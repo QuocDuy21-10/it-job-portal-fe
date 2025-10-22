@@ -1,0 +1,40 @@
+export const en = {
+  meta: {
+    title: "JobPortal - Find Your Dream Job",
+    description:
+      "Connecting talented professionals with amazing opportunities worldwide. Browse thousands of jobs from top companies.",
+    keywords: "jobs, careers, employment, recruitment, job search, hiring",
+  },
+  nav: {
+    findJobs: "Find Jobs",
+    companies: "Companies",
+    admin: "Admin",
+    myAccount: "My Account",
+    profile: "Profile",
+    dashboard: "Dashboard",
+    signOut: "Sign Out",
+    signIn: "Sign In",
+    signUp: "Sign Up",
+  },
+  footer: {
+    logoName: "JobPortal",
+    description:
+      "Connecting talented professionals with amazing opportunities worldwide.",
+    forJobSeekers: "For Job Seekers",
+    browseJobs: "Browse Jobs",
+    browseCompanies: "Browse Companies",
+    careerAdvice: "Career Advice",
+    salaryGuide: "Salary Guide",
+    forEmployers: "For Employers",
+    postAJob: "Post a Job",
+    browseCandidates: "Browse Candidates",
+    employerBranding: "Employer Branding",
+    pricing: "Pricing",
+    company: "Company",
+    aboutUs: "About Us",
+    contact: "Contact",
+    privacyPolicy: "Privacy Policy",
+    termsOfService: "Terms of Service",
+    copyright: `© ${new Date().getFullYear()} JobPortal. All rights reserved.`,
+  },
+};

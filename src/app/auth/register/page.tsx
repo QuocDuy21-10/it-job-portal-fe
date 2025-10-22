@@ -1,208 +1,283 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Briefcase, Mail, Lock, User, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/auth-context';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Briefcase, Mail, Lock, User, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useRegisterMutation } from "@/features/auth/redux/auth.api";
+import {
+  RegisterFormData,
+  RegisterSchema,
+} from "@/features/auth/schemas/auth.schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { toast } from "sonner";
+import { log } from "node:console";
 
 export default function RegisterPage() {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
-  const { signUp, signInWithGoogle, signInWithFacebook } = useAuth();
-  const { toast } = useToast();
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "facebook" | null
+  >(null);
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      acceptTerms: false,
+    },
+  });
 
-    if (password !== confirmPassword) {
-      toast({
-        title: 'Error',
-        description: 'Passwords do not match',
-        variant: 'destructive',
-      });
-      return;
+  const acceptTerms = watch("acceptTerms");
+
+  const [signUp, { isLoading }] = useRegisterMutation();
+
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      const response = await signUp(data).unwrap();
+      console.log("Register response:", response);
+      if (response.statusCode === 201) {
+        toast.success("Đăng ký tài khoản thành công!");
+        router.push("/auth/login");
+      }
+    } catch (error: any) {
+      console.error("Register error:", error);
+      toast.error(`Đăng ký thất bại: ${error?.data?.message || error.message}`);
     }
+  };
 
-    if (password.length < 6) {
-      toast({
-        title: 'Error',
-        description: 'Password must be at least 6 characters',
-        variant: 'destructive',
-      });
-      return;
-    }
+  const handleGoogleSignup = () => {
+    setSocialLoading("google");
+    // Implement Google signup logic
+    toast.warning("Chức năng chưa được triển khai.");
+    setSocialLoading(null);
+  };
 
-    setLoading(true);
-
-    const { error } = await signUp(email, password, fullName);
-
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } else {
-      toast({
-        title: 'Success',
-        description: 'Your account has been created successfully',
-      });
-      router.push('/');
-    }
-
-    setLoading(false);
-  }
-
-  async function handleGoogleSignup() {
-    setSocialLoading('google');
-    const { error } = await signInWithGoogle();
-
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-      setSocialLoading(null);
-    }
-  }
-
-  async function handleFacebookSignup() {
-    setSocialLoading('facebook');
-    const { error } = await signInWithFacebook();
-
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-      setSocialLoading(null);
-    }
-  }
+  const handleFacebookSignup = () => {
+    setSocialLoading("facebook");
+    // Implement Facebook signup logic
+    toast.warning("Chức năng chưa được triển khai.");
+    setSocialLoading(null);
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-cyan-50 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 font-bold text-3xl mb-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 font-bold text-3xl mb-4"
+          >
             <Briefcase className="h-8 w-8 text-blue-600" aria-hidden="true" />
             <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               JobPortal
             </span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">Create Your Account</h1>
-          <p className="text-gray-600 mt-2">Join thousands of professionals today</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-4">
+            Create Your Account
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Join thousands of professionals today
+          </p>
         </div>
 
-        <Card className="shadow-lg">
+        <Card className="shadow-lg dark:bg-slate-800">
           <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
-            <CardDescription>Fill in your details to get started</CardDescription>
+            <CardTitle className="dark:text-white">Sign Up</CardTitle>
+            <CardDescription className="dark:text-gray-400">
+              Fill in your details to get started
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {/* Full Name */}
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="username" className="dark:text-gray-200">
+                  Full Name
+                </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <User
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                   <Input
-                    id="fullName"
+                    id="name"
                     type="text"
                     placeholder="John Doe"
-                    className="pl-10"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                    disabled={loading}
+                    className="pl-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
+                    {...register("name")}
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
               </div>
 
+              {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="dark:text-gray-200">
+                  Email Address
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <Mail
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="pl-10"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
+                    className="pl-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
+                    {...register("email")}
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
 
+              {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="dark:text-gray-200">
+                  Password
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <Lock
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                   <Input
                     id="password"
                     type="password"
                     placeholder="At least 6 characters"
-                    className="pl-10"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    disabled={loading}
+                    className="pl-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
+                    {...register("password")}
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
+              {/* Confirm Password */}
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="dark:text-gray-200">
+                  Confirm Password
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <Lock
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                   <Input
                     id="confirmPassword"
                     type="password"
                     placeholder="Re-enter your password"
-                    className="pl-10"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    disabled={loading}
+                    className="pl-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
+                    {...register("confirmPassword")}
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
+              {/* Terms Acceptance */}
+              <div className="space-y-2">
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="acceptTerms"
+                    checked={acceptTerms}
+                    onCheckedChange={(checked) =>
+                      setValue("acceptTerms", !!checked)
+                    }
+                    disabled={isLoading}
+                    className="mt-1"
+                  />
+                  <Label
+                    htmlFor="acceptTerms"
+                    className="text-sm leading-relaxed cursor-pointer select-none dark:text-gray-300"
+                  >
+                    I agree to JobPortal's{" "}
+                    <Link
+                      href="/terms"
+                      className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy"
+                      className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Privacy Policy
+                    </Link>
+                  </Label>
+                </div>
+                {errors.acceptTerms && (
+                  <p className="text-sm text-red-500 pl-6">
+                    {errors.acceptTerms.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating account...
                   </>
                 ) : (
-                  'Create Account'
+                  "Create Account"
                 )}
               </Button>
             </form>
 
+            {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Or sign up with</span>
+                <span className="px-4 bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400">
+                  Or sign up with
+                </span>
               </div>
             </div>
 
+            {/* Social Login Buttons */}
             <div className="grid grid-cols-2 gap-4">
               <Button
                 type="button"
@@ -211,7 +286,7 @@ export default function RegisterPage() {
                 disabled={socialLoading !== null}
                 className="w-full"
               >
-                {socialLoading === 'google' ? (
+                {socialLoading === "google" ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
@@ -245,11 +320,15 @@ export default function RegisterPage() {
                 disabled={socialLoading !== null}
                 className="w-full"
               >
-                {socialLoading === 'facebook' ? (
+                {socialLoading === "facebook" ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    <svg className="h-5 w-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
+                    <svg
+                      className="h-5 w-5 mr-2"
+                      fill="#1877F2"
+                      viewBox="0 0 24 24"
+                    >
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
                     Facebook
@@ -259,25 +338,17 @@ export default function RegisterPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium transition-colors">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Already have an account?{" "}
+              <Link
+                href="/auth/login"
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+              >
                 Sign in
               </Link>
             </p>
           </CardFooter>
         </Card>
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          By creating an account, you agree to JobPortal's{' '}
-          <Link href="#" className="text-blue-600 hover:text-blue-700">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href="#" className="text-blue-600 hover:text-blue-700">
-            Privacy Policy
-          </Link>
-        </p>
       </div>
     </div>
   );

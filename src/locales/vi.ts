@@ -1,0 +1,40 @@
+export const vi = {
+  meta: {
+    title: "JobPortal - Tìm Công Việc Mơ Ước",
+    description:
+      "Kết nối những chuyên gia tài năng với các cơ hội tuyệt vời trên toàn thế giới. Duyệt qua hàng nghìn công việc từ các công ty hàng đầu.",
+    keywords: "việc làm, sự nghiệp, tuyển dụng, tìm việc, tuyển người",
+  },
+  nav: {
+    findJobs: "Tìm Việc",
+    companies: "Công Ty",
+    admin: "Quản Trị",
+    myAccount: "Tài Khoản",
+    profile: "Hồ Sơ",
+    dashboard: "Bảng Điều Khiển",
+    signOut: "Đăng Xuất",
+    signIn: "Đăng Nhập",
+    signUp: "Đăng Ký",
+  },
+  footer: {
+    logoName: "JobPortal",
+    description:
+      "Kết nối các chuyên gia tài năng với những cơ hội tuyệt vời trên toàn thế giới.",
+    forJobSeekers: "Dành cho Người Tìm Việc",
+    browseJobs: "Tìm việc làm",
+    browseCompanies: "Tìm công ty",
+    careerAdvice: "Tư vấn nghề nghiệp",
+    salaryGuide: "Hướng dẫn lương",
+    forEmployers: "Dành cho Nhà Tuyển Dụng",
+    postAJob: "Đăng tin tuyển dụng",
+    browseCandidates: "Tìm ứng viên",
+    employerBranding: "Thương hiệu tuyển dụng",
+    pricing: "Bảng giá",
+    company: "Công ty",
+    aboutUs: "Về chúng tôi",
+    contact: "Liên hệ",
+    privacyPolicy: "Chính sách bảo mật",
+    termsOfService: "Điều khoản dịch vụ",
+    copyright: `© ${new Date().getFullYear()} JobPortal. Bảo lưu mọi quyền.`,
+  },
+};

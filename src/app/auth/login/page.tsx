@@ -1,21 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Briefcase, Mail, Lock, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/auth-context';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Briefcase, Mail, Lock, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-provider";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "facebook" | null
+  >(null);
   const { signIn, signInWithGoogle, signInWithFacebook } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -28,44 +37,44 @@ export default function LoginPage() {
 
     if (error) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } else {
       toast({
-        title: 'Success',
-        description: 'You have been logged in successfully',
+        title: "Success",
+        description: "You have been logged in successfully",
       });
-      router.push('/');
+      router.push("/");
     }
 
     setLoading(false);
   }
 
   async function handleGoogleLogin() {
-    setSocialLoading('google');
+    setSocialLoading("google");
     const { error } = await signInWithGoogle();
 
     if (error) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
       setSocialLoading(null);
     }
   }
 
   async function handleFacebookLogin() {
-    setSocialLoading('facebook');
+    setSocialLoading("facebook");
     const { error } = await signInWithFacebook();
 
     if (error) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
       setSocialLoading(null);
     }
@@ -75,27 +84,39 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-cyan-50 px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 font-bold text-3xl mb-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 font-bold text-3xl mb-4"
+          >
             <Briefcase className="h-8 w-8 text-blue-600" aria-hidden="true" />
             <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               JobPortal
             </span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your account to continue</p>
+          <h1 className="text-2xl font-bold text-gray-900 mt-4">
+            Welcome Back
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Sign in to your account to continue
+          </p>
         </div>
 
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
-            <CardDescription>Enter your credentials to access your account</CardDescription>
+            <CardDescription>
+              Enter your credentials to access your account
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <Mail
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                   <Input
                     id="email"
                     type="email"
@@ -120,7 +141,10 @@ export default function LoginPage() {
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <Lock
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                   <Input
                     id="password"
                     type="password"
@@ -141,7 +165,7 @@ export default function LoginPage() {
                     Signing in...
                   </>
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </Button>
             </form>
@@ -151,7 +175,9 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Or continue with</span>
+                <span className="px-4 bg-white text-gray-500">
+                  Or continue with
+                </span>
               </div>
             </div>
 
@@ -163,7 +189,7 @@ export default function LoginPage() {
                 disabled={socialLoading !== null}
                 className="w-full"
               >
-                {socialLoading === 'google' ? (
+                {socialLoading === "google" ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
@@ -197,11 +223,15 @@ export default function LoginPage() {
                 disabled={socialLoading !== null}
                 className="w-full"
               >
-                {socialLoading === 'facebook' ? (
+                {socialLoading === "facebook" ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    <svg className="h-5 w-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
+                    <svg
+                      className="h-5 w-5 mr-2"
+                      fill="#1877F2"
+                      viewBox="0 0 24 24"
+                    >
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
                     Facebook
@@ -212,8 +242,11 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium transition-colors">
+              Don't have an account?{" "}
+              <Link
+                href="/auth/register"
+                className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              >
                 Sign up
               </Link>
             </p>
@@ -221,11 +254,11 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          By continuing, you agree to JobPortal's{' '}
+          By continuing, you agree to JobPortal's{" "}
           <Link href="#" className="text-blue-600 hover:text-blue-700">
             Terms of Service
-          </Link>{' '}
-          and{' '}
+          </Link>{" "}
+          and{" "}
           <Link href="#" className="text-blue-600 hover:text-blue-700">
             Privacy Policy
           </Link>

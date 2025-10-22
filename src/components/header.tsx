@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Briefcase, Menu, X, User, LogOut, Settings } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { Briefcase, Menu, X, User, LogOut, Settings } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,18 +11,28 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/contexts/auth-context';
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/auth-provider";
+import { useI18n } from "@/hooks/use-i18n";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
+  const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/95 dark:supports-[backdrop-filter]:bg-slate-900/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl sm:text-2xl">
-          <Briefcase className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" aria-hidden="true" />
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-bold text-xl sm:text-2xl"
+        >
+          <Briefcase
+            className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600"
+            aria-hidden="true"
+          />
           <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
             JobPortal
           </span>
@@ -31,53 +41,56 @@ export function Header() {
         <div className="hidden md:flex items-center gap-6">
           <Link
             href="/jobs"
-            className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+            className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            Find Jobs
+            {i18nMounted ? t("nav.findJobs") : "Find Jobs"}
           </Link>
           <Link
             href="/companies"
-            className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+            className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            Companies
+            {i18nMounted ? t("nav.companies") : "Companies"}
           </Link>
 
           {!loading && user ? (
             <>
               <Link
                 href="/admin"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
-                Admin
+                {i18nMounted ? t("nav.admin") : "Admin"}
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
                     <User className="h-4 w-4" />
-                    <span className="max-w-[100px] truncate">
-                      {user.email}
-                    </span>
+                    <span className="max-w-[100px] truncate">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>
+                    {i18nMounted ? t("nav.myAccount") : "My Account"}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
-                      Profile
+                      {i18nMounted ? t("nav.profile") : "Profile"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/admin" className="cursor-pointer">
                       <Settings className="mr-2 h-4 w-4" />
-                      Dashboard
+                      {i18nMounted ? t("nav.dashboard") : "Dashboard"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut} className="cursor-pointer text-red-600">
+                  <DropdownMenuItem
+                    onClick={signOut}
+                    className="cursor-pointer text-red-600"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    {i18nMounted ? t("nav.signOut") : "Sign Out"}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -86,63 +99,111 @@ export function Header() {
             !loading && (
               <>
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/auth/login">Sign In</Link>
+                  <Link href="/auth/login">
+                    {i18nMounted ? t("nav.signIn") : "Sign In"}
+                  </Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link href="/auth/register">Sign Up</Link>
+                  <Link href="/auth/register">
+                    {i18nMounted ? t("nav.signUp") : "Sign Up"}
+                  </Link>
                 </Button>
               </>
             )
           )}
+
+          <div className="flex items-center gap-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
+            {/* Language Toggle */}
+            <div className="relative">
+              <button
+                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {language.toUpperCase()}
+              </button>
+              {showLanguageMenu && (
+                <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                  <button
+                    onClick={() => {
+                      setLanguage("en");
+                      setShowLanguageMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-t-lg transition-colors"
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLanguage("vi");
+                      setShowLanguageMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-t border-gray-200 dark:border-gray-700 rounded-b-lg transition-colors"
+                  >
+                    Tiếng Việt
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <button
-          className="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+          className="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
         </button>
       </nav>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-white">
+        <div className="md:hidden border-t bg-white dark:bg-slate-900">
           <div className="container mx-auto px-4 py-4 space-y-3">
             <Link
               href="/jobs"
-              className="block py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className="block py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Find Jobs
+              {i18nMounted ? t("nav.findJobs") : "Find Jobs"}
             </Link>
             <Link
               href="/companies"
-              className="block py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className="block py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Companies
+              {i18nMounted ? t("nav.companies") : "Companies"}
             </Link>
 
             {!loading && user && (
               <Link
                 href="/admin"
-                className="block py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                className="block py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Admin
+                {i18nMounted ? t("nav.admin") : "Admin"}
               </Link>
             )}
 
             <div className="flex flex-col gap-2 pt-2">
               {!loading && user ? (
                 <>
-                  <div className="px-3 py-2 text-sm text-gray-600 border rounded-md">
+                  <div className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 border dark:border-gray-700 rounded-md">
                     {user.email}
                   </div>
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       <User className="mr-2 h-4 w-4" />
-                      Profile
+                      {i18nMounted ? t("nav.profile") : "Profile"}
                     </Link>
                   </Button>
                   <Button
@@ -154,25 +215,46 @@ export function Header() {
                     }}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    {i18nMounted ? t("nav.signOut") : "Sign Out"}
                   </Button>
                 </>
               ) : (
                 !loading && (
                   <>
                     <Button asChild variant="outline" className="w-full">
-                      <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-                        Sign In
+                      <Link
+                        href="/auth/login"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {i18nMounted ? t("nav.signIn") : "Sign In"}
                       </Link>
                     </Button>
                     <Button asChild className="w-full">
-                      <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
-                        Sign Up
+                      <Link
+                        href="/auth/register"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {i18nMounted ? t("nav.signUp") : "Sign Up"}
                       </Link>
                     </Button>
                   </>
                 )
               )}
+            </div>
+
+            {/* Mobile Theme & Language Toggle */}
+            <div className="flex items-center gap-4 pt-4 border-t dark:border-gray-700">
+              <ThemeToggle />
+              <div className="flex-1">
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as "en" | "vi")}
+                  className="w-full px-3 py-2 border dark:border-gray-700 rounded-md bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300"
+                >
+                  <option value="en">English</option>
+                  <option value="vi">Tiếng Việt</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
