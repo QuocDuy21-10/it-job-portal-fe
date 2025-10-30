@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import {
-  Search,
-  MapPin,
-  Building2,
-  Filter,
-  Briefcase,
-  DollarSign,
-} from "lucide-react";
+import { Search, MapPin, Building2, Briefcase, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/lib/supabase";
 
 interface Job {
   id: string;
@@ -58,16 +50,98 @@ export default function JobsPage() {
     fetchJobs();
   }, []);
 
+  // Thay thế hàm fetchJobs với mock data
   async function fetchJobs() {
     setLoading(true);
-    let query = supabase
-      .from("jobs")
-      .select("*, companies(id, name, logo_url)")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
 
-    const { data } = await query;
-    if (data) setJobs(data as any);
+    // Mock data
+    const MOCK_JOBS: Job[] = [
+      {
+        id: "1",
+        title: "Senior Frontend Developer",
+        description:
+          "We are looking for an experienced Frontend Developer with React expertise to join our team...",
+        location: "Ho Chi Minh City, Vietnam",
+        job_type: "full-time",
+        experience_level: "senior",
+        salary_min: 3000,
+        salary_max: 5000,
+        salary_currency: "USD",
+        skills: ["React", "TypeScript", "NextJS", "TailwindCSS"],
+        created_at: new Date().toISOString(),
+        companies: {
+          id: "c1",
+          name: "Tech Solutions Inc",
+          logo_url:
+            "https://images.unsplash.com/photo-1549924231-f129b911e442?w=200&h=200",
+        },
+      },
+      {
+        id: "2",
+        title: "Backend Engineer",
+        description:
+          "Looking for a Backend Engineer with strong Node.js and database experience...",
+        location: "Remote",
+        job_type: "remote",
+        experience_level: "mid",
+        salary_min: 2500,
+        salary_max: 4000,
+        salary_currency: "USD",
+        skills: ["NodeJS", "PostgreSQL", "Docker", "AWS"],
+        created_at: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+        companies: {
+          id: "c2",
+          name: "Cloud Systems Co",
+          logo_url:
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=200&h=200",
+        },
+      },
+      {
+        id: "3",
+        title: "UI/UX Designer",
+        description:
+          "Seeking a creative UI/UX Designer to help shape the future of our products...",
+        location: "Hanoi, Vietnam",
+        job_type: "hybrid",
+        experience_level: "junior",
+        salary_min: 1500,
+        salary_max: 2500,
+        salary_currency: "USD",
+        skills: ["Figma", "Adobe XD", "UI Design", "User Research"],
+        created_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+        companies: {
+          id: "c3",
+          name: "Creative Design Studio",
+          logo_url:
+            "https://images.unsplash.com/photo-1558486012-817176f84c6d?w=200&h=200",
+        },
+      },
+      {
+        id: "4",
+        title: "DevOps Engineer",
+        description:
+          "Join our infrastructure team to help scale and maintain our cloud platforms...",
+        location: "Singapore",
+        job_type: "full-time",
+        experience_level: "senior",
+        salary_min: 6000,
+        salary_max: 9000,
+        salary_currency: "USD",
+        skills: ["Kubernetes", "AWS", "Terraform", "CI/CD"],
+        created_at: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+        companies: {
+          id: "c4",
+          name: "Cloud Infrastructure Ltd",
+          logo_url:
+            "https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=200",
+        },
+      },
+    ];
+
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    setJobs(MOCK_JOBS);
     setLoading(false);
   }
 

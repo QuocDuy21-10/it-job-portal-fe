@@ -1,16 +1,36 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from "react";
+import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   id: string;
@@ -30,14 +50,14 @@ interface Role {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
-    email: '',
-    full_name: '',
-    phone: '',
-    role_id: '',
+    email: "",
+    full_name: "",
+    phone: "",
+    role_id: "",
     is_active: true,
   });
   const { toast } = useToast();
@@ -49,14 +69,14 @@ export default function UsersPage() {
 
   async function fetchUsers() {
     const { data } = await supabase
-      .from('users')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("users")
+      .select("*")
+      .order("created_at", { ascending: false });
     if (data) setUsers(data);
   }
 
   async function fetchRoles() {
-    const { data } = await supabase.from('roles').select('*');
+    const { data } = await supabase.from("roles").select("*");
     if (data) setRoles(data);
   }
 
@@ -73,10 +93,10 @@ export default function UsersPage() {
     } else {
       setEditingUser(null);
       setFormData({
-        email: '',
-        full_name: '',
-        phone: '',
-        role_id: roles[0]?.id || '',
+        email: "",
+        full_name: "",
+        phone: "",
+        role_id: roles[0]?.id || "",
         is_active: true,
       });
     }
@@ -88,24 +108,32 @@ export default function UsersPage() {
 
     if (editingUser) {
       const { error } = await supabase
-        .from('users')
+        .from("users")
         .update(formData)
-        .eq('id', editingUser.id);
+        .eq("id", editingUser.id);
 
       if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        toast({ title: 'Success', description: 'User updated successfully' });
+        toast({ title: "Success", description: "User updated successfully" });
         fetchUsers();
         setIsDialogOpen(false);
       }
     } else {
-      const { error } = await supabase.from('users').insert([formData]);
+      const { error } = await supabase.from("users").insert([formData]);
 
       if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        toast({ title: 'Success', description: 'User created successfully' });
+        toast({ title: "Success", description: "User created successfully" });
         fetchUsers();
         setIsDialogOpen(false);
       }
@@ -113,13 +141,17 @@ export default function UsersPage() {
   }
 
   async function handleDelete(id: string) {
-    if (confirm('Are you sure you want to delete this user?')) {
-      const { error } = await supabase.from('users').delete().eq('id', id);
+    if (confirm("Are you sure you want to delete this user?")) {
+      const { error } = await supabase.from("users").delete().eq("id", id);
 
       if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        toast({ title: 'Success', description: 'User deleted successfully' });
+        toast({ title: "Success", description: "User deleted successfully" });
         fetchUsers();
       }
     }
@@ -148,9 +180,13 @@ export default function UsersPage() {
           <DialogContent className="sm:max-w-[500px]">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle>{editingUser ? 'Edit User' : 'Add New User'}</DialogTitle>
+                <DialogTitle>
+                  {editingUser ? "Edit User" : "Add New User"}
+                </DialogTitle>
                 <DialogDescription>
-                  {editingUser ? 'Update user information' : 'Create a new user account'}
+                  {editingUser
+                    ? "Update user information"
+                    : "Create a new user account"}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -160,7 +196,9 @@ export default function UsersPage() {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -169,7 +207,9 @@ export default function UsersPage() {
                   <Input
                     id="full_name"
                     value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, full_name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -178,12 +218,19 @@ export default function UsersPage() {
                   <Input
                     id="phone"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                   />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="role">Role</Label>
-                  <Select value={formData.role_id} onValueChange={(value) => setFormData({ ...formData, role_id: value })}>
+                  <Select
+                    value={formData.role_id}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, role_id: value })
+                    }
+                  >
                     <SelectTrigger id="role">
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
@@ -201,14 +248,20 @@ export default function UsersPage() {
                     type="checkbox"
                     id="is_active"
                     checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, is_active: e.target.checked })
+                    }
                     className="h-4 w-4 rounded border-gray-300"
                   />
-                  <Label htmlFor="is_active" className="font-normal">Active</Label>
+                  <Label htmlFor="is_active" className="font-normal">
+                    Active
+                  </Label>
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">{editingUser ? 'Update' : 'Create'}</Button>
+                <Button type="submit">
+                  {editingUser ? "Update" : "Create"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -217,7 +270,10 @@ export default function UsersPage() {
 
       <div className="mb-4">
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+            aria-hidden="true"
+          />
           <Input
             placeholder="Search users..."
             value={searchQuery}
@@ -242,7 +298,10 @@ export default function UsersPage() {
           <TableBody>
             {filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-8 text-gray-500"
+                >
                   No users found
                 </TableCell>
               </TableRow>
@@ -253,15 +312,15 @@ export default function UsersPage() {
                   <TableCell>{user.full_name}</TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>
-                    <Badge variant={user.is_active ? 'default' : 'secondary'}>
-                      {user.is_active ? 'Active' : 'Inactive'}
+                    <Badge variant={user.is_active ? "default" : "secondary"}>
+                      {user.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {new Date(user.created_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
+                    {new Date(user.created_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
                     })}
                   </TableCell>
                   <TableCell className="text-right">
