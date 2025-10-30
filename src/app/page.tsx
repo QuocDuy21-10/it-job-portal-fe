@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
+import { useGetMeQuery } from "@/features/auth/redux/auth.api";
+import { useAuth } from "@/hooks/use-auth";
 
 interface Job {
   id: string;
@@ -28,14 +29,14 @@ interface Job {
   created_at: string;
   companies: {
     name: string;
-    logo_url: string;
+    logo_url: string | null;
   };
 }
 
 interface Company {
   id: string;
   name: string;
-  logo_url: string;
+  logo_url: string | null;
   industry: string;
   location: string;
 }
@@ -46,28 +47,96 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data: jobs } = await supabase
-        .from("jobs")
-        .select(
-          "id, title, location, job_type, salary_min, salary_max, salary_currency, created_at, companies(name, logo_url)"
-        )
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(6);
-
-      const { data: companies } = await supabase
-        .from("companies")
-        .select("id, name, logo_url, industry, location")
-        .eq("is_verified", true)
-        .limit(6);
-
-      if (jobs) setFeaturedJobs(jobs as any);
-      if (companies) setTopCompanies(companies);
+  useGetMeQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
     }
+  );
+  const { isAuthenticated } = useAuth();
 
-    fetchData();
+  useEffect(() => {
+    // Mock data instead of fetching from Supabase
+    const MOCK_JOBS: Job[] = [
+      {
+        id: "job_1",
+        title: "Senior Frontend Engineer",
+        location: "Remote",
+        job_type: "Full-time",
+        salary_min: 60000,
+        salary_max: 90000,
+        salary_currency: "USD",
+        created_at: new Date().toISOString(),
+        companies: {
+          name: "Acme Tech",
+          logo_url:
+            "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80",
+        },
+      },
+      {
+        id: "job_2",
+        title: "Backend Engineer (Node.js)",
+        location: "Ho Chi Minh City, VN",
+        job_type: "Full-time",
+        salary_min: 25000,
+        salary_max: 45000,
+        salary_currency: "VND",
+        created_at: new Date(
+          Date.now() - 1000 * 60 * 60 * 24 * 3
+        ).toISOString(),
+        companies: {
+          name: "Beta Solutions",
+          logo_url: null,
+        },
+      },
+      {
+        id: "job_3",
+        title: "Product Designer",
+        location: "Hanoi, VN",
+        job_type: "Part-time",
+        salary_min: 1500,
+        salary_max: 3000,
+        salary_currency: "USD",
+        created_at: new Date(
+          Date.now() - 1000 * 60 * 60 * 24 * 7
+        ).toISOString(),
+        companies: {
+          name: "DesignWave",
+          logo_url:
+            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80",
+        },
+      },
+    ];
+
+    const MOCK_COMPANIES: Company[] = [
+      {
+        id: "comp_1",
+        name: "Acme Tech",
+        logo_url:
+          "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80",
+        industry: "Software",
+        location: "Remote",
+      },
+      {
+        id: "comp_2",
+        name: "Beta Solutions",
+        logo_url: null,
+        industry: "FinTech",
+        location: "Ho Chi Minh City, VN",
+      },
+      {
+        id: "comp_3",
+        name: "DesignWave",
+        logo_url:
+          "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80",
+        industry: "Design",
+        location: "Hanoi, VN",
+      },
+    ];
+
+    // Simulate load delay if desired (here immediate)
+    setFeaturedJobs(MOCK_JOBS);
+    setTopCompanies(MOCK_COMPANIES);
   }, []);
 
   const handleSearch = () => {

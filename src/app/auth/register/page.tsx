@@ -24,7 +24,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { toast } from "sonner";
-import { log } from "node:console";
 
 export default function RegisterPage() {
   const [socialLoading, setSocialLoading] = useState<

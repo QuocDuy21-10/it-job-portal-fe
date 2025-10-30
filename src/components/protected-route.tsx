@@ -3,19 +3,30 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useAuth } from "@/contexts/auth-provider";
+import { useAppSelector } from "@/lib/redux/hooks";
+import {
+  selectIsAuthenticated,
+  selectIsLoading,
+  selectUser,
+} from "@/features/auth/redux/auth.slice";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
   const router = useRouter();
 
+  // Lấy state từ Redux
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isLoading = useAppSelector(selectIsLoading);
+  const user = useAppSelector(selectUser);
+
   useEffect(() => {
-    if (!loading && !user) {
+    // Chỉ redirect khi đã load xong và không authenticated
+    if (!isLoading && !isAuthenticated) {
       router.push("/auth/login");
     }
-  }, [user, loading, router]);
+  }, [isAuthenticated, isLoading, router]);
 
-  if (loading) {
+  // Hiển thị loading khi đang check auth
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -26,9 +37,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  // Không hiển thị gì khi chưa authenticated (đang redirect)
+  if (!isAuthenticated || !user) {
     return null;
   }
 
+  // Render children khi đã authenticated
   return <>{children}</>;
 }

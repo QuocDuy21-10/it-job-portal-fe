@@ -15,70 +15,80 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/auth-provider";
+import { useLoginMutation } from "@/features/auth/redux/auth.api";
+import {
+  LoginFormData,
+  LoginSchema,
+} from "@/features/auth/schemas/auth.schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<
     "google" | "facebook" | null
   >(null);
-  const { signIn, signInWithGoogle, signInWithFacebook } = useAuth();
-  const { toast } = useToast();
+
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      // rememberMe: false,
+    },
+  });
 
-    const { error } = await signIn(email, password);
+  const [login, { isLoading }] = useLoginMutation();
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "You have been logged in successfully",
-      });
-      router.push("/");
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const response = await login(data).unwrap();
+
+      if (response.statusCode === 201) {
+        // Lưu access token vào localStorage
+        if (response.data?.access_token) {
+          localStorage.setItem("access_token", response.data.access_token);
+        }
+
+        // Dispatch action để update Redux state
+        if (response.data?.user) {
+          dispatch(setUserLoginInfo(response.data.user));
+        }
+
+        toast.success("Đăng nhập thành công!");
+        router.push("/");
+      }
+    } catch (error: any) {
+      console.error("Login error:", error);
+
+      // Xử lý error message tốt hơn
+      const errorMessage =
+        error?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
+
+      toast.error(`Đăng nhập thất bại: ${errorMessage}`);
     }
+  };
 
-    setLoading(false);
-  }
-
-  async function handleGoogleLogin() {
+  const handleGoogleLogin = () => {
     setSocialLoading("google");
-    const { error } = await signInWithGoogle();
+    toast.warning("Chức năng chưa được triển khai.");
+    setSocialLoading(null);
+  };
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      setSocialLoading(null);
-    }
-  }
-
-  async function handleFacebookLogin() {
+  const handleFacebookLogin = () => {
     setSocialLoading("facebook");
-    const { error } = await signInWithFacebook();
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      setSocialLoading(null);
-    }
-  }
+    toast.warning("Chức năng chưa được triển khai.");
+    setSocialLoading(null);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-cyan-50 px-4 py-12">
@@ -97,19 +107,19 @@ export default function LoginPage() {
             Welcome Back
           </h1>
           <p className="text-gray-600 mt-2">
-            Sign in to your account to continue
+            Log In to your account to continue
           </p>
         </div>
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+            <CardTitle> Log In</CardTitle>
             <CardDescription>
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
@@ -122,12 +132,13 @@ export default function LoginPage() {
                     type="email"
                     placeholder="you@example.com"
                     className="pl-10"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
+                    {...register("email")}
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -150,16 +161,19 @@ export default function LoginPage() {
                     type="password"
                     placeholder="Enter your password"
                     className="pl-10"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={loading}
+                    {...register("password")}
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Signing in...

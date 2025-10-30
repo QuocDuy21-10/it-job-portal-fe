@@ -36,16 +36,14 @@ export const LoginSchema = z.object({
       { message: "Email chứa ký tự không hợp lệ" }
     ),
 
-  password: z
-    .string()
-    .min(1, "Vui lòng nhập mật khẩu")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .max(128, "Mật khẩu không được quá 128 ký tự")
-    .refine((password) => !/\s/.test(password), {
-      message: "Mật khẩu không được chứa khoảng trắng",
-    }),
+  password: z.string().min(1, "Vui lòng nhập mật khẩu"),
+  // .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+  // .max(128, "Mật khẩu không được quá 128 ký tự")
+  // .refine((password) => !/\s/.test(password), {
+  //   message: "Mật khẩu không được chứa khoảng trắng",
+  // }),
 
-  rememberMe: z.boolean().optional().default(false),
+  // rememberMe: z.boolean().optional().default(false),
 });
 
 export type LoginFormData = z.infer<typeof LoginSchema>;
@@ -204,3 +202,31 @@ export const AuthStateSchema = z.object({
 });
 
 export type AuthState = z.infer<typeof AuthStateSchema>;
+
+export interface UserInfo {
+  _id: string;
+  email: string;
+  name: string;
+  role: Role;
+  permissions: Permission[];
+}
+export interface Permission {
+  _id: string;
+  name: string;
+  apiPath: string;
+  method: string;
+  module: string;
+}
+
+export interface Role {
+  _id: string;
+  name: string;
+}
+
+export interface UserInfo {
+  _id: string;
+  email: string;
+  name: string;
+  role: Role;
+  permissions: Permission[];
+}

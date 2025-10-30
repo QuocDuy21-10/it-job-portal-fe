@@ -1,13 +1,15 @@
 export type PagedRequest = {
-  page: number;
-  size: number;
-  filterText?: string;
+  page: string;
+  limit: string;
+  query?: string;
 };
 
 export type PagedAndResult<T> = {
-  items: T[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
+  meta: {
+    current: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+  };
+  result: T[];
 };

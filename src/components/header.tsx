@@ -12,18 +12,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/contexts/auth-provider";
 import { useI18n } from "@/hooks/use-i18n";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useGetMeQuery } from "@/features/auth/redux/auth.api";
+import { useAuth } from "@/hooks/use-auth";
+import { useLogoutMutation } from "@/features/auth/redux/auth.api";
+import { useRouter } from "next/navigation";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, loading, signOut } = useAuth();
   const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const { user, isAuthenticated } = useAuth();
+  const [logout] = useLogoutMutation();
+  const router = useRouter();
+
+  useGetMeQuery({
+    refetchOnMountOrArgChange: true,
+  });
+
+  const handleSignOut = async () => {
+    try {
+      await logout({}).unwrap();
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/95 dark:supports-[backdrop-filter]:bg-slate-900/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/95">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
@@ -52,7 +70,7 @@ export function Header() {
             {i18nMounted ? t("nav.companies") : "Companies"}
           </Link>
 
-          {!loading && user ? (
+          {isAuthenticated && user ? (
             <>
               <Link
                 href="/admin"
@@ -86,7 +104,7 @@ export function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={signOut}
+                    onClick={handleSignOut}
                     className="cursor-pointer text-red-600"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -96,20 +114,18 @@ export function Header() {
               </DropdownMenu>
             </>
           ) : (
-            !loading && (
-              <>
-                <Button asChild variant="outline" size="sm">
-                  <Link href="/auth/login">
-                    {i18nMounted ? t("nav.signIn") : "Sign In"}
-                  </Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href="/auth/register">
-                    {i18nMounted ? t("nav.signUp") : "Sign Up"}
-                  </Link>
-                </Button>
-              </>
-            )
+            <>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/auth/login">
+                  {i18nMounted ? t("nav.signIn") : "Sign In"}
+                </Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link href="/auth/register">
+                  {i18nMounted ? t("nav.signUp") : "Sign Up"}
+                </Link>
+              </Button>
+            </>
           )}
 
           <div className="flex items-center gap-4">
@@ -181,18 +197,8 @@ export function Header() {
               {i18nMounted ? t("nav.companies") : "Companies"}
             </Link>
 
-            {!loading && user && (
-              <Link
-                href="/admin"
-                className="block py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {i18nMounted ? t("nav.admin") : "Admin"}
-              </Link>
-            )}
-
             <div className="flex flex-col gap-2 pt-2">
-              {!loading && user ? (
+              {isAuthenticated && user ? (
                 <>
                   <div className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 border dark:border-gray-700 rounded-md">
                     {user.email}
@@ -210,7 +216,7 @@ export function Header() {
                     variant="outline"
                     className="w-full text-red-600"
                     onClick={() => {
-                      signOut();
+                      handleSignOut();
                       setMobileMenuOpen(false);
                     }}
                   >
@@ -219,26 +225,24 @@ export function Header() {
                   </Button>
                 </>
               ) : (
-                !loading && (
-                  <>
-                    <Button asChild variant="outline" className="w-full">
-                      <Link
-                        href="/auth/login"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {i18nMounted ? t("nav.signIn") : "Sign In"}
-                      </Link>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <Link
-                        href="/auth/register"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {i18nMounted ? t("nav.signUp") : "Sign Up"}
-                      </Link>
-                    </Button>
-                  </>
-                )
+                <>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link
+                      href="/auth/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {i18nMounted ? t("nav.signIn") : "Sign In"}
+                    </Link>
+                  </Button>
+                  <Button asChild className="w-full">
+                    <Link
+                      href="/auth/register"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {i18nMounted ? t("nav.signUp") : "Sign Up"}
+                    </Link>
+                  </Button>
+                </>
               )}
             </div>
 

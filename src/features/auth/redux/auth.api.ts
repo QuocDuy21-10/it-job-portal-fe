@@ -1,5 +1,9 @@
 import { baseApi } from "@/lib/redux/api";
-import { LoginFormData, LoginResponse } from "../schemas/auth.schema";
+import {
+  LoginFormData,
+  LoginResponse,
+  RegisterFormData,
+} from "../schemas/auth.schema";
 import { ApiResponse } from "@/shared/base/api-response.base";
 
 export const authApi = baseApi.injectEndpoints({
@@ -11,31 +15,47 @@ export const authApi = baseApi.injectEndpoints({
         body: credentials,
       }),
     }),
-    getMe: builder.query({
+
+    // Get current user info
+    getMe: builder.query<ApiResponse<LoginResponse>, void>({
       query: () => ({
         url: "/auth/me",
         method: "GET",
       }),
     }),
-    register: builder.mutation({
+
+    register: builder.mutation<ApiResponse<LoginResponse>, RegisterFormData>({
       query: (userData) => ({
         url: "/auth/register",
         method: "POST",
         body: userData,
       }),
     }),
-    logout: builder.mutation({
+
+    logout: builder.mutation<ApiResponse<any>, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
     }),
+
+    // Refresh token endpoint (nếu cần)
+    refreshToken: builder.mutation<ApiResponse<{ access_token: string }>, void>(
+      {
+        query: () => ({
+          url: "/auth/refresh",
+          method: "POST",
+        }),
+      }
+    ),
   }),
 });
 
 export const {
   useLoginMutation,
   useGetMeQuery,
+  useLazyGetMeQuery,
   useRegisterMutation,
   useLogoutMutation,
+  useRefreshTokenMutation,
 } = authApi;

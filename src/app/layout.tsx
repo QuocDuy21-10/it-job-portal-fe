@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import { AuthProvider } from "@/contexts/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { ClientLayout } from "@/components/client-layout";
@@ -32,12 +31,10 @@ export default function RootLayout({
           <ThemeProvider>
             <I18nProvider>
               <ClientLayout />
-              <AuthProvider>
-                <Header />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <Toaster />
-              </AuthProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Toaster />
             </I18nProvider>
           </ThemeProvider>
         </ReduxProvider>
