@@ -37,6 +37,7 @@ export const jobApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["Job"],
     }),
 
     // Get company by id
@@ -45,6 +46,7 @@ export const jobApi = baseApi.injectEndpoints({
         url: `/jobs/${id}`,
         method: "GET",
       }),
+      providesTags: (result, error, id) => [{ type: "Job", id }],
     }),
 
     // Create new company
@@ -54,6 +56,7 @@ export const jobApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Job"],
     }),
 
     // Update company
@@ -66,6 +69,7 @@ export const jobApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Job", id }, "Job"],
     }),
 
     // Delete company
@@ -74,6 +78,7 @@ export const jobApi = baseApi.injectEndpoints({
         url: `/jobs/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Job"],
     }),
   }),
 });
