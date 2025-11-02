@@ -1,32 +1,32 @@
-import { Job } from "../schemas/permission.schema";
+import { Permission } from "../schemas/permission.schema";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface JobState {
-  jobs: Job[];
-  selectedJob: Job | null;
+interface PermissionState {
+  permissions: Permission[];
+  selectedPermission: Permission | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: JobState = {
-  jobs: [],
-  selectedJob: null,
+const initialState: PermissionState = {
+  permissions: [],
+  selectedPermission: null,
   loading: false,
   error: null,
 };
 
-const jobSlice = createSlice({
-  name: "job",
+const permissionSlice = createSlice({
+  name: "permission",
   initialState,
   reducers: {
-    setJobs: (state, action: PayloadAction<Job[]>) => {
-      state.jobs = action.payload;
+    setPermissions: (state, action: PayloadAction<Permission[]>) => {
+      state.permissions = action.payload;
     },
-    setSelectedJob: (state, action: PayloadAction<Job>) => {
-      state.selectedJob = action.payload;
+    setSelectedPermission: (state, action: PayloadAction<Permission>) => {
+      state.selectedPermission = action.payload;
     },
-    clearSelectedJob: (state) => {
-      state.selectedJob = null;
+    clearSelectedPermission: (state) => {
+      state.selectedPermission = null;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -38,18 +38,23 @@ const jobSlice = createSlice({
 });
 
 export const {
-  setJobs,
-  setSelectedJob,
-  clearSelectedJob,
+  setPermissions,
+  setSelectedPermission,
+  clearSelectedPermission,
   setLoading,
   setError,
-} = jobSlice.actions;
+} = permissionSlice.actions;
 
-export default jobSlice.reducer;
+export default permissionSlice.reducer;
 
 // Selectors
-export const selectCompanies = (state: { job: JobState }) => state.job.jobs;
-export const selectSelectedJob = (state: { job: JobState }) =>
-  state.job.selectedJob;
-export const selectJobLoading = (state: { job: JobState }) => state.job.loading;
-export const selectJobError = (state: { job: JobState }) => state.job.error;
+export const selectPermissions = (state: { permission: PermissionState }) =>
+  state.permission.permissions;
+export const selectSelectedPermission = (state: {
+  permission: PermissionState;
+}) => state.permission.selectedPermission;
+export const selectPermissionLoading = (state: {
+  permission: PermissionState;
+}) => state.permission.loading;
+export const selectPermissionError = (state: { permission: PermissionState }) =>
+  state.permission.error;

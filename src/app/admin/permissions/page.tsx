@@ -1,220 +1,219 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
-
-interface Permission {
-  id: string;
-  name: string;
-  description: string;
-  resource: string;
-  action: string;
-  created_at: string;
-}
+import { useState, useMemo, useCallback } from "react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useGetPermissionsQuery } from "@/features/permission/redux/permission.api";
+import { usePermissionOperations } from "@/hooks/use-permission";
+import { PermissionSearchBar } from "@/components/permission/permission-search-bar";
+import { PermissionTable } from "@/components/permission/permission-table";
+import { PermissionDialog } from "@/components/permission/permission-dialog";
+import { Permission } from "@/features/permission/schemas/permission.schema";
 
 export default function PermissionsPage() {
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingPermission, setEditingPermission] = useState<Permission | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    resource: '',
-    action: '',
-  });
-  const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    fetchPermissions();
+  const pageSize = 10;
+
+  // Construct filter and sort queries
+  const filter = searchQuery ? `name=/${searchQuery}/i` : "";
+  const sort = "sort=-createdAt";
+
+  // Fetch permissions với RTK Query
+  const { data: permissionsData, isLoading } = useGetPermissionsQuery({
+    page: currentPage,
+    limit: pageSize,
+    filter,
+    sort,
+  });
+
+  // Custom hook chứa tất cả CRUD operations
+  const {
+    isDialogOpen,
+    editingPermission,
+    isMutating,
+    handleOpenDialog,
+    handleCloseDialog,
+    handleSubmit,
+    handleDelete,
+  } = usePermissionOperations();
+
+  const permissions = useMemo(() => {
+    return permissionsData?.data?.result || [];
+  }, [permissionsData]);
+
+  const pagination = permissionsData?.data?.meta?.pagination;
+
+  // Fix: Sử dụng useCallback để tránh re-render không cần thiết
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
   }, []);
 
-  async function fetchPermissions() {
-    const { data } = await supabase
-      .from('permissions')
-      .select('*')
-      .order('resource', { ascending: true });
-    if (data) setPermissions(data);
-  }
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1); // Reset về trang 1 khi search
+  }, []);
 
-  function handleOpenDialog(permission?: Permission) {
-    if (permission) {
-      setEditingPermission(permission);
-      setFormData({
-        name: permission.name,
-        description: permission.description,
-        resource: permission.resource,
-        action: permission.action,
-      });
-    } else {
-      setEditingPermission(null);
-      setFormData({ name: '', description: '', resource: '', action: '' });
-    }
-    setIsDialogOpen(true);
-  }
+  // Generate page numbers để hiển thị
+  const getPageNumbers = () => {
+    if (!pagination) return [];
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+    const totalPages = pagination.total_pages;
+    const current = currentPage;
+    const pages: (number | string)[] = [];
 
-    if (editingPermission) {
-      const { error } = await supabase
-        .from('permissions')
-        .update(formData)
-        .eq('id', editingPermission.id);
-
-      if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
-      } else {
-        toast({ title: 'Success', description: 'Permission updated successfully' });
-        fetchPermissions();
-        setIsDialogOpen(false);
+    if (totalPages <= 7) {
+      // Nếu tổng số trang <= 7, hiển thị tất cả
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
       }
     } else {
-      const { error } = await supabase.from('permissions').insert([formData]);
+      // Luôn hiển thị trang 1
+      pages.push(1);
 
-      if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
-      } else {
-        toast({ title: 'Success', description: 'Permission created successfully' });
-        fetchPermissions();
-        setIsDialogOpen(false);
+      if (current > 3) {
+        pages.push("...");
       }
-    }
-  }
 
-  async function handleDelete(id: string) {
-    if (confirm('Are you sure you want to delete this permission?')) {
-      const { error } = await supabase.from('permissions').delete().eq('id', id);
+      // Hiển thị các trang xung quanh trang hiện tại
+      const start = Math.max(2, current - 1);
+      const end = Math.min(totalPages - 1, current + 1);
 
-      if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
-      } else {
-        toast({ title: 'Success', description: 'Permission deleted successfully' });
-        fetchPermissions();
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
       }
+
+      if (current < totalPages - 2) {
+        pages.push("...");
+      }
+
+      // Luôn hiển thị trang cuối
+      pages.push(totalPages);
     }
-  }
+
+    return pages;
+  };
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Permissions</h1>
-          <p className="text-gray-600 mt-1">Manage system permissions</p>
+          <p className="text-gray-600 mt-1">
+            Manage permission profiles and information
+          </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Permission
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
-            <form onSubmit={handleSubmit}>
-              <DialogHeader>
-                <DialogTitle>{editingPermission ? 'Edit Permission' : 'Add New Permission'}</DialogTitle>
-                <DialogDescription>
-                  {editingPermission ? 'Update permission details' : 'Create a new permission'}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Permission Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g., users.create"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="resource">Resource</Label>
-                  <Input
-                    id="resource"
-                    value={formData.resource}
-                    onChange={(e) => setFormData({ ...formData, resource: e.target.value })}
-                    placeholder="e.g., users, jobs, companies"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="action">Action</Label>
-                  <Input
-                    id="action"
-                    value={formData.action}
-                    onChange={(e) => setFormData({ ...formData, action: e.target.value })}
-                    placeholder="e.g., create, read, update, delete"
-                    required
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">{editingPermission ? 'Update' : 'Create'}</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+
+        <Button onClick={() => handleOpenDialog()}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Permission
+        </Button>
       </div>
 
-      <div className="bg-white rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Resource</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {permissions.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                  No permissions found
-                </TableCell>
-              </TableRow>
-            ) : (
-              permissions.map((permission) => (
-                <TableRow key={permission.id}>
-                  <TableCell className="font-medium">{permission.name}</TableCell>
-                  <TableCell>{permission.description}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{permission.resource}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{permission.action}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => handleOpenDialog(permission)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDelete(permission.id)}>
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {/* Search Bar */}
+      <PermissionSearchBar
+        value={searchQuery}
+        onChange={handleSearchChange}
+        placeholder="Search by permission name..."
+        delay={500}
+      />
+
+      {/* Permissions Table */}
+      <PermissionTable
+        permissions={permissions}
+        isLoading={isLoading}
+        onEdit={handleOpenDialog}
+        onDelete={(id) => {
+          const permission: Permission | undefined = permissions.find(
+            (c: Permission) => c._id === id
+          );
+          if (permission) handleDelete(permission);
+        }}
+        currentPage={currentPage}
+        pageSize={pageSize}
+      />
+
+      {/* Dialog */}
+      <PermissionDialog
+        open={isDialogOpen}
+        onOpenChange={handleCloseDialog}
+        editingPermission={editingPermission}
+        onSubmit={handleSubmit}
+        isLoading={isMutating}
+      />
+
+      {/* Improved Pagination */}
+      {pagination && pagination.total_pages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
+          {/* Info text */}
+          <p className="text-sm text-gray-600">
+            Showing{" "}
+            <span className="font-medium">
+              {(currentPage - 1) * pageSize + 1}
+            </span>{" "}
+            to{" "}
+            <span className="font-medium">
+              {Math.min(currentPage * pageSize, pagination.total)}
+            </span>{" "}
+            of <span className="font-medium">{pagination.total}</span>{" "}
+            permissions
+          </p>
+
+          {/* Pagination buttons */}
+          <div className="flex items-center gap-1">
+            {/* Previous button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1 || isLoading}
+              className="h-9 w-9 p-0"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            {/* Page numbers */}
+            {getPageNumbers().map((page, index) => {
+              if (page === "...") {
+                return (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="px-2 text-gray-400"
+                  >
+                    ...
+                  </span>
+                );
+              }
+
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page as number)}
+                  disabled={isLoading}
+                  className="h-9 w-9 p-0"
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            {/* Next button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === pagination.total_pages || isLoading}
+              className="h-9 w-9 p-0"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,23 +1,22 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
-  Permission,
   CreatePermissionFormData,
+  Permission,
   UpdatePermissionFormData,
 } from "../schemas/permission.schema";
 
 export const permissionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCompanies: builder.query<
+    getPermissions: builder.query<
       ApiResponse<{
         result: Permission[];
         meta: {
-          pagination: {
-            current_page: number;
-            per_page: number;
-            total_pages: number;
-            total: number;
-          };
+          totalItems: number;
+          itemCount: number;
+          itemsPerPage: number;
+          totalPages: number;
+          currentPage: number;
         };
       }>,
       {
@@ -27,7 +26,7 @@ export const permissionApi = baseApi.injectEndpoints({
         sort?: string;
       }
     >({
-      query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
+      query: ({ page = 1, limit = 10, filter = "", sort = "createdAt" }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;
         if (sort) query += `&${sort}`;
@@ -37,18 +36,20 @@ export const permissionApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["Permission"],
     }),
 
     // Get permission by id
-    getCompany: builder.query<ApiResponse<Permission>, string>({
+    getPermission: builder.query<ApiResponse<Permission>, string>({
       query: (id) => ({
         url: `/permissions/${id}`,
         method: "GET",
       }),
+      providesTags: (result, error, id) => [{ type: "Permission", id }],
     }),
 
     // Create new permission
-    createCompany: builder.mutation<
+    createPermission: builder.mutation<
       ApiResponse<Permission>,
       CreatePermissionFormData
     >({
@@ -57,10 +58,11 @@ export const permissionApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Permission"],
     }),
 
     // Update permission
-    updateCompany: builder.mutation<
+    updatePermission: builder.mutation<
       ApiResponse<Permission>,
       { id: string; data: UpdatePermissionFormData }
     >({
@@ -69,22 +71,27 @@ export const permissionApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Permission", id },
+        "Permission",
+      ],
     }),
 
     // Delete permission
-    deleteCompany: builder.mutation<ApiResponse<void>, string>({
+    deletePermission: builder.mutation<ApiResponse<void>, string>({
       query: (id) => ({
         url: `/permissions/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Permission"],
     }),
   }),
 });
 
 export const {
-  useGetCompaniesQuery,
-  useGetCompanyQuery,
-  useCreateCompanyMutation,
-  useUpdateCompanyMutation,
-  useDeleteCompanyMutation,
-} = companyApi;
+  useGetPermissionsQuery,
+  useGetPermissionQuery,
+  useCreatePermissionMutation,
+  useUpdatePermissionMutation,
+  useDeletePermissionMutation,
+} = permissionApi;
