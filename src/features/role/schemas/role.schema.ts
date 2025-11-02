@@ -1,17 +1,15 @@
-import { CompanySchema } from "@/features/company/schemas/company.schema";
 import { z } from "zod";
 
-export const JobSchema = z.object({
-  name: z.string(),
-
-  apiPath: z.string(),
-
-  method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),
-
-  module: z.string(),
+export const RoleSchema = z.object({
+  name: z.string().min(2, "Role name must be at least 2 characters"),
+  description: z
+    .string()
+    .min(2, "Role description must be at least 2 characters"),
+  isActive: z.boolean(),
+  permissions: z.array(z.string()),
 });
 
-export const JobEntitySchema = JobSchema.extend({
+export const RoleEntitySchema = RoleSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
@@ -30,6 +28,6 @@ export const JobEntitySchema = JobSchema.extend({
 });
 
 // Types
-export type Job = z.infer<typeof JobEntitySchema>;
-export type CreateJobFormData = z.infer<typeof JobSchema>;
-export type UpdateJobFormData = Partial<CreateJobFormData>;
+export type Role = z.infer<typeof RoleEntitySchema>;
+export type CreateRoleFormData = z.infer<typeof RoleSchema>;
+export type UpdateRoleFormData = Partial<CreateRoleFormData>;

@@ -1,32 +1,32 @@
-import { Job } from "../schemas/role.schema";
+import { Role } from "../schemas/role.schema";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface JobState {
-  jobs: Job[];
-  selectedJob: Job | null;
+interface RoleState {
+  roles: Role[];
+  selectedRole: Role | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: JobState = {
-  jobs: [],
-  selectedJob: null,
+const initialState: RoleState = {
+  roles: [],
+  selectedRole: null,
   loading: false,
   error: null,
 };
 
-const jobSlice = createSlice({
-  name: "job",
+const roleSlice = createSlice({
+  name: "role",
   initialState,
   reducers: {
-    setJobs: (state, action: PayloadAction<Job[]>) => {
-      state.jobs = action.payload;
+    setRoles: (state, action: PayloadAction<Role[]>) => {
+      state.roles = action.payload;
     },
-    setSelectedJob: (state, action: PayloadAction<Job>) => {
-      state.selectedJob = action.payload;
+    setSelectedRole: (state, action: PayloadAction<Role>) => {
+      state.selectedRole = action.payload;
     },
-    clearSelectedJob: (state) => {
-      state.selectedJob = null;
+    clearSelectedRole: (state) => {
+      state.selectedRole = null;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -38,18 +38,19 @@ const jobSlice = createSlice({
 });
 
 export const {
-  setJobs,
-  setSelectedJob,
-  clearSelectedJob,
+  setRoles,
+  setSelectedRole,
+  clearSelectedRole,
   setLoading,
   setError,
-} = jobSlice.actions;
+} = roleSlice.actions;
 
-export default jobSlice.reducer;
+export default roleSlice.reducer;
 
 // Selectors
-export const selectCompanies = (state: { job: JobState }) => state.job.jobs;
-export const selectSelectedJob = (state: { job: JobState }) =>
-  state.job.selectedJob;
-export const selectJobLoading = (state: { job: JobState }) => state.job.loading;
-export const selectJobError = (state: { job: JobState }) => state.job.error;
+export const selectCompanies = (state: { role: RoleState }) => state.role.roles;
+export const selectSelectedRole = (state: { role: RoleState }) =>
+  state.role.selectedRole;
+export const selectRoleLoading = (state: { role: RoleState }) =>
+  state.role.loading;
+export const selectRoleError = (state: { role: RoleState }) => state.role.error;

@@ -1,16 +1,16 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
-  Permission,
-  CreatePermissionFormData,
-  UpdatePermissionFormData,
+  Role,
+  CreateRoleFormData,
+  UpdateRoleFormData,
 } from "../schemas/role.schema";
 
-export const permissionApi = baseApi.injectEndpoints({
+export const roleApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCompanies: builder.query<
+    getRoles: builder.query<
       ApiResponse<{
-        result: Permission[];
+        result: Role[];
         meta: {
           pagination: {
             current_page: number;
@@ -33,58 +33,63 @@ export const permissionApi = baseApi.injectEndpoints({
         if (sort) query += `&${sort}`;
 
         return {
-          url: `/permissions?${query}`,
+          url: `/roles?${query}`,
           method: "GET",
         };
       },
+      providesTags: ["Role"],
     }),
 
-    // Get permission by id
-    getCompany: builder.query<ApiResponse<Permission>, string>({
+    // Get role by id
+    getRole: builder.query<ApiResponse<Role>, string>({
       query: (id) => ({
-        url: `/permissions/${id}`,
+        url: `/roles/${id}`,
         method: "GET",
       }),
+      providesTags: (result, error, id) => [{ type: "Role", id }],
     }),
 
-    // Create new permission
-    createCompany: builder.mutation<
-      ApiResponse<Permission>,
-      CreatePermissionFormData
-    >({
+    // Create new role
+    createRole: builder.mutation<ApiResponse<Role>, CreateRoleFormData>({
       query: (data) => ({
-        url: "/permissions",
+        url: "/roles",
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Role"],
     }),
 
-    // Update permission
-    updateCompany: builder.mutation<
-      ApiResponse<Permission>,
-      { id: string; data: UpdatePermissionFormData }
+    // Update role
+    updateRole: builder.mutation<
+      ApiResponse<Role>,
+      { id: string; data: UpdateRoleFormData }
     >({
       query: ({ id, data }) => ({
-        url: `/permissions/${id}`,
+        url: `/roles/${id}`,
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Role", id },
+        "Role",
+      ],
     }),
 
-    // Delete permission
-    deleteCompany: builder.mutation<ApiResponse<void>, string>({
+    // Delete role
+    deleteRole: builder.mutation<ApiResponse<void>, string>({
       query: (id) => ({
-        url: `/permissions/${id}`,
+        url: `/roles/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Role"],
     }),
   }),
 });
 
 export const {
-  useGetCompaniesQuery,
-  useGetCompanyQuery,
-  useCreateCompanyMutation,
-  useUpdateCompanyMutation,
-  useDeleteCompanyMutation,
-} = companyApi;
+  useGetRolesQuery,
+  useGetRoleQuery,
+  useCreateRoleMutation,
+  useUpdateRoleMutation,
+  useDeleteRoleMutation,
+} = roleApi;
