@@ -1,130 +1,205 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
-
-interface Resume {
-  id: string;
-  status: string;
-  applied_at: string;
-  users: { full_name: string; email: string };
-  jobs: { title: string; companies: { name: string } };
-}
+import { useState, useMemo, useCallback } from "react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useGetResumesQuery } from "@/features/resume/redux/resume.api";
+import { ResumeSearchBar } from "@/components/resume/resume-search-bar";
+import { ResumeTable } from "@/components/resume/resume-table";
+import { ResumeDialog } from "@/components/resume/resume-dialog";
+import { Resume } from "@/features/resume/schemas/resume.schema";
+import { useResumeOperations } from "@/hooks/use-resume";
 
 export default function ResumesPage() {
-  const [resumes, setResumes] = useState<Resume[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    fetchResumes();
+  const pageSize = 10;
+
+  // Construct filter and sort queries
+  const filter = searchQuery ? `name=/${searchQuery}/i` : "";
+
+  // Fetch resumes với RTK Query
+  const { data: resumesData, isLoading } = useGetResumesQuery({
+    page: currentPage,
+    limit: pageSize,
+    filter,
+  });
+
+  // Custom hook chứa tất cả CRUD operations
+  const {
+    isDialogOpen,
+    editingResume,
+    isMutating,
+    handleOpenDialog,
+    handleCloseDialog,
+    handleSubmit,
+    handleDelete,
+  } = useResumeOperations();
+
+  const resumes = useMemo(() => {
+    return resumesData?.data?.result || [];
+  }, [resumesData]);
+
+  const pagination = resumesData?.data?.meta?.pagination;
+
+  // Fix: Sử dụng useCallback để tránh re-render không cần thiết
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
   }, []);
 
-  async function fetchResumes() {
-    const { data } = await supabase
-      .from('resumes')
-      .select('*, users(full_name, email), jobs(title, companies(name))')
-      .order('applied_at', { ascending: false });
-    if (data) setResumes(data as any);
-  }
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1); // Reset về trang 1 khi search
+  }, []);
 
-  async function updateStatus(id: string, status: string) {
-    const { error } = await supabase
-      .from('resumes')
-      .update({ status, reviewed_at: new Date().toISOString() })
-      .eq('id', id);
+  // Generate page numbers để hiển thị
+  const getPageNumbers = () => {
+    if (!pagination) return [];
 
-    if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    const totalPages = pagination.total_pages;
+    const current = currentPage;
+    const pages: (number | string)[] = [];
+
+    if (totalPages <= 7) {
+      // Nếu tổng số trang <= 7, hiển thị tất cả
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
     } else {
-      toast({ title: 'Success', description: 'Status updated successfully' });
-      fetchResumes();
-    }
-  }
+      // Luôn hiển thị trang 1
+      pages.push(1);
 
-  const filteredResumes = resumes.filter(
-    (resume) =>
-      resume.users?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resume.jobs?.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      if (current > 3) {
+        pages.push("...");
+      }
+
+      // Hiển thị các trang xung quanh trang hiện tại
+      const start = Math.max(2, current - 1);
+      const end = Math.min(totalPages - 1, current + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (current < totalPages - 2) {
+        pages.push("...");
+      }
+
+      // Luôn hiển thị trang cuối
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Applications</h1>
-        <p className="text-gray-600 mt-1">Manage job applications</p>
-      </div>
-
-      <div className="mb-4">
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
-          <Input
-            placeholder="Search applications..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Resumes</h1>
+          <p className="text-gray-600 mt-1">
+            Manage resume profiles and information
+          </p>
         </div>
-      </div>
 
-      <div className="bg-white rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Candidate</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Job Title</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Applied Date</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredResumes.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                  No applications found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredResumes.map((resume) => (
-                <TableRow key={resume.id}>
-                  <TableCell className="font-medium">{resume.users?.full_name}</TableCell>
-                  <TableCell>{resume.users?.email}</TableCell>
-                  <TableCell>{resume.jobs?.title}</TableCell>
-                  <TableCell>{resume.jobs?.companies?.name}</TableCell>
-                  <TableCell>
-                    {new Date(resume.applied_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <Select value={resume.status} onValueChange={(value) => updateStatus(resume.id, value)}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="reviewed">Reviewed</SelectItem>
-                        <SelectItem value="accepted">Accepted</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        {/* <Button onClick={() => handleOpenDialog()}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Resume
+        </Button> */}
       </div>
+      {/* Search Bar */}
+      <ResumeSearchBar
+        value={searchQuery}
+        onChange={handleSearchChange}
+        placeholder="Search by resume name..."
+        delay={500}
+      />
+      {/* Resumes Table */}
+      <ResumeTable
+        resumes={resumes}
+        isLoading={isLoading}
+        onEdit={handleOpenDialog}
+        currentPage={currentPage}
+        pageSize={pageSize}
+      />
+      <ResumeDialog
+        open={isDialogOpen}
+        onOpenChange={handleCloseDialog}
+        editingResume={editingResume}
+        onSubmit={handleSubmit}
+        isLoading={isMutating}
+      />
+      {/* Improved Pagination */}
+      {pagination && pagination.total_pages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
+          {/* Info text */}
+          <p className="text-sm text-gray-600">
+            Showing{" "}
+            <span className="font-medium">
+              {(currentPage - 1) * pageSize + 1}
+            </span>{" "}
+            to{" "}
+            <span className="font-medium">
+              {Math.min(currentPage * pageSize, pagination.total)}
+            </span>{" "}
+            of <span className="font-medium">{pagination.total}</span> resumes
+          </p>
+
+          {/* Pagination buttons */}
+          <div className="flex items-center gap-1">
+            {/* Previous button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1 || isLoading}
+              className="h-9 w-9 p-0"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            {/* Page numbers */}
+            {getPageNumbers().map((page, index) => {
+              if (page === "...") {
+                return (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="px-2 text-gray-400"
+                  >
+                    ...
+                  </span>
+                );
+              }
+
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page as number)}
+                  disabled={isLoading}
+                  className="h-9 w-9 p-0"
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            {/* Next button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === pagination.total_pages || isLoading}
+              className="h-9 w-9 p-0"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

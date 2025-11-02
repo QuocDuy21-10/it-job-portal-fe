@@ -1,17 +1,25 @@
-import { CompanySchema } from "@/features/company/schemas/company.schema";
 import { z } from "zod";
 
-export const JobSchema = z.object({
-  name: z.string(),
-
-  apiPath: z.string(),
-
-  method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),
-
-  module: z.string(),
+export const ResumeSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  userId: z.string().min(1, "User ID is required"),
+  url: z.string().url("Invalid URL"),
+  status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
+  companyId: z.string().min(1, "Company ID is required").optional(),
+  jobId: z.string().min(1, "Job ID is required").optional(),
+  histories: z.array(
+    z.object({
+      status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
+      updatedAt: z.string(),
+      updatedBy: z.object({
+        _id: z.string(),
+        email: z.string().email("Invalid email address"),
+      }),
+    })
+  ),
 });
 
-export const JobEntitySchema = JobSchema.extend({
+export const ResumeEntitySchema = ResumeSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
@@ -29,7 +37,11 @@ export const JobEntitySchema = JobSchema.extend({
     .optional(),
 });
 
+export const UpdateResumeFormData = z.object({
+  status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
+});
+
 // Types
-export type Job = z.infer<typeof JobEntitySchema>;
-export type CreateJobFormData = z.infer<typeof JobSchema>;
-export type UpdateJobFormData = Partial<CreateJobFormData>;
+export type Resume = z.infer<typeof ResumeEntitySchema>;
+export type CreateResumeFormData = z.infer<typeof ResumeSchema>;
+export type UpdateResumeFormData = z.infer<typeof UpdateResumeFormData>;

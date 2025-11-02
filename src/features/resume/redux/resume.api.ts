@@ -1,16 +1,16 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
-  Permission,
-  CreatePermissionFormData,
-  UpdatePermissionFormData,
+  Resume,
+  CreateResumeFormData,
+  UpdateResumeFormData,
 } from "../schemas/resume.schema";
 
-export const permissionApi = baseApi.injectEndpoints({
+export const resumeApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCompanies: builder.query<
+    getResumes: builder.query<
       ApiResponse<{
-        result: Permission[];
+        result: Resume[];
         meta: {
           pagination: {
             current_page: number;
@@ -33,58 +33,64 @@ export const permissionApi = baseApi.injectEndpoints({
         if (sort) query += `&${sort}`;
 
         return {
-          url: `/permissions?${query}`,
+          url: `/resumes?${query}`,
           method: "GET",
         };
       },
+      providesTags: ["Resume"],
     }),
 
-    // Get permission by id
-    getCompany: builder.query<ApiResponse<Permission>, string>({
+    // Get resume by id
+    getResume: builder.query<ApiResponse<Resume>, string>({
       query: (id) => ({
-        url: `/permissions/${id}`,
+        url: `/resumes/${id}`,
         method: "GET",
       }),
+      providesTags: (result, error, id) => [{ type: "Resume", id }],
     }),
 
-    // Create new permission
-    createCompany: builder.mutation<
-      ApiResponse<Permission>,
-      CreatePermissionFormData
-    >({
+    // Create new resume
+    createResume: builder.mutation<ApiResponse<Resume>, CreateResumeFormData>({
       query: (data) => ({
-        url: "/permissions",
+        url: "/resumes",
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Resume"],
     }),
 
-    // Update permission
-    updateCompany: builder.mutation<
-      ApiResponse<Permission>,
-      { id: string; data: UpdatePermissionFormData }
+    // Update resume
+    updateResume: builder.mutation<
+      ApiResponse<Resume>,
+      { id: string; data: UpdateResumeFormData }
     >({
       query: ({ id, data }) => ({
-        url: `/permissions/${id}`,
+        url: `/resumes/${id}`,
         method: "PATCH",
         body: data,
       }),
+      // Fix: Add invalidation for both specific resume and list
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Resume", id },
+        "Resume",
+      ],
     }),
 
-    // Delete permission
-    deleteCompany: builder.mutation<ApiResponse<void>, string>({
+    // Delete resume
+    deleteResume: builder.mutation<ApiResponse<void>, string>({
       query: (id) => ({
-        url: `/permissions/${id}`,
+        url: `/resumes/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Resume"],
     }),
   }),
 });
 
 export const {
-  useGetCompaniesQuery,
-  useGetCompanyQuery,
-  useCreateCompanyMutation,
-  useUpdateCompanyMutation,
-  useDeleteCompanyMutation,
-} = companyApi;
+  useGetResumesQuery,
+  useGetResumeQuery,
+  useCreateResumeMutation,
+  useUpdateResumeMutation,
+  useDeleteResumeMutation,
+} = resumeApi;

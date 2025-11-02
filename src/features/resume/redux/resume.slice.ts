@@ -1,32 +1,32 @@
-import { Job } from "../schemas/resume.schema";
+import { Resume } from "../schemas/resume.schema";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface JobState {
-  jobs: Job[];
-  selectedJob: Job | null;
+interface ResumeState {
+  resumes: Resume[];
+  selectedResume: Resume | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: JobState = {
-  jobs: [],
-  selectedJob: null,
+const initialState: ResumeState = {
+  resumes: [],
+  selectedResume: null,
   loading: false,
   error: null,
 };
 
-const jobSlice = createSlice({
-  name: "job",
+const resumeSlice = createSlice({
+  name: "resume",
   initialState,
   reducers: {
-    setJobs: (state, action: PayloadAction<Job[]>) => {
-      state.jobs = action.payload;
+    setResumes: (state, action: PayloadAction<Resume[]>) => {
+      state.resumes = action.payload;
     },
-    setSelectedJob: (state, action: PayloadAction<Job>) => {
-      state.selectedJob = action.payload;
+    setSelectedResume: (state, action: PayloadAction<Resume>) => {
+      state.selectedResume = action.payload;
     },
-    clearSelectedJob: (state) => {
-      state.selectedJob = null;
+    clearSelectedResume: (state) => {
+      state.selectedResume = null;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -38,18 +38,21 @@ const jobSlice = createSlice({
 });
 
 export const {
-  setJobs,
-  setSelectedJob,
-  clearSelectedJob,
+  setResumes,
+  setSelectedResume,
+  clearSelectedResume,
   setLoading,
   setError,
-} = jobSlice.actions;
+} = resumeSlice.actions;
 
-export default jobSlice.reducer;
+export default resumeSlice.reducer;
 
 // Selectors
-export const selectCompanies = (state: { job: JobState }) => state.job.jobs;
-export const selectSelectedJob = (state: { job: JobState }) =>
-  state.job.selectedJob;
-export const selectJobLoading = (state: { job: JobState }) => state.job.loading;
-export const selectJobError = (state: { job: JobState }) => state.job.error;
+export const selectCompanies = (state: { resume: ResumeState }) =>
+  state.resume.resumes;
+export const selectSelectedResume = (state: { resume: ResumeState }) =>
+  state.resume.selectedResume;
+export const selectResumeLoading = (state: { resume: ResumeState }) =>
+  state.resume.loading;
+export const selectResumeError = (state: { resume: ResumeState }) =>
+  state.resume.error;
