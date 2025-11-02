@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -5,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CreateCompanyFormData } from "@/features/company/schemas/company.schema";
+import type { CreateCompanyFormData } from "@/features/company/schemas/company.schema";
 import { CompanyForm } from "./company-form";
 
 interface CompanyDialogProps {
@@ -27,7 +29,7 @@ export function CompanyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Edit Company" : "Add New Company"}

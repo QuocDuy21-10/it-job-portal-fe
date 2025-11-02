@@ -37,6 +37,7 @@ export const companyApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["Company"],
     }),
 
     // Get company by id
@@ -45,6 +46,7 @@ export const companyApi = baseApi.injectEndpoints({
         url: `/companies/${id}`,
         method: "GET",
       }),
+      providesTags: (result, error, id) => [{ type: "Company", id }],
     }),
 
     // Create new company
@@ -57,6 +59,7 @@ export const companyApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Company"],
     }),
 
     // Update company
@@ -69,6 +72,10 @@ export const companyApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Company", id },
+        "Company",
+      ],
     }),
 
     // Delete company
@@ -77,6 +84,7 @@ export const companyApi = baseApi.injectEndpoints({
         url: `/companies/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Company"],
     }),
   }),
 });

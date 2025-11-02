@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Plus } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
-import { useCompanyOperations } from "@/hooks/use-company-operations";
+import { useCompanyOperations } from "@/hooks/use-company";
 import { CompanySearchBar } from "@/components/company/company-search-bar";
 import { CompanyTable } from "@/components/company/company-table";
 import { CompanyDialog } from "@/components/company/company-dialog";
@@ -13,16 +13,19 @@ import { Company } from "@/features/company/schemas/company.schema";
 export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
   const pageSize = 10;
 
   // Construct filter and sort queries
   const filter = searchQuery ? `name=/${searchQuery}/i` : "";
+  const sort = "sort=-createdAt";
 
   // Fetch companies với RTK Query
   const { data: companiesData, isLoading } = useGetCompaniesQuery({
     page: currentPage,
     limit: pageSize,
     filter,
+    sort,
   });
 
   // Custom hook chứa tất cả CRUD operations
@@ -41,6 +44,56 @@ export default function CompaniesPage() {
   }, [companiesData]);
 
   const pagination = companiesData?.data?.meta?.pagination;
+
+  // Fix: Sử dụng useCallback để tránh re-render không cần thiết
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
+  }, []);
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1); // Reset về trang 1 khi search
+  }, []);
+
+  // Generate page numbers để hiển thị
+  const getPageNumbers = () => {
+    if (!pagination) return [];
+
+    const totalPages = pagination.total_pages;
+    const current = currentPage;
+    const pages: (number | string)[] = [];
+
+    if (totalPages <= 7) {
+      // Nếu tổng số trang <= 7, hiển thị tất cả
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Luôn hiển thị trang 1
+      pages.push(1);
+
+      if (current > 3) {
+        pages.push("...");
+      }
+
+      // Hiển thị các trang xung quanh trang hiện tại
+      const start = Math.max(2, current - 1);
+      const end = Math.min(totalPages - 1, current + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (current < totalPages - 2) {
+        pages.push("...");
+      }
+
+      // Luôn hiển thị trang cuối
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   return (
     <div className="space-y-6">
@@ -62,12 +115,9 @@ export default function CompaniesPage() {
       {/* Search Bar */}
       <CompanySearchBar
         value={searchQuery}
-        onChange={(value) => {
-          setSearchQuery(value);
-          setCurrentPage(1);
-        }}
+        onChange={handleSearchChange}
         placeholder="Search by company name..."
-        delay={500} // 500ms delay
+        delay={500}
       />
 
       {/* Companies Table */}
@@ -85,7 +135,7 @@ export default function CompaniesPage() {
         pageSize={pageSize}
       />
 
-      {/* Dialog - Nằm riêng, không nằm trong header */}
+      {/* Dialog */}
       <CompanyDialog
         open={isDialogOpen}
         onOpenChange={handleCloseDialog}
@@ -94,30 +144,71 @@ export default function CompaniesPage() {
         isLoading={isMutating}
       />
 
-      {/* Pagination */}
+      {/* Improved Pagination */}
       {pagination && pagination.total_pages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
+          {/* Info text */}
           <p className="text-sm text-gray-600">
-            Showing {(currentPage - 1) * pageSize + 1} to{" "}
-            {Math.min(currentPage * pageSize, pagination.total)} of{" "}
-            {pagination.total} companies
+            Showing{" "}
+            <span className="font-medium">
+              {(currentPage - 1) * pageSize + 1}
+            </span>{" "}
+            to{" "}
+            <span className="font-medium">
+              {Math.min(currentPage * pageSize, pagination.total)}
+            </span>{" "}
+            of <span className="font-medium">{pagination.total}</span> companies
           </p>
-          <div className="flex gap-2">
+
+          {/* Pagination buttons */}
+          <div className="flex items-center gap-1">
+            {/* Previous button */}
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1 || isLoading}
+              className="h-9 w-9 p-0"
             >
-              Previous
+              <ChevronLeft className="h-4 w-4" />
             </Button>
+
+            {/* Page numbers */}
+            {getPageNumbers().map((page, index) => {
+              if (page === "...") {
+                return (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="px-2 text-gray-400"
+                  >
+                    ...
+                  </span>
+                );
+              }
+
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page as number)}
+                  disabled={isLoading}
+                  className="h-9 w-9 p-0"
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            {/* Next button */}
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((p) => p + 1)}
+              onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === pagination.total_pages || isLoading}
+              className="h-9 w-9 p-0"
             >
-              Next
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

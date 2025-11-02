@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Schema cho Create/Update (không bao gồm _id và createdAt)
 export const CompanySchema = z.object({
   name: z
     .string()
@@ -21,16 +20,20 @@ export const CompanySchema = z.object({
     .string()
     .url("Website không hợp lệ (phải bắt đầu bằng http:// hoặc https://)")
     .or(z.literal(""))
-    .optional()
     .transform((val) => val || ""), // Convert undefined thành ""
 
   numberOfEmployees: z
     .number()
     .min(0, "Số lượng nhân viên phải lớn hơn hoặc bằng 0")
     .max(1000000, "Số lượng nhân viên không hợp lệ"),
+
+  logo: z
+    .string()
+    .or(z.literal(""))
+    .transform((val) => val || "")
+    .optional(),
 });
 
-// Schema đầy đủ cho Company entity (bao gồm _id, createdAt, updatedAt)
 export const CompanyEntitySchema = CompanySchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
