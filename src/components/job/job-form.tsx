@@ -65,6 +65,7 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
       salary: initialData?.salary || 0,
       quantity: initialData?.quantity || 1,
       level: initialData?.level || "Internship",
+      formOfWork: initialData?.formOfWork || "Full-time",
       description: initialData?.description || "",
       startDate: initialData?.startDate || "",
       endDate: initialData?.endDate || "",
@@ -90,7 +91,7 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Row 1: Job Name & Level */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField
             control={form.control}
             name="name"
@@ -132,6 +133,36 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                     <SelectItem value="Senior">Senior</SelectItem>
                     <SelectItem value="Lead">Lead</SelectItem>
                     <SelectItem value="Manager">Manager</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="formOfWork"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Hình thức làm việc *</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isLoading}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Hình thức làm việc" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Internship">Internship</SelectItem>
+                    <SelectItem value="Part-time">Part-time</SelectItem>
+                    <SelectItem value="Full-time">Full-time</SelectItem>
+                    <SelectItem value="Freelance">Freelance</SelectItem>
+                    <SelectItem value="Remote">Remote</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

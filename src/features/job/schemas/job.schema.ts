@@ -21,6 +21,15 @@ export const JobSchema = z.object({
     .min(1, "Địa điểm không được để trống"),
   salary: z.number("Lương phải là số").min(0),
   quantity: z.number("Số lượng phải là số").min(1),
+  formOfWork: z.enum([
+    "Full-time",
+    "Part-time",
+    "Internship",
+    "Freelance",
+    "Remote",
+    "Hybrid",
+    "Other",
+  ]),
   level: z.enum(["Internship", "Junior", "Mid", "Senior", "Lead", "Manager"]),
   description: z.string().min(10, "Mô tả phải có ít nhất 10 ký tự"),
   startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
