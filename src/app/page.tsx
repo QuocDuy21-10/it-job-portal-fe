@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Search,
   MapPin,
@@ -16,128 +16,42 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
-import { useAuth } from "@/hooks/use-auth";
-
-interface Job {
-  id: string;
-  title: string;
-  location: string;
-  job_type: string;
-  salary_min: number;
-  salary_max: number;
-  salary_currency: string;
-  created_at: string;
-  companies: {
-    name: string;
-    logo_url: string | null;
-  };
-}
-
-interface Company {
-  id: string;
-  name: string;
-  logo_url: string | null;
-  industry: string;
-  location: string;
-}
+import { useGetJobsQuery } from "@/features/job/redux/job.api";
+import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
+import { Job } from "@/features/job/schemas/job.schema";
+import { Company } from "@/features/company/schemas/company.schema";
+import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 
 export default function Home() {
-  const [featuredJobs, setFeaturedJobs] = useState<Job[]>([]);
-  const [topCompanies, setTopCompanies] = useState<Company[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
 
-  useGetMeQuery(
-    {},
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
-  const { isAuthenticated } = useAuth();
+  useGetMeQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const FEATURED_ITEMS_LIMIT = 12;
 
-  useEffect(() => {
-    // Mock data instead of fetching from Supabase
-    const MOCK_JOBS: Job[] = [
-      {
-        id: "job_1",
-        title: "Senior Frontend Engineer",
-        location: "Remote",
-        job_type: "Full-time",
-        salary_min: 60000,
-        salary_max: 90000,
-        salary_currency: "USD",
-        created_at: new Date().toISOString(),
-        companies: {
-          name: "Acme Tech",
-          logo_url:
-            "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80",
-        },
-      },
-      {
-        id: "job_2",
-        title: "Backend Engineer (Node.js)",
-        location: "Ho Chi Minh City, VN",
-        job_type: "Full-time",
-        salary_min: 25000,
-        salary_max: 45000,
-        salary_currency: "VND",
-        created_at: new Date(
-          Date.now() - 1000 * 60 * 60 * 24 * 3
-        ).toISOString(),
-        companies: {
-          name: "Beta Solutions",
-          logo_url: null,
-        },
-      },
-      {
-        id: "job_3",
-        title: "Product Designer",
-        location: "Hanoi, VN",
-        job_type: "Part-time",
-        salary_min: 1500,
-        salary_max: 3000,
-        salary_currency: "USD",
-        created_at: new Date(
-          Date.now() - 1000 * 60 * 60 * 24 * 7
-        ).toISOString(),
-        companies: {
-          name: "DesignWave",
-          logo_url:
-            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80",
-        },
-      },
-    ];
+  const {
+    data: jobsData,
+    isLoading: jobsLoading,
+    error: jobsError,
+  } = useGetJobsQuery({
+    page: 1,
+    limit: FEATURED_ITEMS_LIMIT,
+    sort: "sort=-createdAt",
+  });
 
-    const MOCK_COMPANIES: Company[] = [
-      {
-        id: "comp_1",
-        name: "Acme Tech",
-        logo_url:
-          "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80",
-        industry: "Software",
-        location: "Remote",
-      },
-      {
-        id: "comp_2",
-        name: "Beta Solutions",
-        logo_url: null,
-        industry: "FinTech",
-        location: "Ho Chi Minh City, VN",
-      },
-      {
-        id: "comp_3",
-        name: "DesignWave",
-        logo_url:
-          "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80",
-        industry: "Design",
-        location: "Hanoi, VN",
-      },
-    ];
+  const {
+    data: companiesData,
+    isLoading: companiesLoading,
+    error: companiesError,
+  } = useGetCompaniesQuery({
+    page: 1,
+    limit: FEATURED_ITEMS_LIMIT,
+  });
 
-    // Simulate load delay if desired (here immediate)
-    setFeaturedJobs(MOCK_JOBS);
-    setTopCompanies(MOCK_COMPANIES);
-  }, []);
+  const featuredJobsToRender = jobsData?.data?.result ?? [];
+  const topCompaniesToRender = companiesData?.data?.result ?? [];
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -272,61 +186,106 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {featuredJobs.map((job) => (
-              <Card
-                key={job.id}
-                className="hover:shadow-lg transition-shadow duration-300"
-              >
-                <CardContent className="p-6">
-                  <Link href={`/jobs/${job.id}`} className="block space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        {job.companies?.logo_url ? (
-                          <img
-                            src={job.companies.logo_url}
-                            alt={`${job.companies.name} logo`}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <Building2 className="h-6 w-6 text-gray-400" />
-                        )}
+            {jobsLoading ? (
+              // Loading placeholders
+              Array.from({ length: 3 }).map((_, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-lg transition-shadow duration-300"
+                >
+                  <CardContent className="p-6">
+                    <div className="animate-pulse space-y-4">
+                      <div className="flex items-start gap-4">
+                        <div className="h-12 w-12 rounded-lg bg-gray-200" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-gray-200 rounded w-3/4" />
+                          <div className="h-3 bg-gray-200 rounded w-1/2" />
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg mb-1 line-clamp-2 hover:text-blue-600 transition-colors">
-                          {job.title}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {job.companies?.name}
-                        </p>
+                      <div className="flex gap-2">
+                        <div className="h-6 bg-gray-200 rounded w-24" />
+                        <div className="h-6 bg-gray-200 rounded w-20" />
+                      </div>
+                      <div className="flex justify-between pt-2 border-t">
+                        <div className="h-4 bg-gray-200 rounded w-16" />
+                        <div className="h-4 bg-gray-200 rounded w-12" />
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : jobsError ? (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-500">
+                  Failed to load jobs. Please try again later.
+                </p>
+              </div>
+            ) : featuredJobsToRender.length === 0 ? (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-500">
+                  No jobs available at the moment.
+                </p>
+              </div>
+            ) : (
+              featuredJobsToRender.map((job: Job) => (
+                <Card
+                  key={job._id}
+                  className="hover:shadow-lg transition-shadow duration-300"
+                >
+                  <CardContent className="p-6">
+                    <Link href={`/jobs/${job._id}`} className="block space-y-4">
+                      <div className="flex items-start gap-4">
+                        <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {job.company?.logo ? (
+                            <img
+                              src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
+                              alt={`${job.company?.name} logo`}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <Building2 className="h-6 w-6 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-lg mb-1 line-clamp-2 hover:text-blue-600 transition-colors">
+                            {job.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {job.company?.name}
+                          </p>
+                        </div>
+                      </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary" className="text-xs">
-                        <MapPin className="h-3 w-3 mr-1" aria-hidden="true" />
-                        {job.location}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {job.job_type}
-                      </Badge>
-                    </div>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="secondary" className="text-xs">
+                          <MapPin className="h-3 w-3 mr-1" aria-hidden="true" />
+                          {job.location}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs capitalize">
+                          {job.formOfWork}
+                        </Badge>
+                      </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t">
-                      <span className="text-sm font-semibold text-blue-600">
-                        ${job.salary_min.toLocaleString()} - $
-                        {job.salary_max.toLocaleString()}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(job.created_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </span>
-                    </div>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+                      <div className="flex items-center justify-between pt-2 border-t">
+                        <span className="text-sm font-semibold text-blue-600">
+                          ${job.salary?.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {job.createdAt &&
+                            new Date(job.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                        </span>
+                      </div>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
 
           <div className="mt-8 text-center sm:hidden">
@@ -358,43 +317,72 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {topCompanies.map((company) => (
-              <Card
-                key={company.id}
-                className="hover:shadow-lg transition-shadow duration-300"
-              >
-                <CardContent className="p-6">
-                  <Link
-                    href={`/companies/${company.id}`}
-                    className="block space-y-4"
-                  >
-                    <div className="h-20 w-20 rounded-lg bg-gray-100 flex items-center justify-center mx-auto overflow-hidden">
-                      {company.logo_url ? (
-                        <img
-                          src={company.logo_url}
-                          alt={`${company.name} logo`}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <Building2 className="h-10 w-10 text-gray-400" />
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <h3 className="font-semibold text-lg mb-1 hover:text-blue-600 transition-colors">
-                        {company.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2">
-                        {company.industry}
-                      </p>
-                      <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
-                        <MapPin className="h-3 w-3" aria-hidden="true" />
-                        {company.location}
+            {companiesLoading ? (
+              // Loading placeholders
+              Array.from({ length: 3 }).map((_, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-lg transition-shadow duration-300"
+                >
+                  <CardContent className="p-6">
+                    <div className="animate-pulse space-y-4">
+                      <div className="h-20 w-20 rounded-lg bg-gray-200 mx-auto" />
+                      <div className="space-y-2 text-center">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
+                        <div className="h-3 bg-gray-200 rounded w-1/2 mx-auto" />
                       </div>
                     </div>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            ) : companiesError ? (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-500">
+                  Failed to load companies. Please try again later.
+                </p>
+              </div>
+            ) : topCompaniesToRender.length === 0 ? (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-500">
+                  No companies available at the moment.
+                </p>
+              </div>
+            ) : (
+              topCompaniesToRender.map((company: Company) => (
+                <Card
+                  key={company._id}
+                  className="hover:shadow-lg transition-shadow duration-300"
+                >
+                  <CardContent className="p-6">
+                    <Link
+                      href={`/companies/${company._id}`}
+                      className="block space-y-4"
+                    >
+                      <div className="h-20 w-20 rounded-lg bg-gray-100 flex items-center justify-center mx-auto overflow-hidden">
+                        {company.logo ? (
+                          <img
+                            src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
+                            alt={`${company.name} logo`}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <Building2 className="h-10 w-10 text-gray-400" />
+                        )}
+                      </div>
+                      <div className="text-center">
+                        <h3 className="font-semibold text-lg mb-1 hover:text-blue-600 transition-colors">
+                          {company.name}
+                        </h3>
+                        <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
+                          <MapPin className="h-3 w-3" aria-hidden="true" />
+                          {company.address || "Location not specified"}
+                        </div>
+                      </div>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
 
           <div className="mt-8 text-center sm:hidden">
@@ -476,14 +464,16 @@ export default function Home() {
             >
               <Link href="/jobs">Browse Jobs</Link>
             </Button>
-            <Button
+            {/* <Button
               asChild
               size="lg"
               variant="outline"
               className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10"
             >
-              <Link href="/admin">Post a Job</Link>
-            </Button>
+              <Link href="/admin" className="...">
+                Admin Dashboard
+              </Link>
+            </Button> */}
           </div>
         </div>
       </section>
