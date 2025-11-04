@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ShieldAlert, Home, ArrowLeft, LogIn, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,7 +37,7 @@ export default function Forbidden() {
           </div>
 
           {/* Reasons */}
-          <div className="bg-white rounded-lg shadow-sm border border-red-100 p-6 max-w-md mx-auto">
+          {/* <div className="bg-white rounded-lg shadow-sm border border-red-100 p-6 max-w-md mx-auto">
             <p className="text-sm font-medium text-gray-700 mb-3 flex items-center justify-center gap-2">
               <ShieldAlert className="w-4 h-4 text-red-600" />
               Có thể do:
@@ -58,7 +60,7 @@ export default function Forbidden() {
                 <span>Phiên đăng nhập của bạn đã hết hạn</span>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         {/* Action Buttons */}

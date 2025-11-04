@@ -1,5 +1,6 @@
 import { baseApi } from "@/lib/redux/api";
 import {
+  AccountResponse,
   LoginFormData,
   LoginResponse,
   RegisterFormData,
@@ -17,7 +18,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // Get current user info
-    getMe: builder.query<ApiResponse<LoginResponse>, void>({
+    getMe: builder.query<ApiResponse<AccountResponse>, void>({
       query: () => ({
         url: "/auth/me",
         method: "GET",

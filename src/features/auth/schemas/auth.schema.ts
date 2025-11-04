@@ -50,14 +50,26 @@ export type LoginFormData = z.infer<typeof LoginSchema>;
 
 // LOGIN RESPONSE SCHEMA
 export const LoginResponseSchema = z.object({
-  id: z.number().positive("ID phải là số dương"),
-  username: z
-    .string()
-    .min(1, "Username không được để trống")
-    .max(50, "Username không được quá 50 ký tự"),
-  email: z.string().email("Email không hợp lệ"),
+  access_token: z.string(),
+  user: z.object({
+    _id: z.string(),
+    email: z.string(),
+    name: z.string(),
+    role: z.object({
+      _id: z.string(),
+      name: z.string(),
+    }),
+    permissions: z.array(
+      z.object({
+        _id: z.string(),
+        name: z.string(),
+        apiPath: z.string(),
+        method: z.string(),
+        module: z.string(),
+      })
+    ),
+  }),
 });
-
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
 // REGISTER SCHEMA
@@ -194,10 +206,35 @@ export const RegisterSchema = z
 
 export type RegisterFormData = z.infer<typeof RegisterSchema>;
 
+export type AccountResponse = Omit<
+  z.infer<typeof LoginResponseSchema>,
+  "access_token"
+>;
 // AUTH STATE SCHEMA
 export const AuthStateSchema = z.object({
-  user: UserSchema.nullable(),
+  user: z
+    .object({
+      _id: z.string(),
+      email: z.string(),
+      name: z.string(),
+      role: z.object({
+        _id: z.string(),
+        name: z.string(),
+      }),
+      permissions: z.array(
+        z.object({
+          _id: z.string(),
+          name: z.string(),
+          apiPath: z.string(),
+          method: z.string(),
+          module: z.string(),
+        })
+      ),
+    })
+    .nullable(),
   isLoading: z.boolean(),
+  isRefreshToken: z.boolean(),
+  errorRefreshToken: z.string(),
   isAuthenticated: z.boolean(),
 });
 

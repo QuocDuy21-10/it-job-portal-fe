@@ -18,12 +18,15 @@ import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useAuth } from "@/hooks/use-auth";
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { selectUserRole } from "@/features/auth/redux/auth.slice";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const userRole = useAppSelector(selectUserRole);
   const [logout] = useLogoutMutation();
   const router = useRouter();
 
@@ -72,12 +75,6 @@ export function Header() {
 
           {isAuthenticated && user ? (
             <>
-              <Link
-                href="/admin"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                {i18nMounted ? t("nav.admin") : "Admin"}
-              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
@@ -96,12 +93,14 @@ export function Header() {
                       {i18nMounted ? t("nav.profile") : "Profile"}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      {i18nMounted ? t("nav.dashboard") : "Dashboard"}
-                    </Link>
-                  </DropdownMenuItem>
+                  {userRole !== "NORMAL USER" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        {i18nMounted ? t("nav.dashboard") : "Dashboard"}
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleSignOut}

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Search, Home, ArrowLeft, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +10,7 @@ export default function NotFound() {
       <div className="max-w-2xl w-full text-center">
         {/* 404 Animation */}
         <div className="relative mb-8">
-          <h1 className="text-[180px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 leading-none">
+          <h1 className="text-[100px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 leading-none">
             404
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -38,13 +40,9 @@ export default function NotFound() {
                 <span className="text-blue-600 mt-0.5">•</span>
                 <span>Kiểm tra lại đường dẫn URL</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 mt-0.5">•</span>
+              <li className="flex items-start">
+                <span className="text-blue-600 mt-0.5 mr-2">•</span>
                 <span>Quay lại trang trước đó</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 mt-0.5">•</span>
-                <span>Tìm kiếm công việc mới nhất</span>
               </li>
             </ul>
           </div>
@@ -84,28 +82,6 @@ export default function NotFound() {
             <ArrowLeft className="w-5 h-5 mr-2" />
             Quay lại
           </Button>
-        </div>
-
-        {/* Search Bar */}
-        <div className="mt-12 max-w-md mx-auto">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm công việc..."
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  const value = (e.target as HTMLInputElement).value;
-                  if (value.trim()) {
-                    window.location.href = `/jobs?q=${encodeURIComponent(
-                      value
-                    )}`;
-                  }
-                }
-              }}
-            />
-          </div>
         </div>
 
         {/* Footer Text */}

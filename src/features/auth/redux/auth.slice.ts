@@ -1,58 +1,58 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { authApi } from "./auth.api";
 import { AuthState, UserInfo } from "../schemas/auth.schema";
 
 const initialState: AuthState = {
   user: null,
-  isLoading: true, // Đặt true để hiển thị loading khi init app
+  isLoading: true,
   isAuthenticated: false,
-  // isRefreshToken: false,
-  // errorRefreshToken: "",
+  isRefreshToken: false,
+  errorRefreshToken: "",
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // Clear auth state khi cần
     clearAuth: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.isLoading = false;
-      // state.isRefreshToken = false;
-      // state.errorRefreshToken = "";
+      state.isRefreshToken = false;
+      state.errorRefreshToken = "";
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("access_token");
+      }
     },
 
-    // Set loading state
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-    // Set user login info manually (nếu cần)
+
     setUserLoginInfo: (state, action: PayloadAction<UserInfo>) => {
       state.isAuthenticated = true;
       state.isLoading = false;
       state.user = action.payload;
     },
 
-    // Logout action (xóa token và clear state)
     setLogoutAction: (state) => {
-      // Xóa access token từ localStorage
       if (typeof window !== "undefined") {
         localStorage.removeItem("access_token");
       }
       state.isAuthenticated = false;
       state.user = null;
       state.isLoading = false;
+      state.isRefreshToken = false;
+      state.errorRefreshToken = "";
     },
 
-    // // Refresh token action
-    // setRefreshTokenAction: (
-    //   state,
-    //   action: PayloadAction<{ status?: boolean; message?: string }>
-    // ) => {
-    //   state.isRefreshToken = action.payload?.status ?? false;
-    //   state.errorRefreshToken = action.payload?.message ?? "";
-    // },
+    setRefreshTokenAction: (
+      state,
+      action: PayloadAction<{ status?: boolean; message?: string }>
+    ) => {
+      state.isRefreshToken = action.payload?.status ?? false;
+      state.errorRefreshToken = action.payload?.message ?? "";
+    },
   },
 
   extraReducers(builder) {
@@ -104,6 +104,9 @@ const authSlice = createSlice({
             permissions: userData.permissions || [],
           };
           state.isAuthenticated = true;
+        } else {
+          state.user = null;
+          state.isAuthenticated = false;
         }
         state.isLoading = false;
       })
@@ -118,22 +121,24 @@ const authSlice = createSlice({
         state.isLoading = true;
       })
       .addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
-        // Xóa token
         if (typeof window !== "undefined") {
           localStorage.removeItem("access_token");
         }
         state.user = null;
         state.isAuthenticated = false;
         state.isLoading = false;
+        state.isRefreshToken = false;
+        state.errorRefreshToken = "";
       })
       .addMatcher(authApi.endpoints.logout.matchRejected, (state) => {
-        // Vẫn clear state ngay cả khi logout failed
         if (typeof window !== "undefined") {
           localStorage.removeItem("access_token");
         }
         state.user = null;
         state.isAuthenticated = false;
         state.isLoading = false;
+        state.isRefreshToken = false;
+        state.errorRefreshToken = "";
       })
 
       // REGISTER
@@ -163,24 +168,31 @@ const authSlice = createSlice({
       )
       .addMatcher(authApi.endpoints.register.matchRejected, (state) => {
         state.isLoading = false;
-      });
+      })
 
-    // // REFRESH TOKEN
-    // .addMatcher(authApi.endpoints.refreshToken?.matchPending, (state) => {
-    //   state.isRefreshToken = true;
-    // })
-    // .addMatcher(authApi.endpoints.refreshToken?.matchFulfilled, (state) => {
-    //   state.isRefreshToken = false;
-    //   state.errorRefreshToken = "";
-    // })
-    // .addMatcher(
-    //   authApi.endpoints.refreshToken?.matchRejected,
-    //   (state, action) => {
-    //     state.isRefreshToken = false;
-    //     state.errorRefreshToken =
-    //       action.error.message || "Refresh token failed";
-    //   }
-    // );
+      // REFRESH TOKEN
+      .addMatcher(
+        authApi.endpoints.refreshToken?.matchPending ?? (() => {}),
+        (state) => {
+          state.isRefreshToken = true;
+          state.errorRefreshToken = "";
+        }
+      )
+      .addMatcher(
+        authApi.endpoints.refreshToken?.matchFulfilled ?? (() => {}),
+        (state) => {
+          state.isRefreshToken = false;
+          state.errorRefreshToken = "";
+        }
+      )
+      .addMatcher(
+        authApi.endpoints.refreshToken?.matchRejected ?? (() => {}),
+        (state, action) => {
+          state.isRefreshToken = false;
+          state.errorRefreshToken =
+            action.error?.message ?? "Refresh token failed";
+        }
+      );
   },
 });
 
@@ -189,30 +201,39 @@ export const {
   setLoading,
   setUserLoginInfo,
   setLogoutAction,
-  // setRefreshTokenAction,
+  setRefreshTokenAction,
 } = authSlice.actions;
 
 export default authSlice.reducer;
 
-// SELECTORS
+// ===========================
+// SELECTORS (Optimized)
+// ===========================
+
 export const selectAuth = (state: { auth: AuthState }) => state.auth;
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
+
 export const selectIsAuthenticated = (state: { auth: AuthState }) =>
   state.auth.isAuthenticated;
+
 export const selectIsLoading = (state: { auth: AuthState }) =>
   state.auth.isLoading;
-// export const selectIsRefreshToken = (state: { auth: AuthState }) =>
-//   state.auth.isRefreshToken;
-// export const selectErrorRefreshToken = (state: { auth: AuthState }) =>
-//   state.auth.errorRefreshToken;
+
+export const selectIsRefreshToken = (state: { auth: AuthState }) =>
+  state.auth.isRefreshToken;
+
+export const selectErrorRefreshToken = (state: { auth: AuthState }) =>
+  state.auth.errorRefreshToken;
 
 // Selector để lấy role name
 export const selectUserRole = (state: { auth: AuthState }) =>
   state.auth.user?.role.name;
 
-// Selector để lấy permissions
-export const selectUserPermissions = (state: { auth: AuthState }) =>
-  state.auth.user?.permissions || [];
+// ✅ FIX: Sử dụng createSelector để memoize permissions
+export const selectUserPermissions = createSelector(
+  [selectUser],
+  (user) => user?.permissions ?? []
+);
 
 // Selector để check role
 export const selectHasRole =
@@ -220,12 +241,8 @@ export const selectHasRole =
     return state.auth.user?.role.name === roleName;
   };
 
-// Selector để check permission by module & method
-// export const selectHasPermission =
-//   (module: string, method: string) => (state: { auth: AuthState }) => {
-//     const permissions = state.auth.user?.permissions || [];
-//     return permissions.some(
-//       (permission) =>
-//         permission.module === module && permission.method === method
-//     );
-//   };
+// ✅ NEW: Selector để check if user is admin
+export const selectIsAdmin = createSelector(
+  [selectUserRole],
+  (role) => role !== "NORMAL USER" && role !== undefined
+);

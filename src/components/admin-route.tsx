@@ -1,40 +1,45 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useAppSelector } from "@/lib/redux/hooks";
 import {
   selectIsAuthenticated,
   selectIsLoading,
+  selectIsAdmin,
 } from "@/features/auth/redux/auth.slice";
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export function AdminRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isLoading = useAppSelector(selectIsLoading);
+  const isAdmin = useAppSelector(selectIsAdmin);
 
   useEffect(() => {
-    // Chỉ redirect nếu chưa authenticated
-    if (!isLoading && !isAuthenticated) {
-      router.push("/auth/login");
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.push("/auth/login");
+      } else if (isAuthenticated && !isAdmin) {
+        router.push("/");
+      }
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, isAdmin, router]);
 
-  // Show loading while checking auth
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Đang kiểm tra xác thực...</p>
+          <p className="text-gray-600">Đang kiểm tra quyền truy cập...</p>
         </div>
       </div>
     );
   }
 
-  // Don't render if not authenticated
-  if (!isAuthenticated) {
+  // Don't render if not authenticated or not admin
+  if (!isAuthenticated || !isAdmin) {
     return null;
   }
 
