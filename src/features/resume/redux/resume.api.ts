@@ -4,6 +4,7 @@ import {
   Resume,
   CreateResumeFormData,
   UpdateResumeFormData,
+  ResumeFormData,
 } from "../schemas/resume.schema";
 
 export const resumeApi = baseApi.injectEndpoints({

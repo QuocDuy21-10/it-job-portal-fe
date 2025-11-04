@@ -14,6 +14,7 @@ import {
 import {
   ResumeSchema,
   CreateResumeFormData,
+  ResumeFormData,
 } from "@/features/resume/schemas/resume.schema";
 import {
   Select,
@@ -24,8 +25,8 @@ import {
 } from "@/components/ui/select";
 
 interface ResumeFormProps {
-  initialData?: Partial<CreateResumeFormData>;
-  onSubmit: (data: CreateResumeFormData) => Promise<boolean>;
+  initialData?: Partial<ResumeFormData>;
+  onSubmit: (data: ResumeFormData) => Promise<boolean>;
   isLoading?: boolean;
 }
 
@@ -34,7 +35,7 @@ export function ResumeForm({
   onSubmit,
   isLoading,
 }: ResumeFormProps) {
-  const form = useForm<CreateResumeFormData>({
+  const form = useForm<ResumeFormData>({
     resolver: zodResolver(ResumeSchema),
     defaultValues: {
       email: initialData?.email || "",
@@ -62,8 +63,8 @@ export function ResumeForm({
     }
   }, [initialData, form]);
 
-  const handleLocalSubmit = async (values: CreateResumeFormData) => {
-    const payload: CreateResumeFormData = {
+  const handleLocalSubmit = async (values: ResumeFormData) => {
+    const payload: ResumeFormData = {
       email: form.getValues("email"),
       userId: form.getValues("userId"),
       url: form.getValues("url"),

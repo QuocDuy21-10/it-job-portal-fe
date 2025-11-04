@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Resume } from "@/features/resume/schemas/resume.schema";
+import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 
 interface ResumeTableProps {
   resumes: Resume[];
@@ -88,7 +89,7 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       <TableCell>{resume.email}</TableCell>
       <TableCell>
         <a
-          href={resume.url}
+          href={`${API_BASE_URL_IMAGE}/images/resumes/${resume.url}`}
           target="_blank"
           rel="noreferrer"
           className="text-blue-600 hover:underline"

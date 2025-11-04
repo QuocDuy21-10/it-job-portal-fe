@@ -37,11 +37,18 @@ export const ResumeEntitySchema = ResumeSchema.extend({
     .optional(),
 });
 
+export const CreateResumeFormData = z.object({
+  url: z.string().url("Invalid URL"),
+  companyId: z.string().min(1, "Company ID is required"),
+  jobId: z.string().min(1, "Job ID is required"),
+});
+
 export const UpdateResumeFormData = z.object({
   status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
 });
 
 // Types
 export type Resume = z.infer<typeof ResumeEntitySchema>;
-export type CreateResumeFormData = z.infer<typeof ResumeSchema>;
+export type ResumeFormData = z.infer<typeof ResumeSchema>;
+export type CreateResumeFormData = z.infer<typeof CreateResumeFormData>;
 export type UpdateResumeFormData = z.infer<typeof UpdateResumeFormData>;
