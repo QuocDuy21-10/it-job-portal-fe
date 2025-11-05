@@ -188,7 +188,7 @@ export function ResumeForm({
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button type="submit" disabled={isLoading || !form.formState.isValid}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? "Saving..." : "Update Status"}
           </Button>
         </div>

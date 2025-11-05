@@ -3,7 +3,7 @@ import { z } from "zod";
 export const ResumeSchema = z.object({
   email: z.string().email("Invalid email address"),
   userId: z.string().min(1, "User ID is required"),
-  url: z.string().url("Invalid URL"),
+  url: z.string(),
   status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
   companyId: z.string().min(1, "Company ID is required").optional(),
   jobId: z.string().min(1, "Job ID is required").optional(),

@@ -5,14 +5,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CreateResumeFormData } from "@/features/resume/schemas/resume.schema";
+import {
+  CreateResumeFormData,
+  ResumeFormData,
+} from "@/features/resume/schemas/resume.schema";
 import { ResumeForm } from "./resume-form";
 
 interface ResumeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editingResume?: any | null;
-  onSubmit: (data: CreateResumeFormData) => Promise<boolean>;
+  onSubmit: (data: ResumeFormData) => Promise<boolean>;
   isLoading?: boolean;
 }
 
