@@ -47,8 +47,23 @@ export const UpdateResumeFormData = z.object({
   status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
 });
 
+export const ResumeAppliedJob = z.object({
+  jobId: z.object({
+    _id: z.string(),
+    name: z.string(),
+    location: z.string(),
+    salary: z.number(),
+  }),
+  companyId: z.object({
+    _id: z.string(),
+    name: z.string(),
+  }),
+  createdAt: z.string(),
+});
+
 // Types
 export type Resume = z.infer<typeof ResumeEntitySchema>;
 export type ResumeFormData = z.infer<typeof ResumeSchema>;
 export type CreateResumeFormData = z.infer<typeof CreateResumeFormData>;
 export type UpdateResumeFormData = z.infer<typeof UpdateResumeFormData>;
+export type ResumeAppliedJob = z.infer<typeof ResumeAppliedJob>;

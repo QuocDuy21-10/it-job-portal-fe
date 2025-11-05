@@ -21,10 +21,12 @@ import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { Job } from "@/features/job/schemas/job.schema";
 import { Company } from "@/features/company/schemas/company.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
+  const { t, mounted: i18nMounted } = useI18n();
 
   useGetMeQuery(undefined, {
     refetchOnMountOrArgChange: true,
@@ -66,21 +68,27 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-              Find Your{" "}
+              {i18nMounted ? t("home.findYour") : "Find Your "}
               <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                Dream Job
+                {i18nMounted ? t("home.dreamJob") : "Dream Job"}
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Discover thousands of opportunities from top companies worldwide.
-              Start your career journey today.
+              {i18nMounted
+                ? t("home.discoverOpportunities")
+                : "Discover thousands of opportunities from top companies worldwide."}
+              {i18nMounted
+                ? t("home.startCareerJourney")
+                : "Start your career journey today."}
             </p>
 
             <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <div className="sm:col-span-1 lg:col-span-1">
                   <label htmlFor="job-search" className="sr-only">
-                    Job title or keyword
+                    {i18nMounted
+                      ? t("home.jobTitleOrKeyword")
+                      : "Job title or keyword"}
                   </label>
                   <div className="relative">
                     <Search
@@ -89,7 +97,11 @@ export default function Home() {
                     />
                     <Input
                       id="job-search"
-                      placeholder="Job title or keyword"
+                      placeholder={
+                        i18nMounted
+                          ? t("home.jobTitleOrKeyword")
+                          : "Job title or keyword"
+                      }
                       className="pl-10 h-12"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -99,7 +111,7 @@ export default function Home() {
                 </div>
                 <div className="sm:col-span-1 lg:col-span-1">
                   <label htmlFor="location-search" className="sr-only">
-                    Location
+                    {i18nMounted ? t("home.location") : "Location"}
                   </label>
                   <div className="relative">
                     <MapPin
@@ -108,7 +120,9 @@ export default function Home() {
                     />
                     <Input
                       id="location-search"
-                      placeholder="Location"
+                      placeholder={
+                        i18nMounted ? t("home.location") : "Location"
+                      }
                       className="pl-10 h-12"
                       value={locationQuery}
                       onChange={(e) => setLocationQuery(e.target.value)}
@@ -120,7 +134,7 @@ export default function Home() {
                   className="h-12 sm:col-span-2 lg:col-span-1"
                   onClick={handleSearch}
                 >
-                  Search Jobs
+                  {i18nMounted ? t("home.searchButton") : "Search Jobs"}
                 </Button>
               </div>
             </div>
@@ -135,7 +149,9 @@ export default function Home() {
                 </div>
                 <div className="text-left">
                   <div className="font-bold text-lg">12,000+</div>
-                  <div className="text-gray-600 text-xs">Active Jobs</div>
+                  <div className="text-gray-600 text-xs">
+                    {i18nMounted ? t("home.activeJobs") : "Active Jobs "}{" "}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -147,7 +163,9 @@ export default function Home() {
                 </div>
                 <div className="text-left">
                   <div className="font-bold text-lg">3,500+</div>
-                  <div className="text-gray-600 text-xs">Companies</div>
+                  <div className="text-gray-600 text-xs">
+                    {i18nMounted ? t("home.companies") : "Companies "}{" "}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -159,7 +177,10 @@ export default function Home() {
                 </div>
                 <div className="text-left">
                   <div className="font-bold text-lg">50,000+</div>
-                  <div className="text-gray-600 text-xs">Candidates</div>
+                  <div className="text-gray-600 text-xs">
+                    {" "}
+                    {i18nMounted ? t("home.jobSeekers") : "Job Seekers "}
+                  </div>
                 </div>
               </div>
             </div>
@@ -172,15 +193,18 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8 sm:mb-12">
             <div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                Featured Jobs
+                {i18nMounted ? t("home.featuredJobs") : "Featured Jobs for You"}
               </h2>
               <p className="text-gray-600">
-                Hand-picked opportunities from top companies
+                {i18nMounted
+                  ? t("home.featuredJobsDescription")
+                  : "Hand-picked opportunities from top companies around the world."}
               </p>
             </div>
             <Button asChild variant="outline" className="hidden sm:flex">
               <Link href="/jobs">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
+                {i18nMounted ? t("home.viewAll") : "View All"}{" "}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -217,13 +241,17 @@ export default function Home() {
             ) : jobsError ? (
               <div className="col-span-3 text-center py-8">
                 <p className="text-gray-500">
-                  Failed to load jobs. Please try again later.
+                  {i18nMounted
+                    ? t("home.loadJobsError")
+                    : "Failed to load jobs. Please try again later."}
                 </p>
               </div>
             ) : featuredJobsToRender.length === 0 ? (
               <div className="col-span-3 text-center py-8">
                 <p className="text-gray-500">
-                  No jobs available at the moment.
+                  {i18nMounted
+                    ? t("home.noJobs")
+                    : "No jobs available at the moment."}
                 </p>
               </div>
             ) : (
@@ -291,7 +319,8 @@ export default function Home() {
           <div className="mt-8 text-center sm:hidden">
             <Button asChild variant="outline" className="w-full sm:w-auto">
               <Link href="/jobs">
-                View All Jobs <ArrowRight className="ml-2 h-4 w-4" />
+                {i18nMounted ? t("home.viewAllJobs") : "View All Jobs"}{" "}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -303,15 +332,18 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8 sm:mb-12">
             <div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                Top Companies
+                {i18nMounted ? t("home.topCompanies") : "Top Companies "}
               </h2>
               <p className="text-gray-600">
-                Join teams at leading organizations
+                {i18nMounted
+                  ? t("home.topCompaniesDescription")
+                  : "Join teams at leading organizations"}
               </p>
             </div>
             <Button asChild variant="outline" className="hidden sm:flex">
               <Link href="/companies">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
+                {i18nMounted ? t("home.viewAll") : "View All"}{" "}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -338,13 +370,17 @@ export default function Home() {
             ) : companiesError ? (
               <div className="col-span-3 text-center py-8">
                 <p className="text-gray-500">
-                  Failed to load companies. Please try again later.
+                  {i18nMounted
+                    ? t("home.errorLoadingCompanies")
+                    : "Error loading companies"}
                 </p>
               </div>
             ) : topCompaniesToRender.length === 0 ? (
               <div className="col-span-3 text-center py-8">
                 <p className="text-gray-500">
-                  No companies available at the moment.
+                  {i18nMounted
+                    ? t("home.noCompanies")
+                    : "No companies available at the moment."}
                 </p>
               </div>
             ) : (
@@ -388,7 +424,9 @@ export default function Home() {
           <div className="mt-8 text-center sm:hidden">
             <Button asChild variant="outline" className="w-full sm:w-auto">
               <Link href="/companies">
-                View All Companies <ArrowRight className="ml-2 h-4 w-4" />
+                {i18nMounted
+                  ? t("home.viewAllCompanies")
+                  : "View All Companies"}{" "}
               </Link>
             </Button>
           </div>
@@ -399,9 +437,13 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-              How It Works
+              {i18nMounted ? t("home.howItWorks") : "How It Works"}
             </h2>
-            <p className="text-gray-600">Get hired in three simple steps</p>
+            <p className="text-gray-600">
+              {i18nMounted
+                ? t("home.howItWorksDescription")
+                : "Get hired in three simple steps"}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
@@ -409,10 +451,13 @@ export default function Home() {
               <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto">
                 <Search className="h-8 w-8 text-blue-600" aria-hidden="true" />
               </div>
-              <h3 className="text-xl font-semibold">Search Jobs</h3>
+              <h3 className="text-xl font-semibold">
+                {i18nMounted ? t("home.searchJobs") : "Search Jobs"}
+              </h3>
               <p className="text-gray-600 leading-relaxed">
-                Browse thousands of job listings tailored to your skills and
-                preferences
+                {i18nMounted
+                  ? t("home.searchJobsDescription")
+                  : "Browse thousands of job listings tailored to your skills and preferences"}
               </p>
             </div>
 
@@ -423,10 +468,13 @@ export default function Home() {
                   aria-hidden="true"
                 />
               </div>
-              <h3 className="text-xl font-semibold">Apply with Ease</h3>
+              <h3 className="text-xl font-semibold">
+                {i18nMounted ? t("home.applyWithEase") : "Apply with Ease"}
+              </h3>
               <p className="text-gray-600 leading-relaxed">
-                Submit your application with just a few clicks using your
-                profile
+                {i18nMounted
+                  ? t("home.applyWithEaseDescription")
+                  : "Submit your application with just a few clicks using your profile"}
               </p>
             </div>
 
@@ -437,9 +485,13 @@ export default function Home() {
                   aria-hidden="true"
                 />
               </div>
-              <h3 className="text-xl font-semibold">Get Hired</h3>
+              <h3 className="text-xl font-semibold">
+                {i18nMounted ? t("home.getHired") : "Get Hired"}
+              </h3>
               <p className="text-gray-600 leading-relaxed">
-                Connect with employers and land your dream job faster than ever
+                {i18nMounted
+                  ? t("home.getHiredDescription")
+                  : "Connect with employers and land your dream job faster than ever"}
               </p>
             </div>
           </div>
@@ -449,11 +501,14 @@ export default function Home() {
       <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-blue-600 to-cyan-600 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-            Ready to Get Started?
+            {i18nMounted
+              ? t("home.readyToGetStarted")
+              : "Ready to Get Started?"}
           </h2>
           <p className="text-lg sm:text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of professionals who have found their dream careers
-            through JobPortal
+            {i18nMounted
+              ? t("home.readyToGetStartedDescription")
+              : "Join thousands of professionals who have found their dream careers through JobPortal"}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -462,7 +517,9 @@ export default function Home() {
               variant="secondary"
               className="w-full sm:w-auto"
             >
-              <Link href="/jobs">Browse Jobs</Link>
+              <Link href="/jobs">
+                {i18nMounted ? t("home.browseJobs") : "Browse Jobs"}
+              </Link>
             </Button>
           </div>
         </div>

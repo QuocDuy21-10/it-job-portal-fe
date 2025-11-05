@@ -1,16 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FileText, Briefcase, Heart, Mail } from "lucide-react";
+import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
+import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 
 export default function OverviewPage() {
+  const [takeOutAppliedJob, { isLoading }] = useTakeOutAppliedJobMutation();
+  const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
+
+  // Fetch applied jobs on component mount
+  useEffect(() => {
+    const fetchAppliedJobs = async () => {
+      try {
+        const result = await takeOutAppliedJob("").unwrap();
+        if (result.data) {
+          const jobs: ResumeAppliedJob[] = Array.isArray(result.data)
+            ? result.data
+            : [result.data];
+          setAppliedJobs(jobs);
+        }
+      } catch (error) {
+        console.error("Error fetching applied jobs:", error);
+      }
+    };
+
+    fetchAppliedJobs();
+  }, [takeOutAppliedJob]);
+
   const [stats] = useState({
-    appliedJobs: 12,
-    savedJobs: 8,
-    jobInvitations: 3,
+    appliedJobs: appliedJobs.length,
+    // savedJobs: 8,
+    // jobInvitations: 3,
   });
+
+  console.log(appliedJobs.length);
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -63,7 +89,7 @@ export default function OverviewPage() {
             <div>
               <p className="text-muted-foreground text-sm">Đã lưu</p>
               <p className="text-3xl font-bold text-accent mt-2">
-                {stats.savedJobs}
+                {/* {stats.savedJobs} */}
               </p>
             </div>
             <Heart className="w-8 h-8 text-accent/30" />
@@ -75,7 +101,7 @@ export default function OverviewPage() {
             <div>
               <p className="text-muted-foreground text-sm">Lời mời việc</p>
               <p className="text-3xl font-bold text-green-500 mt-2">
-                {stats.jobInvitations}
+                {/* {stats.jobInvitations} */}
               </p>
             </div>
             <Mail className="w-8 h-8 text-green-500/30" />

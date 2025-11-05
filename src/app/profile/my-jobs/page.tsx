@@ -2,9 +2,13 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Briefcase, Heart, Eye } from "lucide-react";
+import { Briefcase, Heart, Eye, Loader2 } from "lucide-react";
+import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
+import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
+import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 
 type TabType = "applied" | "saved" | "viewed";
 
@@ -20,64 +24,89 @@ interface Job {
 export default function MyJobsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("applied");
 
-  const appliedJobs: Job[] = [
-    {
-      id: "1",
-      title: "Senior React Developer",
-      company: "Tech Corp",
-      location: "Ho Chi Minh City",
-      salary: "$3000 - $5000",
-      appliedDate: "2024-01-15",
-    },
-    {
-      id: "2",
-      title: "Frontend Engineer",
-      company: "StartUp Inc",
-      location: "Hanoi",
-      salary: "$2500 - $4000",
-      appliedDate: "2024-01-10",
-    },
-  ];
+  const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
+  const { toast } = useToast();
 
-  const savedJobs: Job[] = [
-    {
-      id: "3",
-      title: "Full Stack Developer",
-      company: "Enterprise Co",
-      location: "Da Nang",
-      salary: "$4000 - $6000",
-    },
-    {
-      id: "4",
-      title: "Backend Engineer",
-      company: "Cloud Systems",
-      location: "Ho Chi Minh City",
-      salary: "$3500 - $5500",
-    },
-  ];
+  // API mutation to fetch applied jobs
+  const [takeOutAppliedJob, { isLoading }] = useTakeOutAppliedJobMutation();
 
-  const viewedJobs: Job[] = [
-    {
-      id: "5",
-      title: "UI/UX Designer",
-      company: "Design Studio",
-      location: "Ho Chi Minh City",
-      salary: "$2000 - $3500",
-    },
-  ];
+  // Fetch applied jobs on component mount
+  useEffect(() => {
+    const fetchAppliedJobs = async () => {
+      try {
+        const result = await takeOutAppliedJob("").unwrap();
+        if (result.data) {
+          const jobs: ResumeAppliedJob[] = Array.isArray(result.data)
+            ? result.data
+            : [result.data];
+          setAppliedJobs(jobs);
+        }
+      } catch (error: any) {
+        const errorMessage =
+          error?.data?.message ||
+          error?.message ||
+          "Không thể tải danh sách công việc đã ứng tuyển";
+
+        toast({
+          title: "Lỗi",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        console.error("Error fetching applied jobs:", error);
+      }
+    };
+
+    fetchAppliedJobs();
+  }, [takeOutAppliedJob, toast]);
+
+  // const savedJobs: Job[] = [
+  //   {
+  //     id: "3",
+  //     title: "Full Stack Developer",
+  //     company: "Enterprise Co",
+  //     location: "Da Nang",
+  //     salary: "$4000 - $6000",
+  //   },
+  //   {
+  //     id: "4",
+  //     title: "Backend Engineer",
+  //     company: "Cloud Systems",
+  //     location: "Ho Chi Minh City",
+  //     salary: "$3500 - $5500",
+  //   },
+  // ];
+
+  // const viewedJobs: Job[] = [
+  //   {
+  //     id: "5",
+  //     title: "UI/UX Designer",
+  //     company: "Design Studio",
+  //     location: "Ho Chi Minh City",
+  //     salary: "$2000 - $3500",
+  //   },
+  // ];
 
   const getTabContent = () => {
     switch (activeTab) {
       case "applied":
         return appliedJobs;
-      case "saved":
-        return savedJobs;
-      case "viewed":
-        return viewedJobs;
+      // case "saved":
+      //   return savedJobs;
+      // case "viewed":
+      //   return viewedJobs;
       default:
         return [];
     }
   };
+
+  // // Helper function to check if item is ResumeAppliedJob
+  // const isResumeAppliedJob = (
+  //   item: ResumeAppliedJob | Job
+  // ): item is ResumeAppliedJob => {
+  //   return (
+  //     "jobId" in item && "company" in item && typeof item.company === "object"
+  //   );
+  // };
 
   const tabs: Array<{
     id: TabType;
@@ -91,18 +120,18 @@ export default function MyJobsPage() {
       icon: <Briefcase className="w-4 h-4" />,
       count: appliedJobs.length,
     },
-    {
-      id: "saved",
-      label: "Đã lưu",
-      icon: <Heart className="w-4 h-4" />,
-      count: savedJobs.length,
-    },
-    {
-      id: "viewed",
-      label: "Đã xem gần đây",
-      icon: <Eye className="w-4 h-4" />,
-      count: viewedJobs.length,
-    },
+    // {
+    //   id: "saved",
+    //   label: "Đã lưu",
+    //   icon: <Heart className="w-4 h-4" />,
+    //   count: savedJobs.length,
+    // },
+    // {
+    //   id: "viewed",
+    //   label: "Đã xem gần đây",
+    //   icon: <Eye className="w-4 h-4" />,
+    //   count: viewedJobs.length,
+    // },
   ];
 
   return (
@@ -135,25 +164,27 @@ export default function MyJobsPage() {
         {getTabContent().length > 0 ? (
           getTabContent().map((job) => (
             <Card
-              key={job.id}
+              key={job.jobId._id}
               className="p-4 bg-card border border-border hover:border-primary transition cursor-pointer"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground text-lg">
-                    {job.title}
+                    {job.jobId.name}
                   </h3>
-                  <p className="text-muted-foreground text-sm">{job.company}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {job.companyId.name}
+                  </p>
                   <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
-                    <span>{job.location}</span>
-                    <span className="text-accent font-medium">
-                      {job.salary}
+                    <span>{job.jobId.location}</span>
+                    <span className="text-primary font-medium">
+                      {job.jobId.salary} VND
                     </span>
                   </div>
-                  {job.appliedDate && (
+                  {job.createdAt && (
                     <p className="text-xs text-muted-foreground mt-2">
                       Ứng tuyển:{" "}
-                      {new Date(job.appliedDate).toLocaleDateString("vi-VN")}
+                      {new Date(job.createdAt).toLocaleDateString("vi-VN")}
                     </p>
                   )}
                 </div>

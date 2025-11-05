@@ -5,6 +5,7 @@ import {
   CreateResumeFormData,
   UpdateResumeFormData,
   ResumeFormData,
+  ResumeAppliedJob,
 } from "../schemas/resume.schema";
 
 export const resumeApi = baseApi.injectEndpoints({
@@ -85,6 +86,15 @@ export const resumeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Resume"],
     }),
+
+    // take out the applied job
+    takeOutAppliedJob: builder.mutation<ApiResponse<ResumeAppliedJob>, string>({
+      query: () => ({
+        url: `/resumes/by-user`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Resume"],
+    }),
   }),
 });
 
@@ -94,4 +104,5 @@ export const {
   useCreateResumeMutation,
   useUpdateResumeMutation,
   useDeleteResumeMutation,
+  useTakeOutAppliedJobMutation,
 } = resumeApi;

@@ -5,6 +5,46 @@ export const vi = {
       "Kết nối những chuyên gia tài năng với các cơ hội tuyệt vời trên toàn thế giới. Duyệt qua hàng nghìn công việc từ các công ty hàng đầu.",
     keywords: "việc làm, sự nghiệp, tuyển dụng, tìm việc, tuyển người",
   },
+  home: {
+    findYour: "Tìm ",
+    dreamJob: "Công Việc Mơ Ước",
+    discoverOpportunities:
+      "Khám phá hàng nghìn cơ hội từ các công ty hàng đầu trên toàn thế giới.",
+    startCareerJourney: " Bắt đầu hành trình sự nghiệp của bạn ngay hôm nay.",
+    jobTitleOrKeyword: "Công việc hoặc từ khóa",
+    location: "Địa điểm",
+    searchButton: "Tìm Kiếm",
+    activeJobs: "Công Việc Hoạt Động",
+    companies: "Công Ty",
+    jobSeekers: "Người Tìm Việc",
+    featuredJobs: "Công Việc Nổi Bật",
+    featuredJobsDescription:
+      "Những cơ hội được tuyển chọn từ các công ty hàng đầu trên toàn thế giới.",
+    loadJobsError: "Tải công việc thất bại. Vui lòng thử lại sau.",
+    noJobs: "Hiện tại không có công việc nào. ",
+    viewAllJobs: "Xem Tất Cả Công Việc",
+    topCompanies: "Công Ty Hàng Đầu",
+    topCompaniesDescription: "Tham gia các đội ngũ tại các tổ chức hàng đầu",
+    viewAll: "Xem Tất Cả",
+    errorLoadingCompanies: "Lỗi khi tải công ty",
+    noCompanies: "Hiện tại không có công ty nào. ",
+    viewAllCompanies: "Xem Tất Cả Công Ty",
+    howItWorks: "Cách Thức Hoạt Động",
+    howItWorksDescription: "Được tuyển dụng trong ba bước đơn giản",
+    searchJobs: "Tìm Kiếm Công Việc",
+    searchJobsDescription:
+      "Duyệt qua hàng nghìn danh sách công việc phù hợp với kỹ năng và sở thích của bạn.",
+    applyWithEase: "Ứng Tuyển Dễ Dàng",
+    applyWithEaseDescription:
+      "Nộp đơn ứng tuyển chỉ với vài cú nhấp chuột sử dụng hồ sơ của bạn",
+    getHired: "Được Tuyển Dụng",
+    getHiredDescription:
+      "Kết nối với nhà tuyển dụng và nhanh chóng có được công việc mơ ước của bạn",
+    readyToGetStarted: "Sẵn Sàng Bắt Đầu?",
+    readyToGetStartedDescription:
+      "Tham gia cùng hàng nghìn chuyên gia đã tìm thấy sự nghiệp mơ ước của họ thông qua JobPortal",
+    browseJobs: "Tìm Công Việc",
+  },
   nav: {
     findJobs: "Tìm Việc",
     companies: "Công Ty",

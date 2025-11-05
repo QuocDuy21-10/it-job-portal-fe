@@ -5,6 +5,46 @@ export const en = {
       "Connecting talented professionals with amazing opportunities worldwide. Browse thousands of jobs from top companies.",
     keywords: "jobs, careers, employment, recruitment, job search, hiring",
   },
+  home: {
+    findYour: "Find Your ",
+    dreamJob: "Dream Job",
+    discoverOpportunities:
+      "Discover thousands of opportunities from top companies worldwide.",
+    startCareerJourney: " Start your career journey today.",
+    jobTitleOrKeyword: "Job Title or Keyword",
+    location: "Location",
+    searchButton: "Search",
+    activeJobs: "Active Jobs",
+    companies: "Companies",
+    jobSeekers: "Job Seekers",
+    featuredJobs: "Featured Jobs",
+    featuredJobsDescription:
+      "Hand-picked opportunities from top companies around the world.",
+    loadJobsError: "Failed to load jobs. Please try again later.",
+    noJobs: "No jobs available at the moment. ",
+    viewAllJobs: "View All Jobs",
+    topCompanies: "Top Companies",
+    topCompaniesDescription: "Join teams at leading organizations",
+    viewAll: "View All",
+    errorLoadingCompanies: "Error loading companies",
+    noCompanies: "No companies available at the moment. ",
+    viewAllCompanies: "View All Companies",
+    howItWorks: "How It Works",
+    howItWorksDescription: "Get hired in three simple steps",
+    searchJobs: "Search Jobs",
+    searchJobsDescription:
+      "Browse thousands of job listings tailored to your skills and preferences.",
+    applyWithEase: "Apply with Ease",
+    applyWithEaseDescription:
+      "Submit your application with just a few clicks using your profile",
+    getHired: "Get Hired",
+    getHiredDescription:
+      "Connect with employers and land your dream job faster than ever",
+    readyToGetStarted: "Ready to Get Started?",
+    readyToGetStartedDescription:
+      "Join thousands of professionals who have found their dream careers through JobPortal",
+    browseJobs: "Browse Jobs",
+  },
   nav: {
     findJobs: "Find Jobs",
     companies: "Companies",
