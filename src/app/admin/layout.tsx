@@ -20,9 +20,9 @@ import {
   selectUserPermissions,
   selectIsAdmin,
 } from "@/features/auth/redux/auth.slice";
-import { ALL_MODULES } from "@/config/permissions";
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { ALL_MODULES } from "@/shared/config/permissions";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },

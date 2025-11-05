@@ -30,6 +30,8 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { Combobox } from "../combo-box";
 import { RichTextEditor } from "../rich-text-editor";
+import { MultiSelect } from "../multi-select";
+import { SKILLS_LIST } from "@/shared/config/utils";
 
 interface JobFormProps {
   initialData?: Partial<CreateJobFormData>;
@@ -190,19 +192,19 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="quantity"
+            name="skills"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Số lượng *</FormLabel>
+                <FormLabel>Kỹ năng *</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min="1"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  <MultiSelect
+                    options={SKILLS_LIST}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Chọn kỹ năng..."
+                    searchPlaceholder="Tìm kiếm kỹ năng..."
                     disabled={isLoading}
                   />
                 </FormControl>
@@ -237,21 +239,16 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
 
           <FormField
             control={form.control}
-            name="skills"
+            name="quantity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Kỹ năng *</FormLabel>
+                <FormLabel>Số lượng *</FormLabel>
                 <FormControl>
                   <Input
-                    value={field.value.join(", ")}
-                    onChange={(e) => {
-                      const skills = e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter((s) => s);
-                      field.onChange(skills);
-                    }}
-                    placeholder="VD: React, Node.js, TypeScript"
+                    {...field}
+                    type="number"
+                    min="1"
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                     disabled={isLoading}
                   />
                 </FormControl>

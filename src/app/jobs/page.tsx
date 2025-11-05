@@ -19,10 +19,12 @@ import {
 } from "@/components/ui/select";
 import { Job } from "@/features/job/schemas/job.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function JobsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t, mounted: i18nMounted } = useI18n();
 
   const {
     jobs,
@@ -242,7 +244,7 @@ function JobCard({ job }: { job: Job }) {
                 <img
                   src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
                   alt={`${job.company.name} logo`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover object-center border border-gray-200 border-solid rounded-lg"
                 />
               ) : (
                 <Building2 className="h-8 w-8 text-gray-400" />

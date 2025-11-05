@@ -7,38 +7,58 @@ import {
   SubscriberSkills,
 } from "../schemas/subscriber.schema";
 
+// Types for query params and responses
+interface PaginationMeta {
+  current_page: number;
+  per_page: number;
+  total_pages: number;
+  total: number;
+}
+
+interface GetSubscribersResponse {
+  result: Subscriber[];
+  meta: {
+    pagination: PaginationMeta;
+  };
+}
+
+interface GetSubscribersParams {
+  page?: number;
+  limit?: number;
+  filter?: string;
+  sort?: string;
+}
+
 export const subscriberApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSubscribers: builder.query<
-      ApiResponse<{
-        result: Subscriber[];
-        meta: {
-          pagination: {
-            current_page: number;
-            per_page: number;
-            total_pages: number;
-            total: number;
-          };
-        };
-      }>,
-      {
-        page?: number;
-        limit?: number;
-        filter?: string;
-        sort?: string;
-      }
+      ApiResponse<GetSubscribersResponse>,
+      GetSubscribersParams
     >({
       query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
-        let query = `page=${page}&limit=${limit}`;
-        if (filter) query += `&${filter}`;
-        if (sort) query += `&${sort}`;
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: limit.toString(),
+        });
+
+        if (filter) params.append("filter", filter);
+        if (sort) params.append("sort", sort);
 
         return {
-          url: `/subscribers?${query}`,
+          url: `/subscribers?${params.toString()}`,
           method: "GET",
         };
       },
-      providesTags: ["Subscriber"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.result.map(({ _id }: { _id: string }) => ({
+                type: "Subscriber" as const,
+                id: _id,
+              })),
+              { type: "Subscriber" as const, id: "LIST" },
+            ]
+          : [{ type: "Subscriber" as const, id: "LIST" }],
     }),
 
     // Get subscriber by id
@@ -47,7 +67,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Subscriber", id }],
+      providesTags: (result, error, id) => [{ type: "User" as const, id }],
     }),
 
     getSubscriberSkills: builder.query<ApiResponse<SubscriberSkills>, void>({
@@ -55,7 +75,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/skills`,
         method: "POST",
       }),
-      providesTags: ["Subscriber"],
+      providesTags: [{ type: "User" as const, id: "SKILLS" }],
     }),
 
     // Create new subscriber
@@ -68,22 +88,22 @@ export const subscriberApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Subscriber"],
+      invalidatesTags: [{ type: "User" as const, id: "LIST" }],
     }),
 
     // Update subscriber
     updateSubscriber: builder.mutation<
       ApiResponse<Subscriber>,
-      { id: string; data: UpdateSubscriberFormData }
+      UpdateSubscriberFormData
     >({
-      query: ({ id, data }) => ({
-        url: `/subscribers/${id}`,
-        method: "PATCH",
+      query: (data) => ({
+        url: `/subscribers`,
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Subscriber", id },
-        "Subscriber",
+      invalidatesTags: [
+        { type: "User" as const, id: "SKILLS" },
+        { type: "User" as const, id: "LIST" },
       ],
     }),
 
@@ -93,7 +113,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Subscriber"],
+      invalidatesTags: [{ type: "User" as const, id: "LIST" }],
     }),
   }),
 });
