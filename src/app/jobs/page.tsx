@@ -308,7 +308,11 @@ function JobCard({ job }: { job: Job }) {
                   })}
                 </span>
               )}
-              <Button size="sm" onClick={(e) => e.preventDefault()}>
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+                size="sm"
+                variant="default"
+              >
                 Apply Now
               </Button>
             </div>

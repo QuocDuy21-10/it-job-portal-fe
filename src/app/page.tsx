@@ -240,7 +240,7 @@ export default function Home() {
                             <img
                               src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
                               alt={`${job.company?.name} logo`}
-                              className="h-full w-full object-cover"
+                              className="h-full w-full object-cover border border-gray-200 border-solid rounded-lg"
                             />
                           ) : (
                             <Building2 className="h-6 w-6 text-gray-400" />
@@ -363,7 +363,7 @@ export default function Home() {
                           <img
                             src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
                             alt={`${company.name} logo`}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-cover border border-gray-200 border-solid rounded-lg"
                           />
                         ) : (
                           <Building2 className="h-10 w-10 text-gray-400" />
@@ -464,16 +464,6 @@ export default function Home() {
             >
               <Link href="/jobs">Browse Jobs</Link>
             </Button>
-            {/* <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10"
-            >
-              <Link href="/admin" className="...">
-                Admin Dashboard
-              </Link>
-            </Button> */}
           </div>
         </div>
       </section>
