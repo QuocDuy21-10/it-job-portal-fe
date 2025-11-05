@@ -17,7 +17,7 @@ export default function ResumesPage() {
   const pageSize = 10;
 
   // Construct filter and sort queries
-  const filter = searchQuery ? `name=/${searchQuery}/i` : "";
+  const filter = searchQuery ? `status=/${searchQuery}/i` : "";
 
   // Fetch resumes với RTK Query
   const { data: resumesData, isLoading } = useGetResumesQuery({
@@ -113,7 +113,7 @@ export default function ResumesPage() {
       <ResumeSearchBar
         value={searchQuery}
         onChange={handleSearchChange}
-        placeholder="Search by resume name..."
+        placeholder="Search by resume status..."
         delay={500}
       />
       {/* Resumes Table */}
