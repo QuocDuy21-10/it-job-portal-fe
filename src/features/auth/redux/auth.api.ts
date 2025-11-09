@@ -13,42 +13,47 @@ export const authApi = baseApi.injectEndpoints({
       query: (credentials: LoginFormData) => ({
         url: "/auth/login",
         method: "POST",
-        body: credentials,
+        data: credentials,
       }),
+      // Invalidate cache sau khi login thành công
+      invalidatesTags: ["Auth"],
     }),
 
-    // Get current user info
     getMe: builder.query<ApiResponse<AccountResponse>, void>({
       query: () => ({
         url: "/auth/me",
         method: "GET",
       }),
+      // Provide tag để có thể invalidate cache
+      providesTags: ["Auth"],
     }),
 
     register: builder.mutation<ApiResponse<LoginResponse>, RegisterFormData>({
-      query: (userData) => ({
+      query: (userData: RegisterFormData) => ({
         url: "/auth/register",
         method: "POST",
-        body: userData,
+        data: userData, 
       }),
+      invalidatesTags: ["Auth"],
     }),
-
     logout: builder.mutation<ApiResponse<any>, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
+      // Invalidate tất cả cache khi logout
+      invalidatesTags: ["Auth", "User", "Company", "Job", "Resume"],
     }),
 
-    // Refresh token endpoint (nếu cần)
-    refreshToken: builder.mutation<ApiResponse<{ access_token: string }>, void>(
-      {
-        query: () => ({
-          url: "/auth/refresh",
-          method: "POST",
-        }),
-      }
-    ),
+    refreshToken: builder.mutation<
+      ApiResponse<{ access_token: string }>,
+      void
+    >({
+      query: () => ({
+        url: "/auth/refresh",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -58,5 +63,5 @@ export const {
   useLazyGetMeQuery,
   useRegisterMutation,
   useLogoutMutation,
-  useRefreshTokenMutation,
+  useRefreshTokenMutation, 
 } = authApi;
