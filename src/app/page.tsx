@@ -28,9 +28,14 @@ export default function Home() {
   const [locationQuery, setLocationQuery] = useState("");
   const { t, mounted: i18nMounted } = useI18n();
 
+  // Only fetch user data if token exists - prevent infinite 401 loop
+  const hasToken =
+    typeof window !== "undefined" && localStorage.getItem("access_token");
+
   useGetMeQuery(undefined, {
-    refetchOnMountOrArgChange: true,
+    skip: !hasToken, // Skip query if no token
   });
+
   const FEATURED_ITEMS_LIMIT = 12;
 
   const {

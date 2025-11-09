@@ -52,28 +52,21 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const response = await login(data).unwrap();
-
       if (response.statusCode === 201) {
         // Lưu access token vào localStorage
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
         }
-
         // Dispatch action để update Redux state
         if (response.data?.user) {
           dispatch(setUserLoginInfo(response.data.user));
         }
-
         toast.success("Đăng nhập thành công!");
         router.push("/");
       }
     } catch (error: any) {
       console.error("Login error:", error);
-
-      // Xử lý error message tốt hơn
-      const errorMessage =
-        error?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
-
+      const errorMessage = error?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
       toast.error(`Đăng nhập thất bại: ${errorMessage}`);
     }
   };

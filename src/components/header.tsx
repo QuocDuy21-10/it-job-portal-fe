@@ -30,13 +30,17 @@ export function Header() {
   const [logout] = useLogoutMutation();
   const router = useRouter();
 
-  useGetMeQuery({
-    refetchOnMountOrArgChange: true,
+  // Only fetch user data if token exists - prevent infinite 401 loop
+  const hasToken =
+    typeof window !== "undefined" && localStorage.getItem("access_token");
+
+  useGetMeQuery(undefined, {
+    skip: !hasToken, // Skip query if no token
   });
 
   const handleSignOut = async () => {
     try {
-      await logout({}).unwrap();
+      await logout().unwrap();
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);

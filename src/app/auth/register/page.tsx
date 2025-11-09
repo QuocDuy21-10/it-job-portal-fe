@@ -55,7 +55,6 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       const response = await signUp(data).unwrap();
-      console.log("Register response:", response);
       if (response.statusCode === 201) {
         toast.success("Đăng ký tài khoản thành công!");
         router.push("/auth/login");
