@@ -20,9 +20,9 @@ const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   withCredentials: true, // Send cookie (refresh token)
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // Don't set Content-Type here - let axios auto-detect based on data type
+  // For JSON: axios will set application/json
+  // For FormData: axios will set multipart/form-data with boundary
 });
 
 const handleRefreshToken = async (): Promise<string | null> => {
@@ -66,6 +66,11 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
+    // Set Content-Type for JSON requests only (not for FormData)
+    if (config.headers && !(config.data instanceof FormData)) {
+      config.headers["Content-Type"] = "application/json";
+    }
+
     return config;
   },
   (error: AxiosError) => {
@@ -87,8 +92,8 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && originalRequest) {
       // Check: No login/register API
       const isAuthApi =
-        originalRequest.url?.includes("/auth/login") ||
-        originalRequest.url?.includes("/auth/register");
+        originalRequest.url?.includes("/login") ||
+        originalRequest.url?.includes("/register");
 
       // Check: No retry (avoid infinite loop)
       const hasNoRetryHeader = originalRequest.headers?.[NO_RETRY_HEADER];
