@@ -7,6 +7,7 @@ import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 
 interface CompanyInfoProps {
   company: {
+    id: string;
     name: string;
     employees: string;
     address: string;
@@ -55,8 +56,8 @@ export default function CompanyInfo({ company }: CompanyInfoProps) {
 
         {/* Action Buttons */}
         <div className="space-y-2 mt-6 pt-6 border-t border-border">
-          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-            View Company Profile
+          <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+            <a href={`/companies/${company.id}`}>View Company Profile</a>
           </Button>
           <button className="w-full px-4 py-2 border border-border text-foreground hover:bg-secondary rounded-lg font-medium transition">
             Follow Company
