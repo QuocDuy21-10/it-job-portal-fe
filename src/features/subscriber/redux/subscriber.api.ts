@@ -86,7 +86,7 @@ export const subscriberApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/subscribers",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: [{ type: "User" as const, id: "LIST" }],
     }),
@@ -99,7 +99,7 @@ export const subscriberApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: `/subscribers`,
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: [
         { type: "User" as const, id: "SKILLS" },

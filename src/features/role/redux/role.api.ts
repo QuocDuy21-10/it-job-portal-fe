@@ -54,7 +54,7 @@ export const roleApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/roles",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: ["Role"],
     }),
@@ -67,7 +67,7 @@ export const roleApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/roles/${id}`,
         method: "PATCH",
-        body: data,
+        data: data,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: "Role", id },

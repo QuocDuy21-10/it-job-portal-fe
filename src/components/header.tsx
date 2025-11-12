@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Briefcase, Menu, X, User, LogOut, Settings } from "lucide-react";
+import { Briefcase, Menu, X, User, LogOut, Settings, FileText, PlusCircle, Mail, Bell } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,7 +41,7 @@ export function Header() {
   const handleSignOut = async () => {
     try {
       await logout().unwrap();
-      router.push("/auth/login");
+      router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -81,30 +81,73 @@ export function Header() {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="max-w-[100px] truncate">{user.email}</span>
-                  </Button>
+                  <button
+                    className="flex items-center justify-center w-9 h-9 rounded-full border border-border bg-secondary overflow-hidden focus:outline-none hover:shadow-lg"
+                    aria-label="User menu"
+                  >
+                    <img
+                      src={user?.avatar || '/images/avatar-default.jpg'}
+                      alt={user?.name || user?.email || "avatar"}
+                      className="w-9 h-9 object-cover rounded-full"
+                    />
+                  </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 transition-all duration-200 ease-in-out transform-gpu data-[state=open]:scale-100 data-[state=closed]:scale-95 data-[state=open]:opacity-100 data-[state=closed]:opacity-0">
                   <DropdownMenuLabel>
-                    {i18nMounted ? t("nav.myAccount") : "My Account"}
+                    {user?.name && <div className="font-semibold truncate">{user.name}</div>}
+                    <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
-                      {i18nMounted ? t("nav.profile") : "Profile"}
+                      {i18nMounted ? t("nav.dashboard") : "Dashboard"}
                     </Link>
                   </DropdownMenuItem>
                   {userRole !== "NORMAL USER" && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin" className="cursor-pointer">
                         <Settings className="mr-2 h-4 w-4" />
-                        {i18nMounted ? t("nav.dashboard") : "Dashboard"}
+                        {i18nMounted ? t("nav.adminDashboard") : "Admin Dashboard"}
                       </Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
+                      {i18nMounted ? t("nav.myCV") : "My CV"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="cursor-pointer">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      {i18nMounted ? t("nav.createCV") : "Create CV"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="cursor-pointer">
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      {i18nMounted ? t("nav.myJobs") : "My Jobs"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="cursor-pointer">
+                      <Mail className="mr-2 h-4 w-4" />
+                      {i18nMounted ? t("nav.emailSubscription") : "Email Subscription"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="cursor-pointer">
+                      <Bell className="mr-2 h-4 w-4" />
+                      {i18nMounted ? t("nav.notifications") : "Notifications"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      {i18nMounted ? t("nav.settings") : "Settings"}
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleSignOut}
@@ -119,12 +162,12 @@ export function Header() {
           ) : (
             <>
               <Button asChild variant="outline" size="sm">
-                <Link href="/auth/login">
+                <Link href="login">
                   {i18nMounted ? t("nav.signIn") : "Sign In"}
                 </Link>
               </Button>
               <Button asChild size="sm">
-                <Link href="/auth/register">
+                <Link href="register">
                   {i18nMounted ? t("nav.signUp") : "Sign Up"}
                 </Link>
               </Button>
@@ -231,7 +274,7 @@ export function Header() {
                 <>
                   <Button asChild variant="outline" className="w-full">
                     <Link
-                      href="/auth/login"
+                      href="/login"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {i18nMounted ? t("nav.signIn") : "Sign In"}
@@ -239,7 +282,7 @@ export function Header() {
                   </Button>
                   <Button asChild className="w-full">
                     <Link
-                      href="/auth/register"
+                      href="/register"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {i18nMounted ? t("nav.signUp") : "Sign Up"}

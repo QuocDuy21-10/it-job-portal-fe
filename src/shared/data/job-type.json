@@ -1,0 +1,10 @@
+[
+  { "label": "All Types", "value": "all" },
+  { "label": "Internship", "value": "Internship" },
+  { "label": "Part-time", "value": "Part-time" },
+  { "label": "Full-time", "value": "Full-time" },
+  { "label": "Freelance", "value": "Freelance" },
+  { "label": "Remote", "value": "Remote" },
+  { "label": "Hybrid", "value": "Hybrid" },
+  { "label": "Other", "value": "Other" }
+]

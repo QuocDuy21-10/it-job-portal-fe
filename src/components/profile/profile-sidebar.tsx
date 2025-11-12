@@ -61,7 +61,7 @@ export default function ProfileSidebar({
     },
     {
       id: "settings",
-      label: "Cài đặt",
+      label: "Thông tin cá nhân",
       icon: <Settings className="w-5 h-5" />,
     },
   ];

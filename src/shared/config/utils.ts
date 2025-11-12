@@ -1,87 +1,40 @@
-export const SKILLS_LIST = [
-  { label: "React.JS", value: "REACT.JS" },
-  { label: "React Native", value: "REACT NATIVE" },
-  { label: "Next.JS", value: "NEXT.JS" },
-  { label: "Angular", value: "ANGULAR" },
-  { label: "Express.JS", value: "EXPRESS.JS" },
-  { label: "Power BI", value: " POWER BI" },
-  { label: "Vue.JS", value: "VUE.JS" },
-  { label: "Nest.JS", value: "NEST.JS" },
-  { label: "Node.JS", value: "NODE.JS" },
-  { label: "JavaScript", value: "JAVASCRIPT" },
-  { label: "HTML", value: "HTML" },
-  { label: "CSS", value: "CSS" },
-  { label: "TensorFlow", value: "TENSORFLOW" },
-  { label: "Python", value: "PYTHON" },
-  { label: "Django", value: "DJANGO" },
-  { label: "Flask", value: "FLASK" },
-  { label: "Ruby on Rails", value: "RUBY ON RAILS" },
-  { label: "PHP", value: "PHP" },
-  { label: "Laravel", value: "LARAVEL" },
-  { label: "Spring Boot", value: "SPRING BOOT" },
-  { label: "ASP.NET", value: "ASP.NET" },
-  { label: "Flutter", value: "FLUTTER" },
-  { label: "Swift", value: "SWIFT" },
-  { label: "Wireframing", value: "WIREFRAMING" },
-  { label: "User Research", value: "USER RESEARCH" },
-  { label: "Kotlin", value: "KOTLIN" },
-  { label: "Objective-C", value: "OBJECTIVE-C" },
-  { label: "Adobe XD", value: "ADOBE XD" },
-  { label: "Java", value: "JAVA" },
-  { label: "C#", value: "C#" },
-  { label: "C++", value: "C++" },
-  { label: "C", value: "C" },
-  { label: "FIGMA", value: "FIGMA" },
-  { label: "Selenium", value: "SELENIUM" },
-  { label: "Go", value: "GO" },
-  { label: "Rust", value: "RUST" },
-  { label: "SQL", value: "SQL" },
-  { label: "NoSQL", value: "NOSQL" },
-  { label: "GraphQL", value: "GRAPHQL" },
-  { label: "REST API", value: "REST API" },
-  { label: "gRPC", value: "gRPC" },
-  { label: "WebSocket", value: "WEBSOCKET" },
-  { label: "Digital Marketing", value: "DIGITAL MARKETING" },
-  { label: "SEO", value: "SEO" },
-  { label: "Google Ads", value: "GOOGLE ADS" },
-  { label: "Google Analytics", value: "GOOGLE ANALYTICS" },
-  { label: "MQTT", value: "MQTT" },
-  { label: "Cypress", value: "CYPRESS" },
-  { label: "API Testing", value: "API TESTING" },
-  { label: "Redis", value: "REDIS" },
-  { label: "Postman", value: "POSTMAN" },
-  { label: "Data Visualization", value: "DATA VISUALIZATION" },
-  { label: "MongoDB", value: "MONGODB" },
-  { label: "MySQL", value: "MYSQL" },
-  { label: "PostgreSQL", value: "POSTGRESQL" },
-  { label: "Docker", value: "DOCKER" },
-  { label: "CI/CD", value: "CI/CD" },
-  { label: "Kubernetes", value: "KUBERNETES" },
-  { label: "AWS", value: "AWS" },
-  { label: "Azure", value: "AZURE" },
-  { label: "Google Cloud", value: "GOOGLE CLOUD" },
-  { label: "Firebase", value: "FIREBASE" },
-  { label: "TypeScript", value: "TYPESCRIPT" },
-  { label: "Frontend", value: "FRONTEND" },
-  { label: "Backend", value: "BACKEND" },
-  { label: "Expo", value: "EXPO" },
-  { label: "Redux Toolkit", value: "REDUX TOOLKIT" },
-  { label: "Fullstack", value: "FULLSTACK" },
-  { label: "DevOps", value: "DEVOPS" },
-  { label: "UI/UX Design", value: "UI/UX DESIGN" },
-  { label: "Project Management", value: "PROJECT MANAGEMENT" },
-  {
-    label: "Natural Language Processing",
-    value: "NATURAL LANGUAGE PROCESSING",
-  },
-  { label: "Data Science", value: "DATA SCIENCE" },
-  { label: "Machine Learning", value: "MACHINE LEARNING" },
-  { label: "Mobile Development", value: "MOBILE DEVELOPMENT" },
-  { label: "Web Development", value: "WEB DEVELOPMENT" },
-  { label: "Cloud Computing", value: "CLOUD COMPUTING" },
-  { label: "DevSecOps", value: "DEVSECOPS" },
-  { label: "Agile", value: "AGILE" },
-  { label: "Scrum", value: "SCRUM" },
-  { label: "Kanban", value: "KANBAN" },
-  { label: "Jira", value: "JIRA" },
-];
+export const nonAccentVietnamese = (str: string) => {
+    str = str.replace(/A|Á|À|Ã|Ạ|Â|Ấ|Ầ|Ẫ|Ậ|Ă|Ắ|Ằ|Ẵ|Ặ/g, "A");
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/E|É|È|Ẽ|Ẹ|Ê|Ế|Ề|Ễ|Ệ/, "E");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    str = str.replace(/I|Í|Ì|Ĩ|Ị/g, "I");
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/O|Ó|Ò|Õ|Ọ|Ô|Ố|Ồ|Ỗ|Ộ|Ơ|Ớ|Ờ|Ỡ|Ợ/g, "O");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/U|Ú|Ù|Ũ|Ụ|Ư|Ứ|Ừ|Ữ|Ự/g, "U");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/Y|Ý|Ỳ|Ỹ|Ỵ/g, "Y");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/Đ/g, "D");
+    str = str.replace(/đ/g, "d");
+    // Some system encode vietnamese combining accent as individual utf-8 characters
+    str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng
+    str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
+    return str;
+}
+
+
+export const convertSlug = (str: string) => {
+    str = nonAccentVietnamese(str);
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+    str = str.toLowerCase();
+
+    // remove accents, swap ñ for n, etc
+    const from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆĞÍÌÎÏİŇÑÓÖÒÔÕØŘŔŠŞŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇğíìîïıňñóöòôõøðřŕšşťúůüùûýÿžþÞĐđßÆa·/_,:;";
+    const to = "AAAAAACCCDEEEEEEEEGIIIIINNOOOOOORRSSTUUUUUYYZaaaaaacccdeeeeeeeegiiiiinnooooooorrsstuuuuuyyzbBDdBAa------";
+    for (let i = 0, l = from.length; i < l; i++) {
+        str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+
+    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+        .replace(/\s+/g, '-') // collapse whitespace and replace by -
+        .replace(/-+/g, '-'); // collapse dashes
+
+    return str;
+}

@@ -216,6 +216,7 @@ export const AuthStateSchema = z.object({
     .object({
       _id: z.string(),
       email: z.string(),
+      avatar: z.string().nullable(),
       name: z.string(),
       role: z.object({
         _id: z.string(),

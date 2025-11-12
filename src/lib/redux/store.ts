@@ -9,7 +9,7 @@ import jobReducer from '@/features/job/redux/job.slice';
 import resumeReducer from '@/features/resume/redux/resume.slice';
 import permissionReducer from '@/features/permission/redux/permission.slice';
 import roleReducer from '@/features/role/redux/role.slice';
-import { authErrorMiddleware } from "./middleware/error-handler.middleware";
+import { authErrorMiddleware } from "./middleware/auth-error.middleware";
 
 export const store = configureStore({
   reducer: {
@@ -28,17 +28,7 @@ export const store = configureStore({
       .concat(authErrorMiddleware),
 });
 
-// ==========================================
 // SET REFRESH TOKEN FAILED CALLBACK
-// ==========================================
-/**
- * Set callback để axios instance có thể dispatch action
- * mà không tạo circular dependency
- * 
- * Callback này sẽ được gọi khi:
- * - Refresh token API trả về 400 (expired)
- * - Refresh token API thất bại
- */
 setRefreshTokenFailedCallback((message: string) => {
   store.dispatch(
     setRefreshTokenAction({

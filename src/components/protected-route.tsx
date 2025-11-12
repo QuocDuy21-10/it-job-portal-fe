@@ -17,7 +17,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Chỉ redirect nếu chưa authenticated
     if (!isLoading && !isAuthenticated) {
-      router.push("/auth/login");
+      router.push("/login");
     }
   }, [isAuthenticated, isLoading, router]);
 

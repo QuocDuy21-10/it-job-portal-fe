@@ -19,7 +19,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        router.push("/auth/login");
+        router.push("/login");
       } else if (isAuthenticated && !isAdmin) {
         router.push("/");
       }

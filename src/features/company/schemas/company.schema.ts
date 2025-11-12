@@ -9,7 +9,7 @@ export const CompanySchema = z.object({
   description: z
     .string()
     .min(10, "Mô tả phải có ít nhất 10 ký tự")
-    .max(500, "Mô tả không được quá 500 ký tự"),
+    .max(3000, "Mô tả không được quá 3000 ký tự"),
 
   address: z
     .string()

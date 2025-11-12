@@ -1,4 +1,3 @@
-import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/header";
@@ -8,7 +7,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { ClientLayout } from "@/components/client-layout";
 import ReduxProvider from "@/lib/redux/provider";
-import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,28 +18,21 @@ export const metadata: Metadata = {
   keywords: "jobs, careers, employment, recruitment, job search, hiring",
 };
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex min-h-screen flex-col`}>
         <ReduxProvider>
-          <GoogleOAuthProvider>
-            <ThemeProvider>
-              <I18nProvider>
-                <ClientLayout />
-                {/* <Header /> */}
-                <main className="flex-1">{children}</main>
-                {/* <Footer /> */}
-                <Toaster />
-              </I18nProvider>
-            </ThemeProvider>
-          </GoogleOAuthProvider>
+          <ThemeProvider>
+            <I18nProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Toaster />
+            </I18nProvider>
+          </ThemeProvider>
         </ReduxProvider>
-      </body>
-    </html>
   );
 }

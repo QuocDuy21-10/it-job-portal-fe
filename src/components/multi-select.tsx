@@ -1,14 +1,18 @@
+
 "use client";
+
+import React from "react";
 
 import { useState, useRef, useEffect } from "react";
 import { X, ChevronDown } from "lucide-react";
+
 
 interface Option {
   label: string;
   value: string;
 }
 
-interface MultiSelectProps {
+type MultiSelectProps = {
   options: Option[];
   value: string[];
   onChange: (values: string[]) => void;
@@ -16,7 +20,10 @@ interface MultiSelectProps {
   searchPlaceholder?: string;
   className?: string;
   disabled?: boolean;
-}
+  leftIcon?: React.ReactNode;
+};
+
+
 
 export function MultiSelect({
   options,
@@ -26,6 +33,7 @@ export function MultiSelect({
   searchPlaceholder = "Search...",
   className = "",
   disabled = false,
+  leftIcon,
 }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,6 +90,9 @@ export function MultiSelect({
               : "cursor-pointer hover:bg-secondary/80"
           }`}
         >
+          {leftIcon && (
+            <span className="mr-1 flex items-center text-muted-foreground">{leftIcon}</span>
+          )}
           {selectedLabels.length > 0 ? (
             selectedLabels.map((label) => (
               <div

@@ -53,7 +53,7 @@ export const userApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/users",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: ["User"],
     }),
@@ -66,7 +66,7 @@ export const userApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/users/${id}`,
         method: "PATCH",
-        body: data,
+        data: data,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: "User", id },

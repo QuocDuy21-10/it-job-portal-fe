@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import jobTypes from "@/shared/data/job-type.json";
 import { DatePicker } from "../date-picker";
 import {
   CreateJobFormData,
@@ -31,7 +31,8 @@ import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { Combobox } from "../combo-box";
 import { RichTextEditor } from "../rich-text-editor";
 import { MultiSelect } from "../multi-select";
-import { SKILLS_LIST } from "@/shared/config/utils";
+import jobLevels from "@/shared/data/job-level.json";
+import SKILLS_LIST from "@/shared/data/skill-list.json";
 
 interface JobFormProps {
   initialData?: Partial<CreateJobFormData>;
@@ -129,12 +130,9 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Internship">Internship</SelectItem>
-                    <SelectItem value="Junior">Junior</SelectItem>
-                    <SelectItem value="Mid">Mid</SelectItem>
-                    <SelectItem value="Senior">Senior</SelectItem>
-                    <SelectItem value="Lead">Lead</SelectItem>
-                    <SelectItem value="Manager">Manager</SelectItem>
+                    {jobLevels.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>{level.label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -158,13 +156,9 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Internship">Internship</SelectItem>
-                    <SelectItem value="Part-time">Part-time</SelectItem>
-                    <SelectItem value="Full-time">Full-time</SelectItem>
-                    <SelectItem value="Freelance">Freelance</SelectItem>
-                    <SelectItem value="Remote">Remote</SelectItem>
-                    <SelectItem value="Hybrid">Hybrid</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    {jobTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />

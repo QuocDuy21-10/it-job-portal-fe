@@ -47,10 +47,10 @@ export function ClientLayout() {
       );
 
       // Chuyển hướng về trang login (nếu chưa ở trang login)
-      if (!pathname?.includes("/auth/login")) {
+      if (!pathname?.includes("/login")) {
         // Thêm returnUrl để redirect về trang cũ sau khi login
         const returnUrl = encodeURIComponent(pathname || "/");
-        router.push(`/auth/login?returnUrl=${returnUrl}`);
+        router.push(`/login?returnUrl=${returnUrl}`);
       }
     }
   }, [isRefreshToken, errorRefreshToken, router, pathname, dispatch]);

@@ -56,7 +56,7 @@ export const resumeApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/resumes",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: ["Resume"],
     }),
@@ -69,7 +69,7 @@ export const resumeApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/resumes/${id}`,
         method: "PATCH",
-        body: data,
+        data: data,
       }),
       // Fix: Add invalidation for both specific resume and list
       invalidatesTags: (result, error, { id }) => [

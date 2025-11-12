@@ -28,6 +28,8 @@ export const CreateSubscriberFormData = z.object({
 export const GetSubscriberSkillsData = z.object({
   _id: z.string(),
   skills: z.array(z.string()).min(1, "At least one skill is required"),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 // Types
 export type Subscriber = z.infer<typeof SubscriberEntitySchema>;

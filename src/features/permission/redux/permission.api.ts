@@ -56,7 +56,7 @@ export const permissionApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/permissions",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: ["Permission"],
     }),
@@ -69,7 +69,7 @@ export const permissionApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/permissions/${id}`,
         method: "PATCH",
-        body: data,
+        data: data,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: "Permission", id },

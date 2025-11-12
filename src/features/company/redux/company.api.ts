@@ -57,7 +57,7 @@ export const companyApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/companies",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: ["Company"],
     }),
@@ -70,7 +70,7 @@ export const companyApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/companies/${id}`,
         method: "PATCH",
-        body: data,
+        data: data,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: "Company", id },

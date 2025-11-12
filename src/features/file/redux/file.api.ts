@@ -10,19 +10,19 @@ export const fileApi = baseApi.injectEndpoints({
       query: ({ file, folderType }) => {
         const formData = new FormData();
         formData.append("file", file);
-
+        
+        // DO NOT set Content-Type header - let axios auto-detect FormData
+        // and set multipart/form-data with proper boundary
         return {
           url: "/files/upload",
           method: "POST",
-          body: formData,
+          data: formData,
           headers: {
             folder_type: folderType,
+            // Content-Type will be auto-set by axios for FormData
           },
-          formData: true,
         };
       },
-      // Invalidate the files list after upload
-      // invalidatesTags: ["Files"],
     }),
   }),
 });

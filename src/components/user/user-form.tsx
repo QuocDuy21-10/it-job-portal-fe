@@ -274,7 +274,7 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
                   placeholder="Chọn công ty"
                   searchPlaceholder="Tìm kiếm công ty..."
                   emptyText="Không tìm thấy công ty"
-                  disabled={isLoading || !!initialData}
+                  disabled={isLoading || companies.length === 0}
                 />
               </FormControl>
               <FormMessage />

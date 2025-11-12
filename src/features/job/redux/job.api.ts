@@ -54,7 +54,7 @@ export const jobApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/jobs",
         method: "POST",
-        body: data,
+        data: data,
       }),
       invalidatesTags: ["Job"],
     }),
@@ -67,7 +67,7 @@ export const jobApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/jobs/${id}`,
         method: "PATCH",
-        body: data,
+        data: data,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "Job", id }, "Job"],
     }),
