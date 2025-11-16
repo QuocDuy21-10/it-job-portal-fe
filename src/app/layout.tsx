@@ -10,7 +10,14 @@ import { ClientLayout } from "@/components/client-layout";
 import ReduxProvider from "@/lib/redux/provider";
 import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "arial"],
+  preload: true,
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+});
 
 // Static metadata - fallback cho SEO
 export const metadata: Metadata = {

@@ -99,7 +99,7 @@ export function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/profile" className="cursor-pointer">
+                    <Link href="/profile?tab=overview" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.dashboard") : "Dashboard"}
                     </Link>
@@ -113,37 +113,37 @@ export function Header() {
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
+                    <Link href="/profile?tab=my-cv" className="cursor-pointer">
                       <FileText className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.myCV") : "My CV"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
+                    <Link href="/profile?tab=create-cv" className="cursor-pointer">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.createCV") : "Create CV"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
+                    <Link href="/profile?tab=my-jobs" className="cursor-pointer">
                       <Briefcase className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.myJobs") : "My Jobs"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
+                    <Link href="/profile?tab=email-subscription" className="cursor-pointer">
                       <Mail className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.emailSubscription") : "Email Subscription"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
+                    <Link href="/profile?tab=notifications" className="cursor-pointer">
                       <Bell className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.notifications") : "Notifications"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
+                    <Link href="/profile?tab=settings" className="cursor-pointer">
                       <Settings className="mr-2 h-4 w-4" />
                       {i18nMounted ? t("nav.settings") : "Settings"}
                     </Link>

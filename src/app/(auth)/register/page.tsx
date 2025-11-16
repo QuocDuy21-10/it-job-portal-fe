@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Briefcase, Mail, Lock, User, Loader2 } from "lucide-react";
+import { Briefcase, Mail, Lock, User, Loader2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,8 @@ export default function RegisterPage() {
   const [socialLoading, setSocialLoading] = useState<
     "google" | "facebook" | null
   >(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const {
@@ -169,12 +171,24 @@ export default function RegisterPage() {
                   />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="At least 6 characters"
-                    className="pl-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
+                    className="pl-10 pr-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
                     {...register("password")}
                     disabled={isLoading}
                   />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-sm text-red-500">
@@ -195,12 +209,24 @@ export default function RegisterPage() {
                   />
                   <Input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Re-enter your password"
-                    className="pl-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
+                    className="pl-10 pr-10 dark:bg-slate-700 dark:text-white dark:border-slate-600"
                     {...register("confirmPassword")}
                     disabled={isLoading}
                   />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
                 {errors.confirmPassword && (
                   <p className="text-sm text-red-500">
