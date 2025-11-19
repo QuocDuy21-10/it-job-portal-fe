@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { authApi } from "./auth.api";
 import { AuthState, UserInfo } from "../schemas/auth.schema";
+import { isAdminRole } from "@/shared/constants/roles";
 
 const initialState: AuthState = {
   user: null,
@@ -69,6 +70,7 @@ const authSlice = createSlice({
             _id: userData._id,
             name: userData.name,
             email: userData.email,
+            avatar: userData.avatar || null,
             role: {
               _id: userData.role._id,
               name: userData.role.name,
@@ -97,6 +99,7 @@ const authSlice = createSlice({
             _id: userData._id,
             name: userData.name,
             email: userData.email,
+            avatar: userData.avatar || null,
             role: {
               _id: userData.role._id,
               name: userData.role.name,
@@ -155,6 +158,7 @@ const authSlice = createSlice({
               _id: userData._id,
               name: userData.name,
               email: userData.email,
+              avatar: userData.avatar || null,
               role: {
                 _id: userData.role._id,
                 name: userData.role.name,
@@ -244,5 +248,5 @@ export const selectHasRole =
 // ✅ NEW: Selector để check if user is admin
 export const selectIsAdmin = createSelector(
   [selectUserRole],
-  (role) => role !== "NORMAL USER" && role !== undefined
+  (role) => isAdminRole(role)
 );

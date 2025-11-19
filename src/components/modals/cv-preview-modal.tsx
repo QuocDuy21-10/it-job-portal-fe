@@ -1,151 +1,135 @@
 "use client";
 
-import { X, Download } from "lucide-react";
+import { X } from "lucide-react";
+import { ICVProfile } from "@/shared/types/cv";
+import DownloadPDFButton from "@/components/pdf/download-pdf-button";
+import PDFPreview from "@/components/pdf/pdf-preview";
+import { useState } from "react";
 
-interface CVData {
-  personalInfo: {
-    fullName: string;
-    phone: string;
-    email: string;
-    birthday: string;
-    gender: string;
-    address: string;
-    personalLink: string;
-    bio: string;
-  };
-  education: Array<{
-    id: string;
-    school: string;
-    degree: string;
-    field: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }>;
-  experience: Array<{
-    id: string;
-    company: string;
-    position: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }>;
-  skills: Array<{
-    id: string;
-    name: string;
-    level: string;
-  }>;
-  languages: Array<{
-    id: string;
-    name: string;
-    proficiency: string;
-  }>;
-  projects: Array<{
-    id: string;
-    name: string;
-    description: string;
-    link: string;
-  }>;
-  certificates: Array<{
-    id: string;
-    name: string;
-    issuer: string;
-    date: string;
-  }>;
-  awards: Array<{
-    id: string;
-    name: string;
-    date: string;
-    description: string;
-  }>;
-}
+/**
+ * Helper function to display date
+ * Empty string means "Present" (current position)
+ */
+const formatDateDisplay = (date: string): string => {
+  if (!date || date.trim() === "") {
+    return "Present";
+  }
+  return date;
+};
 
 interface CVPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  cvData: CVData;
-  selectedTemplate: string;
-  onTemplateChange: (template: string) => void;
+  cvData: ICVProfile;
+  selectedTemplate?: string;
+  onTemplateChange?: (template: string) => void;
 }
 
 export default function CVPreviewModal({
   isOpen,
   onClose,
   cvData,
-  selectedTemplate,
+  selectedTemplate = "classic",
   onTemplateChange,
 }: CVPreviewModalProps) {
-  if (!isOpen) return null;
+  const [showPDFPreview, setShowPDFPreview] = useState(false);
 
-  const handleDownload = () => {
-    alert("CV downloaded successfully!");
-  };
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background rounded-lg">
+      <div className="w-full max-w-5xl max-h-[90vh] overflow-hidden bg-background rounded-lg flex flex-col">
         {/* Header */}
-        <div className="sticky top-0 bg-card border-b border-border p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">CV Preview</h2>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleDownload}
-              className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition"
-            >
-              <Download className="w-4 h-4" />
-              Download PDF
-            </button>
+        <div className="bg-card border-b border-border p-6 flex items-center justify-between flex-shrink-0">
+          <div>
+            <h2 className="text-2xl font-bold">Xem trước CV</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Preview và tải xuống CV của bạn
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <DownloadPDFButton
+              cvData={cvData}
+              fileName="CV"
+              template={selectedTemplate as any}
+              variant="default"
+              size="default"
+            />
             <button
               onClick={onClose}
-              className="text-muted-foreground hover:text-foreground transition"
+              className="text-muted-foreground hover:text-foreground transition p-2 hover:bg-secondary rounded-lg"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Template Selector */}
-        <div className="bg-secondary border-b border-border p-4 flex gap-2">
+        {/* Template Selector & Preview Toggle */}
+        <div className="bg-secondary border-b border-border p-4 flex items-center justify-between flex-shrink-0">
+          <div className="flex gap-2">
+            <button
+              onClick={() => onTemplateChange?.("classic")}
+              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                selectedTemplate === "classic"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card text-foreground hover:bg-border"
+              }`}
+            >
+              Classic
+            </button>
+            <button
+              onClick={() => onTemplateChange?.("modern")}
+              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                selectedTemplate === "modern"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card text-foreground hover:bg-border"
+              }`}
+            >
+              Modern
+            </button>
+            <button
+              onClick={() => onTemplateChange?.("minimal")}
+              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                selectedTemplate === "minimal"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card text-foreground hover:bg-border"
+              }`}
+            >
+              Minimal
+            </button>
+          </div>
+
           <button
-            onClick={() => onTemplateChange("classic")}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              selectedTemplate === "classic"
+            onClick={() => setShowPDFPreview(!showPDFPreview)}
+            className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+              showPDFPreview
                 ? "bg-primary text-primary-foreground"
                 : "bg-card text-foreground hover:bg-border"
             }`}
           >
-            Classic
-          </button>
-          <button
-            onClick={() => onTemplateChange("modern")}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              selectedTemplate === "modern"
-                ? "bg-primary text-primary-foreground"
-                : "bg-card text-foreground hover:bg-border"
-            }`}
-          >
-            Modern
-          </button>
-          <button
-            onClick={() => onTemplateChange("minimal")}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              selectedTemplate === "minimal"
-                ? "bg-primary text-primary-foreground"
-                : "bg-card text-foreground hover:bg-border"
-            }`}
-          >
-            Minimal
+            {showPDFPreview ? "📄 Xem HTML" : "📄 Xem PDF"}
           </button>
         </div>
 
         {/* CV Preview */}
-        <div className="p-8 space-y-8">
-          {selectedTemplate === "classic" && (
-            <ClassicTemplate cvData={cvData} />
-          )}
-          {selectedTemplate === "modern" && <ModernTemplate cvData={cvData} />}
-          {selectedTemplate === "minimal" && (
-            <MinimalTemplate cvData={cvData} />
+        <div className="flex-1 overflow-y-auto">
+          {showPDFPreview ? (
+            // Live PDF Preview
+            <div className="p-4 bg-gray-100">
+              <PDFPreview
+                cvData={cvData}
+                template={selectedTemplate as any}
+                height="calc(90vh - 200px)"
+                className="rounded-lg overflow-hidden shadow-lg"
+              />
+            </div>
+          ) : (
+            // HTML Preview (existing templates)
+            <div className="p-8 space-y-8">
+              {selectedTemplate === "classic" && <ClassicTemplate cvData={cvData} />}
+              {selectedTemplate === "modern" && <ModernTemplate cvData={cvData} />}
+              {selectedTemplate === "minimal" && <MinimalTemplate cvData={cvData} />}
+            </div>
           )}
         </div>
       </div>
@@ -153,7 +137,7 @@ export default function CVPreviewModal({
   );
 }
 
-function ClassicTemplate({ cvData }: { cvData: CVData }) {
+function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
   return (
     <div className="bg-white text-black p-8 rounded-lg space-y-6">
       {/* Header */}
@@ -178,7 +162,7 @@ function ClassicTemplate({ cvData }: { cvData: CVData }) {
               <div className="flex justify-between">
                 <h3 className="font-bold">{exp.position}</h3>
                 <span className="text-sm text-gray-600">
-                  {exp.startDate} - {exp.endDate}
+                  {formatDateDisplay(exp.startDate)} - {formatDateDisplay(exp.endDate)}
                 </span>
               </div>
               <p className="text-sm text-gray-600">{exp.company}</p>
@@ -246,11 +230,67 @@ function ClassicTemplate({ cvData }: { cvData: CVData }) {
           </div>
         </div>
       )}
+
+      {/* Projects */}
+      {cvData.projects.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
+            Projects
+          </h2>
+          {cvData.projects.map((project) => (
+            <div key={project.id} className="mb-4">
+              <h3 className="font-bold">{project.name}</h3>
+              <p className="text-sm mt-1">{project.description}</p>
+              {project.link && (
+                <a href={project.link} className="text-sm text-blue-600 hover:underline mt-1 block">
+                  {project.link}
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Certificates */}
+      {cvData.certificates.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
+            Certificates
+          </h2>
+          {cvData.certificates.map((cert) => (
+            <div key={cert.id} className="mb-4">
+              <div className="flex justify-between">
+                <h3 className="font-bold">{cert.name}</h3>
+                <span className="text-sm text-gray-600">{cert.date}</span>
+              </div>
+              <p className="text-sm text-gray-600">{cert.issuer}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Awards */}
+      {cvData.awards.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
+            Awards & Recognition
+          </h2>
+          {cvData.awards.map((award) => (
+            <div key={award.id} className="mb-4">
+              <div className="flex justify-between">
+                <h3 className="font-bold">{award.name}</h3>
+                <span className="text-sm text-gray-600">{award.date}</span>
+              </div>
+              <p className="text-sm mt-1">{award.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function ModernTemplate({ cvData }: { cvData: CVData }) {
+function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 text-gray-800 p-8 rounded-lg space-y-6">
       {/* Header */}
@@ -278,7 +318,7 @@ function ModernTemplate({ cvData }: { cvData: CVData }) {
                   <p className="text-blue-600 font-medium">{exp.company}</p>
                 </div>
                 <span className="text-sm text-gray-600">
-                  {exp.startDate} - {exp.endDate}
+                  {formatDateDisplay(exp.startDate)} - {formatDateDisplay(exp.endDate)}
                 </span>
               </div>
               <p className="text-sm mt-2">{exp.description}</p>
@@ -319,11 +359,78 @@ function ModernTemplate({ cvData }: { cvData: CVData }) {
           </div>
         </div>
       )}
+
+      {/* Languages */}
+      {cvData.languages.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">🌐 Languages</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {cvData.languages.map((lang) => (
+              <div key={lang.id} className="p-3 bg-white rounded-lg">
+                <p className="font-medium">{lang.name}</p>
+                <p className="text-sm text-gray-600">{lang.proficiency}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Projects */}
+      {cvData.projects.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">🚀 Projects</h2>
+          {cvData.projects.map((project) => (
+            <div key={project.id} className="mb-4 p-4 bg-white rounded-lg">
+              <h3 className="font-bold text-lg">{project.name}</h3>
+              <p className="text-sm mt-2">{project.description}</p>
+              {project.link && (
+                <a href={project.link} className="text-sm text-blue-600 hover:underline mt-2 block">
+                  🔗 {project.link}
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Certificates */}
+      {cvData.certificates.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">📜 Certificates</h2>
+          {cvData.certificates.map((cert) => (
+            <div key={cert.id} className="mb-4 p-4 bg-white rounded-lg">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-bold text-lg">{cert.name}</h3>
+                  <p className="text-blue-600 font-medium">{cert.issuer}</p>
+                </div>
+                <span className="text-sm text-gray-600">{cert.date}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Awards */}
+      {cvData.awards.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">🏆 Awards</h2>
+          {cvData.awards.map((award) => (
+            <div key={award.id} className="mb-4 p-4 bg-white rounded-lg">
+              <div className="flex justify-between items-start">
+                <h3 className="font-bold text-lg">{award.name}</h3>
+                <span className="text-sm text-gray-600">{award.date}</span>
+              </div>
+              <p className="text-sm mt-2">{award.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function MinimalTemplate({ cvData }: { cvData: CVData }) {
+function MinimalTemplate({ cvData }: { cvData: ICVProfile }) {
   return (
     <div className="bg-white text-gray-800 p-8 rounded-lg space-y-6">
       {/* Header */}
@@ -354,7 +461,7 @@ function MinimalTemplate({ cvData }: { cvData: CVData }) {
               <div className="flex justify-between items-baseline">
                 <h3 className="font-semibold">{exp.position}</h3>
                 <span className="text-xs text-gray-600">
-                  {exp.startDate} – {exp.endDate}
+                  {formatDateDisplay(exp.startDate)} – {formatDateDisplay(exp.endDate)}
                 </span>
               </div>
               <p className="text-sm text-gray-600">{exp.company}</p>
@@ -390,6 +497,72 @@ function MinimalTemplate({ cvData }: { cvData: CVData }) {
           <p className="text-sm text-gray-700">
             {cvData.skills.map((s) => `${s.name} (${s.level})`).join(", ")}
           </p>
+        </div>
+      )}
+
+      {/* Languages */}
+      {cvData.languages.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold tracking-widest text-gray-700 mb-3">
+            LANGUAGES
+          </h2>
+          <p className="text-sm text-gray-700">
+            {cvData.languages.map((l) => `${l.name} (${l.proficiency})`).join(", ")}
+          </p>
+        </div>
+      )}
+
+      {/* Projects */}
+      {cvData.projects.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold tracking-widest text-gray-700 mb-4">
+            PROJECTS
+          </h2>
+          {cvData.projects.map((project) => (
+            <div key={project.id} className="mb-4">
+              <h3 className="font-semibold">{project.name}</h3>
+              <p className="text-sm mt-1 leading-relaxed">{project.description}</p>
+              {project.link && (
+                <p className="text-xs text-gray-600 mt-1">{project.link}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Certificates */}
+      {cvData.certificates.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold tracking-widest text-gray-700 mb-4">
+            CERTIFICATES
+          </h2>
+          {cvData.certificates.map((cert) => (
+            <div key={cert.id} className="mb-3">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-semibold">{cert.name}</h3>
+                <span className="text-xs text-gray-600">{cert.date}</span>
+              </div>
+              <p className="text-sm text-gray-600">{cert.issuer}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Awards */}
+      {cvData.awards.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold tracking-widest text-gray-700 mb-4">
+            AWARDS & RECOGNITION
+          </h2>
+          {cvData.awards.map((award) => (
+            <div key={award.id} className="mb-3">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-semibold">{award.name}</h3>
+                <span className="text-xs text-gray-600">{award.date}</span>
+              </div>
+              <p className="text-sm mt-1 leading-relaxed">{award.description}</p>
+            </div>
+          ))}
         </div>
       )}
     </div>

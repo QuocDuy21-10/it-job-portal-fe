@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { ClientLayout } from "@/components/client-layout";
 import ReduxProvider from "@/lib/redux/provider";
+import { GuestGuard } from "@/components/guest-guard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,10 +28,12 @@ export default function MainLayout({
         <ReduxProvider>
           <ThemeProvider>
             <I18nProvider>
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <Toaster />
+              <GuestGuard>
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <Toaster />
+              </GuestGuard>
             </I18nProvider>
           </ThemeProvider>
         </ReduxProvider>

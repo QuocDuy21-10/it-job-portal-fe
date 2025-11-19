@@ -1,137 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { Download, Plus, ArrowLeft } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Download, Plus, ArrowLeft, Save, Loader2, CheckCircle2 } from "lucide-react";
 import CVFormSection from "@/components/sections/cv-form-section";
 import CVPreviewModal from "@/components/modals/cv-preview-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useCV } from "@/hooks/use-cv";
+import { ICVProfile } from "@/shared/types/cv";
+import { toast } from "sonner";
 
-interface CVData {
-  personalInfo: {
-    fullName: string;
-    phone: string;
-    email: string;
-    birthday: string;
-    gender: string;
-    address: string;
-    personalLink: string;
-    bio: string;
-  };
-  education: Array<{
-    id: string;
-    school: string;
-    degree: string;
-    field: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }>;
-  experience: Array<{
-    id: string;
-    company: string;
-    position: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }>;
-  skills: Array<{
-    id: string;
-    name: string;
-    level: string;
-  }>;
-  languages: Array<{
-    id: string;
-    name: string;
-    proficiency: string;
-  }>;
-  projects: Array<{
-    id: string;
-    name: string;
-    description: string;
-    link: string;
-  }>;
-  certificates: Array<{
-    id: string;
-    name: string;
-    issuer: string;
-    date: string;
-  }>;
-  awards: Array<{
-    id: string;
-    name: string;
-    date: string;
-    description: string;
-  }>;
-}
+// Type alias for compatibility with existing code
+type CVData = ICVProfile;
 
 const initialCVData: CVData = {
   personalInfo: {
-    fullName: "Nguyen Van A",
-    phone: "+84 123 456 789",
-    email: "email@example.com",
-    birthday: "1995-01-15",
-    gender: "Male",
-    address: "Ho Chi Minh City, Vietnam",
-    personalLink: "https://linkedin.com/in/example",
-    bio: "Passionate frontend engineer with 5+ years of experience building scalable web applications.",
+    fullName: "",
+    phone: "",
+    email: "",
+    birthday: "",
+    gender: "",
+    address: "",
+    personalLink: "",
+    bio: "",
   },
-  education: [
-    {
-      id: "1",
-      school: "University of Science and Technology",
-      degree: "Bachelor",
-      field: "Computer Science",
-      startDate: "2015-09",
-      endDate: "2019-06",
-      description: "GPA: 3.8/4.0",
-    },
-  ],
-  experience: [
-    {
-      id: "1",
-      company: "TechCorp Vietnam",
-      position: "Senior Frontend Engineer",
-      startDate: "2022-01",
-      endDate: "Present",
-      description:
-        "Leading frontend development team, mentoring junior developers.",
-    },
-  ],
-  skills: [
-    { id: "1", name: "React", level: "Expert" },
-    { id: "2", name: "TypeScript", level: "Expert" },
-    { id: "3", name: "Next.js", level: "Advanced" },
-  ],
-  languages: [
-    { id: "1", name: "English", proficiency: "Advanced" },
-    { id: "2", name: "Vietnamese", proficiency: "Native" },
-  ],
-  projects: [
-    {
-      id: "1",
-      name: "E-commerce Platform",
-      description:
-        "Built scalable e-commerce platform using Next.js and Node.js",
-      link: "https://example.com",
-    },
-  ],
-  certificates: [
-    {
-      id: "1",
-      name: "AWS Certified Developer",
-      issuer: "Amazon Web Services",
-      date: "2023-06",
-    },
-  ],
-  awards: [
-    {
-      id: "1",
-      name: "Employee of the Year",
-      date: "2023",
-      description: "Recognized for outstanding contribution to the team.",
-    },
-  ],
+  education: [],
+  experience: [],
+  skills: [],
+  languages: [],
+  projects: [],
+  certificates: [],
+  awards: [],
 };
 
 interface CreateCVPageProps {
@@ -142,6 +41,83 @@ export default function CreateCVPage({ onBack }: CreateCVPageProps) {
   const [cvData, setCVData] = useState<CVData>(initialCVData);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  
+  // CV Management Hook
+  const { isLoading, error, cvData: fetchedCVData, upsertCV, fetchMyCVProfile, clearError } = useCV();
+
+  /**
+   * Fetch CV data on component mount
+   * GET /cv-profiles/me
+   */
+  useEffect(() => {
+    const loadCVData = async () => {
+      setIsInitialLoading(true);
+      const result = await fetchMyCVProfile();
+      
+      if (result) {
+        // Merge fetched data with state, ensuring all arrays exist
+        setCVData({
+          personalInfo: result.personalInfo || initialCVData.personalInfo,
+          education: result.education || [],
+          experience: result.experience || [],
+          skills: result.skills || [],
+          languages: result.languages || [],
+          projects: result.projects || [],
+          certificates: result.certificates || [],
+          awards: result.awards || [],
+        });
+      } else {
+        // If no CV data exists, initialize with empty structure
+        setCVData(initialCVData);
+      }
+      
+      setIsInitialLoading(false);
+    };
+
+    loadCVData();
+  }, [fetchMyCVProfile]);
+
+  // Handle Update CV (API Call)
+  const handleUpdateCV = async () => {
+    try {
+      // Clear previous errors
+      clearError();
+
+      // Call API
+      const result = await upsertCV({
+        personalInfo: cvData.personalInfo,
+        education: cvData.education,
+        experience: cvData.experience,
+        skills: cvData.skills,
+        languages: cvData.languages,
+        projects: cvData.projects,
+        certificates: cvData.certificates,
+        awards: cvData.awards,
+      });
+
+      if (result) {
+        toast.success("✅ Cập nhật CV thành công!", {
+          description: "CV của bạn đã được lưu thành công.",
+          duration: 3000,
+        });
+
+        // Update cvData with server response (includes _id, timestamps, etc.)
+        setCVData(result);
+      }
+    } catch (err) {
+      console.error("Update CV failed:", err);
+    }
+  };
+
+  // Show error toast when error occurs
+  if (error) {
+    toast.error("Lỗi cập nhật CV", {
+      description: error,
+      duration: 4000,
+    });
+    clearError();
+  }
 
   const updatePersonalInfo = (field: string, value: string) => {
     setCVData((prev) => ({
@@ -365,26 +341,48 @@ export default function CreateCVPage({ onBack }: CreateCVPageProps) {
             </button>
           )}
           <h1 className="text-4xl font-bold mb-2">
-            Tạo CV của bạn (Create Your CV)
+            Tạo CV của bạn 
           </h1>
           <p className="text-muted-foreground">
             Cập nhật thông tin cá nhân và trải nghiệm của bạn
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 mb-8 flex-wrap">
-          <Button
-            onClick={() => setIsPreviewOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Preview & Download CV
-          </Button>
-          <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
-            Cập nhật CV (Update CV)
-          </Button>
-        </div>
+        {/* Initial Loading State */}
+        {isInitialLoading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
+            <p className="text-lg text-muted-foreground">Đang tải thông tin CV...</p>
+          </div>
+        ) : (
+          <>
+            {/* Action Buttons */}
+            <div className="flex gap-4 mb-8 flex-wrap">
+              <Button
+                onClick={() => setIsPreviewOpen(true)}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Preview & Download CV
+              </Button>
+              <Button 
+                onClick={handleUpdateCV}
+                disabled={isLoading}
+                className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Đang lưu...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Cập nhật CV
+                  </>
+                )}
+              </Button>
+            </div>
 
         {/* Form Sections */}
         <div className="space-y-8">
@@ -650,8 +648,12 @@ export default function CreateCVPage({ onBack }: CreateCVPageProps) {
                         onChange={(e) =>
                           updateExperience(exp.id, "endDate", e.target.value)
                         }
+                        placeholder="Leave empty for 'Present'"
                         className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Leave empty if currently working here
+                      </p>
                     </div>
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium mb-2">
@@ -1019,10 +1021,26 @@ export default function CreateCVPage({ onBack }: CreateCVPageProps) {
             <Download className="w-4 h-4 mr-2" />
             Preview & Download CV
           </Button>
-          <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
-            Cập nhật CV (Update CV)
+          <Button 
+            onClick={handleUpdateCV}
+            disabled={isLoading}
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Đang lưu...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Cập nhật CV
+              </>
+            )}
           </Button>
         </div>
+          </>
+        )}
       </div>
 
       {/* Preview Modal */}

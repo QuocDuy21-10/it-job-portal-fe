@@ -6,6 +6,8 @@ import {
   UpdateResumeFormData,
   ResumeFormData,
   ResumeAppliedJob,
+  ResumeUpload,
+  ResumeResponseUpload,
 } from "../schemas/resume.schema";
 
 export const resumeApi = baseApi.injectEndpoints({
@@ -61,6 +63,24 @@ export const resumeApi = baseApi.injectEndpoints({
       invalidatesTags: ["Resume"],
     }),
 
+    // create new resume with upload
+    createResumeWithUpload: builder.mutation<
+      ApiResponse<ResumeResponseUpload>,
+      { file: File; jobId: string }
+    >({
+      query: ({ file, jobId }) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("jobId", jobId);
+        return {
+          url: "/resumes/upload-cv",
+          method: "POST",
+          data: formData,
+        };
+      },
+      invalidatesTags: ["Resume"],
+    }),
+
     // Update resume
     updateResume: builder.mutation<
       ApiResponse<Resume>,
@@ -102,6 +122,7 @@ export const {
   useGetResumesQuery,
   useGetResumeQuery,
   useCreateResumeMutation,
+  useCreateResumeWithUploadMutation,
   useUpdateResumeMutation,
   useDeleteResumeMutation,
   useTakeOutAppliedJobMutation,

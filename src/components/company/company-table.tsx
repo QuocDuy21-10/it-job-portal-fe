@@ -10,6 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Company } from "@/features/company/schemas/company.schema";
+import { Access } from "@/components/access";
+import { ALL_PERMISSIONS } from "@/shared/config/permissions";
 
 interface CompanyTableProps {
   companies: Company[];
@@ -39,40 +41,42 @@ export function CompanyTable({
   }
 
   return (
-    <div className="bg-white rounded-lg border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead>Website</TableHead>
-            <TableHead>Number of Employees</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {companies.length === 0 ? (
+    <Access permission={ALL_PERMISSIONS.COMPANIES.GET_PAGINATE}>
+      <div className="bg-white rounded-lg border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                No companies found
-              </TableCell>
+              <TableHead className="w-[80px]">STT</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead>Website</TableHead>
+              <TableHead>Number of Employees</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ) : (
-            companies.map((company, index) => (
-              <CompanyTableRow
-                key={company._id}
-                company={company}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                orderNumber={(currentPage - 1) * pageSize + index + 1}
-              />
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {companies.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                  No companies found
+                </TableCell>
+              </TableRow>
+            ) : (
+              companies.map((company, index) => (
+                <CompanyTableRow
+                  key={company._id}
+                  company={company}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  orderNumber={(currentPage - 1) * pageSize + index + 1}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </Access>
   );
 }
 
@@ -112,22 +116,26 @@ function CompanyTableRow({
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(company)}
-            title="Edit company"
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(company._id as string)}
-            title="Delete company"
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Access permission={ALL_PERMISSIONS.COMPANIES.UPDATE} hideChildren>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(company)}
+              title="Edit company"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </Access>
+          <Access permission={ALL_PERMISSIONS.COMPANIES.DELETE} hideChildren>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDelete(company._id as string)}
+              title="Delete company"
+            >
+              <Trash2 className="h-4 w-4 text-red-500" />
+            </Button>
+          </Access>
         </div>
       </TableCell>
     </TableRow>

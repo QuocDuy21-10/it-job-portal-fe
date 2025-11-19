@@ -20,6 +20,7 @@ import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUserRole } from "@/features/auth/redux/auth.slice";
+import { isAdminRole } from "@/shared/constants/roles";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -104,7 +105,7 @@ export function Header() {
                       {i18nMounted ? t("nav.dashboard") : "Dashboard"}
                     </Link>
                   </DropdownMenuItem>
-                  {userRole !== "NORMAL USER" && (
+                  {isAdminRole(userRole) && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin" className="cursor-pointer">
                         <Settings className="mr-2 h-4 w-4" />

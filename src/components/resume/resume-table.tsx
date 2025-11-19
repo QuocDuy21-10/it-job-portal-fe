@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/table";
 import { Resume } from "@/features/resume/schemas/resume.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import { Access } from "@/components/access";
+import { ALL_PERMISSIONS } from "@/shared/config/permissions";
 
 interface ResumeTableProps {
   resumes: Resume[];
@@ -38,40 +40,44 @@ export function ResumeTable({
   }
 
   return (
-    <div className="bg-white rounded-lg border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Link</TableHead>
-            <TableHead>Job</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {resumes.length === 0 ? (
+    <Access permission={ALL_PERMISSIONS.RESUMES.GET_PAGINATE}>
+      <div className="bg-white rounded-lg border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-8 text-gray-500">
-                No resumes found
-              </TableCell>
+              <TableHead className="w-[80px]">STT</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Link</TableHead>
+              <TableHead>Job</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Matching Score</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ) : (
-            resumes.map((resume, index) => (
-              <ResumeTableRow
-                key={resume._id}
-                resume={resume}
-                onEdit={onEdit}
-                orderNumber={(currentPage - 1) * pageSize + index + 1}
-              />
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {resumes.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                  No resumes found
+                </TableCell>
+              </TableRow>
+            ) : (
+              resumes.map((resume, index) => (
+                <ResumeTableRow
+                  key={resume._id}
+                  resume={resume}
+                  onEdit={onEdit}
+                  orderNumber={(currentPage - 1) * pageSize + index + 1}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </Access>
   );
 }
 
@@ -89,7 +95,7 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       <TableCell>{resume.email}</TableCell>
       <TableCell>
         <a
-          href={`${API_BASE_URL_IMAGE}/images/resumes/${resume.url}`}
+          href={`${API_BASE_URL_IMAGE}/${resume.url}`}
           target="_blank"
           rel="noreferrer"
           className="text-blue-600 hover:underline"
@@ -100,6 +106,12 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       <TableCell>{resume.jobId || "-"}</TableCell>
       <TableCell>{resume.companyId || "-"}</TableCell>
       <TableCell>
+        <Badge variant="outline">{resume.priority || "-"}</Badge>
+      </TableCell>
+      <TableCell>
+        <Badge variant="default">{typeof resume.aiAnalysis?.matchingScore === "number" ? `${resume.aiAnalysis.matchingScore}%` : "-"}</Badge>
+        </TableCell>
+      <TableCell>
         <Badge variant="outline">{resume.status.toUpperCase()}</Badge>
       </TableCell>
       <TableCell>
@@ -109,14 +121,16 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(resume)}
-            title="Edit resume"
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
+          <Access permission={ALL_PERMISSIONS.RESUMES.UPDATE} hideChildren>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(resume)}
+              title="Edit resume"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </Access>
         </div>
       </TableCell>
     </TableRow>

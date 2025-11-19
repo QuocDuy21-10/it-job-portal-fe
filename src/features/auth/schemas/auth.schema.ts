@@ -241,13 +241,6 @@ export const AuthStateSchema = z.object({
 
 export type AuthState = z.infer<typeof AuthStateSchema>;
 
-export interface UserInfo {
-  _id: string;
-  email: string;
-  name: string;
-  role: Role;
-  permissions: Permission[];
-}
 export interface Permission {
   _id: string;
   name: string;
@@ -264,6 +257,7 @@ export interface Role {
 export interface UserInfo {
   _id: string;
   email: string;
+  avatar: string | null;
   name: string;
   role: Role;
   permissions: Permission[];

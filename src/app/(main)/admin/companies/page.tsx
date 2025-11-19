@@ -9,6 +9,8 @@ import { CompanySearchBar } from "@/components/company/company-search-bar";
 import { CompanyTable } from "@/components/company/company-table";
 import { CompanyDialog } from "@/components/company/company-dialog";
 import { Company } from "@/features/company/schemas/company.schema";
+import { Access } from "@/components/access";
+import { ALL_PERMISSIONS } from "@/shared/config/permissions";
 
 export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -106,10 +108,12 @@ export default function CompaniesPage() {
           </p>
         </div>
 
-        <Button onClick={() => handleOpenDialog()}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Company
-        </Button>
+        <Access permission={ALL_PERMISSIONS.COMPANIES.CREATE} hideChildren>
+          <Button onClick={() => handleOpenDialog()}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Company
+          </Button>
+        </Access>
       </div>
 
       {/* Search Bar */}

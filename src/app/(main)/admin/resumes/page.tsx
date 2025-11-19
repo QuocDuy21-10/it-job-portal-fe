@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, ArrowDownAZ, ArrowUpZA, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetResumesQuery } from "@/features/resume/redux/resume.api";
 import { ResumeSearchBar } from "@/components/resume/resume-search-bar";
@@ -9,21 +9,29 @@ import { ResumeTable } from "@/components/resume/resume-table";
 import { ResumeDialog } from "@/components/resume/resume-dialog";
 import { Resume } from "@/features/resume/schemas/resume.schema";
 import { useResumeOperations } from "@/hooks/use-resume";
+import queryString from "query-string";
+
 
 export default function ResumesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sort, setSort] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
 
   const pageSize = 10;
 
-  // Construct filter and sort queries
-  const filter = searchQuery ? `status=/${searchQuery}/i` : "";
+  // Build filter and sort query using query-string
+  const filterObj: Record<string, any> = {};
+  if (searchQuery) filterObj.status = `/${searchQuery}/i`;
+  if (priority) filterObj.priority = priority;
+  const filter = queryString.stringify(filterObj);
 
   // Fetch resumes với RTK Query
   const { data: resumesData, isLoading } = useGetResumesQuery({
     page: currentPage,
     limit: pageSize,
     filter,
+    sort,
   });
 
   // Custom hook chứa tất cả CRUD operations
@@ -52,6 +60,18 @@ export default function ResumesPage() {
     setSearchQuery(value);
     setCurrentPage(1); // Reset về trang 1 khi search
   }, []);
+
+  // Sort handlers
+  const handleSortChange = (value: string) => {
+    setSort(value);
+    setCurrentPage(1);
+  };
+
+  // Priority filter handler
+  const handlePriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPriority(e.target.value);
+    setCurrentPage(1);
+  };
 
   // Generate page numbers để hiển thị
   const getPageNumbers = () => {
@@ -103,19 +123,46 @@ export default function ResumesPage() {
             Manage resume profiles and information
           </p>
         </div>
-
-        {/* <Button onClick={() => handleOpenDialog()}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Resume
-        </Button> */}
       </div>
-      {/* Search Bar */}
-      <ResumeSearchBar
-        value={searchQuery}
-        onChange={handleSearchChange}
-        placeholder="Search by resume status..."
-        delay={500}
-      />
+      {/* Filter & Sort Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+        <ResumeSearchBar
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Search by resume status..."
+          delay={500}
+        />
+        <div className="flex gap-2 items-center mt-2 sm:mt-0 sm:ml-auto">
+          <label className="text-sm text-gray-700 flex items-center gap-1">
+            <Filter className="w-4 h-4" /> Priority:
+            <select
+              className="border rounded px-2 py-1 text-sm"
+              value={priority}
+              onChange={handlePriorityChange}
+            >
+              <option value="">All</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="EXCELLENT">Excellent</option>
+            </select>
+          </label>
+          <label className="text-sm text-gray-700 flex items-center gap-1">
+            Sort:
+            <select
+              className="border rounded px-2 py-1 text-sm"
+              value={sort}
+              onChange={e => handleSortChange(e.target.value)}
+            >
+              <option value="">Default</option>
+              <option value="aiAnalysis.matchingScore">Match Score ↑</option>
+              <option value="-aiAnalysis.matchingScore">Match Score ↓</option>
+            </select>
+            {sort === "aiAnalysis.matchingScore" && <ArrowUpZA className="w-4 h-4 text-blue-500" />}
+            {sort === "-aiAnalysis.matchingScore" && <ArrowDownAZ className="w-4 h-4 text-blue-500" />}
+          </label>
+        </div>
+      </div>
       {/* Resumes Table */}
       <ResumeTable
         resumes={resumes}

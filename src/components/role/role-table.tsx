@@ -11,6 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Role } from "@/features/role/schemas/role.schema";
+import { Access } from "@/components/access";
+import { ALL_PERMISSIONS } from "@/shared/config/permissions";
 
 interface RoleTableProps {
   roles: Role[];
@@ -40,39 +42,41 @@ export function RoleTable({
   }
 
   return (
-    <div className="bg-white rounded-lg border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>IsActive</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {roles.length === 0 ? (
+    <Access permission={ALL_PERMISSIONS.ROLES.GET_PAGINATE}>
+      <div className="bg-white rounded-lg border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                No roles found
-              </TableCell>
+              <TableHead className="w-[80px]">STT</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>IsActive</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ) : (
-            roles.map((role, index) => (
-              <RoleTableRow
-                key={role._id}
-                role={role}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                orderNumber={(currentPage - 1) * pageSize + index + 1}
-              />
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {roles.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                  No roles found
+                </TableCell>
+              </TableRow>
+            ) : (
+              roles.map((role, index) => (
+                <RoleTableRow
+                  key={role._id}
+                  role={role}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  orderNumber={(currentPage - 1) * pageSize + index + 1}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </Access>
   );
 }
 
@@ -107,22 +111,26 @@ function RoleTableRow({
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(role)}
-            title="Edit role"
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(role._id)}
-            title="Delete role"
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Access permission={ALL_PERMISSIONS.ROLES.UPDATE} hideChildren>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(role)}
+              title="Edit role"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </Access>
+          <Access permission={ALL_PERMISSIONS.ROLES.DELETE} hideChildren>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDelete(role._id)}
+              title="Delete role"
+            >
+              <Trash2 className="h-4 w-4 text-red-500" />
+            </Button>
+          </Access>
         </div>
       </TableCell>
     </TableRow>

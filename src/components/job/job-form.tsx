@@ -333,7 +333,7 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                   placeholder="Chọn công ty"
                   searchPlaceholder="Tìm kiếm công ty..."
                   emptyText="Không tìm thấy công ty"
-                  disabled={isLoading || !!initialData}
+                  disabled={isLoading }
                 />
               </FormControl>
               <FormMessage />

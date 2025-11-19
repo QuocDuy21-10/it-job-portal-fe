@@ -6,8 +6,7 @@ import { X, Upload, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
-import { useFileOperations } from "@/hooks/use-file";
-import { useCreateResumeMutation } from "@/features/resume/redux/resume.api";
+import { useCreateResumeWithUploadMutation } from "@/features/resume/redux/resume.api";
 import { selectAuth } from "@/features/auth/redux/auth.slice";
 
 interface ApplyModalProps {
@@ -26,7 +25,7 @@ export default function ApplyModal({
   companyId,
 }: ApplyModalProps) {
   const { user } = useSelector(selectAuth);
-  const [createResume] = useCreateResumeMutation();
+  const [createResumeWithUpload, { isLoading: isUploading }] = useCreateResumeWithUploadMutation();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     phone: "",
@@ -65,8 +64,6 @@ export default function ApplyModal({
     }
   };
 
-  const { handleUpload, isUploading } = useFileOperations();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cvFile) {
@@ -76,16 +73,9 @@ export default function ApplyModal({
 
     setIsSubmitting(true);
     try {
-      // Upload CV first
-      const fileName = await handleUpload(cvFile, "resumes");
-      if (!fileName) {
-        throw new Error("Upload CV thất bại");
-      }
-
-      // Create resume application
-      const response = await createResume({
-        url: fileName, // URL của CV đã upload
-        companyId: companyId,
+      // Upload CV and create resume in one API call
+      const response = await createResumeWithUpload({
+        file: cvFile,
         jobId: jobId,
       }).unwrap();
 
@@ -102,7 +92,8 @@ export default function ApplyModal({
         throw new Error(response.message || "Có lỗi khi nộp đơn");
       }
     } catch (error: any) {
-      toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      const errorMessage = error?.data?.message || error?.message || "Có lỗi xảy ra, vui lòng thử lại";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -221,10 +212,10 @@ export default function ApplyModal({
           {/* Submit Button */}
           <Button
             type="submit"
-            disabled={isSubmitting || !cvFile}
+            disabled={isSubmitting || isUploading || !cvFile}
             className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground font-semibold h-10"
           >
-            {isSubmitting ? "Đang gửi..." : "Gửi đơn ứng tuyển"}
+            {isSubmitting || isUploading ? "Đang gửi..." : "Gửi đơn ứng tuyển"}
           </Button>
         </form>
       </Card>

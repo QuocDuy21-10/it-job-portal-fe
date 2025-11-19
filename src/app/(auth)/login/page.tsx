@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Briefcase, Mail, Lock, Loader2, EyeOff, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOneTap } from "@/components/google-one-tap";
+import { getDefaultRoute } from "@/shared/constants/roles";
 
 export default function LoginPage() {
   const [socialLoading, setSocialLoading] = useState<
@@ -39,6 +40,22 @@ export default function LoginPage() {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  /**
+   * Helper function để xác định route redirect sau khi login
+   * Priority: returnUrl > role-based default route
+   */
+  const getRedirectUrl = (userRole?: string): string => {
+    // Kiểm tra xem có returnUrl trong URL params không
+    const returnUrl = searchParams?.get("returnUrl");
+    if (returnUrl) {
+      return returnUrl;
+    }
+    
+    // Nếu không có returnUrl, dùng route mặc định theo role
+    return getDefaultRoute(userRole);
+  };
 
   const {
     register,
@@ -60,23 +77,35 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const response = await login(data).unwrap();
+      
       if (response.statusCode === 201) {
         // Lưu access token vào localStorage
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
         }
+        
         // Dispatch action để update Redux state
         if (response.data?.user) {
           dispatch(setUserLoginInfo(response.data.user));
         }
+        
+        // Hiển thị thông báo thành công
         toast.success("Đăng nhập thành công!");
-        router.push("/");
+        
+        // Lấy role từ response
+        const userRole = response.data?.user?.role?.name;
+        
+        // Xác định URL redirect và chuyển hướng
+        const redirectUrl = getRedirectUrl(userRole);
+        router.push(redirectUrl);
       }
     } catch (error: any) {
       console.error("Login error:", error);
       const errorMessage =
-        error?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
-      toast.error(`Đăng nhập thất bại: ${errorMessage}`);
+        error?.data?.message ||
+        error?.message ||
+        "Đăng nhập thất bại. Vui lòng thử lại.";
+      toast.error(errorMessage);
     }
   };
 
@@ -95,18 +124,30 @@ export default function LoginPage() {
       }).unwrap();
 
       if (response.statusCode === 201) {
+        // Lưu access token
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
         }
+        
+        // Update Redux state
         if (response.data?.user) {
           dispatch(setUserLoginInfo(response.data.user));
         }
+        
+        // Hiển thị thông báo thành công
         toast.success("Đăng nhập với Google thành công!");
-        router.push("/");
+        
+        // Lấy role và redirect
+        const userRole = response.data?.user?.role?.name;
+        const redirectUrl = getRedirectUrl(userRole);
+        router.push(redirectUrl);
       }
     } catch (error: any) {
       console.error("Google login error:", error);
-      const errorMessage = error?.message || "Đăng nhập với Google thất bại.";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Đăng nhập với Google thất bại.";
       toast.error(errorMessage);
     } finally {
       setSocialLoading(null);
