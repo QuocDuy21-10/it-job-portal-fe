@@ -76,6 +76,7 @@ const authSlice = createSlice({
               name: userData.role.name,
             },
             permissions: userData.permissions || [],
+            savedJobs: userData.savedJobs || [],
           };
           state.isAuthenticated = true;
         }
@@ -105,6 +106,7 @@ const authSlice = createSlice({
               name: userData.role.name,
             },
             permissions: userData.permissions || [],
+            jobFavorites: userData.jobFavorites || [],
           };
           state.isAuthenticated = true;
         } else {
@@ -164,6 +166,7 @@ const authSlice = createSlice({
                 name: userData.role.name,
               },
               permissions: userData.permissions || [],
+              jobFavorites: userData.jobFavorites || [],
             };
             state.isAuthenticated = true;
           }
@@ -249,4 +252,10 @@ export const selectHasRole =
 export const selectIsAdmin = createSelector(
   [selectUserRole],
   (role) => isAdminRole(role)
+);
+
+// ✅ NEW: Selector để lấy jobFavorites
+export const selectJobFavorites = createSelector(
+  [selectUser],
+  (user) => user?.jobFavorites ?? []
 );

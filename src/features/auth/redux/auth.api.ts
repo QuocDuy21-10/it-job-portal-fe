@@ -4,6 +4,9 @@ import {
   LoginFormData,
   LoginResponse,
   RegisterFormData,
+  ForgotPasswordFormData,
+  ResetPasswordFormData,
+  ChangePasswordFormData,
 } from "../schemas/auth.schema";
 import { ApiResponse } from "@/shared/base/api-response.base";
 
@@ -36,6 +39,28 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Auth"],
     }),
+
+    verifyEmail: builder.mutation<
+      ApiResponse<{ message: string }>,
+      { _id: string; code: string }
+    >({
+      query: (data) => ({
+        url: "/auth/verify",
+        method: "POST",
+        data,
+      }),
+    }),
+
+    resendCode: builder.mutation<
+      ApiResponse<{ message: string }>,
+      { id: string }
+    >({
+      query: (data) => ({
+        url: "/auth/resend-code",
+        method: "POST",
+        data,
+      }),
+    }),
     
     logout: builder.mutation<ApiResponse<any>, void>({
       query: () => ({
@@ -67,6 +92,40 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Auth"],
     }),
+
+    changePassword: builder.mutation<
+      ApiResponse<{ message: string }>,
+      ChangePasswordFormData
+    >({
+      query: (data) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
+    forgotPassword: builder.mutation<
+      ApiResponse<{ message: string }>,
+      ForgotPasswordFormData
+    >({
+      query: (data) => ({
+        url: "/auth/forgot-password",
+        method: "POST",
+        data,
+      }),
+    }),
+
+    resetPassword: builder.mutation<
+      ApiResponse<{ message: string }>,
+      { token: string; email: string; newPassword: string }
+    >({
+      query: (data) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        data,
+      }),
+    }),
   }),
 });
 
@@ -78,4 +137,7 @@ export const {
   useLogoutMutation,
   useRefreshTokenMutation,
   useGoogleLoginMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useChangePasswordMutation,
 } = authApi;

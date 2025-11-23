@@ -206,6 +206,90 @@ export const RegisterSchema = z
 
 export type RegisterFormData = z.infer<typeof RegisterSchema>;
 
+// FORGOT PASSWORD SCHEMA
+export const ForgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Vui lòng nhập email")
+    .trim()
+    .toLowerCase()
+    .email("Email không hợp lệ")
+    .regex(EMAIL_REGEX, "Định dạng email không đúng")
+    .max(255, "Email không được quá 255 ký tự"),
+});
+
+export type ForgotPasswordFormData = z.infer<typeof ForgotPasswordSchema>;
+
+// RESET PASSWORD SCHEMA
+export const ResetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(1, "Vui lòng nhập mật khẩu mới")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .max(128, "Mật khẩu không được quá 128 ký tự")
+      .regex(
+        PASSWORD_UPPERCASE,
+        "Mật khẩu phải chứa ít nhất một chữ cái viết hoa"
+      )
+      .regex(
+        PASSWORD_LOWERCASE,
+        "Mật khẩu phải chứa ít nhất một chữ cái viết thường"
+      )
+      .regex(PASSWORD_DIGIT, "Mật khẩu phải chứa ít nhất một số")
+      .regex(
+        PASSWORD_SPECIAL,
+        "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (!@#$%^&*...)"
+      )
+      .refine((password) => !/\s/.test(password), {
+        message: "Mật khẩu không được chứa khoảng trắng",
+      }),
+
+    confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordFormData = z.infer<typeof ResetPasswordSchema>;
+
+// CHANGE PASSWORD SCHEMA
+export const ChangePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Vui lòng nhập mật khẩu hiện tại"),
+
+    newPassword: z
+      .string()
+      .min(1, "Vui lòng nhập mật khẩu mới")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .max(128, "Mật khẩu không được quá 128 ký tự")
+      .regex(
+        PASSWORD_UPPERCASE,
+        "Mật khẩu phải chứa ít nhất một chữ cái viết hoa"
+      )
+      .regex(
+        PASSWORD_LOWERCASE,
+        "Mật khẩu phải chứa ít nhất một chữ cái viết thường"
+      )
+      .regex(PASSWORD_DIGIT, "Mật khẩu phải chứa ít nhất một số")
+      .regex(
+        PASSWORD_SPECIAL,
+        "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (!@#$%^&*...)"
+      )
+      .refine((password) => !/\s/.test(password), {
+        message: "Mật khẩu không được chứa khoảng trắng",
+      }),
+
+    confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  });
+  
+export type ChangePasswordFormData = z.infer<typeof ChangePasswordSchema>;
+
 export type AccountResponse = Omit<
   z.infer<typeof LoginResponseSchema>,
   "access_token"
@@ -261,4 +345,5 @@ export interface UserInfo {
   name: string;
   role: Role;
   permissions: Permission[];
+  jobFavorites?: string[];
 }
