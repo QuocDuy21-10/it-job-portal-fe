@@ -195,7 +195,8 @@ export default function EmailSubscriptionPage() {
               <option value="Da Nang">Đà Nẵng</option>
               <option value="Can Tho">Cần Thơ</option>
             </select>
-          </div> */}
+          </div> 
+            */}
             <Button
               onClick={handleRegister}
               disabled={
