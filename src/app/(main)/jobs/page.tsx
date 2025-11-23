@@ -24,6 +24,7 @@ import jobLevels from "@/shared/data/job-level.json";
 import { Job } from "@/features/job/schemas/job.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useI18n } from "@/hooks/use-i18n";
+import { JobCard as JobCardComponent } from "@/components/job/job-card";
 
 export default function JobsPage() {
   const router = useRouter();
@@ -214,7 +215,7 @@ export default function JobsPage() {
           <>
             <div className="space-y-4">
               {jobs.map((job: Job) => (
-                <JobCard key={job._id} job={job} />
+                <JobCardComponent key={job._id} job={job} variant="detailed" />
               ))}
             </div>
 

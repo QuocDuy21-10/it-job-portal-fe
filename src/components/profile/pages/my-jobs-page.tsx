@@ -4,9 +4,11 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Heart } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
+import { useGetSavedJobsQuery } from "@/features/user/redux/user.api";
+import { SavedJob } from "@/features/user/schemas/user.schema";
 import { toast } from "sonner";
 
 type TabType = "applied" | "saved" | "viewed";
@@ -22,12 +24,23 @@ interface Job {
 
 export default function MyJobsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("applied");
-
   const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageLimit = 10;
 
   // API mutation to fetch applied jobs
-  const [takeOutAppliedJob, { isLoading }] = useTakeOutAppliedJobMutation();
+  const [takeOutAppliedJob, { isLoading: isLoadingApplied }] =
+    useTakeOutAppliedJobMutation();
+
+  // API query to fetch saved jobs
+  const {
+    data: savedJobsData,
+    isLoading: isLoadingSaved,
+    refetch: refetchSavedJobs,
+  } = useGetSavedJobsQuery(
+    { page: currentPage, limit: pageLimit },
+    { skip: activeTab !== "saved" }
+  );
 
   // Fetch applied jobs on component mount
   useEffect(() => {
@@ -55,7 +68,7 @@ export default function MyJobsPage() {
     };
 
     fetchAppliedJobs();
-  }, [takeOutAppliedJob, toast]);
+  }, [takeOutAppliedJob]);
 
   // const savedJobs: Job[] = [
   //   {
@@ -84,27 +97,26 @@ export default function MyJobsPage() {
   //   },
   // ];
 
-  const getTabContent = () => {
+  // Extract saved jobs from API response
+  const savedJobs: SavedJob[] = savedJobsData?.data?.result || [];
+
+  const getTabContent = (): ResumeAppliedJob[] | SavedJob[] => {
     switch (activeTab) {
       case "applied":
         return appliedJobs;
-      // case "saved":
-      //   return savedJobs;
-      // case "viewed":
-      //   return viewedJobs;
+      case "saved":
+        return savedJobs;
       default:
         return [];
     }
   };
 
-  // // Helper function to check if item is ResumeAppliedJob
-  // const isResumeAppliedJob = (
-  //   item: ResumeAppliedJob | Job
-  // ): item is ResumeAppliedJob => {
-  //   return (
-  //     "jobId" in item && "company" in item && typeof item.company === "object"
-  //   );
-  // };
+  // Type guard to check if item is ResumeAppliedJob
+  const isResumeAppliedJob = (
+    item: ResumeAppliedJob | SavedJob
+  ): item is ResumeAppliedJob => {
+    return "jobId" in item && typeof item.jobId === "object";
+  };
 
   const tabs: Array<{
     id: TabType;
@@ -118,18 +130,12 @@ export default function MyJobsPage() {
       icon: <Briefcase className="w-4 h-4" />,
       count: appliedJobs.length,
     },
-    // {
-    //   id: "saved",
-    //   label: "Đã lưu",
-    //   icon: <Heart className="w-4 h-4" />,
-    //   count: savedJobs.length,
-    // },
-    // {
-    //   id: "viewed",
-    //   label: "Đã xem gần đây",
-    //   icon: <Eye className="w-4 h-4" />,
-    //   count: viewedJobs.length,
-    // },
+    {
+      id: "saved",
+      label: "Đã lưu",
+      icon: <Heart className="w-4 h-4" />,
+      count: savedJobsData?.data?.meta?.total || 0,
+    },
   ];
 
   return (
@@ -159,36 +165,63 @@ export default function MyJobsPage() {
 
       {/* Job List */}
       <div className="space-y-3">
-        {getTabContent().length > 0 ? (
-          getTabContent().map((job) => (
-            <Card
-              key={job.jobId._id}
-              className="p-4 bg-card border border-border hover:border-primary transition cursor-pointer"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground text-lg">
-                    {job.jobId.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {job.companyId.name}
-                  </p>
-                  <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
-                    <span>{job.jobId.location}</span>
-                    <span className="text-primary font-medium">
-                      {job.jobId.salary} VND
-                    </span>
-                  </div>
-                  {job.createdAt && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Ứng tuyển:{" "}
-                      {new Date(job.createdAt).toLocaleDateString("vi-VN")}
+        {isLoadingApplied || isLoadingSaved ? (
+          <Card className="p-8 bg-secondary/50 border border-dashed border-border text-center">
+            <p className="text-muted-foreground">Đang tải dữ liệu...</p>
+          </Card>
+        ) : getTabContent().length > 0 ? (
+          getTabContent().map((job) => {
+            const isApplied = isResumeAppliedJob(job);
+            const jobData = isApplied
+              ? {
+                  id: job.jobId._id,
+                  name: job.jobId.name,
+                  companyName: job.companyId.name,
+                  location: job.jobId.location,
+                  salary: job.jobId.salary,
+                  createdAt: job.createdAt,
+                }
+              : {
+                  id: job._id,
+                  name: job.name,
+                  companyName: job.company.name,
+                  location: job.location,
+                  salary: job.salary,
+                  createdAt: undefined,
+                };
+
+            return (
+              <Card
+                key={jobData.id}
+                className="p-4 bg-card border border-border hover:border-primary transition cursor-pointer"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground text-lg">
+                      {jobData.name}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {jobData.companyName}
                     </p>
-                  )}
+                    <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
+                      <span>{jobData.location}</span>
+                      <span className="text-primary font-medium">
+                        {jobData.salary.toLocaleString()} VND
+                      </span>
+                    </div>
+                    {jobData.createdAt && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Ứng tuyển:{" "}
+                        {new Date(jobData.createdAt).toLocaleDateString(
+                          "vi-VN"
+                        )}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))
+              </Card>
+            );
+          })
         ) : (
           <Card className="p-8 bg-secondary/50 border border-dashed border-border text-center">
             <p className="text-muted-foreground">Chưa có việc làm nào</p>

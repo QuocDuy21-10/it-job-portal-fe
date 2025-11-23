@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import OverviewPage from "@/components/profile/pages/overview-page";
 import MyCVPage from "@/components/profile/pages/my-cv-page";
 import MyJobsPage from "@/components/profile/pages/my-jobs-page";
+import SavedJobsPage from "@/components/profile/pages/saved-jobs-page";
 import EmailSubscriptionPage from "@/components/profile/pages/email-subscription-page";
 import NotificationsPage from "@/components/profile/pages/notifications-page";
 import SettingsPage from "@/components/profile/pages/settings-page";
@@ -24,6 +25,7 @@ export default function ProfileHome() {
       "my-cv",
       "create-cv",
       "my-jobs",
+      "saved-jobs",
       "email-subscription",
       "notifications",
       "settings",
@@ -50,6 +52,8 @@ export default function ProfileHome() {
         return <CreateCVPage onBack={() => handlePageChange("overview")} />;
       case "my-jobs":
         return <MyJobsPage />;
+      case "saved-jobs":
+        return <SavedJobsPage />;
       case "email-subscription":
         return <EmailSubscriptionPage />;
       case "notifications":

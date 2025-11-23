@@ -1,36 +1,46 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AlertCircle, Lock, Trash2 } from "lucide-react";
+import { useChangePasswordMutation } from "@/features/auth/redux/auth.api";
+import { ChangePasswordSchema, ChangePasswordFormData } from "@/features/auth/schemas/auth.schema";
+import { toast } from "sonner";
 
 export default function SettingsPage({
   onNavigateToCCV,
 }: {
   onNavigateToCCV: () => void;
 }) {
-  const [passwords, setPasswords] = useState({
-    current: "",
-    new: "",
-    confirm: "",
+  const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ChangePasswordFormData>({
+    resolver: zodResolver(ChangePasswordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  const handlePasswordChange = () => {
-    if (!passwords.current || !passwords.new || !passwords.confirm) {
-      alert("Vui lòng điền đầy đủ thông tin");
-      return;
+  const onSubmitChangePassword = async (data: ChangePasswordFormData) => {
+    try {
+      await changePassword(data).unwrap();
+      toast.success("Mật khẩu đã được cập nhật thành công");
+      reset();
+    } catch (error: any) {
+      const msg = error?.data?.message || "Đổi mật khẩu thất bại";
+      toast.error(msg);
     }
-
-    if (passwords.new !== passwords.confirm) {
-      alert("Mật khẩu mới không trùng khớp");
-      return;
-    }
-
-    alert("Mật khẩu đã được cập nhật thành công");
-    setPasswords({ current: "", new: "", confirm: "" });
   };
 
   const handleDeleteAccount = () => {
@@ -86,19 +96,21 @@ export default function SettingsPage({
             Đổi mật khẩu
           </h2>
         </div>
-        <div className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmitChangePassword)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               Mật khẩu hiện tại
             </label>
             <input
               type="password"
-              value={passwords.current}
-              onChange={(e) =>
-                setPasswords({ ...passwords, current: e.target.value })
-              }
+              {...register("currentPassword")}
               className="w-full px-3 py-2 border border-border rounded-lg bg-secondary text-foreground"
+              autoComplete="current-password"
+              disabled={isChangingPassword}
             />
+            {errors.currentPassword && (
+              <p className="text-sm text-red-500 mt-1">{errors.currentPassword.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
@@ -106,12 +118,14 @@ export default function SettingsPage({
             </label>
             <input
               type="password"
-              value={passwords.new}
-              onChange={(e) =>
-                setPasswords({ ...passwords, new: e.target.value })
-              }
+              {...register("newPassword")}
               className="w-full px-3 py-2 border border-border rounded-lg bg-secondary text-foreground"
+              autoComplete="new-password"
+              disabled={isChangingPassword}
             />
+            {errors.newPassword && (
+              <p className="text-sm text-red-500 mt-1">{errors.newPassword.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
@@ -119,20 +133,23 @@ export default function SettingsPage({
             </label>
             <input
               type="password"
-              value={passwords.confirm}
-              onChange={(e) =>
-                setPasswords({ ...passwords, confirm: e.target.value })
-              }
+              {...register("confirmPassword")}
               className="w-full px-3 py-2 border border-border rounded-lg bg-secondary text-foreground"
+              autoComplete="new-password"
+              disabled={isChangingPassword}
             />
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-500 mt-1">{errors.confirmPassword.message}</p>
+            )}
           </div>
           <Button
-            onClick={handlePasswordChange}
+            type="submit"
             className="bg-primary hover:bg-primary/90 w-full"
+            disabled={isChangingPassword}
           >
-            Cập nhật mật khẩu
+            {isChangingPassword ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
           </Button>
-        </div>
+        </form>
       </Card>
 
       {/* Delete Account */}

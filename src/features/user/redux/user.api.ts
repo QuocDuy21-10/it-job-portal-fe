@@ -5,6 +5,7 @@ import {
   User,
   UpdateUserFormData,
 } from "../schemas/user.schema";
+import { authApi } from "@/features/auth/redux/auth.api";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -82,6 +83,99 @@ export const userApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+
+    // Save job to favorites
+    saveJob: builder.mutation<ApiResponse<string>, string>({
+      query: (jobId) => ({
+        url: "/users/save-job",
+        method: "POST",
+        data: { jobId },
+      }),
+      invalidatesTags: ["Auth", "User"],
+      // Optimistic update
+      async onQueryStarted(jobId, { dispatch, queryFulfilled }) {
+        // Optimistically update getMe cache
+        const patchResult = dispatch(
+          authApi.util.updateQueryData("getMe", undefined, (draft) => {
+            if (draft.data?.user) {
+              const currentFavorites = draft.data.user.jobFavorites || [];
+              if (!currentFavorites.includes(jobId)) {
+                draft.data.user.jobFavorites = [...currentFavorites, jobId];
+              }
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
+
+    // Unsave job from favorites
+    unsaveJob: builder.mutation<ApiResponse<string>, string>({
+      query: (jobId) => ({
+        url: "/users/save-job",
+        method: "DELETE",
+        data: { jobId },
+      }),
+      invalidatesTags: ["Auth", "User"],
+      // Optimistic update
+      async onQueryStarted(jobId, { dispatch, queryFulfilled }) {
+        // Optimistically update getMe cache
+        const patchResult = dispatch(
+          authApi.util.updateQueryData("getMe", undefined, (draft) => {
+            if (draft.data?.user) {
+              const currentFavorites = draft.data.user.jobFavorites || [];
+              draft.data.user.jobFavorites = currentFavorites.filter(
+                (id: string) => id !== jobId
+              );
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
+
+    // Get saved jobs
+    getSavedJobs: builder.query<
+      ApiResponse<{
+        result: Array<{
+          _id: string;
+          name: string;
+          skills: string[];
+          company: {
+            _id: string;
+            name: string;
+            logo: string;
+          };
+          location: string;
+          salary: number;
+          level: string;
+          startDate: string;
+          endDate: string;
+          formOfWork: string;
+        }>;
+        meta: {
+          current: number;
+          pageSize: number;
+          pages: number;
+          total: number;
+        };
+      }>,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 } = {}) => ({
+        url: `/users/saved-jobs?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
   }),
 });
 
@@ -91,4 +185,7 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useSaveJobMutation,
+  useUnsaveJobMutation,
+  useGetSavedJobsQuery,
 } = userApi;

@@ -52,6 +52,7 @@ export const UserEntitySchema = CreateUserSchema.extend({
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   role: z.string(),
+  savedJobs: z.array(z.string()).optional().default([]),
   createdBy: z
     .object({
       _id: z.string(),
@@ -66,7 +67,26 @@ export const UserEntitySchema = CreateUserSchema.extend({
     .optional(),
 });
 
+// Schema cho SavedJob (từ API GET /users/saved-jobs)
+export const SavedJobSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  skills: z.array(z.string()),
+  company: z.object({
+    _id: z.string(),
+    name: z.string(),
+    logo: z.string(),
+  }),
+  location: z.string(),
+  salary: z.number(),
+  level: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  formOfWork: z.string(),
+});
+
 // Types
 export type User = z.infer<typeof UserEntitySchema>;
 export type CreateUserFormData = z.infer<typeof CreateUserSchema>;
 export type UpdateUserFormData = z.infer<typeof UpdateUserSchema>;
+export type SavedJob = z.infer<typeof SavedJobSchema>;

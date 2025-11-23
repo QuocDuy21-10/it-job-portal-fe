@@ -10,6 +10,7 @@ import {
   Users,
   TrendingUp,
   ArrowRight,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { Company } from "@/features/company/schemas/company.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useI18n } from "@/hooks/use-i18n";
+import { JobCard } from "@/components/job/job-card";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -258,62 +260,7 @@ export default function Home() {
               </div>
             ) : (
               featuredJobsToRender.map((job: Job) => (
-                <Card
-                  key={job._id}
-                  className="hover:shadow-lg transition-shadow duration-300"
-                >
-                  <CardContent className="p-6">
-                    <Link href={`/jobs/${job._id}`} className="block space-y-4">
-                      <div className="flex items-start gap-4">
-                        <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                          {job.company?.logo ? (
-                            <img
-                              src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
-                              alt={`${job.company?.name} logo`}
-                              className="h-full w-full object-cover border border-gray-200 border-solid rounded-lg"
-                            />
-                          ) : (
-                            <Building2 className="h-6 w-6 text-gray-400" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-lg mb-1 line-clamp-2 hover:text-blue-600 transition-colors">
-                            {job.name}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {job.company?.name}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          <MapPin className="h-3 w-3 mr-1" aria-hidden="true" />
-                          {job.location}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs capitalize">
-                          {job.formOfWork}
-                        </Badge>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-sm font-semibold text-blue-600">
-                          ${job.salary?.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {job.createdAt &&
-                            new Date(job.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )}
-                        </span>
-                      </div>
-                    </Link>
-                  </CardContent>
-                </Card>
+                <JobCard key={job._id} job={job} />
               ))
             )}
           </div>

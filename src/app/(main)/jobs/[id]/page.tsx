@@ -16,6 +16,8 @@ import { useParams } from "next/navigation";
 import { useGetJobQuery } from "@/features/job/redux/job.api";
 import { Loader2 } from "lucide-react";
 import parse from "html-react-parser";
+import { useJobFavorite } from "@/hooks/use-job-favorite";
+import { cn } from "@/lib/utils";
 
 // Helper to format salary
 const formatSalary = (salary: number) => {
@@ -32,13 +34,15 @@ export default function JobDetailPage() {
   const jobId = params.id as string;
 
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
 
   const { isAuthenticated } = useSelector(selectAuth);
 
   // Fetch job details
   const { data: response, isLoading, error } = useGetJobQuery(jobId);
   const job = response?.data;
+
+  // Job favorite hook
+  const { isSaved, toggleSaveJob, isLoading: isSavingJob } = useJobFavorite(jobId);
 
   const daysRemaining = job?.endDate
     ? Math.ceil(
@@ -136,17 +140,24 @@ export default function JobDetailPage() {
               >
                 Ứng tuyển ngay (Apply Now)
               </Button>
-              <button
-                onClick={() => setIsSaved(!isSaved)}
-                className={`flex-1 sm:flex-none px-6 h-12 border-2 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${
+              <Button
+                onClick={toggleSaveJob}
+                disabled={isSavingJob}
+                className={cn(
+                  "flex-1 sm:flex-none px-6 h-12 border-2 rounded-lg font-semibold transition flex items-center justify-center gap-2",
                   isSaved
-                    ? "bg-accent text-accent-foreground border-accent"
-                    : "border-border text-foreground hover:bg-secondary"
-                }`}
+                    ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                )}
               >
-                <Heart className={`w-5 h-5 ${isSaved ? "fill-current" : ""}`} />
-                Lưu job (Save Job)
-              </button>
+                <Heart
+                  className={cn(
+                    "w-5 h-5 transition-all",
+                    isSaved ? "fill-current" : ""
+                  )}
+                />
+                {isSaved ? "Đã lưu (Saved)" : "Lưu tin (Save Job)"}
+              </Button>
             </div>
 
             {/* Deadline Alert */}

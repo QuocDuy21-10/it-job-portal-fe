@@ -7,6 +7,7 @@ import {
   FileText,
   Edit3,
   Briefcase,
+  Heart,
   Mail,
   Bell,
   Settings,
@@ -17,6 +18,7 @@ export type PageType =
   | "my-cv"
   | "create-cv"
   | "my-jobs"
+  | "saved-jobs"
   | "email-subscription"
   | "notifications"
   | "settings";
@@ -48,6 +50,11 @@ export default function ProfileSidebar({
       id: "my-jobs",
       label: "Việc làm của tôi",
       icon: <Briefcase className="w-5 h-5" />,
+    },
+    {
+      id: "saved-jobs",
+      label: "Việc làm đã lưu",
+      icon: <Heart className="w-5 h-5" />,
     },
     {
       id: "email-subscription",
