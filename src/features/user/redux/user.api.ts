@@ -176,6 +176,92 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+
+    // Follow company
+    followCompany: builder.mutation<ApiResponse<string>, string>({
+      query: (companyId) => ({
+        url: "/users/follow-company",
+        method: "POST",
+        data: { companyId },
+      }),
+      invalidatesTags: ["Auth", "User"],
+      // Optimistic update
+      async onQueryStarted(companyId, { dispatch, queryFulfilled }) {
+        // Optimistically update getMe cache
+        const patchResult = dispatch(
+          authApi.util.updateQueryData("getMe", undefined, (draft) => {
+            if (draft.data?.user) {
+              const currentFollowing = draft.data.user.companyFollowing || [];
+              if (!currentFollowing.includes(companyId)) {
+                draft.data.user.companyFollowing = [...currentFollowing, companyId];
+              }
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
+
+    // Unfollow company
+    unfollowCompany: builder.mutation<ApiResponse<string>, string>({
+      query: (companyId) => ({
+        url: "/users/follow-company",
+        method: "DELETE",
+        data: { companyId },
+      }),
+      invalidatesTags: ["Auth", "User"],
+      // Optimistic update
+      async onQueryStarted(companyId, { dispatch, queryFulfilled }) {
+        // Optimistically update getMe cache
+        const patchResult = dispatch(
+          authApi.util.updateQueryData("getMe", undefined, (draft) => {
+            if (draft.data?.user) {
+              const currentFollowing = draft.data.user.companyFollowing || [];
+              draft.data.user.companyFollowing = currentFollowing.filter(
+                (id: string) => id !== companyId
+              );
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
+
+    // Get following companies
+    getFollowingCompanies: builder.query<
+      ApiResponse<{
+        result: Array<{
+          _id: string;
+          name: string;
+          logo: string;
+          address: string;
+          description: string;
+          numberOfEmployees: string;
+          website: string;
+        }>;
+        meta: {
+          current: number;
+          pageSize: number;
+          pages: number;
+          total: number;
+        };
+      }>,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 } = {}) => ({
+        url: `/users/following-companies?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
   }),
 });
 
@@ -188,4 +274,7 @@ export const {
   useSaveJobMutation,
   useUnsaveJobMutation,
   useGetSavedJobsQuery,
+  useFollowCompanyMutation,
+  useUnfollowCompanyMutation,
+  useGetFollowingCompaniesQuery,
 } = userApi;

@@ -1,8 +1,11 @@
 "use client";
 
 import { Plus, X } from 'lucide-react';
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import CVFormSection from "@/components/sections/cv-form-section";
+import { LanguageRequestSchema, type LanguageRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { toast } from "sonner";
 
 interface Language {
   id: string;
@@ -25,12 +28,47 @@ export default function LanguagesSection({
   onUpdate,
   onRemove,
 }: LanguagesSectionProps) {
+  const [errors, setErrors] = useState<Record<string, { name?: string; proficiency?: string }>>({});
+
   const handleAddLanguage = () => {
+    if (languages.length >= 5) {
+      toast.error("Bạn chỉ có thể thêm tối đa 5 ngôn ngữ");
+      return;
+    }
     onAdd({
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: "",
       proficiency: "Intermediate",
     });
+  };
+
+  const handleUpdate = (id: string, field: "name" | "proficiency", value: string) => {
+    onUpdate(id, field, value);
+    
+    const lang = languages.find((l) => l.id === id);
+    if (lang) {
+      const updatedLang = { ...lang, [field]: value };
+      const result = LanguageRequestSchema.safeParse({
+        name: updatedLang.name,
+        proficiency: updatedLang.proficiency,
+      });
+      
+      if (!result.success) {
+        const fieldErrors: { name?: string; proficiency?: string } = {};
+        result.error.issues.forEach((issue) => {
+          if (issue.path[0] === "name" || issue.path[0] === "proficiency") {
+            fieldErrors[issue.path[0]] = issue.message;
+          }
+        });
+        setErrors((prev) => ({ ...prev, [id]: fieldErrors }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[id];
+          return newErrors;
+        });
+      }
+    }
   };
 
   return (
@@ -60,28 +98,31 @@ export default function LanguagesSection({
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Language
+                    Language *
                   </label>
                   <input
                     type="text"
                     value={lang.name}
-                    onChange={(e) =>
-                      onUpdate(lang.id, "name", e.target.value)
-                    }
+                    onChange={(e) => handleUpdate(lang.id, "name", e.target.value)}
                     placeholder="e.g., English, French"
-                    className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors[lang.id]?.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
                   />
+                  {errors[lang.id]?.name && (
+                    <p className="mt-1 text-xs text-destructive">{errors[lang.id].name}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Proficiency
+                    Proficiency *
                   </label>
                   <select
                     value={lang.proficiency}
-                    onChange={(e) =>
-                      onUpdate(lang.id, "proficiency", e.target.value)
-                    }
-                    className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    onChange={(e) => handleUpdate(lang.id, "proficiency", e.target.value)}
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors[lang.id]?.proficiency ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
                   >
                     {PROFICIENCY_LEVELS.map((level) => (
                       <option key={level} value={level}>
@@ -89,6 +130,9 @@ export default function LanguagesSection({
                       </option>
                     ))}
                   </select>
+                  {errors[lang.id]?.proficiency && (
+                    <p className="mt-1 text-xs text-destructive">{errors[lang.id].proficiency}</p>
+                  )}
                 </div>
                 <button
                   onClick={() => onRemove(lang.id)}

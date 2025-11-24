@@ -127,13 +127,35 @@ const styles = StyleSheet.create({
 
 /**
  * Helper function to format date for display
- * Empty string means "Present" (current job/position)
+ * Handles Date objects, strings, and empty values
+ * Empty string or missing date means "Present" (current job/position)
  */
-const formatDateForDisplay = (date: string): string => {
-  if (!date || date.trim() === "") {
+const formatDateForDisplay = (date: Date | string | undefined): string => {
+  if (!date) {
     return "Present";
   }
-  return date;
+  
+  // If it's a Date object, convert to localized string
+  if (date instanceof Date) {
+    return date.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+  
+  // If it's an empty string, show "Present"
+  if (typeof date === 'string' && date.trim() === "") {
+    return "Present";
+  }
+  
+  // If it's a date string, format it
+  if (typeof date === 'string') {
+    try {
+      const dateObj = new Date(date);
+      return dateObj.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    } catch {
+      return date;
+    }
+  }
+  
+  return String(date);
 };
 
 /**
@@ -154,7 +176,11 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
             {personalInfo.email && <Text style={styles.contactItem}>📧 {personalInfo.email}</Text>}
             {personalInfo.phone && <Text style={styles.contactItem}>📱 {personalInfo.phone}</Text>}
             {personalInfo.address && <Text style={styles.contactItem}>📍 {personalInfo.address}</Text>}
-            {personalInfo.birthday && <Text style={styles.contactItem}>🎂 {personalInfo.birthday}</Text>}
+            {personalInfo.birthday && (
+              <Text style={styles.contactItem}>
+                🎂 {formatDateForDisplay(personalInfo.birthday)}
+              </Text>
+            )}
             {personalInfo.gender && <Text style={styles.contactItem}>👤 {personalInfo.gender}</Text>}
           </View>
           {personalInfo.personalLink && (
@@ -193,7 +219,7 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
               <View key={edu.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{edu.school}</Text>
-                  <Text style={styles.itemDate}>{edu.endDate}</Text>
+                  <Text style={styles.itemDate}>{formatDateForDisplay(edu.endDate)}</Text>
                 </View>
                 <Text style={styles.itemSubtitle}>
                   {edu.degree} - {edu.field}
@@ -267,7 +293,7 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
               <View key={cert.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{cert.name}</Text>
-                  <Text style={styles.itemDate}>{cert.date}</Text>
+                  <Text style={styles.itemDate}>{formatDateForDisplay(cert.date)}</Text>
                 </View>
                 <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
               </View>
@@ -283,7 +309,7 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
               <View key={award.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{award.name}</Text>
-                  <Text style={styles.itemDate}>{award.date}</Text>
+                  <Text style={styles.itemDate}>{formatDateForDisplay(award.date)}</Text>
                 </View>
                 {award.description && (
                   <Text style={styles.itemDescription}>{award.description}</Text>

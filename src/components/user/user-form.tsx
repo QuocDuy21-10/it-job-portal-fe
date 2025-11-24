@@ -69,9 +69,6 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
       name: initialData?.name || "",
       email: initialData?.email || "",
       password: "",
-      age: initialData?.age || 0,
-      gender: initialData?.gender || "male",
-      address: initialData?.address || "",
       role: initialData?.role || "",
     },
     mode: "onChange",
@@ -150,7 +147,7 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
           />
         </div>
 
-        {/* Row 2: Password and Age */}
+        {/* Row 2: Password */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {!isEditMode && (
             <FormField
@@ -183,82 +180,6 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
               )}
             />
           )}
-
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Age <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    placeholder="0"
-                    min={0}
-                    max={150}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Row 3: Gender and Address */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Gender <span className="text-red-500">*</span>
-                </FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Address <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Street address"
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
         {/* Replace company fields with Combobox */}
         <FormField
           control={form.control}
@@ -298,6 +219,7 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
             </div>
           </div>
         )}
+        </div>
 
         <FormField
           control={form.control}

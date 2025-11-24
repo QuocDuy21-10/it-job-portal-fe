@@ -14,74 +14,89 @@ interface JobCardProps {
   className?: string;
 }
 
-/**
- * JobCard Component - Reusable job card với save/unsave functionality
- * 
- * Features:
- * - Optimistic UI updates
- * - Heart icon để save/unsave
- * - Responsive design
- * - Multiple variants
- */
+// Tách nút Heart ra component riêng để tái sử dụng và dễ quản lý logic UI
+const FavoriteButton = ({
+  isSaved,
+  onClick,
+  disabled,
+  className,
+}: {
+  isSaved: boolean;
+  onClick: (e: React.MouseEvent) => void;
+  disabled: boolean;
+  className?: string;
+}) => {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn(
+        "rounded-full hover:bg-primary/10 transition-all duration-300 active:scale-95", // Hiệu ứng click
+        className
+      )}
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={isSaved ? "Bỏ lưu công việc" : "Lưu công việc"}
+    >
+      <Heart
+        className={cn(
+          "h-5 w-5 transition-colors duration-300",
+          isSaved
+            ? "fill-primary text-primary" // Active: Lõi màu Primary, Viền Primary
+            : "fill-transparent text-muted-foreground hover:text-primary" // Inactive: Lõi trong suốt, Viền xám (hover chuyển primary)
+        )}
+      />
+    </Button>
+  );
+};
+
 export function JobCard({ job, variant = "default", className }: JobCardProps) {
   const { isSaved, toggleSaveJob, isLoading } = useJobFavorite(job._id);
 
+  // Render cho variant Compact
   if (variant === "compact") {
     return (
-      <Card className={cn("hover:shadow-md transition-shadow", className)}>
+      <Card className={cn("hover:shadow-md transition-shadow group", className)}>
         <CardContent className="p-4">
           <Link href={`/jobs/${job._id}`} className="block">
             <div className="flex items-start gap-3">
-              {/* Company Logo */}
-              <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden border border-border">
                 {job.company?.logo ? (
                   <img
                     src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
                     alt={`${job.company?.name} logo`}
-                    className="h-full w-full object-cover border border-gray-200 border-solid rounded-lg"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
-                  <Building2 className="h-6 w-6 text-gray-400" />
+                  <Building2 className="h-6 w-6 text-muted-foreground" />
                 )}
               </div>
 
-              {/* Job Info */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-base mb-1 line-clamp-1 hover:text-blue-600 transition-colors">
+                <h3 className="font-semibold text-base mb-1 line-clamp-1 group-hover:text-primary transition-colors">
                   {job.name}
                 </h3>
-                <p className="text-sm text-gray-600 line-clamp-1">
+                <p className="text-sm text-muted-foreground line-clamp-1">
                   {job.company?.name}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs font-normal">
                     <MapPin className="h-3 w-3 mr-1" />
                     {job.location}
                   </Badge>
-                  <span className="text-sm font-semibold text-blue-600">
+                  <span className="text-sm font-semibold text-primary">
                     ${job.salary?.toLocaleString()}
                   </span>
                 </div>
               </div>
 
-              {/* Save Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 flex-shrink-0"
-                onClick={toggleSaveJob}
-                disabled={isLoading}
-                aria-label={isSaved ? "Unsave job" : "Save job"}
-              >
-                <Heart
-                  className={cn(
-                    "h-5 w-5 transition-all",
-                    isSaved
-                      ? "fill-red-500 text-red-500"
-                      : "text-gray-400 hover:text-red-500"
-                  )}
-                />
-              </Button>
+              {/* Nút Save đã được tối ưu UI */}
+              <FavoriteButton 
+                isSaved={isSaved} 
+                onClick={toggleSaveJob} 
+                disabled={isLoading} 
+                className="h-8 w-8 -mt-1 -mr-1"
+              />
             </div>
           </Link>
         </CardContent>
@@ -89,33 +104,31 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
     );
   }
 
+  // Render cho variant Detailed
   if (variant === "detailed") {
     return (
-      <Card className={cn("hover:shadow-md transition-shadow", className)}>
+      <Card className={cn("hover:shadow-md transition-shadow group", className)}>
         <CardContent className="p-6">
           <Link href={`/jobs/${job._id}`} className="block">
             <div className="flex flex-col sm:flex-row gap-4">
-              {/* Company Logo */}
-              <div className="h-16 w-16 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <div className="h-16 w-16 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden border border-border">
                 {job.company?.logo ? (
                   <img
                     src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
                     alt={`${job.company.name} logo`}
-                    className="h-full w-full object-cover object-center border border-gray-200 border-solid rounded-lg"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
-                  <Building2 className="h-8 w-8 text-gray-400" />
+                  <Building2 className="h-8 w-8 text-muted-foreground" />
                 )}
               </div>
 
-              {/* Job Info */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-xl mb-1 hover:text-blue-600 transition-colors">
+                <h3 className="font-semibold text-xl mb-1 group-hover:text-primary transition-colors">
                   {job.name}
                 </h3>
-                <p className="text-gray-600 mb-3">{job.company?.name}</p>
+                <p className="text-muted-foreground mb-3">{job.company?.name}</p>
 
-                {/* Badges */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   <Badge variant="secondary" className="text-xs">
                     <MapPin className="h-3 w-3 mr-1" />
@@ -130,32 +143,11 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                     </Badge>
                   )}
                 </div>
-
-                {/* Skills */}
-                {job.skills && job.skills.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {job.skills.slice(0, 5).map((skill: string) => (
-                      <Badge
-                        key={skill}
-                        variant="secondary"
-                        className="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                    {job.skills.length > 5 && (
-                      <Badge variant="secondary" className="text-xs">
-                        +{job.skills.length - 5} more
-                      </Badge>
-                    )}
-                  </div>
-                )}
               </div>
 
-              {/* Date & Actions */}
               <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 sm:min-w-[120px]">
                 {job.createdAt && (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {new Date(job.createdAt).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -163,28 +155,16 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                   </span>
                 )}
 
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-blue-600">
+                <div className="flex items-center gap-2 mt-auto">
+                  <span className="text-sm font-semibold text-primary">
                     ${job.salary?.toLocaleString()}
                   </span>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={toggleSaveJob}
-                    disabled={isLoading}
-                    aria-label={isSaved ? "Unsave job" : "Save job"}
-                  >
-                    <Heart
-                      className={cn(
-                        "h-5 w-5 transition-all",
-                        isSaved
-                          ? "fill-red-500 text-red-500"
-                          : "text-gray-400 hover:text-red-500"
-                      )}
-                    />
-                  </Button>
+                  
+                  <FavoriteButton 
+                    isSaved={isSaved} 
+                    onClick={toggleSaveJob} 
+                    disabled={isLoading} 
+                  />
                 </div>
               </div>
             </div>
@@ -194,74 +174,61 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
     );
   }
 
-  // Default variant (used in Home page)
+  // Default variant
   return (
-    <Card className={cn("hover:shadow-lg transition-shadow duration-300 relative", className)}>
+    <Card className={cn("hover:shadow-lg transition-all duration-300 relative group border-transparent hover:border-primary/20", className)}>
       <CardContent className="p-6">
-        {/* Save Button - Positioned absolutely */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-4 right-4 h-9 w-9 p-0 rounded-full hover:bg-gray-100 z-10"
-          onClick={toggleSaveJob}
-          disabled={isLoading}
-          aria-label={isSaved ? "Unsave job" : "Save job"}
-        >
-          <Heart
-            className={cn(
-              "h-5 w-5 transition-all",
-              isSaved
-                ? "fill-red-500 text-red-500"
-                : "text-gray-400 hover:text-red-500"
-            )}
-          />
-        </Button>
+        {/* Position absolute cho nút tim ở góc phải */}
+        <div className="absolute top-4 right-4 z-10">
+           <FavoriteButton 
+              isSaved={isSaved} 
+              onClick={toggleSaveJob} 
+              disabled={isLoading} 
+            />
+        </div>
 
         <Link href={`/jobs/${job._id}`} className="block space-y-4">
           <div className="flex items-start gap-4 pr-8">
-            {/* Company Logo */}
-            <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <div className="h-14 w-14 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 overflow-hidden border border-border p-1">
               {job.company?.logo ? (
                 <img
                   src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
                   alt={`${job.company?.name} logo`}
-                  className="h-full w-full object-cover border border-gray-200 border-solid rounded-lg"
+                  className="h-full w-full object-contain rounded-lg"
                 />
               ) : (
-                <Building2 className="h-6 w-6 text-gray-400" />
+                <Building2 className="h-7 w-7 text-muted-foreground" />
               )}
             </div>
 
-            {/* Job Info */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-lg mb-1 line-clamp-2 hover:text-blue-600 transition-colors">
+              <h3 className="font-bold text-lg mb-1 line-clamp-2 group-hover:text-primary transition-colors">
                 {job.name}
               </h3>
-              <p className="text-sm text-gray-600">{job.company?.name}</p>
+              <p className="text-sm text-muted-foreground font-medium">{job.company?.name}</p>
             </div>
           </div>
 
-          {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className="text-xs bg-secondary/50 hover:bg-secondary">
               <MapPin className="h-3 w-3 mr-1" aria-hidden="true" />
               {job.location}
             </Badge>
-            <Badge variant="outline" className="text-xs capitalize">
+            <Badge variant="outline" className="text-xs capitalize border-primary/20 text-primary/80">
               {job.formOfWork}
             </Badge>
           </div>
 
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-2 border-t">
-            <span className="text-sm font-semibold text-blue-600">
+          <div className="flex items-center justify-between pt-4 border-t border-dashed">
+            <span className="text-base font-bold text-primary">
               ${job.salary?.toLocaleString()}
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground font-medium">
               {job.createdAt &&
                 new Date(job.createdAt).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
+                  year: "numeric"
                 })}
             </span>
           </div>

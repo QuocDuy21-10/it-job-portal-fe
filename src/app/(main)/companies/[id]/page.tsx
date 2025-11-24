@@ -4,10 +4,18 @@ import { useMemo, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { useGetCompanyQuery } from "@/features/company/redux/company.api";
 import CompanyHeader from "@/components/company/section/company-header";
 import CompanyDescription from "@/components/company/section/company-description";
@@ -44,21 +52,41 @@ export default function CompanyDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
       {/* Breadcrumb Navigation */}
-      <div className="border-b border-border bg-card">
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-sm">
-            <Link href="/" className="text-muted-foreground hover:text-foreground">
-              Home
-            </Link>
-            <span className="text-muted-foreground">/</span>
-            <Link href="/companies" className="text-muted-foreground hover:text-foreground">
-              Companies
-            </Link>
-            <span className="text-muted-foreground">/</span>
-            <span className="text-foreground font-medium">{company.name}</span>
-          </nav>
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  href="/"
+                  className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+                >
+                  Trang chủ
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <ChevronRight className="h-4 w-4" />
+              </BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  href="/companies"
+                  className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+                >
+                  Công ty
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <ChevronRight className="h-4 w-4" />
+              </BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-slate-900 dark:text-slate-100 font-medium line-clamp-1">
+                  {company.name}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
       </div>
 
@@ -75,32 +103,35 @@ export default function CompanyDetailPage() {
             {/* Job Listing Section */}
             <section className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">Các việc làm đang tuyển dụng</h2>
-                <p className="text-muted-foreground">Khám phá các cơ hội nghề nghiệp hiện có từ công ty này</p>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Các việc làm đang tuyển dụng</h2>
+                </div>
+                <p className="text-slate-600 dark:text-slate-400 ml-4">Khám phá các cơ hội nghề nghiệp hiện có từ công ty này</p>
               </div>
 
               {/* Filter Section */}
-              <Card className="p-6">
+              <Card className="p-6 hover:shadow-lg transition-shadow duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-1">
                     <Input
                       placeholder="Tìm kiếm theo tên công việc..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full"
+                      className="w-full h-11 border-slate-300 dark:border-slate-700 focus:border-blue-500 focus:ring-blue-500 transition-colors "
                     />
                   </div>
                   <select
                     value={selectedLocation}
                     onChange={(e) => setSelectedLocation(e.target.value)}
-                    className="px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="px-4 py-2.5 h-11 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer hover:border-blue-400"
                   >
                     <option value="all">Tất cả vị trí</option>
                     <option value="Hà Nội">Hà Nội</option>
                     <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                     <option value="Đà Nẵng">Đà Nẵng</option>
                   </select>
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white h-11 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
                     <Search className="w-4 h-4 mr-2" />
                     Tìm kiếm
                   </Button>

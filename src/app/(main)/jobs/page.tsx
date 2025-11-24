@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useJobList } from "@/hooks/use-job-list";
 import { Pagination } from "@/components/pagination";
 import Link from "next/link";
-import { Search, MapPin, Building2, Briefcase, DollarSign } from "lucide-react";
+import { Search, MapPin, Building2, Briefcase, DollarSign, X, Filter, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/multi-select";
 import provinces from "@/shared/data/provinces.json";
@@ -13,12 +13,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import jobTypes from "@/shared/data/job-type.json";
 import jobLevels from "@/shared/data/job-level.json";
 import { Job } from "@/features/job/schemas/job.schema";
@@ -36,6 +45,10 @@ export default function JobsPage() {
     const initial = searchParams.get("location");
     return initial ? initial.split(",") : [];
   });
+
+  // UI state
+  const [showFilters, setShowFilters] = React.useState(true);
+  const [showMobileFilters, setShowMobileFilters] = React.useState(false);
 
   const {
     jobs,
@@ -94,124 +107,292 @@ export default function JobsPage() {
     router,
   ]);
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with filters */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-6">
-            Find Your Next Opportunity
-          </h1>
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSearchInput("");
+    setSelectedProvinces([]);
+    setJobType("all");
+    setExperience("all");
+    setPage(1);
+  };
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              {/* Search Input */}
-              <div className="sm:col-span-1">
-                <label htmlFor="search-jobs" className="sr-only">
-                  Search jobs
-                </label>
-                <div className="relative">
-                  <Search
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <Input
-                    id="search-jobs"
-                    placeholder="Job title or keyword"
-                    className="pl-10"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
+  // Check if any filters are active
+  const hasActiveFilters = searchQuery || selectedProvinces.length > 0 || jobType !== "all" || experience !== "all";
+
+  // Count active filters
+  const activeFilterCount = [
+    searchQuery,
+    selectedProvinces.length > 0,
+    jobType !== "all",
+    experience !== "all",
+  ].filter(Boolean).length;
+
+  return (
+    <Tooltip.Provider>
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+        {/* Breadcrumb */}
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink 
+                    href="/"
+                    className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+                  >
+                    Trang chủ
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator>
+                  <ChevronRight className="h-4 w-4" />
+                </BreadcrumbSeparator>
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-slate-900 dark:text-slate-100 font-medium">
+                    Tìm việc làm
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </div>
+
+        {/* Header with gradient */}
+        <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white overflow-hidden">
+          <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          
+          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">
+              Khám phá cơ hội nghề nghiệp
+            </h1>
+            <p className="text-xl text-blue-100 mb-8">
+              Tìm kiếm công việc phù hợp với kỹ năng và đam mê của bạn
+            </p>
+
+            {/* Search Bar */}
+            <div className="max-w-3xl">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-200" />
+                <Input
+                  placeholder="Tìm kiếm theo tên công việc, kỹ năng..."
+                  className="pl-14 h-14 text-lg bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 caret-blue-600 border-0 shadow-xl hover:shadow-2xl transition-shadow focus:ring-2 focus:ring-white/50"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Filter Bar */}
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-40">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1 overflow-x-auto">
+                {/* Toggle Filters Button */}
+                <Tooltip.Root delayDuration={200}>
+                  <Tooltip.Trigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="hidden lg:flex items-center gap-2 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      <SlidersHorizontal className="w-4 h-4" />
+                      Bộ lọc
+                      {activeFilterCount > 0 && (
+                        <Badge className="ml-1 bg-blue-600 text-white">{activeFilterCount}</Badge>
+                      )}
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+                      {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+                      <Tooltip.Arrow className="fill-slate-900" />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+
+                {/* Mobile Filter Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  className="lg:hidden flex items-center gap-2"
+                >
+                  <Filter className="w-4 h-4" />
+                  Lọc
+                  {activeFilterCount > 0 && (
+                    <Badge className="ml-1 bg-blue-600">{activeFilterCount}</Badge>
+                  )}
+                </Button>
+
+                {/* Active Filter Tags */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {searchQuery && (
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                      Tìm: {searchQuery.substring(0, 20)}{searchQuery.length > 20 && '...'}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSearchInput("")} />
+                    </Badge>
+                  )}
+                  {selectedProvinces.length > 0 && (
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                      <MapPin className="w-3 h-3" />
+                      {selectedProvinces.length} vị trí
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSelectedProvinces([])} />
+                    </Badge>
+                  )}
+                  {jobType !== "all" && (
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                      {jobTypes.find(t => t.value === jobType)?.label}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setJobType("all")} />
+                    </Badge>
+                  )}
+                  {experience !== "all" && (
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                      {jobLevels.find(l => l.value === experience)?.label}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setExperience("all")} />
+                    </Badge>
+                  )}
                 </div>
               </div>
 
-              {/* Location Input */}
-              <div className="sm:col-span-1">
-                <label htmlFor="location-multi-select" className="sr-only">
-                  Location
-                </label>
-                <div className="relative">
-                  <div className="pl-8">
+              {/* Clear All Filters */}
+              {hasActiveFilters && (
+                <Tooltip.Root delayDuration={200}>
+                  <Tooltip.Trigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAllFilters}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-colors whitespace-nowrap"
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Xóa bộ lọc
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+                      Xóa tất cả bộ lọc
+                      <Tooltip.Arrow className="fill-slate-900" />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
+            </div>
+            {/* Advanced Filters Panel */}
+            {(showFilters || showMobileFilters) && (
+              <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Location Multi-Select */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-blue-600" />
+                      Địa điểm
+                    </label>
                     <MultiSelect
                       options={provinces}
                       value={selectedProvinces}
                       onChange={setSelectedProvinces}
                       placeholder="Chọn tỉnh/thành phố..."
-                      searchPlaceholder="Tìm kiếm tỉnh/thành..."
-                      className="w-full"
+                      searchPlaceholder="Tìm kiếm..."
                       disabled={isLoading}
-                      leftIcon={<MapPin className="w-5 h-5" />}
                     />
+                  </div>
+
+                  {/* Job Type */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-purple-600" />
+                      Hình thức làm việc
+                    </label>
+                    <Select value={jobType} onValueChange={setJobType}>
+                      <SelectTrigger className="w-full bg-white dark:bg-slate-900">
+                        <SelectValue placeholder="Chọn hình thức" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobTypes.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Experience Level */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-emerald-600" />
+                      Cấp bậc
+                    </label>
+                    <Select value={experience} onValueChange={setExperience}>
+                      <SelectTrigger className="w-full bg-white dark:bg-slate-900">
+                        <SelectValue placeholder="Chọn cấp bậc" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobLevels.map((level) => (
+                          <SelectItem key={level.value} value={level.value}>
+                            {level.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
+            )}
+          </div>
+        </div>
 
-              {/* Job Type Filter */}
-              <div>
-                <label htmlFor="job-type" className="sr-only">
-                  Job type
-                </label>
-                <Select value={jobType} onValueChange={setJobType}>
-                  <SelectTrigger id="job-type">
-                    <SelectValue placeholder="Job Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jobTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Experience Level Filter */}
-              <div>
-                <label htmlFor="level" className="sr-only">
-                  Experience level
-                </label>
-                <Select value={experience} onValueChange={setExperience}>
-                  <SelectTrigger id="level">
-                    <SelectValue placeholder="Level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jobLevels.map((level) => (
-                      <SelectItem key={level.value} value={level.value}>{level.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+        {/* Job List */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Results Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">
+                {isLoading ? (
+                  "Đang tải..."
+                ) : (
+                  <>
+                    {totalItems} việc làm
+                  </>
+                )}
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Cập nhật liên tục mỗi ngày
+              </p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Job List */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-gray-600">
-            {isLoading ? (
-              "Loading..."
-            ) : (
-              <>
-                {totalItems} {totalItems === 1 ? "job" : "jobs"} found
-              </>
-            )}
-          </p>
-        </div>
-
-        {isLoading ? (
-          <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-            <p className="text-gray-500 mt-4">Loading jobs...</p>
-          </div>
-        ) : jobs.length === 0 ? (
-          <div className="text-center py-12">
-            <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              No jobs found
-            </h3>
-            <p className="text-gray-500">Try adjusting your search criteria</p>
-          </div>
-        ) : (
+          {isLoading ? (
+            <div className="text-center py-20">
+              <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400" />
+              <p className="text-slate-600 dark:text-slate-400 mt-6 text-lg">Đang tìm kiếm công việc phù hợp...</p>
+            </div>
+          ) : jobs.length === 0 ? (
+            <Card className="p-16 text-center border-slate-200 dark:border-slate-800">
+              <div className="max-w-md mx-auto">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-950 dark:to-indigo-950 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Briefcase className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">
+                  Không tìm thấy công việc
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-6">
+                  Thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác
+                </p>
+                {hasActiveFilters && (
+                  <Button
+                    onClick={clearAllFilters}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                  >
+                    Xóa tất cả bộ lọc
+                  </Button>
+                )}
+              </div>
+            </Card>
+          ) : (
           <>
             <div className="space-y-4">
               {jobs.map((job: Job) => (
@@ -221,20 +402,23 @@ export default function JobsPage() {
 
             {/* Pagination */}
             {totalItems > 0 && (
-              <div className="mt-8 flex justify-center">
-                <Pagination
-                  currentPage={currentPage}
-                  pageSize={pageSize}
-                  totalItems={totalItems}
-                  onPageChange={setPage}
-                  onPageSizeChange={setLimit}
-                />
+              <div className="mt-10">
+                <Card className="p-6 border-slate-200 dark:border-slate-800">
+                  <Pagination
+                    currentPage={currentPage}
+                    pageSize={pageSize}
+                    totalItems={totalItems}
+                    onPageChange={setPage}
+                    onPageSizeChange={setLimit}
+                  />
+                </Card>
               </div>
             )}
           </>
         )}
+        </div>
       </div>
-    </div>
+    </Tooltip.Provider>
   );
 }
 

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react"; // Thêm useEffect
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -11,51 +11,31 @@ import {
   selectJobFavorites,
 } from "@/features/auth/redux/auth.slice";
 
-/**
- * Custom hook để quản lý job favorites với optimistic UI updates
- * 
- * @param jobId - ID của job cần check/toggle favorite
- * @returns Object chứa trạng thái và handlers
- * 
- * @example
- * ```tsx
- * const { isSaved, toggleSaveJob, isLoading } = useJobFavorite(job._id);
- * 
- * <button onClick={toggleSaveJob} disabled={isLoading}>
- *   <Heart className={isSaved ? "fill-current" : ""} />
- * </button>
- * ```
- */
 export function useJobFavorite(jobId: string) {
   const router = useRouter();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const jobFavorites = useSelector(selectJobFavorites);
+  const jobFavorites = useSelector(selectJobFavorites); // Danh sách thực từ Server/Redux
 
-  // RTK Query mutations
-  const [saveJob, { isLoading: isSaving }] = useSaveJobMutation();
-  const [unsaveJob, { isLoading: isUnsaving }] = useUnsaveJobMutation();
+  const [saveJob] = useSaveJobMutation();
+  const [unsaveJob] = useUnsaveJobMutation();
 
-  // Local state để track debounce (tránh spam click)
-  const [isProcessing, setIsProcessing] = useState(false);
+  // 1. Tạo local state để lưu trạng thái UI ngay lập tức
+  // Khởi tạo bằng việc kiểm tra trong Redux store
+  const isSavedInStore = jobFavorites.includes(jobId);
+  const [optimisticIsSaved, setOptimisticIsSaved] = useState(isSavedInStore);
 
-  // Check xem job đã được lưu chưa
-  const isSaved = useMemo(
-    () => jobFavorites.includes(jobId),
-    [jobFavorites, jobId]
-  );
+  // 2. Đồng bộ local state khi Redux store thay đổi (để đảm bảo tính nhất quán sau khi API chạy xong hoặc reload)
+  useEffect(() => {
+    setOptimisticIsSaved(isSavedInStore);
+  }, [isSavedInStore]);
 
-  /**
-   * Toggle save/unsave job với optimistic update
-   */
   const toggleSaveJob = useCallback(
     async (e?: React.MouseEvent) => {
-      // Prevent event bubbling (nếu button nằm trong card clickable)
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
 
-      // Check authentication
       if (!isAuthenticated) {
         toast.info("Vui lòng đăng nhập để lưu công việc", {
           duration: 3000,
@@ -69,66 +49,36 @@ export function useJobFavorite(jobId: string) {
         return;
       }
 
-      // Prevent spam clicking
-      if (isProcessing || isSaving || isUnsaving) {
-        return;
-      }
-
-      setIsProcessing(true);
+      // 3. OPTIMISTIC UPDATE: Đảo ngược trạng thái UI ngay lập tức
+      const previousState = optimisticIsSaved; // Lưu trạng thái cũ để revert nếu lỗi
+      setOptimisticIsSaved(!previousState); // Cập nhật UI ngay -> Icon đổi màu liền
 
       try {
-        if (isSaved) {
-          // Unsave job
+        if (previousState) {
+          // Nếu đang là true (đã lưu) -> Gọi API bỏ lưu
           await unsaveJob(jobId).unwrap();
-          toast.success("Đã bỏ lưu công việc", {
-            duration: 2000,
-          });
+          toast.success("Đã bỏ lưu công việc", { duration: 1000 }); // Giảm duration toast cho đỡ phiền
         } else {
-          // Save job
+          // Nếu đang là false (chưa lưu) -> Gọi API lưu
           await saveJob(jobId).unwrap();
-          toast.success("Đã lưu công việc", {
-            duration: 2000,
-          });
+          toast.success("Đã lưu công việc", { duration: 1000 });
         }
       } catch (error: any) {
+        // 4. REVERT: Nếu API lỗi, trả về trạng thái cũ
+        setOptimisticIsSaved(previousState);
+        
         console.error("Toggle job favorite error:", error);
-
-        const errorMessage =
-          error?.data?.message ||
-          error?.message ||
-          "Đã xảy ra lỗi. Vui lòng thử lại.";
-
-        toast.error(errorMessage, {
-          duration: 3000,
-        });
-      } finally {
-        // Debounce timeout
-        setTimeout(() => {
-          setIsProcessing(false);
-        }, 300);
+        const errorMessage = error?.data?.message || error?.message || "Đã xảy ra lỗi.";
+        toast.error(errorMessage);
       }
     },
-    [
-      isAuthenticated,
-      isSaved,
-      jobId,
-      saveJob,
-      unsaveJob,
-      isProcessing,
-      isSaving,
-      isUnsaving,
-      router,
-    ]
+    [isAuthenticated, optimisticIsSaved, jobId, saveJob, unsaveJob, router]
   );
 
   return {
-    /** Trạng thái đã lưu hay chưa */
-    isSaved,
-    /** Handler để toggle save/unsave */
+    isSaved: optimisticIsSaved, // Trả về trạng thái Optimistic cho UI
     toggleSaveJob,
-    /** Loading state (đang gọi API) */
-    isLoading: isSaving || isUnsaving || isProcessing,
-    /** Check user đã đăng nhập chưa */
+    isLoading: false, // Không cần loading spinner nữa vì UI đã phản hồi ngay tức thì
     isAuthenticated,
   };
 }

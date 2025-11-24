@@ -2,15 +2,18 @@
 
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Card } from "@/components/ui/card";
 import CVFormSection from "@/components/sections/cv-form-section";
 import DataModal from "../modals/data-modal";
+import { CertificateRequestSchema, type CertificateRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 
 interface Certificate {
   id: string;
   name: string;
   issuer: string;
-  date: string;
+  date: Date | string;
 }
 
 interface CertificatesSectionProps {
@@ -28,20 +31,32 @@ export default function CertificatesSection({
 }: CertificatesSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Certificate>({
-    id: "",
-    name: "",
-    issuer: "",
-    date: "",
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CertificateRequest>({
+    resolver: zodResolver(CertificateRequestSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      issuer: "",
+      date: "",
+    },
   });
 
   const handleOpen = (cert?: Certificate) => {
     if (cert) {
-      setFormData(cert);
+      reset({
+        name: cert.name,
+        issuer: cert.issuer,
+        date: cert.date ? (typeof cert.date === "string" ? cert.date : cert.date.toISOString().slice(0, 7)) : "",
+      });
       setEditingId(cert.id);
     } else {
-      setFormData({
-        id: Date.now().toString(),
+      reset({
         name: "",
         issuer: "",
         date: "",
@@ -51,18 +66,21 @@ export default function CertificatesSection({
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = handleSubmit((data) => {
     if (editingId) {
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key !== "id") {
-          onUpdate(editingId, key, value as string);
-        }
-      });
+      onUpdate(editingId, "name", data.name);
+      onUpdate(editingId, "issuer", data.issuer);
+      onUpdate(editingId, "date", data.date);
     } else {
-      onAdd(formData);
+      onAdd({
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: data.name,
+        issuer: data.issuer,
+        date: data.date,
+      });
     }
     setIsModalOpen(false);
-  };
+  });
 
   return (
     <>
@@ -98,7 +116,7 @@ export default function CertificatesSection({
                     </p>
                     {cert.date && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {cert.date}
+                        {typeof cert.date === 'string' ? cert.date : cert.date.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })}
                       </p>
                     )}
                   </div>
@@ -131,47 +149,75 @@ export default function CertificatesSection({
         saveLabel={editingId ? "Update" : "Add"}
       >
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Certificate Name *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="AWS Certified Solution Architect"
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Issuer
-            </label>
-            <input
-              type="text"
-              value={formData.issuer}
-              onChange={(e) =>
-                setFormData({ ...formData, issuer: e.target.value })
-              }
-              placeholder="Amazon Web Services"
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Date Issued
-            </label>
-            <input
-              type="month"
-              value={formData.date}
-              onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
-              }
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Certificate Name *
+                </label>
+                <input
+                  type="text"
+                  {...field}
+                  placeholder="AWS Certified Solution Architect"
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.name && (
+                  <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
+            name="issuer"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Issuer *
+                </label>
+                <input
+                  type="text"
+                  {...field}
+                  placeholder="Amazon Web Services"
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.issuer ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.issuer && (
+                  <p className="mt-1 text-xs text-destructive">{errors.issuer.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Date Issued *
+                </label>
+                <input
+                  type="month"
+                  value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                  onChange={(e) => {
+                    const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                    field.onChange(dateValue);
+                  }}
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.date ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.date && (
+                  <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>
+                )}
+              </div>
+            )}
+          />
         </div>
       </DataModal>
     </>

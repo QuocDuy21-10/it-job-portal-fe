@@ -259,3 +259,9 @@ export const selectJobFavorites = createSelector(
   [selectUser],
   (user) => user?.jobFavorites ?? []
 );
+
+// ✅ NEW: Selector để lấy companyFollowing
+export const selectCompanyFollowing = createSelector(
+  [selectUser],
+  (user) => user?.companyFollowing ?? []
+);

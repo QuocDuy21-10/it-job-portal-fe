@@ -4,10 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
-import { MapPin, Briefcase, Calendar, Heart } from "lucide-react";
+import { MapPin, Briefcase, Calendar, Heart, DollarSign, Clock, Users, ChevronRight } from "lucide-react";
 import { selectAuth } from "@/features/auth/redux/auth.slice";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import RelatedJobsGrid from "@/components/sections/related-jobs-grid";
 import CompanyInfo from "@/components/sections/company-info";
 import ApplyModal from "@/components/modals/apply-modal";
@@ -79,12 +87,60 @@ export default function JobDetailPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 min-h-screen">
+      {/* Breadcrumb Section */}
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  href="/"
+                  className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+                >
+                  Trang chủ
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <ChevronRight className="h-4 w-4" />
+              </BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  href="/jobs"
+                  className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+                >
+                  Việc làm
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <ChevronRight className="h-4 w-4" />
+              </BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-slate-900 dark:text-slate-100 font-medium line-clamp-1">
+                  {job.name}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </div>
+
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-primary-foreground py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4 text-balance">{job.name}</h1>
-          <p className="text-lg opacity-90">{job.company?.name}</p>
+      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 py-12">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-balance leading-tight drop-shadow-lg">
+              {job.name}
+            </h1>
+            <div className="flex items-center gap-3 text-blue-100">
+              <Briefcase className="w-5 h-5" />
+              <p className="text-xl font-medium">{job.company?.name}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -94,33 +150,42 @@ export default function JobDetailPage() {
           {/* Left Column - Job Details and Description */}
           <div className="lg:col-span-2 space-y-6">
             {/* Quick Info Tags */}
-            <Card className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-primary" />
+            <Card className="p-6 hover:shadow-lg transition-shadow duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="flex items-start gap-3 group">
+                  <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900 transition-colors">
+                    <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Location</p>
-                    <p className="font-semibold">{job.location}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Địa điểm</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{job.location}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-primary" />
+                <div className="flex items-start gap-3 group">
+                  <div className="p-2 bg-purple-50 dark:bg-purple-950 rounded-lg group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition-colors">
+                    <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Level</p>
-                    <p className="font-semibold">{job.level}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Cấp bậc</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{job.level}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" />
+                <div className="flex items-start gap-3 group">
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-950 rounded-lg group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900 transition-colors">
+                    <Calendar className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Type</p>
-                    <p className="font-semibold">{job.formOfWork}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Loại hình</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{job.formOfWork}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-start gap-3 group">
+                  <div className="p-2 bg-amber-50 dark:bg-amber-950 rounded-lg group-hover:bg-amber-100 dark:group-hover:bg-amber-900 transition-colors">
+                    <DollarSign className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Salary</p>
-                    <p className="font-semibold">{formatSalary(job.salary)}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Mức lương</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{formatSalary(job.salary)}</p>
                   </div>
                 </div>
               </div>
@@ -136,18 +201,20 @@ export default function JobDetailPage() {
                   }
                   setIsApplyModalOpen(true);
                 }}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:bg-gradient-to-r hover:from-blue-600/90 hover:to-cyan-600/90 text-primary-foreground font-semibold h-12 rounded-lg"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold h-12 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
               >
-                Ứng tuyển ngay (Apply Now)
+                <Briefcase className="w-5 h-5 mr-2" />
+                Ứng tuyển ngay
               </Button>
               <Button
                 onClick={toggleSaveJob}
                 disabled={isSavingJob}
+                variant="outline"
                 className={cn(
-                  "flex-1 sm:flex-none px-6 h-12 border-2 rounded-lg font-semibold transition flex items-center justify-center gap-2",
+                  "flex-1 sm:flex-none px-6 h-12 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2",
                   isSaved
-                    ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
-                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    ? "bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900 shadow-sm hover:shadow-md"
+                    : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:shadow-md"
                 )}
               >
                 <Heart
@@ -156,34 +223,46 @@ export default function JobDetailPage() {
                     isSaved ? "fill-current" : ""
                   )}
                 />
-                {isSaved ? "Đã lưu (Saved)" : "Lưu tin (Save Job)"}
+                {isSaved ? "Đã lưu" : "Lưu tin"}
               </Button>
             </div>
 
             {/* Deadline Alert */}
             {daysRemaining !== null && daysRemaining > 0 && (
-              <Card className="p-4 bg-accent/10 border border-accent">
-                <p className="text-sm">
-                  <span className="font-semibold">Deadline:</span>{" "}
-                  {daysRemaining} days remaining
-                </p>
+              <Card className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950 dark:to-orange-950 border-amber-200 dark:border-amber-800 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white dark:bg-slate-900 rounded-full">
+                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                      <span className="font-semibold">Hạn nộp hồ sơ:</span>{" "}
+                      Còn {daysRemaining} ngày
+                    </p>
+                  </div>
+                </div>
               </Card>
             )}
 
             {/* Job Description */}
-            <Card className="p-8">
-              <div className="prose max-w-none">
+            <Card className="p-8 hover:shadow-lg transition-shadow duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <div className="prose max-w-none dark:prose-invert">
                 {/* Skills Section */}
                 {job.skills?.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">
-                      Required Skills
-                    </h3>
+                  <div className="mb-8 pb-8 border-b border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                        <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 m-0">
+                        Kỹ năng yêu cầu
+                      </h3>
+                    </div>
                     <div className="flex flex-wrap gap-2">
                       {job.skills.map((skill: string) => (
                         <span
                           key={skill}
-                          className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                          className="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium border border-blue-200 dark:border-blue-800 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-default"
                         >
                           {skill}
                         </span>
@@ -193,31 +272,52 @@ export default function JobDetailPage() {
                 )}
 
                 {/* Job Description */}
-                <div className="space-y-6">
+                <div className="space-y-6 mb-8">
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">
-                      Job Description
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+                      <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+                      Mô tả công việc
                     </h3>
-                    <div className="space-y-2">{parse(job.description || "")}</div>
+                    <div className="space-y-2 text-slate-700 dark:text-slate-300 leading-relaxed">
+                      {parse(job.description || "")}
+                    </div>
                   </div>
+                </div>
 
-                  {/* Requirements */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Requirements</h3>
-                    <ul className="list-disc pl-5 space-y-2">
-                      <li>Level: {job.level}</li>
-                      <li>Form of Work: {job.formOfWork}</li>
-                      <li>Location: {job.location}</li>
-                      <li>Quantity: {job.quantity} position(s)</li>
-                    </ul>
-                  </div>
+                {/* Requirements */}
+                <div className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+                    Yêu cầu công việc
+                  </h3>
+                  <ul className="space-y-3 text-slate-700 dark:text-slate-300">
+                    <li className="flex items-start gap-3">
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                      <span><strong>Cấp bậc:</strong> {job.level}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                      <span><strong>Hình thức làm việc:</strong> {job.formOfWork}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                      <span><strong>Địa điểm:</strong> {job.location}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                      <span><strong>Số lượng tuyển:</strong> {job.quantity} vị trí</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </Card>
 
             {/* Related Jobs Section */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Related Jobs</h2>
+            <div className="pt-4">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Việc làm liên quan</h2>
+              </div>
               <RelatedJobsGrid />
             </div>
           </div>

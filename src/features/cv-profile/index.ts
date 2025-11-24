@@ -19,7 +19,7 @@ export type {
 } from "@/shared/types/cv";
 
 // Service
-export { cvService } from "@/features/cv/cv.service";
+export { cvService } from "@/features/cv-profile/cv.service";
 
 // Hook
 export { useCV } from "@/hooks/use-cv";

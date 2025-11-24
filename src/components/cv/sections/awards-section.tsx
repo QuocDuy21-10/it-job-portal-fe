@@ -2,14 +2,17 @@
 
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Card } from "@/components/ui/card";
 import CVFormSection from "@/components/sections/cv-form-section";
 import DataModal from "../modals/data-modal";
+import { AwardRequestSchema, type AwardRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 
 interface Award {
   id: string;
   name: string;
-  date: string;
+  date: Date | string;
   description: string;
 }
 
@@ -28,20 +31,32 @@ export default function AwardsSection({
 }: AwardsSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Award>({
-    id: "",
-    name: "",
-    date: "",
-    description: "",
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<AwardRequest>({
+    resolver: zodResolver(AwardRequestSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      date: "",
+      description: "",
+    },
   });
 
   const handleOpen = (award?: Award) => {
     if (award) {
-      setFormData(award);
+      reset({
+        name: award.name,
+        date: award.date ? (typeof award.date === "string" ? award.date : award.date.toISOString().slice(0, 7)) : "",
+        description: award.description,
+      });
       setEditingId(award.id);
     } else {
-      setFormData({
-        id: Date.now().toString(),
+      reset({
         name: "",
         date: "",
         description: "",
@@ -51,18 +66,21 @@ export default function AwardsSection({
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = handleSubmit((data) => {
     if (editingId) {
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key !== "id") {
-          onUpdate(editingId, key, value as string);
-        }
-      });
+      onUpdate(editingId, "name", data.name);
+      onUpdate(editingId, "date", data.date);
+      onUpdate(editingId, "description", data.description || "");
     } else {
-      onAdd(formData);
+      onAdd({
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: data.name,
+        date: data.date,
+        description: data.description || "",
+      });
     }
     setIsModalOpen(false);
-  };
+  });
 
   return (
     <>
@@ -95,7 +113,7 @@ export default function AwardsSection({
                     <h3 className="font-semibold text-foreground">{award.name}</h3>
                     {award.date && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {award.date}
+                        {typeof award.date === 'string' ? award.date : award.date.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })}
                       </p>
                     )}
                     {award.description && (
@@ -133,47 +151,76 @@ export default function AwardsSection({
         saveLabel={editingId ? "Update" : "Add"}
       >
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Award Name *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="Employee of the Year"
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Date
-            </label>
-            <input
-              type="month"
-              value={formData.date}
-              onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
-              }
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Describe the award or achievement"
-              rows={3}
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-            />
-          </div>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Award Name *
+                </label>
+                <input
+                  type="text"
+                  {...field}
+                  placeholder="Employee of the Year"
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.name && (
+                  <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Date *
+                </label>
+                <input
+                  type="month"
+                  value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                  onChange={(e) => {
+                    const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                    field.onChange(dateValue);
+                  }}
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.date ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.date && (
+                  <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Description
+                </label>
+                <textarea
+                  {...field}
+                  value={field.value || ""}
+                  placeholder="Describe the award or achievement"
+                  rows={3}
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${
+                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.description && (
+                  <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>
+                )}
+              </div>
+            )}
+          />
         </div>
       </DataModal>
     </>

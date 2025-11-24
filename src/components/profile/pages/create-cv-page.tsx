@@ -1,11 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, Save, Loader2, ArrowLeft } from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Save, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import CVPreviewModal from "@/components/modals/cv-preview-modal";
 import { useCV } from "@/hooks/use-cv";
-import { ICVProfile } from "@/shared/types/cv";
+import { 
+  UpsertCVProfileRequestSchema,
+  type UpsertCVProfileRequest,
+  type PersonalInfo,
+  type Education,
+  type Experience,
+  type Skill,
+  type Language,
+  type Project,
+  type Certificate,
+  type Award,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { toast } from "sonner";
 
 // Section imports
@@ -19,13 +31,77 @@ import CertificatesSection from "@/components/cv/sections/certificates-section";
 import AwardsSection from "@/components/cv/sections/awards-section";
 import CompletionProgress from "@/components/cv/completion-progress";
 
-const initialCVData: ICVProfile = {
+interface CVData {
+  _id?: string;
+  userId?: string;
+  personalInfo: {
+    fullName: string;
+    phone: string;
+    email: string;
+    birthday?: Date;
+    gender?: "male" | "female" | "other";
+    address?: string;
+    personalLink?: string;
+    bio?: string;
+  };
+  education: Array<{
+    id: string;
+    school: string;
+    degree: string;
+    field: string;
+    startDate: Date | string;
+    endDate?: Date | string;
+    description?: string;
+  }>;
+  experience: Array<{
+    id: string;
+    company: string;
+    position: string;
+    startDate: Date | string;
+    endDate?: Date | string;
+    description?: string;
+  }>;
+  skills: Array<{
+    id: string;
+    name: string;
+    level: string;
+  }>;
+  languages: Array<{
+    id: string;
+    name: string;
+    proficiency: string;
+  }>;
+  projects: Array<{
+    id: string;
+    name: string;
+    description: string;
+    link?: string;
+  }>;
+  certificates: Array<{
+    id: string;
+    name: string;
+    issuer: string;
+    date: Date | string;
+  }>;
+  awards: Array<{
+    id: string;
+    name: string;
+    date: Date | string;
+    description?: string;
+  }>;
+  isActive?: boolean;
+  lastUpdated?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+const initialCVData: CVData = {
   personalInfo: {
     fullName: "",
     phone: "",
     email: "",
-    birthday: "",
-    gender: "",
+    birthday: undefined,
+    gender: "male",
     address: "",
     personalLink: "",
     bio: "",
@@ -40,12 +116,20 @@ const initialCVData: ICVProfile = {
 };
 
 export default function CreateCVPage() {
-  const [cvData, setCVData] = useState<ICVProfile>(initialCVData);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState("classic");
+  const [cvData, setCVData] = useState<CVData>(initialCVData);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const { isLoading, error, upsertCV, fetchMyCVProfile, clearError } = useCV();
+
+  // React Hook Form with Zod validation
+  const {
+    formState: { errors: formErrors },
+    trigger,
+    clearErrors,
+  } = useForm({
+    resolver: zodResolver(UpsertCVProfileRequestSchema) as any,
+    mode: "onChange",
+  });
 
   useEffect(() => {
     const loadCVData = async () => {
@@ -54,14 +138,67 @@ export default function CreateCVPage() {
 
       if (result) {
         setCVData({
-          personalInfo: result.personalInfo || initialCVData.personalInfo,
-          education: result.education || [],
-          experience: result.experience || [],
-          skills: result.skills || [],
-          languages: result.languages || [],
-          projects: result.projects || [],
-          certificates: result.certificates || [],
-          awards: result.awards || [],
+          _id: result._id,
+          userId: result.userId,
+          personalInfo: {
+            fullName: result.personalInfo?.fullName,
+            phone: result.personalInfo?.phone,
+            email: result.personalInfo?.email,
+            birthday: result.personalInfo?.birthday ? new Date(result.personalInfo.birthday) : undefined,
+            gender: result.personalInfo?.gender as "male" | "female" | "other" | undefined,
+            address: result.personalInfo?.address || "",
+            personalLink: result.personalInfo?.personalLink || "",
+            bio: result.personalInfo?.bio || "",
+          },
+          education: result.education.map((edu: any) => ({
+            id: edu.id || "",
+            school: edu.school,
+            degree: edu.degree,
+            field: edu.field,
+            startDate: new Date(edu.startDate),
+            endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+            description: edu.description || "",
+          })),
+          experience: result.experience.map((exp: any) => ({
+            id: exp.id || "",
+            company: exp.company,
+            position: exp.position,
+            startDate: new Date(exp.startDate),
+            endDate: new Date(exp.endDate),
+            description: exp.description || "",
+          })),
+          skills: result.skills.map((skill: any) => ({
+            id: skill.id || "",
+            name: skill.name,
+            level: skill.level,
+          })),
+          languages: result.languages.map((lang: any) => ({
+            id: lang.id || "",
+            name: lang.name,
+            proficiency: lang.proficiency,
+          })),
+          projects: result.projects.map((proj: any) => ({
+            id: proj.id || "",
+            name: proj.name,
+            description: proj.description,
+            link: proj.link || "",
+          })),
+          certificates: result.certificates.map((cert: any) => ({
+            id: cert.id || "",
+            name: cert.name,
+            issuer: cert.issuer,
+            date: new Date(cert.date),
+          })),
+          awards: result.awards.map((award: any) => ({
+            id: award.id || "",
+            name: award.name,
+            date: new Date(award.date),
+            description: award.description || "",
+          })),
+          isActive: result.isActive,
+          lastUpdated: result.updatedAt,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
         });
       } else {
         setCVData(initialCVData);
@@ -71,41 +208,226 @@ export default function CreateCVPage() {
     };
 
     loadCVData();
-  }, [fetchMyCVProfile]);
+  }, []);
 
   const handleUpdateCV = async () => {
     try {
       clearError();
-      const result = await upsertCV({
-        personalInfo: cvData.personalInfo,
-        education: cvData.education,
-        experience: cvData.experience,
-        skills: cvData.skills,
-        languages: cvData.languages,
-        projects: cvData.projects,
-        certificates: cvData.certificates,
-        awards: cvData.awards,
-      });
+      clearErrors();
+
+      // Prepare data for validation
+      const dataToValidate: UpsertCVProfileRequest = {
+        personalInfo: {
+          fullName: cvData.personalInfo.fullName,
+          phone: cvData.personalInfo.phone,
+          email: cvData.personalInfo.email,
+          birthday: cvData.personalInfo.birthday || undefined,
+          gender: cvData.personalInfo.gender || "male",
+          address: cvData.personalInfo.address || undefined,
+          personalLink: cvData.personalInfo.personalLink || undefined,
+          bio: cvData.personalInfo.bio || undefined,
+        },
+        education: cvData.education.map(edu => ({
+          school: edu.school,
+          degree: edu.degree,
+          field: edu.field,
+          startDate: typeof edu.startDate === 'string' ? edu.startDate : edu.startDate.toISOString(),
+          endDate: edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : edu.endDate.toISOString()) : undefined,
+          description: edu.description || undefined,
+        })),
+        experience: cvData.experience.map(exp => ({
+          company: exp.company,
+          position: exp.position,
+          startDate: typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toISOString(),
+          endDate: exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : exp.endDate.toISOString()) : undefined,
+          description: exp.description || undefined,
+        })),
+        skills: cvData.skills.map(skill => ({
+          name: skill.name,
+          level: skill.level,
+        })),
+        languages: cvData.languages.map(lang => ({
+          name: lang.name,
+          proficiency: lang.proficiency,
+        })),
+        projects: cvData.projects.map(proj => ({
+          name: proj.name,
+          description: proj.description,
+          link: proj.link || undefined,
+        })),
+        certificates: cvData.certificates.map(cert => ({
+          name: cert.name,
+          issuer: cert.issuer,
+          date: typeof cert.date === 'string' ? cert.date : cert.date.toISOString(),
+        })),
+        awards: cvData.awards.map(award => ({
+          name: award.name,
+          date: typeof award.date === 'string' ? award.date : award.date.toISOString(),
+          description: award.description || undefined,
+        })),
+      };
+
+      // Validate the form data
+      const validationResult = await trigger();
+      
+      // Manual validation using Zod
+      const zodValidation = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
+      
+      if (!zodValidation.success) {
+        const firstError = zodValidation.error.issues[0];
+        toast.error("Lỗi Validation", {
+          description: `${firstError.path.join('.')}: ${firstError.message}`,
+          duration: 4000,
+        });
+        return;
+      }
+
+      const result = await upsertCV(dataToValidate);
 
       if (result) {
-        toast.success("CV updated successfully!", {
-          description: "Your CV has been saved.",
+        toast.success("Lưu CV thành công!", {
+          description: "CV của bạn đã được lưu.",
           duration: 3000,
         });
-        setCVData(result);
+        
+        // Convert API response back to ICVProfile format
+        setCVData({
+          _id: result._id,
+          userId: result.userId,
+          personalInfo: {
+            fullName: result.personalInfo.fullName,
+            phone: result.personalInfo.phone,
+            email: result.personalInfo.email,
+            birthday: result.personalInfo.birthday ? new Date(result.personalInfo.birthday) : undefined,
+            gender: result.personalInfo.gender as "male" | "female" | "other" | undefined,
+            address: result.personalInfo.address || "",
+            personalLink: result.personalInfo.personalLink || "",
+            bio: result.personalInfo.bio || "",
+          },
+          education: result.education.map((edu: any) => ({
+            id: edu.id || "",
+            school: edu.school,
+            degree: edu.degree,
+            field: edu.field,
+            startDate: edu.startDate,
+            endDate: edu.endDate || "",
+            description: edu.description || "",
+          })),
+          experience: result.experience.map((exp: any) => ({
+            id: exp.id || "",
+            company: exp.company,
+            position: exp.position,
+            startDate: exp.startDate,
+            endDate: exp.endDate || "",
+            description: exp.description || "",
+          })),
+          skills: result.skills.map((skill: any) => ({
+            id: skill.id || "",
+            name: skill.name,
+            level: skill.level,
+          })),
+          languages: result.languages.map((lang: any) => ({
+            id: lang.id || "",
+            name: lang.name,
+            proficiency: lang.proficiency,
+          })),
+          projects: result.projects.map((proj: any) => ({
+            id: proj.id || "",
+            name: proj.name,
+            description: proj.description,
+            link: proj.link || "",
+          })),
+          certificates: result.certificates.map((cert: any) => ({
+            id: cert.id || "",
+            name: cert.name,
+            issuer: cert.issuer,
+            date: cert.date,
+          })),
+          awards: result.awards.map((award: any) => ({
+            id: award.id || "",
+            name: award.name,
+            date: award.date,
+            description: award.description || "",
+          })),
+          isActive: result.isActive,
+          lastUpdated: result.updatedAt,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+        });
       }
     } catch (err) {
       console.error("Update CV failed:", err);
     }
   };
 
-  if (error) {
-    toast.error("Failed to update CV", {
-      description: error,
-      duration: 4000,
-    });
-    clearError();
-  }
+  useEffect(() => {
+    if (error) {
+      toast.error("Có lỗi xảy ra", {
+        description: error,
+        duration: 4000,
+      });
+      clearError();
+    }
+  }, [error, clearError]);
+
+  // Validation summary helper
+  const getValidationErrors = () => {
+    const dataToValidate: UpsertCVProfileRequest = {
+      personalInfo: {
+        fullName: cvData.personalInfo.fullName,
+        phone: cvData.personalInfo.phone,
+        email: cvData.personalInfo.email,
+        birthday: cvData.personalInfo.birthday || undefined,
+        gender: cvData.personalInfo.gender || "male",
+        address: cvData.personalInfo.address || undefined,
+        personalLink: cvData.personalInfo.personalLink || undefined,
+        bio: cvData.personalInfo.bio || undefined,
+      },
+      education: cvData.education.map(edu => ({
+        school: edu.school,
+        degree: edu.degree,
+        field: edu.field,
+        startDate: typeof edu.startDate === 'string' ? edu.startDate : edu.startDate.toISOString(),
+        endDate: edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : edu.endDate.toISOString()) : undefined,
+        description: edu.description || undefined,
+      })),
+      experience: cvData.experience.map(exp => ({
+        company: exp.company,
+        position: exp.position,
+        startDate: typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toISOString(),
+        endDate: exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : exp.endDate.toISOString()) : undefined,
+        description: exp.description || undefined,
+      })),
+      skills: cvData.skills.map(skill => ({
+        name: skill.name,
+        level: skill.level,
+      })),
+      languages: cvData.languages.map(lang => ({
+        name: lang.name,
+        proficiency: lang.proficiency,
+      })),
+      projects: cvData.projects.map(proj => ({
+        name: proj.name,
+        description: proj.description,
+        link: proj.link || undefined,
+      })),
+      certificates: cvData.certificates.map(cert => ({
+        name: cert.name,
+        issuer: cert.issuer,
+        date: typeof cert.date === 'string' ? cert.date : cert.date.toISOString(),
+      })),
+      awards: cvData.awards.map(award => ({
+        name: award.name,
+        date: typeof award.date === 'string' ? award.date : award.date.toISOString(),
+        description: award.description || undefined,
+      })),
+    };
+
+    const result = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
+    return result.success ? [] : result.error.issues;
+  };
+
+  const validationErrors = getValidationErrors();
 
   return (
     <div className="bg-background min-h-screen py-8">
@@ -122,29 +444,51 @@ export default function CreateCVPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Form Content */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Validation Errors Summary */}
+              {validationErrors.length > 0 && (
+                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-destructive mb-2">
+                        Vui lòng sửa các lỗi sau ({validationErrors.length})
+                      </h3>
+                      <ul className="space-y-1 text-sm text-destructive/90">
+                        {validationErrors.slice(0, 5).map((error, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-destructive">•</span>
+                            <span>
+                              {error.path.join(' → ')}: {error.message}
+                            </span>
+                          </li>
+                        ))}
+                        {validationErrors.length > 5 && (
+                          <li className="text-xs text-muted-foreground italic mt-2">
+                            ... và {validationErrors.length - 5} lỗi khác
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Action Buttons */}
               <div className="flex gap-3 flex-wrap">
                 <Button
-                  onClick={() => setIsPreviewOpen(true)}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Preview & Download
-                </Button>
-                <Button
                   onClick={handleUpdateCV}
-                  disabled={isLoading}
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+                  disabled={isLoading || validationErrors.length > 0}
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving...
+                      Đang lưu...
                     </>
                   ) : (
                     <>
                       <Save className="w-4 h-4 mr-2" />
-                      Save CV
+                      Lưu CV {validationErrors.length > 0 && `(${validationErrors.length} lỗi)`}
                     </>
                   )}
                 </Button>
@@ -340,15 +684,6 @@ export default function CreateCVPage() {
           </div>
         )}
       </div>
-
-      {/* Preview Modal */}
-      <CVPreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        cvData={cvData}
-        selectedTemplate={selectedTemplate}
-        onTemplateChange={setSelectedTemplate}
-      />
     </div>
   );
 }

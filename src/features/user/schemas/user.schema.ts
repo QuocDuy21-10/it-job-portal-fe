@@ -5,9 +5,6 @@ export const CreateUserSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  age: z.number().min(0, "Age must be a positive number"),
-  gender: z.enum(["male", "female", "other"]),
-  address: z.string(),
   company: z
     .object({
       _id: z.string().optional(),
@@ -29,9 +26,6 @@ export const UpdateUserSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .optional()
     .or(z.literal("")),
-  age: z.number().min(0, "Age must be a positive number"),
-  gender: z.enum(["male", "female", "other"]),
-  address: z.string(),
   company: z
     .object({
       _id: z.string().optional(),
@@ -53,6 +47,8 @@ export const UserEntitySchema = CreateUserSchema.extend({
   updatedAt: z.string().optional(),
   role: z.string(),
   savedJobs: z.array(z.string()).optional().default([]),
+  jobFavorites: z.array(z.string()).optional().default([]),
+  companyFollowing: z.array(z.string()).optional().default([]),
   createdBy: z
     .object({
       _id: z.string(),

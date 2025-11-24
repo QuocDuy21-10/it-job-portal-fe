@@ -1,10 +1,13 @@
 "use client";
 
-import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Download, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ICVProfile } from "@/shared/types/cv";
+import { useCV } from "@/hooks/use-cv";
 import DownloadPDFButton from "@/components/pdf/download-pdf-button";
 import PDFPreview from "@/components/pdf/pdf-preview";
-import { useState } from "react";
 
 /**
  * Helper function to display date
@@ -15,43 +18,144 @@ const formatDateDisplay = (date: string | Date | undefined): string => {
     return "Present";
   }
   if (date instanceof Date) {
-    // Format as MM/YYYY or as desired
     return date.toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" });
   }
   return date;
 };
 
-interface CVPreviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  cvData: ICVProfile;
-  selectedTemplate?: string;
-  onTemplateChange?: (template: string) => void;
-}
-
-export default function CVPreviewModal({
-  isOpen,
-  onClose,
-  cvData,
-  selectedTemplate = "classic",
-  onTemplateChange,
-}: CVPreviewModalProps) {
+export default function CVPreviewPage() {
+  const router = useRouter();
+  const [cvData, setCVData] = useState<ICVProfile | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [showPDFPreview, setShowPDFPreview] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!isOpen) return null;
+  const { fetchMyCVProfile } = useCV();
+
+  useEffect(() => {
+    const loadCVData = async () => {
+      setIsLoading(true);
+      const result = await fetchMyCVProfile();
+
+      if (result) {
+        setCVData({
+          _id: result._id,
+          userId: result.userId,
+          personalInfo: {
+            fullName: result.personalInfo.fullName,
+            phone: result.personalInfo.phone,
+            email: result.personalInfo.email,
+            birthday: result.personalInfo.birthday ? new Date(result.personalInfo.birthday) : undefined,
+            gender: result.personalInfo.gender as "male" | "female" | "other" | undefined,
+            address: result.personalInfo.address || "",
+            personalLink: result.personalInfo.personalLink || "",
+            bio: result.personalInfo.bio || "",
+          },
+          education: result.education.map((edu: any) => ({
+            id: edu.id || "",
+            school: edu.school,
+            degree: edu.degree,
+            field: edu.field,
+            startDate: edu.startDate,
+            endDate: edu.endDate || "",
+            description: edu.description || "",
+          })),
+          experience: result.experience.map((exp: any) => ({
+            id: exp.id || "",
+            company: exp.company,
+            position: exp.position,
+            startDate: exp.startDate,
+            endDate: exp.endDate || "",
+            description: exp.description || "",
+          })),
+          skills: result.skills.map((skill: any) => ({
+            id: skill.id || "",
+            name: skill.name,
+            level: skill.level,
+          })),
+          languages: result.languages.map((lang: any) => ({
+            id: lang.id || "",
+            name: lang.name,
+            proficiency: lang.proficiency,
+          })),
+          projects: result.projects.map((proj: any) => ({
+            id: proj.id || "",
+            name: proj.name,
+            description: proj.description,
+            link: proj.link || "",
+          })),
+          certificates: result.certificates.map((cert: any) => ({
+            id: cert.id || "",
+            name: cert.name,
+            issuer: cert.issuer,
+            date: cert.date,
+          })),
+          awards: result.awards.map((award: any) => ({
+            id: award.id || "",
+            name: award.name,
+            date: award.date,
+            description: award.description || "",
+          })),
+          isActive: result.isActive,
+          lastUpdated: result.updatedAt,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+        });
+      }
+
+      setIsLoading(false);
+    };
+
+    loadCVData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+          <p className="text-muted-foreground">Đang tải CV...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cvData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">Không tìm thấy CV</p>
+          <Button onClick={() => router.push("/profile?tab=create-cv")}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Quay lại
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-5xl max-h-[90vh] overflow-hidden bg-background rounded-lg flex flex-col">
-        {/* Header */}
-        <div className="bg-card border-b border-border p-6 flex items-center justify-between flex-shrink-0">
-          <div>
-            <h2 className="text-2xl font-bold">Xem trước CV</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Preview và tải xuống CV của bạn
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-card border-b border-border sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={() => router.push("/profile?tab=create-cv")}
+                variant="outline"
+                size="sm"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Quay lại
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold">Xem trước CV</h1>
+                <p className="text-sm text-muted-foreground">
+                  Preview và tải xuống CV của bạn
+                </p>
+              </div>
+            </div>
             <DownloadPDFButton
               cvData={cvData}
               fileName="CV"
@@ -59,91 +163,90 @@ export default function CVPreviewModal({
               variant="default"
               size="default"
             />
+          </div>
+        </div>
+      </div>
+
+      {/* Template Selector & Preview Toggle */}
+      <div className="bg-secondary border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSelectedTemplate("classic")}
+                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                  selectedTemplate === "classic"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-foreground hover:bg-border"
+                }`}
+              >
+                Classic
+              </button>
+              <button
+                onClick={() => setSelectedTemplate("modern")}
+                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                  selectedTemplate === "modern"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-foreground hover:bg-border"
+                }`}
+              >
+                Modern
+              </button>
+              <button
+                onClick={() => setSelectedTemplate("minimal")}
+                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                  selectedTemplate === "minimal"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-foreground hover:bg-border"
+                }`}
+              >
+                Minimal
+              </button>
+            </div>
+
             <button
-              onClick={onClose}
-              className="text-muted-foreground hover:text-foreground transition p-2 hover:bg-secondary rounded-lg"
+              onClick={() => setShowPDFPreview(!showPDFPreview)}
+              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
+                showPDFPreview
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card text-foreground hover:bg-border"
+              }`}
             >
-              <X className="w-5 h-5" />
+              {showPDFPreview ? "📄 Xem HTML" : "📄 Xem PDF"}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Template Selector & Preview Toggle */}
-        <div className="bg-secondary border-b border-border p-4 flex items-center justify-between flex-shrink-0">
-          <div className="flex gap-2">
-            <button
-              onClick={() => onTemplateChange?.("classic")}
-              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                selectedTemplate === "classic"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-foreground hover:bg-border"
-              }`}
-            >
-              Classic
-            </button>
-            <button
-              onClick={() => onTemplateChange?.("modern")}
-              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                selectedTemplate === "modern"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-foreground hover:bg-border"
-              }`}
-            >
-              Modern
-            </button>
-            <button
-              onClick={() => onTemplateChange?.("minimal")}
-              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                selectedTemplate === "minimal"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-foreground hover:bg-border"
-              }`}
-            >
-              Minimal
-            </button>
+      {/* CV Preview */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {showPDFPreview ? (
+          // Live PDF Preview
+          <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
+            <PDFPreview
+              cvData={cvData}
+              template={selectedTemplate as any}
+              height="calc(100vh - 280px)"
+              className="rounded-lg overflow-hidden shadow-lg"
+            />
           </div>
-
-          <button
-            onClick={() => setShowPDFPreview(!showPDFPreview)}
-            className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-              showPDFPreview
-                ? "bg-primary text-primary-foreground"
-                : "bg-card text-foreground hover:bg-border"
-            }`}
-          >
-            {showPDFPreview ? "📄 Xem HTML" : "📄 Xem PDF"}
-          </button>
-        </div>
-
-        {/* CV Preview */}
-        <div className="flex-1 overflow-y-auto">
-          {showPDFPreview ? (
-            // Live PDF Preview
-            <div className="p-4 bg-gray-100">
-              <PDFPreview
-                cvData={cvData}
-                template={selectedTemplate as any}
-                height="calc(90vh - 200px)"
-                className="rounded-lg overflow-hidden shadow-lg"
-              />
-            </div>
-          ) : (
-            // HTML Preview (existing templates)
-            <div className="p-8 space-y-8">
-              {selectedTemplate === "classic" && <ClassicTemplate cvData={cvData} />}
-              {selectedTemplate === "modern" && <ModernTemplate cvData={cvData} />}
-              {selectedTemplate === "minimal" && <MinimalTemplate cvData={cvData} />}
-            </div>
-          )}
-        </div>
+        ) : (
+          // HTML Preview
+          <div className="space-y-8">
+            {selectedTemplate === "classic" && <ClassicTemplate cvData={cvData} />}
+            {selectedTemplate === "modern" && <ModernTemplate cvData={cvData} />}
+            {selectedTemplate === "minimal" && <MinimalTemplate cvData={cvData} />}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
+// Template components (copied from cv-preview-modal.tsx)
 function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
   return (
-    <div className="bg-white text-black p-8 rounded-lg space-y-6">
+    <div className="bg-white text-black p-8 rounded-lg space-y-6 shadow-lg max-w-4xl mx-auto">
       {/* Header */}
       <div className="border-b-2 border-black pb-4">
         <h1 className="text-3xl font-bold">{cvData.personalInfo.fullName}</h1>
@@ -186,7 +289,7 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
             <div key={edu.id} className="mb-4">
               <div className="flex justify-between">
                 <h3 className="font-bold">{edu.school}</h3>
-                <span className="text-sm text-gray-600">{edu.endDate}</span>
+                <span className="text-sm text-gray-600">{formatDateDisplay(edu.endDate)}</span>
               </div>
               <p className="text-sm text-gray-600">
                 {edu.degree} in {edu.field}
@@ -265,7 +368,7 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
             <div key={cert.id} className="mb-4">
               <div className="flex justify-between">
                 <h3 className="font-bold">{cert.name}</h3>
-                <span className="text-sm text-gray-600">{cert.date}</span>
+                <span className="text-sm text-gray-600">{formatDateDisplay(cert.date)}</span>
               </div>
               <p className="text-sm text-gray-600">{cert.issuer}</p>
             </div>
@@ -283,7 +386,7 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
             <div key={award.id} className="mb-4">
               <div className="flex justify-between">
                 <h3 className="font-bold">{award.name}</h3>
-                <span className="text-sm text-gray-600">{award.date}</span>
+                <span className="text-sm text-gray-600">{formatDateDisplay(award.date)}</span>
               </div>
               <p className="text-sm mt-1">{award.description}</p>
             </div>
@@ -296,7 +399,7 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
 
 function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 text-gray-800 p-8 rounded-lg space-y-6">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 text-gray-800 p-8 rounded-lg space-y-6 shadow-lg max-w-4xl mx-auto">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-lg">
         <h1 className="text-4xl font-bold">{cvData.personalInfo.fullName}</h1>
@@ -311,9 +414,7 @@ function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
       {/* Experience */}
       {cvData.experience.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">
-            💼 Experience
-          </h2>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">💼 Experience</h2>
           {cvData.experience.map((exp) => (
             <div key={exp.id} className="mb-4 p-4 bg-white rounded-lg">
               <div className="flex justify-between items-start">
@@ -334,9 +435,7 @@ function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
       {/* Education */}
       {cvData.education.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">
-            🎓 Education
-          </h2>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">🎓 Education</h2>
           {cvData.education.map((edu) => (
             <div key={edu.id} className="mb-4 p-4 bg-white rounded-lg">
               <h3 className="font-bold text-lg">{edu.school}</h3>
@@ -408,7 +507,7 @@ function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
                   <h3 className="font-bold text-lg">{cert.name}</h3>
                   <p className="text-blue-600 font-medium">{cert.issuer}</p>
                 </div>
-                <span className="text-sm text-gray-600">{cert.date}</span>
+                <span className="text-sm text-gray-600">{formatDateDisplay(cert.date)}</span>
               </div>
             </div>
           ))}
@@ -423,7 +522,7 @@ function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
             <div key={award.id} className="mb-4 p-4 bg-white rounded-lg">
               <div className="flex justify-between items-start">
                 <h3 className="font-bold text-lg">{award.name}</h3>
-                <span className="text-sm text-gray-600">{award.date}</span>
+                <span className="text-sm text-gray-600">{formatDateDisplay(award.date)}</span>
               </div>
               <p className="text-sm mt-2">{award.description}</p>
             </div>
@@ -436,7 +535,7 @@ function ModernTemplate({ cvData }: { cvData: ICVProfile }) {
 
 function MinimalTemplate({ cvData }: { cvData: ICVProfile }) {
   return (
-    <div className="bg-white text-gray-800 p-8 rounded-lg space-y-6">
+    <div className="bg-white text-gray-800 p-8 rounded-lg space-y-6 shadow-lg max-w-4xl mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-light tracking-wide">
@@ -544,7 +643,7 @@ function MinimalTemplate({ cvData }: { cvData: ICVProfile }) {
             <div key={cert.id} className="mb-3">
               <div className="flex justify-between items-baseline">
                 <h3 className="font-semibold">{cert.name}</h3>
-                <span className="text-xs text-gray-600">{cert.date}</span>
+                <span className="text-xs text-gray-600">{formatDateDisplay(cert.date)}</span>
               </div>
               <p className="text-sm text-gray-600">{cert.issuer}</p>
             </div>
@@ -562,7 +661,7 @@ function MinimalTemplate({ cvData }: { cvData: ICVProfile }) {
             <div key={award.id} className="mb-3">
               <div className="flex justify-between items-baseline">
                 <h3 className="font-semibold">{award.name}</h3>
-                <span className="text-xs text-gray-600">{String(award.date)}</span>
+                <span className="text-xs text-gray-600">{formatDateDisplay(award.date)}</span>
               </div>
               <p className="text-sm mt-1 leading-relaxed">{award.description}</p>
             </div>

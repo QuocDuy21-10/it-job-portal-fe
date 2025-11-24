@@ -2,16 +2,19 @@
 
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Card } from "@/components/ui/card";
 import CVFormSection from "@/components/sections/cv-form-section";
 import DataModal from "../modals/data-modal";
+import { ExperienceRequestSchema, type ExperienceRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 
 interface Experience {
   id: string;
   company: string;
   position: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | string;
+  endDate: Date | string;
   description: string;
 }
 
@@ -30,22 +33,36 @@ export default function WorkExperienceSection({
 }: WorkExperienceSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Experience>({
-    id: "",
-    company: "",
-    position: "",
-    startDate: "",
-    endDate: "",
-    description: "",
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ExperienceRequest>({
+    resolver: zodResolver(ExperienceRequestSchema),
+    mode: "onChange",
+    defaultValues: {
+      company: "",
+      position: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+    },
   });
 
   const handleOpen = (exp?: Experience) => {
     if (exp) {
-      setFormData(exp);
+      reset({
+        company: exp.company,
+        position: exp.position,
+        startDate: exp.startDate ? (typeof exp.startDate === "string" ? exp.startDate : exp.startDate.toISOString()) : "",
+        endDate: exp.endDate ? (typeof exp.endDate === "string" ? exp.endDate : exp.endDate.toISOString()) : "",
+        description: exp.description,
+      });
       setEditingId(exp.id);
     } else {
-      setFormData({
-        id: Date.now().toString(),
+      reset({
         company: "",
         position: "",
         startDate: "",
@@ -57,18 +74,25 @@ export default function WorkExperienceSection({
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = handleSubmit((data) => {
     if (editingId) {
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key !== "id") {
-          onUpdate(editingId, key, value as string);
-        }
-      });
+      onUpdate(editingId, "company", data.company);
+      onUpdate(editingId, "position", data.position);
+      onUpdate(editingId, "startDate", data.startDate);
+      onUpdate(editingId, "endDate", data.endDate || "");
+      onUpdate(editingId, "description", data.description || "");
     } else {
-      onAdd(formData);
+      onAdd({
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        company: data.company,
+        position: data.position,
+        startDate: data.startDate,
+        endDate: data.endDate || "",
+        description: data.description || "",
+      });
     }
     setIsModalOpen(false);
-  };
+  });
 
   return (
     <>
@@ -102,7 +126,7 @@ export default function WorkExperienceSection({
                     <p className="text-sm text-primary font-medium">{exp.company}</p>
                     {exp.startDate && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {exp.startDate} - {exp.endDate || "Present"}
+                        {typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })} - {exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : exp.endDate.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })) : "Present"}
                       </p>
                     )}
                     {exp.description && (
@@ -141,78 +165,127 @@ export default function WorkExperienceSection({
       >
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">
-                Company *
-              </label>
-              <input
-                type="text"
-                value={formData.company}
-                onChange={(e) =>
-                  setFormData({ ...formData, company: e.target.value })
-                }
-                placeholder="Tech Company Inc."
-                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">
-                Position *
-              </label>
-              <input
-                type="text"
-                value={formData.position}
-                onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
-                }
-                placeholder="Senior Developer"
-                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">
-                Start Date
-              </label>
-              <input
-                type="month"
-                value={formData.startDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, startDate: e.target.value })
-                }
-                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">
-                End Date
-              </label>
-              <input
-                type="month"
-                value={formData.endDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, endDate: e.target.value })
-                }
-                placeholder="Leave empty for current"
-                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Describe your responsibilities and achievements"
-              rows={3}
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+            <Controller
+              name="company"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Company *
+                  </label>
+                  <input
+                    type="text"
+                    {...field}
+                    placeholder="Tech Company Inc."
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors.company ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
+                  />
+                  {errors.company && (
+                    <p className="mt-1 text-xs text-destructive">{errors.company.message}</p>
+                  )}
+                </div>
+              )}
+            />
+            <Controller
+              name="position"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Position *
+                  </label>
+                  <input
+                    type="text"
+                    {...field}
+                    placeholder="Senior Developer"
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors.position ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
+                  />
+                  {errors.position && (
+                    <p className="mt-1 text-xs text-destructive">{errors.position.message}</p>
+                  )}
+                </div>
+              )}
             />
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    Start Date *
+                  </label>
+                  <input
+                    type="month"
+                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                    onChange={(e) => {
+                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                      field.onChange(dateValue);
+                    }}
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors.startDate ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
+                  />
+                  {errors.startDate && (
+                    <p className="mt-1 text-xs text-destructive">{errors.startDate.message}</p>
+                  )}
+                </div>
+              )}
+            />
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    End Date *
+                  </label>
+                  <input
+                    type="month"
+                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                    onChange={(e) => {
+                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                      field.onChange(dateValue);
+                    }}
+                    placeholder="Leave empty for current"
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors.endDate ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
+                  />
+                  {errors.endDate && (
+                    <p className="mt-1 text-xs text-destructive">{errors.endDate.message}</p>
+                  )}
+                </div>
+              )}
+            />
+          </div>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Description
+                </label>
+                <textarea
+                  {...field}
+                  value={field.value || ""}
+                  placeholder="Describe your responsibilities and achievements"
+                  rows={3}
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${
+                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.description && (
+                  <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>
+                )}
+              </div>
+            )}
+          />
         </div>
       </DataModal>
     </>

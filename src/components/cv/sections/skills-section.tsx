@@ -1,8 +1,11 @@
 "use client";
 
 import { Plus, X } from 'lucide-react';
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import CVFormSection from "@/components/sections/cv-form-section";
+import { SkillRequestSchema, type SkillRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { toast } from "sonner";
 
 interface Skill {
   id: string;
@@ -25,12 +28,49 @@ export default function SkillsSection({
   onUpdate,
   onRemove,
 }: SkillsSectionProps) {
+  const [errors, setErrors] = useState<Record<string, { name?: string; level?: string }>>({});
+
   const handleAddSkill = () => {
+    if (skills.length >= 20) {
+      toast.error("Bạn chỉ có thể thêm tối đa 20 kỹ năng");
+      return;
+    }
     onAdd({
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: "",
       level: "Intermediate",
     });
+  };
+
+  const handleUpdate = (id: string, field: "name" | "level", value: string) => {
+    // Update value immediately
+    onUpdate(id, field, value);
+    
+    // Validate after update
+    const skill = skills.find((s) => s.id === id);
+    if (skill) {
+      const updatedSkill = { ...skill, [field]: value };
+      const result = SkillRequestSchema.safeParse({
+        name: updatedSkill.name,
+        level: updatedSkill.level,
+      });
+      
+      if (!result.success) {
+        const fieldErrors: { name?: string; level?: string } = {};
+        result.error.issues.forEach((issue) => {
+          if (issue.path[0] === "name" || issue.path[0] === "level") {
+            fieldErrors[issue.path[0]] = issue.message;
+          }
+        });
+        setErrors((prev) => ({ ...prev, [id]: fieldErrors }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[id];
+          return newErrors;
+        });
+      }
+    }
   };
 
   return (
@@ -60,28 +100,31 @@ export default function SkillsSection({
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Skill Name
+                    Skill Name *
                   </label>
                   <input
                     type="text"
                     value={skill.name}
-                    onChange={(e) =>
-                      onUpdate(skill.id, "name", e.target.value)
-                    }
+                    onChange={(e) => handleUpdate(skill.id, "name", e.target.value)}
                     placeholder="e.g., React, Python"
-                    className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors[skill.id]?.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
                   />
+                  {errors[skill.id]?.name && (
+                    <p className="mt-1 text-xs text-destructive">{errors[skill.id].name}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Level
+                    Level *
                   </label>
                   <select
                     value={skill.level}
-                    onChange={(e) =>
-                      onUpdate(skill.id, "level", e.target.value)
-                    }
-                    className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    onChange={(e) => handleUpdate(skill.id, "level", e.target.value)}
+                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                      errors[skill.id]?.level ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    }`}
                   >
                     {SKILL_LEVELS.map((level) => (
                       <option key={level} value={level}>
@@ -89,6 +132,9 @@ export default function SkillsSection({
                       </option>
                     ))}
                   </select>
+                  {errors[skill.id]?.level && (
+                    <p className="mt-1 text-xs text-destructive">{errors[skill.id].level}</p>
+                  )}
                 </div>
                 <button
                   onClick={() => onRemove(skill.id)}

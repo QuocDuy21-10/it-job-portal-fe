@@ -8,7 +8,7 @@ export const baseApi = createApi({
   baseQuery: axiosBaseQuery({ baseUrl: API_BASE_URL }),
 
   // Define tag types for cache invalidation
-  tagTypes: ["Auth", "User", "Company", "Job", "Resume", "Permission", "Role"],
+  tagTypes: ["Auth", "User", "Company", "Job", "Resume", "Permission", "Role", "CVProfile"],
 
   endpoints: (builder) => ({
     getHello: builder.query<string, void>({

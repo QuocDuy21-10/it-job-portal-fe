@@ -2,9 +2,12 @@
 
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Card } from "@/components/ui/card";
 import CVFormSection from "@/components/sections/cv-form-section";
 import DataModal from "../modals/data-modal";
+import { ProjectRequestSchema, type ProjectRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 
 interface Project {
   id: string;
@@ -28,20 +31,32 @@ export default function ProjectsSection({
 }: ProjectsSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Project>({
-    id: "",
-    name: "",
-    description: "",
-    link: "",
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProjectRequest>({
+    resolver: zodResolver(ProjectRequestSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      description: "",
+      link: "",
+    },
   });
 
   const handleOpen = (project?: Project) => {
     if (project) {
-      setFormData(project);
+      reset({
+        name: project.name,
+        description: project.description,
+        link: project.link,
+      });
       setEditingId(project.id);
     } else {
-      setFormData({
-        id: Date.now().toString(),
+      reset({
         name: "",
         description: "",
         link: "",
@@ -51,18 +66,21 @@ export default function ProjectsSection({
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = handleSubmit((data) => {
     if (editingId) {
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key !== "id") {
-          onUpdate(editingId, key, value as string);
-        }
-      });
+      onUpdate(editingId, "name", data.name);
+      onUpdate(editingId, "description", data.description || "");
+      onUpdate(editingId, "link", data.link || "");
     } else {
-      onAdd(formData);
+      onAdd({
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: data.name,
+        description: data.description || "",
+        link: data.link || "",
+      });
     }
     setIsModalOpen(false);
-  };
+  });
 
   return (
     <>
@@ -140,48 +158,74 @@ export default function ProjectsSection({
         saveLabel={editingId ? "Update" : "Add"}
       >
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Project Name *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="My Awesome Project"
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Describe your project"
-              rows={3}
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Project Link
-            </label>
-            <input
-              type="url"
-              value={formData.link}
-              onChange={(e) =>
-                setFormData({ ...formData, link: e.target.value })
-              }
-              placeholder="https://example.com"
-              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Project Name *
+                </label>
+                <input
+                  type="text"
+                  {...field}
+                  placeholder="My Awesome Project"
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.name && (
+                  <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Description
+                </label>
+                <textarea
+                  {...field}
+                  value={field.value || ""}
+                  placeholder="Describe your project"
+                  rows={3}
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${
+                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.description && (
+                  <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
+            name="link"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Project Link
+                </label>
+                <input
+                  type="url"
+                  {...field}
+                  value={field.value || ""}
+                  placeholder="https://example.com"
+                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    errors.link ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.link && (
+                  <p className="mt-1 text-xs text-destructive">{errors.link.message}</p>
+                )}
+              </div>
+            )}
+          />
         </div>
       </DataModal>
     </>

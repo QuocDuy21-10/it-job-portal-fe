@@ -80,3 +80,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Grid pattern for decorative backgrounds */
+  .bg-grid-white\/\[0\.05\] {
+    background-image: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+  
+  /* Smooth transitions for interactive elements */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

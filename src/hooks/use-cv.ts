@@ -1,90 +1,97 @@
 import { useState, useCallback } from "react";
-import { cvService } from "@/features/cv/cv.service";
-import { IUpsertCVProfileRequest, ICVProfile } from "@/shared/types/cv";
+import { 
+  useUpsertCVProfileMutation, 
+  useGetMyCVProfileQuery 
+} from "@/features/cv-profile/redux/cv-profile.api";
+import { 
+  UpsertCVProfileRequest, 
+  CVProfile 
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 
 interface UseCV {
   isLoading: boolean;
   error: string | null;
-  cvData: ICVProfile | null;
-  upsertCV: (data: IUpsertCVProfileRequest) => Promise<ICVProfile | null>;
-  fetchMyCVProfile: () => Promise<ICVProfile | null>;
+  cvData: CVProfile | null;
+  upsertCV: (data: UpsertCVProfileRequest) => Promise<CVProfile | null>;
+  fetchMyCVProfile: () => Promise<CVProfile | null>;
   clearError: () => void;
+  refetch: () => void;
 }
 
 /**
- * Custom Hook for CV Management
+ * Custom Hook for CV Management using RTK Query
  * Quản lý state và logic cho CV operations
  */
 export const useCV = (): UseCV => {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cvData, setCvData] = useState<ICVProfile | null>(null);
+
+  // RTK Query hooks
+  const { 
+    data: cvProfileData, 
+    isLoading: isLoadingQuery,
+    refetch 
+  } = useGetMyCVProfileQuery();
+  
+  const [upsertCVMutation, { isLoading: isUpserting }] = useUpsertCVProfileMutation();
+
+  const cvData = cvProfileData?.data?.data || null;
+  const isLoading = isLoadingQuery || isUpserting;
 
   /**
    * Fetch current user's CV Profile
    * GET /cv-profiles/me
+   * Returns 200 OK with data: null if user doesn't have CV Profile yet
    */
-  const fetchMyCVProfile = useCallback(async (): Promise<ICVProfile | null> => {
-    setIsLoading(true);
+  const fetchMyCVProfile = useCallback(async (): Promise<CVProfile | null> => {
     setError(null);
 
     try {
-      const response = await cvService.getMyCVProfile();
+      const result = await refetch();
       
-      // API returns nested structure: { statusCode, message, data: { statusCode, message, data: ICVProfile } }
-      if (response.data?.data?.data) {
-        const cvProfile = response.data.data.data;
-        setCvData(cvProfile);
-        return cvProfile;
-      } else if (response.data?.data) {
-        // Alternative response structure
-        const cvProfile = response.data.data;
-        setCvData(cvProfile);
-        return cvProfile;
-      } else {
-        return null; // No CV profile yet
+      // Success: data exists (user has CV Profile)
+      if (result.data?.data?.data) {
+        return result.data.data.data;
       }
-    } catch (err: any) {
-      // 404 means user hasn't created CV yet - this is normal
-      if (err?.response?.status === 404) {
-        setCvData(null);
+      
+      // Success: data is null (user doesn't have CV Profile yet - this is normal)
+      if (result.data?.data?.data === null) {
         return null;
       }
       
-      const errorMessage = err?.response?.data?.message || err.message || "Có lỗi xảy ra khi tải CV";
+      // Error occurred
+      if (result.error) {
+        throw result.error;
+      }
+      
+      return null;
+    } catch (err: any) {
+      const errorMessage = err?.data?.message || err?.message || "Có lỗi xảy ra khi tải CV";
       setError(errorMessage);
       return null;
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  }, [refetch]);
 
   /**
    * Upsert CV Profile (Create or Update)
    * POST /cv-profiles/upsert
    */
-  const upsertCV = useCallback(async (data: IUpsertCVProfileRequest): Promise<ICVProfile | null> => {
-    setIsLoading(true);
+  const upsertCV = useCallback(async (data: UpsertCVProfileRequest): Promise<CVProfile | null> => {
     setError(null);
 
     try {
-      const response = await cvService.upsertCVProfile(data);
+      const result = await upsertCVMutation(data).unwrap();
       
-      if (response.statusCode === 200 && response.data?.data) {
-        const cvProfile = response.data.data;
-        setCvData(cvProfile);
-        return cvProfile;
+      if (result.data?.data) {
+        return result.data.data;
       } else {
-        throw new Error(response.data?.message || "Failed to save CV");
+        throw new Error(result.message || "Failed to save CV");
       }
     } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || err.message || "Có lỗi xảy ra khi lưu CV";
+      const errorMessage = err?.data?.message || err?.message || "Có lỗi xảy ra khi lưu CV";
       setError(errorMessage);
       return null;
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  }, [upsertCVMutation]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -97,5 +104,6 @@ export const useCV = (): UseCV => {
     upsertCV,
     fetchMyCVProfile,
     clearError,
+    refetch,
   };
 };

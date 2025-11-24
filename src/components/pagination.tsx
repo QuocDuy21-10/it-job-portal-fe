@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,14 @@ export function Pagination({
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
+  };
+
+  const handleFirst = () => {
+    onPageChange(1);
+  };
+
+  const handleLast = () => {
+    onPageChange(totalPages);
   };
 
   const handlePageSizeChange = (value: string) => {
@@ -91,30 +100,47 @@ export function Pagination({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 w-full">
       {/* Items info */}
-      <div className="text-sm text-gray-600">
-        Showing {startItem} to {endItem} of {totalItems} results
+      <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+        Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{startItem}</span> đến{" "}
+        <span className="font-bold text-slate-900 dark:text-slate-100">{endItem}</span> trong tổng số{" "}
+        <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems}</span> kết quả
       </div>
 
       {/* Pagination controls */}
       <div className="flex items-center gap-2">
+        {/* First Page */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleFirst}
+          disabled={currentPage === 1}
+          className="h-9 w-9 hidden sm:flex disabled:opacity-50"
+          aria-label="First page"
+        >
+          <ChevronsLeft className="h-4 w-4" />
+        </Button>
+
+        {/* Previous */}
         <Button
           variant="outline"
           size="sm"
           onClick={handlePrevious}
           disabled={currentPage === 1}
+          className="gap-1 disabled:opacity-50"
           aria-label="Previous page"
         >
-          Previous
+          <ChevronLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">Trước</span>
         </Button>
 
         {/* Page numbers */}
-        <div className="hidden sm:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-1">
           {getPageNumbers().map((page, index) => {
             if (page === "...") {
               return (
-                <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
+                <span key={`ellipsis-${index}`} className="px-3 text-slate-400 dark:text-slate-500">
                   ...
                 </span>
               );
@@ -126,7 +152,11 @@ export function Pagination({
                 variant={currentPage === page ? "default" : "outline"}
                 size="sm"
                 onClick={() => onPageChange(page as number)}
-                className="min-w-[40px]"
+                className={`min-w-[40px] h-9 ${
+                  currentPage === page
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md"
+                    : "hover:bg-slate-100 dark:hover:bg-slate-800"
+                }`}
                 aria-label={`Go to page ${page}`}
                 aria-current={currentPage === page ? "page" : undefined}
               >
@@ -137,33 +167,48 @@ export function Pagination({
         </div>
 
         {/* Mobile page indicator */}
-        <div className="sm:hidden">
-          <span className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
+        <div className="md:hidden flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
+          <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+            Trang {currentPage} / {totalPages}
           </span>
         </div>
 
+        {/* Next */}
         <Button
           variant="outline"
           size="sm"
           onClick={handleNext}
           disabled={currentPage === totalPages}
+          className="gap-1 disabled:opacity-50"
           aria-label="Next page"
         >
-          Next
+          <span className="hidden sm:inline">Sau</span>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+
+        {/* Last Page */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleLast}
+          disabled={currentPage === totalPages}
+          className="h-9 w-9 hidden sm:flex disabled:opacity-50"
+          aria-label="Last page"
+        >
+          <ChevronsRight className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Page size selector */}
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-600 whitespace-nowrap">
-          Per page:
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap font-medium">
+          Số lượng/trang:
         </span>
         <Select
           value={pageSize.toString()}
           onValueChange={handlePageSizeChange}
         >
-          <SelectTrigger className="w-[100px]" aria-label="Select page size">
+          <SelectTrigger className="w-[100px] h-9 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700" aria-label="Select page size">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
