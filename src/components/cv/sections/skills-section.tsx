@@ -1,10 +1,16 @@
 "use client";
 
-import { Plus, X } from 'lucide-react';
-import { useState } from "react";
+import { Plus, Edit, Trash2, Award } from 'lucide-react';
 import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
-import { SkillRequestSchema, type SkillRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import SkillModal from "@/components/cv/modals/skill-modal";
+import { useSkillModal } from "@/hooks/use-skill-modal";
 import { toast } from "sonner";
 
 interface Skill {
@@ -20,7 +26,12 @@ interface SkillsSectionProps {
   onRemove: (id: string) => void;
 }
 
-const SKILL_LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
+const SKILL_LEVEL_COLORS: Record<string, string> = {
+  Beginner: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  Intermediate: "bg-green-500/10 text-green-600 dark:text-green-400",
+  Advanced: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  Expert: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+};
 
 export default function SkillsSection({
   skills,
@@ -28,126 +39,124 @@ export default function SkillsSection({
   onUpdate,
   onRemove,
 }: SkillsSectionProps) {
-  const [errors, setErrors] = useState<Record<string, { name?: string; level?: string }>>({});
+  const skillModal = useSkillModal(skills, onAdd, onUpdate);
 
-  const handleAddSkill = () => {
-    if (skills.length >= 20) {
-      toast.error("Bạn chỉ có thể thêm tối đa 20 kỹ năng");
-      return;
-    }
-    onAdd({
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      name: "",
-      level: "Intermediate",
+  const handleRemove = (id: string, name: string) => {
+    toast.success("Đã xóa kỹ năng", {
+      description: `Kỹ năng "${name}" đã được xóa`,
+      duration: 2000,
     });
-  };
-
-  const handleUpdate = (id: string, field: "name" | "level", value: string) => {
-    // Update value immediately
-    onUpdate(id, field, value);
-    
-    // Validate after update
-    const skill = skills.find((s) => s.id === id);
-    if (skill) {
-      const updatedSkill = { ...skill, [field]: value };
-      const result = SkillRequestSchema.safeParse({
-        name: updatedSkill.name,
-        level: updatedSkill.level,
-      });
-      
-      if (!result.success) {
-        const fieldErrors: { name?: string; level?: string } = {};
-        result.error.issues.forEach((issue) => {
-          if (issue.path[0] === "name" || issue.path[0] === "level") {
-            fieldErrors[issue.path[0]] = issue.message;
-          }
-        });
-        setErrors((prev) => ({ ...prev, [id]: fieldErrors }));
-      } else {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[id];
-          return newErrors;
-        });
-      }
-    }
+    onRemove(id);
   };
 
   return (
-    <CVFormSection
-      title="Skills"
-      description={`Add your professional skills (${skills.length}/20)`}
-      actionButton={
-        skills.length < 20 && (
-          <button
-            onClick={handleAddSkill}
-            className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Add Skill
-          </button>
-        )
-      }
-    >
-      {skills.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-4 text-center">
-          No skills added yet
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {skills.map((skill) => (
-            <Card key={skill.id} className="p-4 bg-secondary/50 border border-border">
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Skill Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={skill.name}
-                    onChange={(e) => handleUpdate(skill.id, "name", e.target.value)}
-                    placeholder="e.g., React, Python"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors[skill.id]?.name ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
-                  />
-                  {errors[skill.id]?.name && (
-                    <p className="mt-1 text-xs text-destructive">{errors[skill.id].name}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Level *
-                  </label>
-                  <select
-                    value={skill.level}
-                    onChange={(e) => handleUpdate(skill.id, "level", e.target.value)}
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors[skill.id]?.level ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
+    <>
+      <CVFormSection
+        title="Kỹ Năng Chuyên Môn"
+        description={`Thêm các kỹ năng của bạn (${skills.length}/20)`}
+        actionButton={
+          skills.length < 20 && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={skillModal.openAddModal}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all hover:scale-105"
                   >
-                    {SKILL_LEVELS.map((level) => (
-                      <option key={level} value={level}>
-                        {level}
-                      </option>
-                    ))}
-                  </select>
-                  {errors[skill.id]?.level && (
-                    <p className="mt-1 text-xs text-destructive">{errors[skill.id].level}</p>
-                  )}
+                    <Plus className="w-4 h-4" />
+                    Thêm Kỹ Năng
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Thêm kỹ năng chuyên môn mới</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )
+        }
+      >
+        {skills.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-br from-secondary/30 to-secondary/10 rounded-xl border-2 border-dashed border-border/50">
+            <Award className="w-16 h-16 text-muted-foreground/30 mb-4" />
+            <p className="text-base font-medium text-muted-foreground mb-2">
+              Chưa có kỹ năng nào
+            </p>
+            <p className="text-sm text-muted-foreground/70 text-center max-w-md">
+              Thêm các kỹ năng chuyên môn để nổi bật hồ sơ của bạn
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {skills.map((skill) => (
+              <Card
+                key={skill.id}
+                className="group relative overflow-hidden bg-gradient-to-br from-card to-secondary/20 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-base text-foreground mb-2 line-clamp-1">
+                        {skill.name}
+                      </h4>
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          SKILL_LEVEL_COLORS[skill.level] || SKILL_LEVEL_COLORS.Intermediate
+                        }`}
+                      >
+                        {skill.level}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-border/30">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => skillModal.openEditModal(skill)}
+                            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium transition-all hover:scale-105"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            Sửa
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chỉnh sửa kỹ năng này</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => handleRemove(skill.id, skill.name)}
+                            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-destructive/10 hover:bg-destructive/20 text-destructive text-xs font-medium transition-all hover:scale-105"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Xóa
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Xóa kỹ năng này</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
-                <button
-                  onClick={() => onRemove(skill.id)}
-                  className="w-full flex items-center justify-center gap-2 text-destructive hover:text-destructive/80 font-medium text-sm py-2 rounded hover:bg-card transition"
-                >
-                  <X className="w-4 h-4" />
-                  Remove
-                </button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </CVFormSection>
+              </Card>
+            ))}
+          </div>
+        )}
+      </CVFormSection>
+
+      <SkillModal
+        isOpen={skillModal.isOpen}
+        onClose={skillModal.closeModal}
+        onSubmit={skillModal.handleSubmit}
+        initialData={skillModal.currentSkill}
+        mode={skillModal.mode}
+      />
+    </>
   );
 }

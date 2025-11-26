@@ -8,6 +8,14 @@ import { ICVProfile } from "@/shared/types/cv";
 import { useCV } from "@/hooks/use-cv";
 import DownloadPDFButton from "@/components/pdf/download-pdf-button";
 import PDFPreview from "@/components/pdf/pdf-preview";
+import {
+  EmailIconHTML,
+  PhoneIconHTML,
+  LocationIconHTML,
+  CalendarIconHTML,
+  UserIconHTML,
+  LinkIconHTML,
+} from "@/components/cv/html-icons";
 
 /**
  * Helper function to display date
@@ -221,8 +229,8 @@ export default function CVPreviewPage() {
       {/* CV Preview */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {showPDFPreview ? (
-          // Live PDF Preview
-          <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
+          // Live PDF Preview - Tăng height để xem tốt hơn
+          <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg min-h-[calc(100vh-240px)]">
             <PDFPreview
               cvData={cvData}
               template={selectedTemplate as any}
@@ -251,29 +259,65 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
       <div className="border-b-2 border-black pb-4">
         <h1 className="text-3xl font-bold">{cvData.personalInfo.fullName}</h1>
         <p className="text-sm text-gray-600 mt-1">{cvData.personalInfo.bio}</p>
-        <div className="flex flex-wrap gap-4 mt-3 text-sm">
-          <span>{cvData.personalInfo.email}</span>
-          <span>{cvData.personalInfo.phone}</span>
-          <span>{cvData.personalInfo.address}</span>
+        
+        {/* Contact Information with Icons */}
+        <div className="flex flex-wrap gap-4 mt-3 text-sm items-center">
+          {cvData.personalInfo.email && (
+            <span className="flex items-center gap-1.5">
+              <EmailIconHTML className="w-3.5 h-3.5 text-gray-500" />
+              {cvData.personalInfo.email}
+            </span>
+          )}
+          {cvData.personalInfo.phone && (
+            <span className="flex items-center gap-1.5">
+              <PhoneIconHTML className="w-3.5 h-3.5 text-gray-500" />
+              {cvData.personalInfo.phone}
+            </span>
+          )}
+          {cvData.personalInfo.address && (
+            <span className="flex items-center gap-1.5">
+              <LocationIconHTML className="w-3.5 h-3.5 text-gray-500" />
+              {cvData.personalInfo.address}
+            </span>
+          )}
+          {cvData.personalInfo.birthday && (
+            <span className="flex items-center gap-1.5">
+              <CalendarIconHTML className="w-3.5 h-3.5 text-gray-500" />
+              {formatDateDisplay(cvData.personalInfo.birthday)}
+            </span>
+          )}
+          {cvData.personalInfo.gender && (
+            <span className="flex items-center gap-1.5">
+              <UserIconHTML className="w-3.5 h-3.5 text-gray-500" />
+              {cvData.personalInfo.gender}
+            </span>
+          )}
         </div>
+        
+        {cvData.personalInfo.personalLink && (
+          <div className="flex items-center gap-1.5 mt-2 text-sm text-blue-600">
+            <LinkIconHTML className="w-3.5 h-3.5" />
+            {cvData.personalInfo.personalLink}
+          </div>
+        )}
       </div>
 
       {/* Experience */}
       {cvData.experience.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Experience
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+            Kinh nghiệm làm việc
           </h2>
           {cvData.experience.map((exp) => (
             <div key={exp.id} className="mb-4">
               <div className="flex justify-between">
-                <h3 className="font-bold">{exp.position}</h3>
-                <span className="text-sm text-gray-600">
+                <h3 className="font-bold text-gray-800">{exp.position}</h3>
+                <span className="text-sm text-gray-500">
                   {formatDateDisplay(exp.startDate)} - {formatDateDisplay(exp.endDate)}
                 </span>
               </div>
               <p className="text-sm text-gray-600">{exp.company}</p>
-              <p className="text-sm mt-1">{exp.description}</p>
+              <p className="text-sm mt-1 text-gray-700 leading-relaxed">{exp.description}</p>
             </div>
           ))}
         </div>
@@ -282,74 +326,80 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
       {/* Education */}
       {cvData.education.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Education
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+            Học vấn
           </h2>
           {cvData.education.map((edu) => (
             <div key={edu.id} className="mb-4">
               <div className="flex justify-between">
-                <h3 className="font-bold">{edu.school}</h3>
-                <span className="text-sm text-gray-600">{formatDateDisplay(edu.endDate)}</span>
+                <h3 className="font-bold text-gray-800">{edu.school}</h3>
+                <span className="text-sm text-gray-500">
+                  {formatDateDisplay(edu.startDate)} - {formatDateDisplay(edu.endDate)}
+                </span>
               </div>
               <p className="text-sm text-gray-600">
-                {edu.degree} in {edu.field}
+                {edu.degree} - {edu.field}
               </p>
-              <p className="text-sm mt-1">{edu.description}</p>
+              <p className="text-sm mt-1 text-gray-700 leading-relaxed">{edu.description}</p>
             </div>
           ))}
         </div>
       )}
 
-      {/* Skills */}
-      {cvData.skills.length > 0 && (
-        <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Skills
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {cvData.skills.map((skill) => (
-              <span
-                key={skill.id}
-                className="px-3 py-1 bg-gray-200 text-black rounded text-sm"
-              >
-                {skill.name} ({skill.level})
-              </span>
-            ))}
+      {/* Skills & Languages - Two Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Skills */}
+        {cvData.skills.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+              Kỹ năng
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {cvData.skills.map((skill) => (
+                <span
+                  key={skill.id}
+                  className="px-3 py-1.5 bg-gray-200 text-black rounded text-sm"
+                >
+                  {skill.name} ({skill.level})
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Languages */}
-      {cvData.languages.length > 0 && (
-        <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Languages
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {cvData.languages.map((lang) => (
-              <span
-                key={lang.id}
-                className="px-3 py-1 bg-gray-200 text-black rounded text-sm"
-              >
-                {lang.name} ({lang.proficiency})
-              </span>
-            ))}
+        {/* Languages */}
+        {cvData.languages.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+              Ngôn ngữ
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {cvData.languages.map((lang) => (
+                <span
+                  key={lang.id}
+                  className="px-3 py-1.5 bg-gray-200 text-black rounded text-sm"
+                >
+                  {lang.name} ({lang.proficiency})
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Projects */}
       {cvData.projects.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Projects
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+            Dự án
           </h2>
           {cvData.projects.map((project) => (
             <div key={project.id} className="mb-4">
-              <h3 className="font-bold">{project.name}</h3>
-              <p className="text-sm mt-1">{project.description}</p>
+              <h3 className="font-bold text-gray-800">{project.name}</h3>
+              <p className="text-sm mt-1 text-gray-700 leading-relaxed">{project.description}</p>
               {project.link && (
-                <a href={project.link} className="text-sm text-blue-600 hover:underline mt-1 block">
+                <a href={project.link} className="text-sm text-blue-600 hover:underline mt-1 flex items-center gap-1">
+                  <LinkIconHTML className="w-3 h-3" />
                   {project.link}
                 </a>
               )}
@@ -361,14 +411,14 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
       {/* Certificates */}
       {cvData.certificates.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Certificates
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+            Chứng chỉ
           </h2>
           {cvData.certificates.map((cert) => (
             <div key={cert.id} className="mb-4">
               <div className="flex justify-between">
-                <h3 className="font-bold">{cert.name}</h3>
-                <span className="text-sm text-gray-600">{formatDateDisplay(cert.date)}</span>
+                <h3 className="font-bold text-gray-800">{cert.name}</h3>
+                <span className="text-sm text-gray-500">{formatDateDisplay(cert.date)}</span>
               </div>
               <p className="text-sm text-gray-600">{cert.issuer}</p>
             </div>
@@ -379,16 +429,16 @@ function ClassicTemplate({ cvData }: { cvData: ICVProfile }) {
       {/* Awards */}
       {cvData.awards.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">
-            Awards & Recognition
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3 uppercase tracking-wide text-gray-800">
+            Giải thưởng
           </h2>
           {cvData.awards.map((award) => (
             <div key={award.id} className="mb-4">
               <div className="flex justify-between">
-                <h3 className="font-bold">{award.name}</h3>
-                <span className="text-sm text-gray-600">{formatDateDisplay(award.date)}</span>
+                <h3 className="font-bold text-gray-800">{award.name}</h3>
+                <span className="text-sm text-gray-500">{formatDateDisplay(award.date)}</span>
               </div>
-              <p className="text-sm mt-1">{award.description}</p>
+              <p className="text-sm mt-1 text-gray-700 leading-relaxed">{award.description}</p>
             </div>
           ))}
         </div>

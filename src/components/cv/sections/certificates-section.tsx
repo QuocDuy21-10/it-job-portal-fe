@@ -72,8 +72,10 @@ export default function CertificatesSection({
       onUpdate(editingId, "issuer", data.issuer);
       onUpdate(editingId, "date", data.date);
     } else {
+      // Add new - create unique id
+      const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       onAdd({
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: newId,
         name: data.name,
         issuer: data.issuer,
         date: data.date,

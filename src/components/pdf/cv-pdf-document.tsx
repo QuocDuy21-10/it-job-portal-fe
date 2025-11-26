@@ -3,10 +3,11 @@
  * Sử dụng @react-pdf/renderer để tạo PDF template
  * 
  * LƯU Ý QUAN TRỌNG:
- * 1. Chỉ sử dụng: Document, Page, View, Text, Image, Link
+ * 1. Chỉ sử dụng: Document, Page, View, Text, Image, Link, Svg
  * 2. KHÔNG dùng: div, span, p, h1, button, etc.
  * 3. Styling: Chỉ hỗ trợ Flexbox cơ bản, không có grid/z-index/box-shadow
  * 4. Font: Phải register .ttf fonts cho tiếng Việt
+ * 5. Icons: Dùng SVG primitives từ icons.tsx
  */
 
 import React from "react";
@@ -19,6 +20,21 @@ import {
 } from "@react-pdf/renderer";
 import { ICVProfile } from "@/shared/types/cv";
 import { registerFonts } from '@/lib/pdf/fonts';
+import {
+  EmailIcon,
+  PhoneIcon,
+  LocationIcon,
+  CalendarIcon,
+  UserIcon,
+  LinkIcon,
+} from "@/components/pdf/icons";
+import {
+  CVColors,
+  CVFontSizes,
+  CVSpacing,
+  CVLineHeights,
+  CVBorderWidths,
+} from "@/lib/pdf/cv-styles";
 
 
 interface CVPdfDocumentProps {
@@ -28,57 +44,62 @@ interface CVPdfDocumentProps {
 
 registerFonts();
 
-// Styles cho PDF - Chỉ dùng Flexbox
+// Styles cho PDF - Sử dụng shared constants
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    padding: CVSpacing.pageMargin,
     fontFamily: "Roboto",
-    fontSize: 10,
-    lineHeight: 1.5,
+    fontSize: CVFontSizes.bodyMedium,
+    lineHeight: CVLineHeights.normal,
   },
   header: {
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 20,
-    paddingBottom: 15,
-    borderBottom: "2 solid #333",
+    marginBottom: CVSpacing.sectionMarginTop,
+    paddingBottom: CVSpacing.headerPaddingBottom,
+    borderBottom: `${CVBorderWidths.medium} solid ${CVColors.borderPrimary}`,
   },
   name: {
-    fontSize: 24,
+    fontSize: CVFontSizes.nameClassic,
     fontWeight: 700,
     marginBottom: 8,
-    color: "#1a1a1a",
+    color: CVColors.textPrimary,
   },
   bio: {
-    fontSize: 11,
-    color: "#555",
+    fontSize: CVFontSizes.bodyLarge,
+    color: CVColors.textSecondary,
     marginBottom: 8,
   },
   contactRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
-    fontSize: 9,
-    color: "#666",
+    gap: CVSpacing.contactGap,
+    fontSize: CVFontSizes.bodySmall,
+    color: CVColors.textMuted,
   },
   contactItem: {
-    marginRight: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  personalLink: {
+    fontSize: CVFontSizes.bodySmall,
+    color: CVColors.linkColor,
+    marginTop: 4,
   },
   section: {
-    marginTop: 20,
+    marginTop: CVSpacing.sectionMarginTop,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: CVFontSizes.sectionTitleClassic,
     fontWeight: 700,
     marginBottom: 10,
-    paddingBottom: 5,
-    borderBottom: "1 solid #ddd",
-    color: "#2c3e50",
+    paddingBottom: CVSpacing.sectionPaddingBottom,
+    borderBottom: `${CVBorderWidths.thin} solid ${CVColors.borderSecondary}`,
+    color: CVColors.sectionTitleClassic,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   itemContainer: {
-    marginBottom: 12,
+    marginBottom: CVSpacing.itemMarginBottom,
   },
   itemHeader: {
     flexDirection: "row",
@@ -86,42 +107,47 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemTitle: {
-    fontSize: 11,
+    fontSize: CVFontSizes.itemTitle,
     fontWeight: 700,
-    color: "#2c3e50",
+    color: CVColors.sectionTitleClassic,
   },
   itemSubtitle: {
-    fontSize: 10,
-    color: "#7f8c8d",
+    fontSize: CVFontSizes.itemSubtitle,
+    color: CVColors.textLight,
     marginBottom: 4,
   },
   itemDate: {
-    fontSize: 9,
-    color: "#95a5a6",
+    fontSize: CVFontSizes.bodySmall,
+    color: CVColors.textLighter,
   },
   itemDescription: {
-    fontSize: 10,
-    color: "#555",
-    lineHeight: 1.6,
+    fontSize: CVFontSizes.bodyMedium,
+    color: CVColors.textSecondary,
+    lineHeight: CVLineHeights.relaxed,
   },
   skillsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: CVSpacing.skillGap,
   },
   skillTag: {
-    backgroundColor: "#ecf0f1",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    backgroundColor: CVColors.borderLight,
+    paddingHorizontal: CVSpacing.tagPaddingHorizontal,
+    paddingVertical: CVSpacing.tagPaddingVertical,
     borderRadius: 3,
-    fontSize: 9,
+    fontSize: CVFontSizes.bodySmall,
   },
   twoColumns: {
     flexDirection: "row",
-    gap: 20,
+    gap: CVSpacing.columnGap,
   },
   column: {
     flex: 1,
+  },
+  linkText: {
+    fontSize: CVFontSizes.bodySmall,
+    color: CVColors.linkColor,
+    marginTop: 2,
   },
 });
 
@@ -160,7 +186,8 @@ const formatDateForDisplay = (date: Date | string | undefined): string => {
 
 /**
  * Classic CV Template
- * Template truyền thống, rõ ràng, dễ đọ
+ * Template truyền thống, rõ ràng, dễ đọc
+ * Sử dụng SVG icons và shared constants
  */
 const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
   const { personalInfo, education, experience, skills, languages, projects, certificates, awards } = cvData;
@@ -172,21 +199,46 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
         <View style={styles.header}>
           <Text style={styles.name}>{personalInfo.fullName}</Text>
           {personalInfo.bio && <Text style={styles.bio}>{personalInfo.bio}</Text>}
+          
+          {/* Contact Information with Icons */}
           <View style={styles.contactRow}>
-            {personalInfo.email && <Text style={styles.contactItem}>📧 {personalInfo.email}</Text>}
-            {personalInfo.phone && <Text style={styles.contactItem}>📱 {personalInfo.phone}</Text>}
-            {personalInfo.address && <Text style={styles.contactItem}>📍 {personalInfo.address}</Text>}
-            {personalInfo.birthday && (
-              <Text style={styles.contactItem}>
-                🎂 {formatDateForDisplay(personalInfo.birthday)}
-              </Text>
+            {personalInfo.email && (
+              <View style={styles.contactItem}>
+                <EmailIcon size={10} color={CVColors.textMuted} />
+                <Text>{personalInfo.email}</Text>
+              </View>
             )}
-            {personalInfo.gender && <Text style={styles.contactItem}>👤 {personalInfo.gender}</Text>}
+            {personalInfo.phone && (
+              <View style={styles.contactItem}>
+                <PhoneIcon size={10} color={CVColors.textMuted} />
+                <Text>{personalInfo.phone}</Text>
+              </View>
+            )}
+            {personalInfo.address && (
+              <View style={styles.contactItem}>
+                <LocationIcon size={10} color={CVColors.textMuted} />
+                <Text>{personalInfo.address}</Text>
+              </View>
+            )}
+            {personalInfo.birthday && (
+              <View style={styles.contactItem}>
+                <CalendarIcon size={10} color={CVColors.textMuted} />
+                <Text>{formatDateForDisplay(personalInfo.birthday)}</Text>
+              </View>
+            )}
+            {personalInfo.gender && (
+              <View style={styles.contactItem}>
+                <UserIcon size={10} color={CVColors.textMuted} />
+                <Text>{personalInfo.gender}</Text>
+              </View>
+            )}
           </View>
+          
           {personalInfo.personalLink && (
-            <Text style={{ fontSize: 9, color: "#3498db", marginTop: 4 }}>
-              🔗 {personalInfo.personalLink}
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 }}>
+              <LinkIcon size={10} color={CVColors.linkColor} />
+              <Text style={styles.personalLink}>{personalInfo.personalLink}</Text>
+            </View>
           )}
         </View>
 
@@ -219,7 +271,9 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
               <View key={edu.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{edu.school}</Text>
-                  <Text style={styles.itemDate}>{formatDateForDisplay(edu.endDate)}</Text>
+                  <Text style={styles.itemDate}>
+                    {formatDateForDisplay(edu.startDate)} - {formatDateForDisplay(edu.endDate)}
+                  </Text>
                 </View>
                 <Text style={styles.itemSubtitle}>
                   {edu.degree} - {edu.field}
@@ -276,9 +330,7 @@ const ClassicCVTemplate: React.FC<{ cvData: ICVProfile }> = ({ cvData }) => {
                   <Text style={styles.itemDescription}>{project.description}</Text>
                 )}
                 {project.link && (
-                  <Text style={{ fontSize: 9, color: "#3498db", marginTop: 2 }}>
-                    {project.link}
-                  </Text>
+                  <Text style={styles.linkText}>{project.link}</Text>
                 )}
               </View>
             ))}

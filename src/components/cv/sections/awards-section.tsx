@@ -72,8 +72,10 @@ export default function AwardsSection({
       onUpdate(editingId, "date", data.date);
       onUpdate(editingId, "description", data.description || "");
     } else {
+      // Add new - create unique id
+      const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       onAdd({
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: newId,
         name: data.name,
         date: data.date,
         description: data.description || "",

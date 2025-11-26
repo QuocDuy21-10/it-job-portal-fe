@@ -4,7 +4,9 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/contexts/i18n-provider";
+import { AuthModalProvider } from "@/contexts/auth-modal-context";
 import { ClientLayout } from "@/components/client-layout";
+import { AuthModal } from "@/components/modals/auth-modal";
 import ReduxProvider from "@/lib/redux/provider";
 import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
 
@@ -35,11 +37,14 @@ export default function RootLayout({
           <GoogleOAuthProvider>
             <ThemeProvider>
               <I18nProvider>
-                <ClientLayout />
-                {/* <Header /> */}
-                <main className="flex-1">{children}</main>
-                {/* <Footer /> */}
-                <Toaster />
+                <AuthModalProvider>
+                  <ClientLayout />
+                  {/* <Header /> */}
+                  <main className="flex-1">{children}</main>
+                  {/* <Footer /> */}
+                  <AuthModal />
+                  <Toaster />
+                </AuthModalProvider>
               </I18nProvider>
             </ThemeProvider>
           </GoogleOAuthProvider>

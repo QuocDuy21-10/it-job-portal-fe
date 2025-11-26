@@ -1,0 +1,7 @@
+// Centralized exports for auth components
+export { AuthLayout } from "./auth-layout";
+export { AuthHeader } from "./auth-header";
+export { AuthCard } from "./auth-card";
+export { PasswordInput } from "./password-input";
+export { SocialAuthButtons } from "./social-auth-buttons";
+export { AuthFooter } from "./auth-footer";

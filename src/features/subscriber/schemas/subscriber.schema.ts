@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 export const SubscriberSchema = z.object({
@@ -9,6 +10,8 @@ export const SubscriberEntitySchema = SubscriberSchema.extend({
   name: z.string().min(2, "Subscriber name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   skills: z.array(z.string()).min(1, "At least one skill is required"),
+  location: z.string(),
+  createdAt: z.string().optional(),
   createdBy: z.object({
     _id: z.string(),
     email: z.string().email("Invalid email address"),
@@ -19,9 +22,18 @@ export const SubscriberEntitySchema = SubscriberSchema.extend({
   }),
 });
 
+export const GetMySubscribersResponse = z.object({
+  subscriptions: z.array(SubscriberEntitySchema),
+  total: z.number(),
+  maxAllowed: z.number(),
+});
+
+export type GetMySubscribersResponse = z.infer<typeof GetMySubscribersResponse>;
+
 export const CreateSubscriberFormData = z.object({
   name: z.string().min(2, "Subscriber name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
+  location: z.string(),
   skills: z.array(z.string()).min(1, "At least one skill is required"),
 });
 

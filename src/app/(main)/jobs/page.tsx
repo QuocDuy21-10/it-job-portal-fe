@@ -7,7 +7,7 @@ import { Pagination } from "@/components/pagination";
 import Link from "next/link";
 import { Search, MapPin, Building2, Briefcase, DollarSign, X, Filter, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { MultiSelect } from "@/components/multi-select";
+import { SingleSelect } from "@/components/single-select";
 import provinces from "@/shared/data/provinces.json";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,10 +40,10 @@ export default function JobsPage() {
   const searchParams = useSearchParams();
   const { t, mounted: i18nMounted } = useI18n();
 
-  // Multi-select location state
-  const [selectedProvinces, setSelectedProvinces] = React.useState<string[]>(() => {
+  // Single-select location state
+  const [selectedProvince, setSelectedProvince] = React.useState<string>(() => {
     const initial = searchParams.get("location");
-    return initial ? initial.split(",") : [];
+    return initial || "";
   });
 
   // UI state
@@ -75,10 +75,10 @@ export default function JobsPage() {
   });
 
   // Update URL when filters change (debounced values)
-  // Đồng bộ lại selectedProvinces khi URL thay đổi (nếu user thao tác back/forward)
+  // Đồng bộ lại selectedProvince khi URL thay đổi (nếu user thao tác back/forward)
   useEffect(() => {
     const initial = searchParams.get("location");
-    setSelectedProvinces(initial ? initial.split(",") : []);
+    setSelectedProvince(initial || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.get("location")]);
 
@@ -86,7 +86,7 @@ export default function JobsPage() {
     const params = new URLSearchParams();
 
     if (searchQuery) params.set("q", searchQuery);
-    if (selectedProvinces.length > 0) params.set("location", selectedProvinces.join(","));
+    if (selectedProvince) params.set("location", selectedProvince);
     if (jobType !== "all") params.set("type", jobType);
     if (experience !== "all") params.set("experience", experience);
     if (currentPage > 1) params.set("page", currentPage.toString());
@@ -99,7 +99,7 @@ export default function JobsPage() {
     router.replace(url, { scroll: false });
   }, [
     searchQuery,
-    selectedProvinces,
+    selectedProvince,
     jobType,
     experience,
     currentPage,
@@ -110,19 +110,19 @@ export default function JobsPage() {
   // Clear all filters
   const clearAllFilters = () => {
     setSearchInput("");
-    setSelectedProvinces([]);
+    setSelectedProvince("");
     setJobType("all");
     setExperience("all");
     setPage(1);
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchQuery || selectedProvinces.length > 0 || jobType !== "all" || experience !== "all";
+  const hasActiveFilters = searchQuery || selectedProvince || jobType !== "all" || experience !== "all";
 
   // Count active filters
   const activeFilterCount = [
     searchQuery,
-    selectedProvinces.length > 0,
+    selectedProvince,
     jobType !== "all",
     experience !== "all",
   ].filter(Boolean).length;
@@ -235,11 +235,11 @@ export default function JobsPage() {
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSearchInput("")} />
                     </Badge>
                   )}
-                  {selectedProvinces.length > 0 && (
+                  {selectedProvince && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
                       <MapPin className="w-3 h-3" />
-                      {selectedProvinces.length} vị trí
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSelectedProvinces([])} />
+                      {provinces.find(p => p.value === selectedProvince)?.label}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSelectedProvince("")} />
                     </Badge>
                   )}
                   {jobType !== "all" && (
@@ -284,16 +284,16 @@ export default function JobsPage() {
             {(showFilters || showMobileFilters) && (
               <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* Location Multi-Select */}
+                  {/* Location Single-Select */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-blue-600" />
                       Địa điểm
                     </label>
-                    <MultiSelect
+                    <SingleSelect
                       options={provinces}
-                      value={selectedProvinces}
-                      onChange={setSelectedProvinces}
+                      value={selectedProvince}
+                      onChange={setSelectedProvince}
                       placeholder="Chọn tỉnh/thành phố..."
                       searchPlaceholder="Tìm kiếm..."
                       disabled={isLoading}

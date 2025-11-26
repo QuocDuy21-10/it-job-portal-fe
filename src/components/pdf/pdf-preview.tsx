@@ -33,7 +33,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({
   cvData,
   template = "classic",
   width = "100%",
-  height = "600px",
+  height = "calc(100vh - 240px)", // Tăng height mặc định để xem dễ hơn
   className = "",
 }) => {
   const [isClient, setIsClient] = useState(false);

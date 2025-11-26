@@ -96,4 +96,122 @@
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  /* Gradient text utilities */
+  .gradient-text-primary {
+    @apply bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-accent {
+    @apply bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent;
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:-translate-y-0.5;
+  }
+
+  /* Button gradient effects */
+  .btn-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all shadow-md hover:shadow-lg hover:scale-105;
+  }
+
+  /* Glass morphism effect */
+  .glass-effect {
+    @apply bg-background/80 backdrop-blur-lg border border-border/50;
+  }
+
+  /* Subtle background gradients */
+  .bg-gradient-subtle {
+    @apply bg-gradient-to-br from-card via-card to-secondary/20;
+  }
+
+  /* Focus ring with primary color */
+  .focus-ring-primary {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+  }
+
+  /* Animated gradient background */
+  .bg-gradient-animate {
+    background: linear-gradient(270deg, hsl(var(--primary)), hsl(var(--primary) / 0.8), hsl(var(--secondary)));
+    background-size: 400% 400%;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Skeleton loading animation */
+  .skeleton {
+    @apply animate-pulse bg-muted/50 rounded;
+  }
+
+  /* Auth page specific utilities */
+  .auth-input {
+    @apply transition-all duration-200 border-gray-300 dark:border-slate-600 
+           focus:border-primary focus:ring-2 focus:ring-primary/20 
+           dark:bg-slate-700 dark:text-white;
+  }
+
+  .auth-button-primary {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
+           text-white font-medium shadow-md hover:shadow-lg 
+           transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .auth-card-shadow {
+    @apply shadow-xl hover:shadow-2xl transition-shadow duration-300;
+  }
+
+  .auth-link {
+    @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 
+           font-medium transition-colors underline-offset-4 hover:underline;
+  }
+
+  /* Smooth slide-in animations for form elements */
+  @keyframes slide-in-from-top {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-in {
+    animation: slide-in-from-top 0.3s ease-out;
+  }
+
+  /* Smooth scale on hover */
+  .scale-hover {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  /* Badge styles */
+  .badge-primary {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20;
+  }
+
+  .badge-error {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive border border-destructive/20;
+  }
 }

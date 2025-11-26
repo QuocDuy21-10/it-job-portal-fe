@@ -88,9 +88,10 @@ export default function EducationSection({
       onUpdate(editingId, "endDate", data.endDate || "");
       onUpdate(editingId, "description", data.description || "");
     } else {
-      // Add new
+      // Add new - create unique id
+      const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       onAdd({
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: newId,
         school: data.school,
         degree: data.degree,
         field: data.field,

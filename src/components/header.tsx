@@ -21,6 +21,8 @@ import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUserRole } from "@/features/auth/redux/auth.slice";
 import { isAdminRole } from "@/shared/constants/roles";
+import { TooltipIcon } from "@/components/sections/tooltip-icon";
+import { TRANSITIONS } from "@/shared/constants/design";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -49,51 +51,55 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/95">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-bold text-xl sm:text-2xl"
-        >
-          <Briefcase
-            className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600"
-            aria-hidden="true"
-          />
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-            JobPortal
-          </span>
-        </Link>
+        <TooltipIcon content="Go to homepage" side="bottom">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-bold text-xl sm:text-2xl group"
+          >
+            <Briefcase
+              className="h-6 w-6 sm:h-7 sm:w-7 text-primary group-hover:scale-110 transition-transform duration-300"
+              aria-hidden="true"
+            />
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              JobPortal
+            </span>
+          </Link>
+        </TooltipIcon>
 
         <div className="hidden md:flex items-center gap-6">
           <Link
             href="/jobs"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="text-sm font-medium text-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105 relative group"
           >
             {i18nMounted ? t("nav.findJobs") : "Find Jobs"}
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
           </Link>
           <Link
             href="/companies"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="text-sm font-medium text-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105 relative group"
           >
             {i18nMounted ? t("nav.companies") : "Companies"}
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
           </Link>
 
           {isAuthenticated && user ? (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button
-                    className="flex items-center justify-center w-9 h-9 rounded-full border border-border bg-secondary overflow-hidden focus:outline-none hover:shadow-lg"
-                    aria-label="User menu"
-                  >
-                    <img
-                      src={user?.avatar || '/images/avatar-default.jpg'}
-                      alt={user?.name || user?.email || "avatar"}
-                      className="w-9 h-9 object-cover rounded-full"
-                    />
-                  </button>
+                    <button
+                      className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-primary/20 bg-secondary overflow-hidden focus:outline-none focus-visible:outline-none hover:shadow-md transition-all duration-300 hover:scale-105 data-[state=open]:ring-2 data-[state=open]:ring-primary/20"
+                      aria-label="User menu"
+                    >
+                      <img
+                        src={user?.avatar || '/images/avatar-default.jpg'}
+                        alt={user?.name || user?.email || "avatar"}
+                        className="w-10 h-10 object-cover rounded-full"
+                      />
+                    </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 transition-all duration-200 ease-in-out transform-gpu data-[state=open]:scale-100 data-[state=closed]:scale-95 data-[state=open]:opacity-100 data-[state=closed]:opacity-0">
+                <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
                     {user?.name && <div className="font-semibold truncate">{user.name}</div>}
                     <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
@@ -181,31 +187,33 @@ export function Header() {
 
             {/* Language Toggle */}
             <div className="relative">
-              <button
-                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {language.toUpperCase()}
-              </button>
+              <TooltipIcon content="Change language" side="bottom">
+                <button
+                  onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                  className="px-3 py-2 hover:bg-secondary rounded-lg transition-all duration-200 text-sm font-semibold text-foreground/80 hover:text-primary border border-transparent hover:border-primary/20"
+                >
+                  {language.toUpperCase()}
+                </button>
+              </TooltipIcon>
               {showLanguageMenu && (
-                <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 mt-2 w-36 bg-card border border-border rounded-lg shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                   <button
                     onClick={() => {
                       setLanguage("en");
                       setShowLanguageMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-t-lg transition-colors"
+                    className="w-full text-left px-4 py-2.5 text-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200 font-medium"
                   >
-                    English
+                    🇬🇧 English
                   </button>
                   <button
                     onClick={() => {
                       setLanguage("vi");
                       setShowLanguageMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-t border-gray-200 dark:border-gray-700 rounded-b-lg transition-colors"
+                    className="w-full text-left px-4 py-2.5 text-foreground hover:bg-primary/10 hover:text-primary border-t border-border transition-all duration-200 font-medium"
                   >
-                    Tiếng Việt
+                    🇻🇳 Tiếng Việt
                   </button>
                 </div>
               )}
@@ -213,21 +221,26 @@ export function Header() {
           </div>
         </div>
 
-        <button
-          className="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+        <TooltipIcon
+          content={mobileMenuOpen ? "Close menu" : "Open menu"}
+          side="left"
         >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-secondary transition-all duration-200 hover:scale-105"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6 text-foreground" />
+            ) : (
+              <Menu className="h-6 w-6 text-foreground" />
+            )}
+          </button>
+        </TooltipIcon>
       </nav>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-white dark:bg-slate-900">
+        <div className="md:hidden border-t bg-background/95 backdrop-blur-md animate-in slide-in-from-top-2 duration-300">
           <div className="container mx-auto px-4 py-4 space-y-3">
             <Link
               href="/jobs"

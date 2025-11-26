@@ -38,6 +38,7 @@ export const CompanyEntitySchema = CompanySchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
+  totalJobs: z.number().default(0),
   createdBy: z
     .object({
       _id: z.string(),

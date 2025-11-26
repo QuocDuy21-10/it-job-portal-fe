@@ -4,11 +4,14 @@ import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useEffect, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Building2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import parse from "html-react-parser";
+import { PageBreadcrumb } from "@/components/sections/page-breadcrumb";
+import { TooltipIcon } from "@/components/sections/tooltip-icon";
+import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
 
 export default function CompanyListPage() {
   const router = useRouter();
@@ -49,39 +52,56 @@ export default function CompanyListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/20 via-background to-secondary/10 py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Breadcrumb */}
+        <PageBreadcrumb
+          items={[{ label: "Companies" }]}
+          className="mb-6"
+        />
+
         {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Find Your Next Employer</h1>
-          <p className="text-muted-foreground text-lg">
+        <div className="mb-12 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary mb-4">
+            <Building2 className="h-4 w-4" />
+            <span>Discover Top Employers</span>
+          </div>
+          <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
+            Find Your Next{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Employer
+            </span>
+          </h1>
+          <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
             Browse top companies and explore exciting career opportunities
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search companies by name or description..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-12 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-muted-foreground transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
-          </div>
+        <div className="mb-10">
+          <TooltipIcon content="Search companies by name or description" side="bottom">
+            <div className="relative max-w-2xl mx-auto">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search companies by name or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-12 py-4 bg-card/80 backdrop-blur-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-foreground placeholder-muted-foreground transition-all duration-200 shadow-sm hover:shadow-md"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-secondary rounded-md"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+          </TooltipIcon>
           {total > 0 && (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Found {total} compan{total !== 1 ? "ies" : "y"}
+            <p className="mt-3 text-center text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{total}</span> compan{total !== 1 ? "ies" : "y"} found
             </p>
           )}
         </div>
@@ -101,37 +121,62 @@ export default function CompanyListPage() {
               <Card
                 key={company._id}
                 onClick={() => router.push(`/companies/${company._id}`)}
-                className={`p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border ${
-                  selectedCompany === company._id
-                    ? "border-primary bg-primary/5 shadow-lg"
-                    : "border-border bg-card hover:border-primary/50"
-                }`}
+                className={`group p-6 cursor-pointer ${EFFECTS.cardHover} bg-card border border-border hover:bg-card/90`}
               >
-                {/* Company Logo */}
-                <div className="mb-4 flex items-center gap-3">
-                  <img
-                    src={company.logo ? `${API_BASE_URL_IMAGE}/images/company/${company.logo}` : "/placeholder.svg"}
-                    alt={company.name}
-                    className="w-12 h-12 rounded-lg bg-secondary object-cover"
-                  />
-                  <h3 className="text-lg font-semibold text-foreground line-clamp-2">{company.name}</h3>
+                {/* Company Logo & Name */}
+                <div className="mb-5 flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={company.logo ? `${API_BASE_URL_IMAGE}/images/company/${company.logo}` : "/placeholder.svg"}
+                      alt={company.name}
+                      className="w-16 h-16 rounded-xl bg-secondary object-cover border border-border/50 shadow-sm group-hover:shadow-md transition-shadow duration-300"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                      {company.name}
+                    </h3>
+                    {company.location && (
+                      <div className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5" />
+                        <span className="line-clamp-1">{company.location}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Description */}
-                <div className="text-muted-foreground text-sm line-clamp-2 mb-4 leading-relaxed">
+                <div className="text-muted-foreground text-sm line-clamp-3 leading-relaxed">
                   {parse(truncateDescription(company.description || ""))}
+                </div>
+
+                {/* View Details Link */}
+                <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    {company.jobCount || 0} open positions
+                  </span>
+                  <span className="text-sm font-medium text-primary group-hover:translate-x-1 transition-transform duration-300">
+                    View Details →
+                  </span>
                 </div>
               </Card>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="mb-4">
-              <Search className="w-16 h-16 mx-auto text-muted-foreground opacity-20" />
+          <div className="text-center py-20">
+            <div className="mb-6">
+              <div className="inline-flex p-6 bg-secondary/50 rounded-full">
+                <Search className="w-16 h-16 text-muted-foreground/30" />
+              </div>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">No companies found</h3>
-            <p className="text-muted-foreground">Try adjusting your search query to find what you're looking for</p>
-            <Button variant="outline" className="mt-6 bg-transparent" onClick={() => setSearchQuery("")}>
+            <h3 className={`${TYPOGRAPHY.h3} text-foreground mb-3`}>No companies found</h3>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+              Try adjusting your search query to find what you're looking for
+            </p>
+            <Button 
+              variant="outline" 
+              className="bg-card hover:bg-secondary" 
+              onClick={() => setSearchQuery("")}>
               Clear Search
             </Button>
           </div>

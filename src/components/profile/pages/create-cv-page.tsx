@@ -3,8 +3,23 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save, Loader2, AlertCircle } from 'lucide-react';
+import { Save, Loader2, AlertCircle, FileText, Home } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Link from "next/link";
 import { useCV } from "@/hooks/use-cv";
 import { 
   UpsertCVProfileRequestSchema,
@@ -151,7 +166,7 @@ export default function CreateCVPage() {
             bio: result.personalInfo?.bio || "",
           },
           education: result.education.map((edu: any) => ({
-            id: edu.id || "",
+            id: edu.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             school: edu.school,
             degree: edu.degree,
             field: edu.field,
@@ -160,7 +175,7 @@ export default function CreateCVPage() {
             description: edu.description || "",
           })),
           experience: result.experience.map((exp: any) => ({
-            id: exp.id || "",
+            id: exp.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             company: exp.company,
             position: exp.position,
             startDate: new Date(exp.startDate),
@@ -168,29 +183,29 @@ export default function CreateCVPage() {
             description: exp.description || "",
           })),
           skills: result.skills.map((skill: any) => ({
-            id: skill.id || "",
+            id: skill.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             name: skill.name,
             level: skill.level,
           })),
           languages: result.languages.map((lang: any) => ({
-            id: lang.id || "",
+            id: lang.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             name: lang.name,
             proficiency: lang.proficiency,
           })),
           projects: result.projects.map((proj: any) => ({
-            id: proj.id || "",
+            id: proj.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             name: proj.name,
             description: proj.description,
             link: proj.link || "",
           })),
           certificates: result.certificates.map((cert: any) => ({
-            id: cert.id || "",
+            id: cert.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             name: cert.name,
             issuer: cert.issuer,
             date: new Date(cert.date),
           })),
           awards: result.awards.map((award: any) => ({
-            id: award.id || "",
+            id: award.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             name: award.name,
             date: new Date(award.date),
             description: award.description || "",
@@ -228,6 +243,7 @@ export default function CreateCVPage() {
           bio: cvData.personalInfo.bio || undefined,
         },
         education: cvData.education.map(edu => ({
+          id: edu.id, // Include id for upsert
           school: edu.school,
           degree: edu.degree,
           field: edu.field,
@@ -236,6 +252,7 @@ export default function CreateCVPage() {
           description: edu.description || undefined,
         })),
         experience: cvData.experience.map(exp => ({
+          id: exp.id, // Include id for upsert
           company: exp.company,
           position: exp.position,
           startDate: typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toISOString(),
@@ -243,24 +260,29 @@ export default function CreateCVPage() {
           description: exp.description || undefined,
         })),
         skills: cvData.skills.map(skill => ({
+          id: skill.id, // Include id for upsert
           name: skill.name,
           level: skill.level,
         })),
         languages: cvData.languages.map(lang => ({
+          id: lang.id, // Include id for upsert
           name: lang.name,
           proficiency: lang.proficiency,
         })),
         projects: cvData.projects.map(proj => ({
+          id: proj.id, // Include id for upsert
           name: proj.name,
           description: proj.description,
           link: proj.link || undefined,
         })),
         certificates: cvData.certificates.map(cert => ({
+          id: cert.id, // Include id for upsert
           name: cert.name,
           issuer: cert.issuer,
           date: typeof cert.date === 'string' ? cert.date : cert.date.toISOString(),
         })),
         awards: cvData.awards.map(award => ({
+          id: award.id, // Include id for upsert
           name: award.name,
           date: typeof award.date === 'string' ? award.date : award.date.toISOString(),
           description: award.description || undefined,
@@ -430,15 +452,57 @@ export default function CreateCVPage() {
   const validationErrors = getValidationErrors();
 
   return (
-    <div className="bg-background min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
+    <div className="bg-background min-h-screen">
+      {/* Gradient Header */}
+      <div className="bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* Breadcrumb */}
+          {/* <Breadcrumb className="mb-4">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" className="flex items-center gap-1">
+                    <Home className="w-4 h-4" />
+                    Trang chủ
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/profile">Hồ sơ</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Tạo CV</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb> */}
 
+          {/* Header Title */}
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+              <FileText className="w-8 h-8 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                Tạo CV Chuyên Nghiệp
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Hoàn thiện thông tin để tạo CV ấn tượng
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Initial Loading State */}
         {isInitialLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-            <p className="text-lg text-muted-foreground">Loading your CV...</p>
+            <p className="text-lg text-muted-foreground">Đang tải CV của bạn...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -446,24 +510,27 @@ export default function CreateCVPage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Validation Errors Summary */}
               {validationErrors.length > 0 && (
-                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                <div className="bg-gradient-to-r from-destructive/10 to-destructive/5 border-l-4 border-destructive rounded-lg p-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-lg bg-destructive/10">
+                      <AlertCircle className="w-5 h-5 text-destructive" />
+                    </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-destructive mb-2">
-                        Vui lòng sửa các lỗi sau ({validationErrors.length})
+                      <h3 className="font-bold text-destructive mb-3 text-lg">
+                        Vui lòng sửa {validationErrors.length} lỗi sau
                       </h3>
-                      <ul className="space-y-1 text-sm text-destructive/90">
+                      <ul className="space-y-2 text-sm text-destructive/90">
                         {validationErrors.slice(0, 5).map((error, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <span className="text-destructive">•</span>
-                            <span>
-                              {error.path.join(' → ')}: {error.message}
+                          <li key={index} className="flex items-start gap-2 pl-2 border-l-2 border-destructive/30">
+                            <span className="text-destructive font-bold mt-0.5">→</span>
+                            <span className="font-medium">
+                              <span className="text-destructive/70">{error.path.join(' → ')}:</span>{' '}
+                              {error.message}
                             </span>
                           </li>
                         ))}
                         {validationErrors.length > 5 && (
-                          <li className="text-xs text-muted-foreground italic mt-2">
+                          <li className="text-xs text-muted-foreground italic mt-3 pl-2">
                             ... và {validationErrors.length - 5} lỗi khác
                           </li>
                         )}
@@ -474,24 +541,43 @@ export default function CreateCVPage() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-3 flex-wrap">
-                <Button
-                  onClick={handleUpdateCV}
-                  disabled={isLoading || validationErrors.length > 0}
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Đang lưu...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Lưu CV {validationErrors.length > 0 && `(${validationErrors.length} lỗi)`}
-                    </>
-                  )}
-                </Button>
+              <div className="flex gap-3 flex-wrap sticky top-4 z-10 bg-gradient-to-r from-background via-background/95 to-background/90 backdrop-blur-sm p-4 rounded-xl border border-border/50 shadow-lg">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleUpdateCV}
+                        disabled={isLoading || validationErrors.length > 0}
+                        size="lg"
+                        className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Đang lưu CV...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-5 h-5 mr-2" />
+                            Lưu CV
+                            {validationErrors.length > 0 && (
+                              <span className="ml-2 px-2 py-0.5 rounded-full bg-destructive/20 text-xs">
+                                {validationErrors.length} lỗi
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {validationErrors.length > 0
+                          ? `Vui lòng sửa ${validationErrors.length} lỗi trước khi lưu`
+                          : "Lưu thông tin CV của bạn"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               {/* Form Sections */}

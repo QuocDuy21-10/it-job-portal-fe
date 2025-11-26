@@ -1,10 +1,16 @@
 "use client";
 
-import { Plus, X } from 'lucide-react';
-import { useState } from "react";
+import { Plus, Edit, Trash2, Globe } from 'lucide-react';
 import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
-import { LanguageRequestSchema, type LanguageRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import LanguageModal from "@/components/cv/modals/language-modal";
+import { useLanguageModal } from "@/hooks/use-language-modal";
 import { toast } from "sonner";
 
 interface Language {
@@ -20,7 +26,12 @@ interface LanguagesSectionProps {
   onRemove: (id: string) => void;
 }
 
-const PROFICIENCY_LEVELS = ["Beginner", "Intermediate", "Advanced", "Native"];
+const PROFICIENCY_COLORS: Record<string, string> = {
+  Beginner: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  Intermediate: "bg-green-500/10 text-green-600 dark:text-green-400",
+  Advanced: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  Native: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+};
 
 export default function LanguagesSection({
   languages,
@@ -28,124 +39,124 @@ export default function LanguagesSection({
   onUpdate,
   onRemove,
 }: LanguagesSectionProps) {
-  const [errors, setErrors] = useState<Record<string, { name?: string; proficiency?: string }>>({});
+  const languageModal = useLanguageModal(languages, onAdd, onUpdate);
 
-  const handleAddLanguage = () => {
-    if (languages.length >= 5) {
-      toast.error("Bạn chỉ có thể thêm tối đa 5 ngôn ngữ");
-      return;
-    }
-    onAdd({
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      name: "",
-      proficiency: "Intermediate",
+  const handleRemove = (id: string, name: string) => {
+    toast.success("Đã xóa ngôn ngữ", {
+      description: `Ngôn ngữ "${name}" đã được xóa`,
+      duration: 2000,
     });
-  };
-
-  const handleUpdate = (id: string, field: "name" | "proficiency", value: string) => {
-    onUpdate(id, field, value);
-    
-    const lang = languages.find((l) => l.id === id);
-    if (lang) {
-      const updatedLang = { ...lang, [field]: value };
-      const result = LanguageRequestSchema.safeParse({
-        name: updatedLang.name,
-        proficiency: updatedLang.proficiency,
-      });
-      
-      if (!result.success) {
-        const fieldErrors: { name?: string; proficiency?: string } = {};
-        result.error.issues.forEach((issue) => {
-          if (issue.path[0] === "name" || issue.path[0] === "proficiency") {
-            fieldErrors[issue.path[0]] = issue.message;
-          }
-        });
-        setErrors((prev) => ({ ...prev, [id]: fieldErrors }));
-      } else {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[id];
-          return newErrors;
-        });
-      }
-    }
+    onRemove(id);
   };
 
   return (
-    <CVFormSection
-      title="Languages"
-      description={`Add languages you speak (${languages.length}/5)`}
-      actionButton={
-        languages.length < 5 && (
-          <button
-            onClick={handleAddLanguage}
-            className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Add Language
-          </button>
-        )
-      }
-    >
-      {languages.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-4 text-center">
-          No languages added yet
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {languages.map((lang) => (
-            <Card key={lang.id} className="p-4 bg-secondary/50 border border-border">
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Language *
-                  </label>
-                  <input
-                    type="text"
-                    value={lang.name}
-                    onChange={(e) => handleUpdate(lang.id, "name", e.target.value)}
-                    placeholder="e.g., English, French"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors[lang.id]?.name ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
-                  />
-                  {errors[lang.id]?.name && (
-                    <p className="mt-1 text-xs text-destructive">{errors[lang.id].name}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium mb-2 text-muted-foreground">
-                    Proficiency *
-                  </label>
-                  <select
-                    value={lang.proficiency}
-                    onChange={(e) => handleUpdate(lang.id, "proficiency", e.target.value)}
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors[lang.id]?.proficiency ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
+    <>
+      <CVFormSection
+        title="Ngôn Ngữ"
+        description={`Thêm ngôn ngữ bạn sử dụng (${languages.length}/5)`}
+        actionButton={
+          languages.length < 5 && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={languageModal.openAddModal}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all hover:scale-105"
                   >
-                    {PROFICIENCY_LEVELS.map((level) => (
-                      <option key={level} value={level}>
-                        {level}
-                      </option>
-                    ))}
-                  </select>
-                  {errors[lang.id]?.proficiency && (
-                    <p className="mt-1 text-xs text-destructive">{errors[lang.id].proficiency}</p>
-                  )}
+                    <Plus className="w-4 h-4" />
+                    Thêm Ngôn Ngữ
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Thêm ngôn ngữ mới</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )
+        }
+      >
+        {languages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-br from-secondary/30 to-secondary/10 rounded-xl border-2 border-dashed border-border/50">
+            <Globe className="w-16 h-16 text-muted-foreground/30 mb-4" />
+            <p className="text-base font-medium text-muted-foreground mb-2">
+              Chưa có ngôn ngữ nào
+            </p>
+            <p className="text-sm text-muted-foreground/70 text-center max-w-md">
+              Thêm các ngôn ngữ bạn sử dụng để tăng cơ hội tìm việc
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {languages.map((lang) => (
+              <Card
+                key={lang.id}
+                className="group relative overflow-hidden bg-gradient-to-br from-card to-secondary/20 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-base text-foreground mb-2 line-clamp-1">
+                        {lang.name}
+                      </h4>
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          PROFICIENCY_COLORS[lang.proficiency] || PROFICIENCY_COLORS.Intermediate
+                        }`}
+                      >
+                        {lang.proficiency}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-border/30">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => languageModal.openEditModal(lang)}
+                            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium transition-all hover:scale-105"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            Sửa
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chỉnh sửa ngôn ngữ này</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => handleRemove(lang.id, lang.name)}
+                            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-destructive/10 hover:bg-destructive/20 text-destructive text-xs font-medium transition-all hover:scale-105"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Xóa
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Xóa ngôn ngữ này</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
-                <button
-                  onClick={() => onRemove(lang.id)}
-                  className="w-full flex items-center justify-center gap-2 text-destructive hover:text-destructive/80 font-medium text-sm py-2 rounded hover:bg-card transition"
-                >
-                  <X className="w-4 h-4" />
-                  Remove
-                </button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </CVFormSection>
+              </Card>
+            ))}
+          </div>
+        )}
+      </CVFormSection>
+
+      <LanguageModal
+        isOpen={languageModal.isOpen}
+        onClose={languageModal.closeModal}
+        onSubmit={languageModal.handleSubmit}
+        initialData={languageModal.currentLanguage}
+        mode={languageModal.mode}
+      />
+    </>
   );
 }

@@ -72,8 +72,10 @@ export default function ProjectsSection({
       onUpdate(editingId, "description", data.description || "");
       onUpdate(editingId, "link", data.link || "");
     } else {
+      // Add new - create unique id
+      const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       onAdd({
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: newId,
         name: data.name,
         description: data.description || "",
         link: data.link || "",

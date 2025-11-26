@@ -32,15 +32,12 @@ export default function MyJobsPage() {
   const [takeOutAppliedJob, { isLoading: isLoadingApplied }] =
     useTakeOutAppliedJobMutation();
 
-  // API query to fetch saved jobs
+  // API query to fetch saved jobs - fetch immediately on mount
   const {
     data: savedJobsData,
     isLoading: isLoadingSaved,
     refetch: refetchSavedJobs,
-  } = useGetSavedJobsQuery(
-    { page: currentPage, limit: pageLimit },
-    { skip: activeTab !== "saved" }
-  );
+  } = useGetSavedJobsQuery({ page: currentPage, limit: pageLimit });
 
   // Fetch applied jobs on component mount
   useEffect(() => {

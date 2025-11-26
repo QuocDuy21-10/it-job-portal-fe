@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAuthModal } from "@/contexts/auth-modal-context";
 import {
   useFollowCompanyMutation,
   useUnfollowCompanyMutation,
@@ -12,7 +12,7 @@ import {
 } from "@/features/auth/redux/auth.slice";
 
 export function useCompanyFollow(companyId: string) {
-  const router = useRouter();
+  const { openModal } = useAuthModal();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const companyFollowing = useSelector(selectCompanyFollowing); // Danh sách thực từ Server/Redux
 
@@ -36,16 +36,9 @@ export function useCompanyFollow(companyId: string) {
         e.stopPropagation();
       }
 
+      // Show Auth Modal if not authenticated
       if (!isAuthenticated) {
-        toast.info("Vui lòng đăng nhập để theo dõi công ty", {
-          duration: 3000,
-          action: {
-            label: "Đăng nhập",
-            onClick: () => {
-              router.push(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
-            },
-          },
-        });
+        openModal("signin");
         return;
       }
 
@@ -72,7 +65,7 @@ export function useCompanyFollow(companyId: string) {
         toast.error(errorMessage);
       }
     },
-    [isAuthenticated, optimisticIsFollowing, companyId, followCompany, unfollowCompany, router]
+    [isAuthenticated, optimisticIsFollowing, companyId, followCompany, unfollowCompany, openModal]
   );
 
   return {

@@ -1,65 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trash2, Loader2 } from "lucide-react";
+import { Loader2, Mail, ChevronRight, Home, Sparkles } from "lucide-react";
 import SKILLS_LIST from "@/shared/data/skill-list.json";
+import PROVINCES_LIST from "@/shared/data/provinces.json";
 import { MultiSelect } from "@/components/multi-select";
+import { SingleSelect } from "@/components/single-select";
 import { useAuth } from "@/hooks/use-auth";
-import { useGetSubscriberSkillsQuery, useUpdateSubscriberMutation, useDeleteSubscriberMutation } from "@/features/subscriber/redux/subscriber.api";
-
+import {
+  useGetSubscribersByUserQuery,
+  useCreateSubscriberMutation,
+  useDeleteSubscriberMutation,
+} from "@/features/subscriber/redux/subscriber.api";
+import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
 import { toast } from "sonner";
+import { SubscriptionList } from "@/components/profile/subscription-list";
+import Link from "next/link";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
-interface Subscription {
-  id: string;
-  skills: string[];
-  location: string;
-  isActive: boolean;
-  createdDate: string;
-}
-
+const MAX_SUBSCRIPTIONS = 3;
 
 export default function EmailSubscriptionPage() {
-    const [showConfirm, setShowConfirm] = useState(false);
-  const [deleteSubscriber, { isLoading: isDeleting }] = useDeleteSubscriberMutation();
   const { user } = useAuth();
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
 
-  // Fetch current subscriber skills
+  // Fetch user's subscriptions
   const {
-    data: subscriberSkillsData,
-    isLoading: isLoadingSkills,
+    data: mySubsData,
+    isLoading: isLoadingSubscribers,
     refetch,
-  } = useGetSubscriberSkillsQuery();
+  } = useGetSubscribersByUserQuery();
 
-  // Update subscriber mutation
-  const [updateSubscriber, { isLoading: isUpdating }] =
-    useUpdateSubscriberMutation();
+  // Create subscriber mutation
+  const [createSubscriber, { isLoading: isCreating }] =
+    useCreateSubscriberMutation();
 
-  // Load skills when data is fetched
-  useEffect(() => {
-    if (subscriberSkillsData?.data?.skills) {
-      setSelectedSkills(subscriberSkillsData.data.skills);
-    }
-  }, [subscriberSkillsData]);
+  // Delete subscriber mutation
+  const [deleteSubscriber, { isLoading: isDeleting }] =
+    useDeleteSubscriberMutation();
 
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([
-    {
-      id: "1",
-      skills: ["REACT.JS", "TYPESCRIPT", "NODE.JS"],
-      location: "Ho Chi Minh City",
-      isActive: true,
-      createdDate: "2024-01-10",
-    },
-    {
-      id: "2",
-      skills: ["PYTHON", "DJANGO"],
-      location: "Hanoi",
-      isActive: false,
-      createdDate: "2024-01-05",
-    },
-  ]);
+  // Get user's current subscriptions
+  const userSubscriptions: Subscriber[] =
+    (mySubsData?.data?.subscriptions as Subscriber[]) || [];
+  const totalSubscriptions: number =
+    mySubsData?.data?.total ?? userSubscriptions.length;
+  const maxAllowed: number = mySubsData?.data?.maxAllowed ?? 3;
 
   const handleRegister = async () => {
     // Validation
@@ -67,10 +55,6 @@ export default function EmailSubscriptionPage() {
       toast.error("Vui lòng đăng nhập để sử dụng tính năng này", {
         duration: 4000,
         position: "top-center",
-        style: {
-          background: "hsl(var(--destructive))",
-          color: "hsl(var(--destructive-foreground))",
-        },
       });
       return;
     }
@@ -79,37 +63,44 @@ export default function EmailSubscriptionPage() {
       toast.error("Vui lòng chọn ít nhất một kỹ năng", {
         duration: 4000,
         position: "top-center",
-        style: {
-          background: "hsl(var(--destructive))",
-          color: "hsl(var(--destructive-foreground))",
-        },
+      });
+      return;
+    }
+
+    if (!selectedLocation) {
+      toast.error("Vui lòng chọn địa điểm", {
+        duration: 4000,
+        position: "top-center",
+      });
+      return;
+    }
+
+    if (totalSubscriptions >= maxAllowed) {
+      toast.error(`Bạn chỉ có thể đăng ký tối đa ${maxAllowed} lần`, {
+        duration: 4000,
+        position: "top-center",
       });
       return;
     }
 
     try {
-      // Call API to update subscriber
-      const result = await updateSubscriber({
+      await createSubscriber({
         email: user.email,
         name: user.name,
         skills: selectedSkills,
+        location: selectedLocation,
       }).unwrap();
 
-
-      // Show success toast (sonner)
       toast.success("Đăng ký nhận công việc thành công!", {
         duration: 4000,
         position: "top-center",
-        style: {
-          background: "hsl(var(--primary))",
-          color: "hsl(var(--primary-foreground))",
-        },
       });
 
-      // Refetch subscriber skills to update UI
+      // Reset form
+      setSelectedSkills([]);
+      setSelectedLocation("");
       refetch();
     } catch (error: any) {
-      // Show error toast with details
       const errorMessage =
         error?.data?.message ||
         error?.message ||
@@ -118,211 +109,206 @@ export default function EmailSubscriptionPage() {
       toast.error(errorMessage, {
         duration: 4000,
         position: "top-center",
-        style: {
-          background: "hsl(var(--destructive))",
-          color: "hsl(var(--destructive-foreground))",
-        },
       });
 
-      console.error("Error updating subscriber:", error);
+      console.error("Error creating subscriber:", error);
     }
   };
 
-  const deleteSubscription = (id: string) => {
-    setSubscriptions(subscriptions.filter((s) => s.id !== id));
-  };
-
-  const toggleSubscription = (id: string) => {
-    setSubscriptions(
-      subscriptions.map((s) =>
-        s.id === id ? { ...s, isActive: !s.isActive } : s
-      )
-    );
-  };
-
-  const getSkillLabels = (values: string[]): string[] => {
-    return values
-      .map((v) => SKILLS_LIST.find((s) => s.value === v)?.label)
-      .filter(Boolean) as string[];
+  const handleDeleteSubscription = async (id: string) => {
+    try {
+      await deleteSubscriber(id).unwrap();
+      toast.success("Huỷ đăng ký thành công!", {
+        duration: 4000,
+        position: "top-center",
+      });
+      refetch();
+    } catch (error: any) {
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Có lỗi xảy ra khi huỷ đăng ký. Vui lòng thử lại.";
+      toast.error(errorMessage, {
+        duration: 4000,
+        position: "top-center",
+      });
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-foreground">  Đăng ký nhận công việc</h1>
+    <Tooltip.Provider>
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
+        {/* Breadcrumb */}
+        <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <Link
+            href="/"
+            className="hover:text-foreground transition-colors flex items-center gap-1"
+          >
+            <Home className="w-4 h-4" />
+            Trang chủ
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <Link
+            href="/profile"
+            className="hover:text-foreground transition-colors"
+          >
+            Hồ sơ
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-foreground font-medium">Đăng ký nhận Gmail</span>
+        </nav>
 
-      {/* Register Form */}
-      <Card className="p-6 bg-card border border-border">
-        {isLoadingSkills ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2 text-muted-foreground">
-              Đang tải dữ liệu...
-            </span>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Kỹ năng
-              </label>
-              <MultiSelect
-                options={SKILLS_LIST}
-                value={selectedSkills}
-                onChange={setSelectedSkills}
-                placeholder="Chọn kỹ năng..."
-                searchPlaceholder="Tìm kiếm kỹ năng..."
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Nhấn để chọn hoặc bỏ chọn kỹ năng. Bạn có thể tìm kiếm bằng tên
-                kỹ năng.
-              </p>
-            </div>
-            {/* Location */}
-            {/* <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Địa điểm
-            </label>
-            <select
-              value={formData.location}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-border rounded-lg bg-secondary text-foreground"
-            >
-              <option value="">Chọn địa điểm</option>
-              <option value="Ho Chi Minh City">Hồ Chí Minh</option>
-              <option value="Hanoi">Hà Nội</option>
-              <option value="Da Nang">Đà Nẵng</option>
-              <option value="Can Tho">Cần Thơ</option>
-            </select>
-          </div> 
-            */}
-            <Button
-              onClick={handleRegister}
-              disabled={
-                isUpdating || isLoadingSkills || selectedSkills.length === 0
-              }
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isUpdating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang xử lý...
-                </>
-              ) : (
-                "Đăng ký"
-              )}
-            </Button>
-          </div>
-        )}
-      </Card>
-
-      {/* Subscriptions List */}
-      <div className="space-y-3">
-        <h2 className="text-xl font-semibold text-foreground">
-          Kỹ năng đã đăng ký
-        </h2>
-        {isLoadingSkills ? (
-          <Card className="p-8 bg-card border border-border">
-            <div className="flex items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              <span className="ml-2 text-muted-foreground">Đang tải...</span>
-            </div>
-          </Card>
-        ) : subscriberSkillsData?.data?.skills &&
-          subscriberSkillsData.data.skills.length > 0 ? (
-          <Card className="p-4 bg-card border border-border">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <div className="flex flex-wrap gap-2">
-                {getSkillLabels(subscriberSkillsData.data.skills).map((skill) => (
-                  <span
-                    key={skill}
-                    className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full font-medium"
-                  >
-                    {skill}
-                  </span>
-                ))}
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                <Mail className="w-6 h-6 text-white" />
               </div>
-              <button
-                type="button"
-                className="p-2 hover:bg-secondary rounded-full transition ml-2"
-                aria-label="Xoá tất cả kỹ năng"
-                onClick={() => setShowConfirm(true)}
-                disabled={isDeleting}
-              >
-                <Trash2 className="w-4 h-4 text-destructive" />
-              </button>
-      {/* Confirm Unsubscribe Popup */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-card rounded-lg shadow-lg p-6 min-w-[320px] border border-border">
-            <h3 className="text-lg font-semibold mb-2 text-foreground">Xác nhận huỷ đăng ký</h3>
-            <p className="mb-4 text-muted-foreground">Bạn có muốn huỷ đăng ký nhận thông báo công việc không?</p>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setShowConfirm(false)}
-                disabled={isDeleting}
-              >
-                Huỷ
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={async () => {
-                  if (!subscriberSkillsData?.data?._id) return;
-                  try {
-                    await deleteSubscriber(subscriberSkillsData.data._id).unwrap();
-                    toast.success("Huỷ đăng ký thành công!", {
-                      duration: 4000,
-                      position: "top-center",
-                      style: {
-                        background: "hsl(var(--primary))",
-                        color: "hsl(var(--primary-foreground))",
-                      },
-                    });
-                    setSelectedSkills([]);
-                    setShowConfirm(false);
-                    refetch();
-                  } catch (error: any) {
-                    const errorMessage =
-                      error?.data?.message ||
-                      error?.message ||
-                      "Có lỗi xảy ra khi huỷ đăng ký. Vui lòng thử lại.";
-                    toast.error(errorMessage, {
-                      duration: 4000,
-                      position: "top-center",
-                      style: {
-                        background: "hsl(var(--destructive))",
-                        color: "hsl(var(--destructive-foreground))",
-                      },
-                    });
-                  }
-                }}
-                disabled={isDeleting}
-              >
-                {isDeleting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                Xoá đăng ký
-              </Button>
+              <div>
+                <h1 className="text-3xl font-bold gradient-text-primary">
+                  Đăng ký nhận công việc
+                </h1>
+                <p className="text-muted-foreground mt-1">
+                  Nhận thông báo việc làm phù hợp qua email
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Register Form */}
+        <Card className="p-6 glass-effect shadow-lg">
+          <div className="flex items-center gap-2 mb-6">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold text-foreground">
+              Tạo đăng ký mới
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            {/* Skills and Location on same row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Skills */}
+              <div>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <label className="block text-sm font-medium text-foreground mb-2 cursor-help">
+                      Kỹ năng <span className="text-destructive">*</span>
+                    </label>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      className="bg-popover text-popover-foreground px-3 py-2 rounded-md text-xs shadow-lg border border-border max-w-xs"
+                      sideOffset={5}
+                    >
+                      Chọn các kỹ năng bạn quan tâm để nhận thông báo công việc phù hợp
+                      <Tooltip.Arrow className="fill-popover" />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+                <MultiSelect
+                  options={SKILLS_LIST}
+                  value={selectedSkills}
+                  onChange={setSelectedSkills}
+                  placeholder="Chọn kỹ năng..."
+                  searchPlaceholder="Tìm kiếm kỹ năng..."
+                />
+              </div>
+
+              {/* Location */}
+              <div>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <label className="block text-sm font-medium text-foreground mb-2 cursor-help">
+                      Địa điểm <span className="text-destructive">*</span>
+                    </label>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      className="bg-popover text-popover-foreground px-3 py-2 rounded-md text-xs shadow-lg border border-border max-w-xs"
+                      sideOffset={5}
+                    >
+                      Chọn tỉnh/thành phố bạn muốn tìm việc
+                      <Tooltip.Arrow className="fill-popover" />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+                <SingleSelect
+                  options={PROVINCES_LIST}
+                  value={selectedLocation}
+                  onChange={setSelectedLocation}
+                  placeholder="Chọn địa điểm..."
+                  searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
+                />
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              Đăng ký: {subscriberSkillsData.data.createdAt ? new Date(subscriberSkillsData.data.createdAt).toLocaleDateString("vi-VN") : "Không rõ ngày"}
-            </p>
-          </Card>
-        ) : (
-          <Card className="p-6 bg-card border border-border">
-            <p className="text-center text-muted-foreground">
-              Bạn chưa đăng ký kỹ năng nào. Hãy chọn kỹ năng và nhấn Đăng ký để
-              nhận thông báo công việc.
-            </p>
-          </Card>
-        )}
+
+            {/* Subscription count info */}
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    Số lượng đăng ký: {totalSubscriptions}/{maxAllowed}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {maxAllowed - totalSubscriptions > 0
+                      ? `Còn ${maxAllowed - totalSubscriptions} lượt đăng ký`
+                      : "Đã hết lượt đăng ký"}
+                  </p>
+                </div>
+              </div>
+              {totalSubscriptions >= maxAllowed && (
+                <span className="badge-error">Đã đạt giới hạn</span>
+              )}
+            </div>
+
+            <Button
+              onClick={handleRegister}
+              disabled={
+                isCreating ||
+                selectedSkills.length === 0 ||
+                !selectedLocation ||
+                totalSubscriptions >= maxAllowed
+              }
+              className="w-full btn-gradient-primary h-12 text-base font-semibold shadow-lg"
+            >
+              {isCreating ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Đang xử lý...
+                </>
+              ) : (
+                <>
+                  <Mail className="mr-2 h-5 w-5" />
+                  Đăng ký nhận thông báo
+                </>
+              )}
+            </Button>
+          </div>
+        </Card>
+
+        {/* Subscriptions List */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-foreground">
+              Danh sách đăng ký của bạn
+            </h2>
+            <span className="text-sm text-muted-foreground">
+              {totalSubscriptions} đăng ký
+            </span>
+          </div>
+          <SubscriptionList
+            subscriptions={userSubscriptions}
+            isLoading={isLoadingSubscribers}
+            onDelete={handleDeleteSubscription}
+            isDeleting={isDeleting}
+          />
+        </div>
       </div>
-    </div>
+    </Tooltip.Provider>
   );
 }

@@ -6,6 +6,7 @@ import {
   Subscriber,
   SubscriberSkills,
 } from "../schemas/subscriber.schema";
+import { get } from "http";
 
 // Types for query params and responses
 interface PaginationMeta {
@@ -50,7 +51,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         };
       },
       providesTags: (result) =>
-        result
+        result && result.data && Array.isArray(result.data.result)
           ? [
               ...result.data.result.map(({ _id }: { _id: string }) => ({
                 type: "Subscriber" as const,
@@ -67,7 +68,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "User" as const, id }],
+      providesTags: (result, error, id) => [{ type: "Subscriber" as const, id }],
     }),
 
     getSubscriberSkills: builder.query<ApiResponse<SubscriberSkills>, void>({
@@ -75,7 +76,28 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/skills`,
         method: "POST",
       }),
-      providesTags: [{ type: "User" as const, id: "SKILLS" }],
+      providesTags: [{ type: "Subscriber" as const, id: "SKILLS" }],
+    }),
+
+
+    getSubscribersByUser: builder.query<
+      ApiResponse<GetSubscribersResponse>,
+      void
+    >({
+      query: () => ({
+        url: `/subscribers/by-user`,
+        method: "GET",
+      }),
+      providesTags: (result) =>
+        result && result.data && Array.isArray(result.data.result)
+          ? [
+              ...result.data.result.map(({ _id }: { _id: string }) => ({
+                type: "Subscriber" as const,
+                id: _id,
+              })),
+              { type: "Subscriber" as const, id: "LIST" },
+            ]
+          : [{ type: "Subscriber" as const, id: "LIST" }],
     }),
 
     // Create new subscriber
@@ -88,7 +110,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         method: "POST",
         data: data,
       }),
-      invalidatesTags: [{ type: "User" as const, id: "LIST" }],
+      invalidatesTags: [{ type: "Subscriber" as const, id: "LIST" }],
     }),
 
     // Update subscriber
@@ -102,8 +124,8 @@ export const subscriberApi = baseApi.injectEndpoints({
         data: data,
       }),
       invalidatesTags: [
-        { type: "User" as const, id: "SKILLS" },
-        { type: "User" as const, id: "LIST" },
+        { type: "Subscriber" as const, id: "SKILLS" },
+        { type: "Subscriber" as const, id: "LIST" },
       ],
     }),
 
@@ -113,7 +135,7 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "User" as const, id: "LIST" }],
+      invalidatesTags: [{ type: "Subscriber" as const, id: "LIST" }],
     }),
   }),
 });
@@ -121,6 +143,7 @@ export const subscriberApi = baseApi.injectEndpoints({
 export const {
   useGetSubscribersQuery,
   useGetSubscriberQuery,
+  useGetSubscribersByUserQuery,
   useGetSubscriberSkillsQuery,
   useCreateSubscriberMutation,
   useUpdateSubscriberMutation,
