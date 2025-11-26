@@ -111,17 +111,6 @@ export function Pagination({
       {/* Pagination controls */}
       <div className="flex items-center gap-2">
         {/* First Page */}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleFirst}
-          disabled={currentPage === 1}
-          className="h-9 w-9 hidden sm:flex disabled:opacity-50"
-          aria-label="First page"
-        >
-          <ChevronsLeft className="h-4 w-4" />
-        </Button>
-
         {/* Previous */}
         <Button
           variant="outline"
@@ -132,7 +121,6 @@ export function Pagination({
           aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Trước</span>
         </Button>
 
         {/* Page numbers */}
@@ -145,7 +133,6 @@ export function Pagination({
                 </span>
               );
             }
-
             return (
               <Button
                 key={page}
@@ -182,21 +169,9 @@ export function Pagination({
           className="gap-1 disabled:opacity-50"
           aria-label="Next page"
         >
-          <span className="hidden sm:inline">Sau</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
 
-        {/* Last Page */}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleLast}
-          disabled={currentPage === totalPages}
-          className="h-9 w-9 hidden sm:flex disabled:opacity-50"
-          aria-label="Last page"
-        >
-          <ChevronsRight className="h-4 w-4" />
-        </Button>
       </div>
 
       {/* Page size selector */}

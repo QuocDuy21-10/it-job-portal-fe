@@ -138,26 +138,6 @@ export default function EmailSubscriptionPage() {
   return (
     <Tooltip.Provider>
       <div className="max-w-6xl mx-auto p-6 space-y-6">
-        {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Link
-            href="/"
-            className="hover:text-foreground transition-colors flex items-center gap-1"
-          >
-            <Home className="w-4 h-4" />
-            Trang chủ
-          </Link>
-          <ChevronRight className="w-4 h-4" />
-          <Link
-            href="/profile"
-            className="hover:text-foreground transition-colors"
-          >
-            Hồ sơ
-          </Link>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-foreground font-medium">Đăng ký nhận Gmail</span>
-        </nav>
-
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="space-y-2">

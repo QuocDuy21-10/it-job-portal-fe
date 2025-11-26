@@ -44,7 +44,9 @@ export default function ForgotPasswordPage() {
 
       if (response.statusCode === 201) {
         setIsSuccess(true);
-        toast.success("Đã gửi email hướng dẫn đặt lại mật khẩu!");
+        toast.success("Đã gửi email hướng dẫn đặt lại mật khẩu!", {
+          duration: 5000,
+        });
 
         // Cooldown 60 giây để tránh spam
         setCooldownTime(60);

@@ -53,7 +53,6 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <TooltipIcon content="Go to homepage" side="bottom">
           <Link
             href="/"
             className="flex items-center gap-2 font-bold text-xl sm:text-2xl group"
@@ -66,7 +65,6 @@ export function Header() {
               JobPortal
             </span>
           </Link>
-        </TooltipIcon>
 
         <div className="hidden md:flex items-center gap-6">
           <Link

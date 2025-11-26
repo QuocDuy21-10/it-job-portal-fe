@@ -131,7 +131,7 @@ export default function Home() {
                             ? t("home.jobTitleOrKeyword")
                             : "Job title or keyword"
                         }
-                        className="pl-10 h-12 bg-background border-border focus:border-primary transition-all duration-200"
+                        className="pl-10 h-12 bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-blue-500 dark:focus:border-blue-600 transition-all"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}

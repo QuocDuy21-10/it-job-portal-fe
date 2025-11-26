@@ -7,6 +7,7 @@ import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { Job } from "@/features/job/schemas/job.schema";
 import { useJobFavorite } from "@/hooks/use-job-favorite";
 import { cn } from "@/lib/utils";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 interface JobCardProps {
   job: Job;
@@ -27,26 +28,38 @@ const FavoriteButton = ({
   className?: string;
 }) => {
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className={cn(
-        "rounded-full hover:bg-primary/10 transition-all duration-300 active:scale-95", // Hiệu ứng click
-        className
-      )}
-      onClick={onClick}
-      disabled={disabled}
-      aria-label={isSaved ? "Bỏ lưu công việc" : "Lưu công việc"}
-    >
-      <Heart
-        className={cn(
-          "h-5 w-5 transition-colors duration-300",
-          isSaved
-            ? "fill-primary text-primary" // Active: Lõi màu Primary, Viền Primary
-            : "fill-transparent text-muted-foreground hover:text-primary" // Inactive: Lõi trong suốt, Viền xám (hover chuyển primary)
-        )}
-      />
-    </Button>
+    <Tooltip.Provider delayDuration={300}>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "rounded-full hover:bg-primary/10 transition-all duration-300 active:scale-95",
+              className
+            )}
+            onClick={onClick}
+            disabled={disabled}
+            aria-label={isSaved ? "Unsave job" : "Save job"}
+          >
+            <Heart
+              className={cn(
+                "h-5 w-5 transition-colors duration-300",
+                isSaved
+                  ? "fill-primary text-primary"
+                  : "fill-transparent text-muted-foreground hover:text-primary"
+              )}
+            />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+            {isSaved ? "Unsave job" : "Save job"}
+            <Tooltip.Arrow className="fill-slate-900" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 };
 

@@ -2,12 +2,7 @@ import Link from "next/link";
 import { Building2, Briefcase, UserPlus, UserCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { Company } from "@/features/company/schemas/company.schema";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
@@ -18,18 +13,6 @@ interface CompanyCardProps {
   className?: string;
 }
 
-/**
- * FollowButton Component
- * 
- * A dedicated button for follow/unfollow company action.
- * Uses optimistic UI for instant feedback.
- * 
- * Features:
- * - Tooltip explaining the action
- * - Different states: Following vs Not Following
- * - Smooth transitions
- * - Disabled state during loading
- */
 const FollowButton = ({
   companyId,
   className,
@@ -41,9 +24,9 @@ const FollowButton = ({
     useCompanyFollow(companyId);
 
   return (
-    <TooltipProvider delayDuration={300}>
-      <Tooltip>
-        <TooltipTrigger asChild>
+    <Tooltip.Provider>
+      <Tooltip.Root delayDuration={200}>
+        <Tooltip.Trigger asChild>
           <Button
             variant={isFollowing ? "secondary" : "outline"}
             size="sm"
@@ -57,37 +40,40 @@ const FollowButton = ({
               className
             )}
             aria-label={
-              isFollowing ? "Bỏ theo dõi công ty" : "Theo dõi công ty"
+              isFollowing ? "Unfollow company" : "Follow company"
             }
           >
             {isFollowing ? (
               <>
                 <UserCheck className="h-4 w-4" />
-                <span>Đang theo dõi</span>
+                <span>Following</span>
               </>
             ) : (
               <>
                 <UserPlus className="h-4 w-4" />
-                <span>Theo dõi</span>
+                <span>Follow</span>
               </>
             )}
           </Button>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
-          <p className="text-sm">
-            {isAuthenticated ? (
-              isFollowing ? (
-                "Bấm để bỏ theo dõi công ty này"
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+            <p className="text-sm">
+              {isAuthenticated ? (
+                isFollowing ? (
+                  "Click to unfollow this company"
+                ) : (
+                  "Click to get notified when new jobs are posted"
+                )
               ) : (
-                "Bấm để nhận thông báo khi có việc làm mới"
-              )
-            ) : (
-              "Đăng nhập để theo dõi công ty"
-            )}
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+                "Log in to follow this company"
+              )}
+            </p>
+            <Tooltip.Arrow className="fill-slate-900" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 };
 
