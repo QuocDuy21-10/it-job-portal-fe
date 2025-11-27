@@ -1,22 +1,18 @@
 "use client";
 
-import { Plus, Trash2, Edit2 } from 'lucide-react';
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Trash2, Edit2, GraduationCap, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
-import DataModal from "../modals/data-modal";
-import { EducationRequestSchema, type EducationRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import EducationModal from "../modals/education-modal";
+import { useEducationModal } from "@/hooks/use-education-modal";
+import { type EducationRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
+import { toast } from "sonner";
 
-interface Education {
+interface Education extends EducationRequest {
   id: string;
-  school: string;
-  degree: string;
-  field: string;
-  startDate: Date | string;
-  endDate?: Date | string;
-  description: string;
 }
 
 interface EducationSectionProps {
@@ -32,295 +28,159 @@ export default function EducationSection({
   onUpdate,
   onRemove,
 }: EducationSectionProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const { t } = useI18n();
   
   const {
-    control,
+    isOpen,
+    mode,
+    currentEducation,
+    openAddModal,
+    openEditModal,
+    closeModal,
     handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<EducationRequest>({
-    resolver: zodResolver(EducationRequestSchema),
-    mode: "onChange",
-    defaultValues: {
-      school: "",
-      degree: "",
-      field: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    },
-  });
+  } = useEducationModal(education, onAdd, onUpdate);
 
-  const handleOpen = (edu?: Education) => {
-    if (edu) {
-      reset({
-        school: edu.school,
-        degree: edu.degree,
-        field: edu.field,
-        startDate: edu.startDate ? (typeof edu.startDate === "string" ? edu.startDate : edu.startDate.toISOString()) : "",
-        endDate: edu.endDate ? (typeof edu.endDate === "string" ? edu.endDate : edu.endDate.toISOString()) : "",
-        description: edu.description,
-      });
-      setEditingId(edu.id);
-    } else {
-      reset({
-        school: "",
-        degree: "",
-        field: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
-      setEditingId(null);
-    }
-    setIsModalOpen(true);
+  const handleDelete = (id: string, school: string) => {
+    onRemove(id);
+    toast.success("Xóa học vấn thành công", {
+      description: `Đã xóa: ${school}`,
+      duration: 2000,
+    });
   };
 
-  const handleSave = handleSubmit((data) => {
-    if (editingId) {
-      // Update existing
-      onUpdate(editingId, "school", data.school);
-      onUpdate(editingId, "degree", data.degree);
-      onUpdate(editingId, "field", data.field);
-      onUpdate(editingId, "startDate", data.startDate);
-      onUpdate(editingId, "endDate", data.endDate || "");
-      onUpdate(editingId, "description", data.description || "");
-    } else {
-      // Add new - create unique id
-      const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      onAdd({
-        id: newId,
-        school: data.school,
-        degree: data.degree,
-        field: data.field,
-        startDate: data.startDate,
-        endDate: data.endDate || "",
-        description: data.description || "",
-      });
-    }
-    setIsModalOpen(false);
-  });
+  const formatDate = (date: Date | string | undefined) => {
+    if (!date) return "Present";
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" });
+  };
 
   return (
     <>
       <CVFormSection
-        title="Education"
-        description="Add your educational background"
+        title={t("cv.education.title")}
+        description={t("cv.education.description")}
         actionButton={
-          <button
-            onClick={() => handleOpen()}
-            className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Add Education
-          </button>
+                <button
+                  onClick={openAddModal}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t("cv.education.addButton")}
+                </button>
         }
       >
-        <div className="space-y-3">
-          {education.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              No education added yet
+        {education.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <GraduationCap className="w-8 h-8 text-primary" />
+            </div>
+            <p className="text-sm font-medium text-foreground mb-1">
+              {t("cv.education.noData")}
             </p>
-          ) : (
-            education.map((edu) => (
+            <p className="text-xs text-muted-foreground mb-6 text-center max-w-md">
+              Thêm thông tin học vấn của bạn để tạo CV chuyên nghiệp hơn
+            </p>
+            <Button
+              onClick={openAddModal}
+              className="gap-2 bg-primary hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4 " />
+              {t("cv.education.addButton")}
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {education.map((edu) => (
               <Card
                 key={edu.id}
-                className="p-4 bg-secondary/50 border border-border hover:border-primary/50 transition"
+                className="group relative p-5 bg-gradient-to-br from-card to-secondary/20 border border-border hover:border-primary/40 hover:shadow-lg transition-all duration-300"
               >
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{edu.school}</h3>
-                    <p className="text-sm text-primary font-medium">
-                      {edu.degree} in {edu.field}
-                    </p>
-                    {edu.startDate && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {typeof edu.startDate === 'string' ? edu.startDate : edu.startDate.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })} - {edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : edu.endDate.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })) : "Present"}
+                {/* Card Header */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <GraduationCap className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground text-sm mb-1 truncate">
+                        {edu.school}
+                      </h3>
+                      <p className="text-xs text-primary font-medium">
+                        {edu.degree}
                       </p>
-                    )}
-                    {edu.description && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        {edu.description}
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {edu.field}
                       </p>
-                    )}
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleOpen(edu)}
-                      className="p-2 text-muted-foreground hover:text-primary hover:bg-card rounded transition"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onRemove(edu.id)}
-                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-card rounded transition"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEditModal(edu)}
+                            className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chỉnh sửa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(edu.id, edu.school)}
+                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Xóa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
+
+                {/* Date Range */}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>
+                    {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                  </span>
+                </div>
+
+                {/* Description */}
+                {edu.description && (
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 border-t border-border/50 pt-3">
+                    {edu.description}
+                  </p>
+                )}
               </Card>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </CVFormSection>
 
-      <DataModal
-        isOpen={isModalOpen}
-        title={editingId ? "Edit Education" : "Add Education"}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSave}
-        saveLabel={editingId ? "Update" : "Add"}
-      >
-        <div className="space-y-4">
-          <Controller
-            name="school"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">
-                  School *
-                </label>
-                <input
-                  type="text"
-                  {...field}
-                  placeholder="University of Technology"
-                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                    errors.school ? "border-destructive focus:ring-destructive/50" : "border-border"
-                  }`}
-                />
-                {errors.school && (
-                  <p className="mt-1 text-xs text-destructive">{errors.school.message}</p>
-                )}
-              </div>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <Controller
-              name="degree"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-foreground">
-                    Degree *
-                  </label>
-                  <input
-                    type="text"
-                    {...field}
-                    placeholder="Bachelor"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors.degree ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
-                  />
-                  {errors.degree && (
-                    <p className="mt-1 text-xs text-destructive">{errors.degree.message}</p>
-                  )}
-                </div>
-              )}
-            />
-            <Controller
-              name="field"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-foreground">
-                    Field of Study *
-                  </label>
-                  <input
-                    type="text"
-                    {...field}
-                    placeholder="Computer Science"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors.field ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
-                  />
-                  {errors.field && (
-                    <p className="mt-1 text-xs text-destructive">{errors.field.message}</p>
-                  )}
-                </div>
-              )}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Controller
-              name="startDate"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-foreground">
-                    Start Date *
-                  </label>
-                  <input
-                    type="month"
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
-                    onChange={(e) => {
-                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
-                      field.onChange(dateValue);
-                    }}
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors.startDate ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
-                  />
-                  {errors.startDate && (
-                    <p className="mt-1 text-xs text-destructive">{errors.startDate.message}</p>
-                  )}
-                </div>
-              )}
-            />
-            <Controller
-              name="endDate"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-foreground">
-                    End Date
-                  </label>
-                  <input
-                    type="month"
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
-                    onChange={(e) => {
-                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
-                      field.onChange(dateValue);
-                    }}
-                    placeholder="Leave empty for current"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                      errors.endDate ? "border-destructive focus:ring-destructive/50" : "border-border"
-                    }`}
-                  />
-                  {errors.endDate && (
-                    <p className="mt-1 text-xs text-destructive">{errors.endDate.message}</p>
-                  )}
-                </div>
-              )}
-            />
-          </div>
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">
-                  Description
-                </label>
-                <textarea
-                  {...field}
-                  value={field.value || ""}
-                  placeholder="Add any additional details about your education"
-                  rows={3}
-                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${
-                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
-                  }`}
-                />
-                {errors.description && (
-                  <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>
-                )}
-              </div>
-            )}
-          />
-        </div>
-      </DataModal>
+      <EducationModal
+        isOpen={isOpen}
+        mode={mode}
+        education={currentEducation}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }

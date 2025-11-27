@@ -1,19 +1,18 @@
 "use client";
 
-import { Plus, Trash2, Edit2 } from 'lucide-react';
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Trash2, Edit2, Award as AwardIcon, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
-import DataModal from "../modals/data-modal";
-import { CertificateRequestSchema, type CertificateRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import CertificateModal from "../modals/certificate-modal";
+import { useCertificateModal } from "@/hooks/use-certificate-modal";
+import { type CertificateRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
+import { toast } from "sonner";
 
-interface Certificate {
+interface Certificate extends CertificateRequest {
   id: string;
-  name: string;
-  issuer: string;
-  date: Date | string;
 }
 
 interface CertificatesSectionProps {
@@ -29,199 +28,146 @@ export default function CertificatesSection({
   onUpdate,
   onRemove,
 }: CertificatesSectionProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const { t } = useI18n();
 
   const {
-    control,
+    isOpen,
+    mode,
+    currentCertificate,
+    openAddModal,
+    openEditModal,
+    closeModal,
     handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<CertificateRequest>({
-    resolver: zodResolver(CertificateRequestSchema),
-    mode: "onChange",
-    defaultValues: {
-      name: "",
-      issuer: "",
-      date: "",
-    },
-  });
+  } = useCertificateModal(certificates, onAdd, onUpdate);
 
-  const handleOpen = (cert?: Certificate) => {
-    if (cert) {
-      reset({
-        name: cert.name,
-        issuer: cert.issuer,
-        date: cert.date ? (typeof cert.date === "string" ? cert.date : cert.date.toISOString().slice(0, 7)) : "",
-      });
-      setEditingId(cert.id);
-    } else {
-      reset({
-        name: "",
-        issuer: "",
-        date: "",
-      });
-      setEditingId(null);
-    }
-    setIsModalOpen(true);
+  const handleDelete = (id: string, name: string) => {
+    onRemove(id);
+    toast.success("Xóa chứng chỉ thành công", {
+      description: `Đã xóa: ${name}`,
+      duration: 2000,
+    });
   };
 
-  const handleSave = handleSubmit((data) => {
-    if (editingId) {
-      onUpdate(editingId, "name", data.name);
-      onUpdate(editingId, "issuer", data.issuer);
-      onUpdate(editingId, "date", data.date);
-    } else {
-      // Add new - create unique id
-      const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      onAdd({
-        id: newId,
-        name: data.name,
-        issuer: data.issuer,
-        date: data.date,
-      });
-    }
-    setIsModalOpen(false);
-  });
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" });
+  };
 
   return (
     <>
       <CVFormSection
-        title="Certificates & Credentials"
-        description="Add your certificates and credentials"
+        title={t("cv.certificates.title")}
+        description={t("cv.certificates.description")}
         actionButton={
-          <button
-            onClick={() => handleOpen()}
-            className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Add Certificate
-          </button>
+                <button
+                  onClick={openAddModal}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t("cv.certificates.addButton")}
+                </button>
         }
       >
-        <div className="space-y-3">
-          {certificates.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              No certificates added yet
+        {certificates.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <AwardIcon className="w-8 h-8 text-primary" />
+            </div>
+            <p className="text-sm font-medium text-foreground mb-1">
+              {t("cv.certificates.noData")}
             </p>
-          ) : (
-            certificates.map((cert) => (
+            <p className="text-xs text-muted-foreground mb-6 text-center max-w-md">
+              Thêm chứng chỉ của bạn để tăng uy tín với nhà tuyển dụng
+            </p>
+            <Button
+              onClick={openAddModal}
+              className="gap-2 bg-primary hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4" />
+              {t("cv.certificates.addButton")}
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {certificates.map((cert) => (
               <Card
                 key={cert.id}
-                className="p-4 bg-secondary/50 border border-border hover:border-primary/50 transition"
+                className="group relative p-5 bg-gradient-to-br from-card to-secondary/20 border border-border hover:border-primary/40 hover:shadow-lg transition-all duration-300"
               >
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{cert.name}</h3>
-                    <p className="text-sm text-primary font-medium mt-1">
-                      {cert.issuer}
-                    </p>
-                    {cert.date && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {typeof cert.date === 'string' ? cert.date : cert.date.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })}
+                {/* Card Header */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <AwardIcon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground text-sm mb-1 truncate">
+                        {cert.name}
+                      </h3>
+                      <p className="text-xs text-primary font-medium truncate">
+                        {cert.issuer}
                       </p>
-                    )}
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleOpen(cert)}
-                      className="p-2 text-muted-foreground hover:text-primary hover:bg-card rounded transition"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onRemove(cert.id)}
-                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-card rounded transition"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEditModal(cert)}
+                            className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chỉnh sửa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(cert.id, cert.name)}
+                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Xóa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
+
+                {/* Date */}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>{formatDate(cert.date)}</span>
+                </div>
               </Card>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </CVFormSection>
 
-      <DataModal
-        isOpen={isModalOpen}
-        title={editingId ? "Edit Certificate" : "Add Certificate"}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSave}
-        saveLabel={editingId ? "Update" : "Add"}
-      >
-        <div className="space-y-4">
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">
-                  Certificate Name *
-                </label>
-                <input
-                  type="text"
-                  {...field}
-                  placeholder="AWS Certified Solution Architect"
-                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
-                  }`}
-                />
-                {errors.name && (
-                  <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
-                )}
-              </div>
-            )}
-          />
-          <Controller
-            name="issuer"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">
-                  Issuer *
-                </label>
-                <input
-                  type="text"
-                  {...field}
-                  placeholder="Amazon Web Services"
-                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                    errors.issuer ? "border-destructive focus:ring-destructive/50" : "border-border"
-                  }`}
-                />
-                {errors.issuer && (
-                  <p className="mt-1 text-xs text-destructive">{errors.issuer.message}</p>
-                )}
-              </div>
-            )}
-          />
-          <Controller
-            name="date"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">
-                  Date Issued *
-                </label>
-                <input
-                  type="month"
-                  value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
-                  onChange={(e) => {
-                    const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
-                    field.onChange(dateValue);
-                  }}
-                  className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                    errors.date ? "border-destructive focus:ring-destructive/50" : "border-border"
-                  }`}
-                />
-                {errors.date && (
-                  <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>
-                )}
-              </div>
-            )}
-          />
-        </div>
-      </DataModal>
+      <CertificateModal
+        isOpen={isOpen}
+        mode={mode}
+        certificate={currentCertificate}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }

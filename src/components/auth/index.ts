@@ -5,3 +5,6 @@ export { AuthCard } from "./auth-card";
 export { PasswordInput } from "./password-input";
 export { SocialAuthButtons } from "./social-auth-buttons";
 export { AuthFooter } from "./auth-footer";
+export { OTPInput } from "./otp-input";
+export { CountdownTimer } from "./countdown-timer";
+export { VerificationAlert } from "./verification-alert";

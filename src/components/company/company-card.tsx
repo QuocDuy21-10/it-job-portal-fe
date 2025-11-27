@@ -7,6 +7,7 @@ import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { Company } from "@/features/company/schemas/company.schema";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface CompanyCardProps {
   company: Company;
@@ -22,6 +23,7 @@ const FollowButton = ({
 }) => {
   const { isFollowing, toggleFollowCompany, isLoading, isAuthenticated } =
     useCompanyFollow(companyId);
+  const { t } = useI18n();
 
   return (
     <Tooltip.Provider>
@@ -40,18 +42,18 @@ const FollowButton = ({
               className
             )}
             aria-label={
-              isFollowing ? "Unfollow company" : "Follow company"
+              isFollowing ? t("followButton.unfollowAria") : t("followButton.followAria")
             }
           >
             {isFollowing ? (
               <>
                 <UserCheck className="h-4 w-4" />
-                <span>Following</span>
+                <span>{t("followButton.following")}</span>
               </>
             ) : (
               <>
                 <UserPlus className="h-4 w-4" />
-                <span>Follow</span>
+                <span>{t("followButton.follow")}</span>
               </>
             )}
           </Button>
@@ -61,12 +63,12 @@ const FollowButton = ({
             <p className="text-sm">
               {isAuthenticated ? (
                 isFollowing ? (
-                  "Click to unfollow this company"
+                  t("followButton.unfollowTooltip")
                 ) : (
-                  "Click to get notified when new jobs are posted"
+                  t("followButton.followTooltip")
                 )
               ) : (
-                "Log in to follow this company"
+                t("followButton.loginTooltip")
               )}
             </p>
             <Tooltip.Arrow className="fill-slate-900" />

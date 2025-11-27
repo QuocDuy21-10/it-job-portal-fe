@@ -225,7 +225,6 @@ function UserTableRow({
       {/* Email */}
       <TableCell>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-          <Mail className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />
           <span className="text-sm">{user.email}</span>
         </div>
       </TableCell>

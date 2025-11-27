@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 interface AuthCardProps {
   title?: string;
-  description?: string;
+  description?: string | ReactNode;
   children: ReactNode;
   className?: string;
 }

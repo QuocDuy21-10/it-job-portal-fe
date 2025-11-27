@@ -4,12 +4,15 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Briefcase, Heart } from "lucide-react";
+import { Briefcase, Heart, MapPin, DollarSign, Calendar, ExternalLink, Loader2 } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 import { useGetSavedJobsQuery } from "@/features/user/redux/user.api";
 import { SavedJob } from "@/features/user/schemas/user.schema";
 import { toast } from "sonner";
+import Link from "next/link";
+import { LoadingState } from "../shared/loading-state";
+import { EmptyState } from "../shared/empty-state";
 
 type TabType = "applied" | "saved" | "viewed";
 
@@ -64,33 +67,6 @@ export default function MyJobsPage() {
     fetchAppliedJobs();
   }, [takeOutAppliedJob]);
 
-  // const savedJobs: Job[] = [
-  //   {
-  //     id: "3",
-  //     title: "Full Stack Developer",
-  //     company: "Enterprise Co",
-  //     location: "Da Nang",
-  //     salary: "$4000 - $6000",
-  //   },
-  //   {
-  //     id: "4",
-  //     title: "Backend Engineer",
-  //     company: "Cloud Systems",
-  //     location: "Ho Chi Minh City",
-  //     salary: "$3500 - $5500",
-  //   },
-  // ];
-
-  // const viewedJobs: Job[] = [
-  //   {
-  //     id: "5",
-  //     title: "UI/UX Designer",
-  //     company: "Design Studio",
-  //     location: "Ho Chi Minh City",
-  //     salary: "$2000 - $3500",
-  //   },
-  // ];
-
   // Extract saved jobs from API response
   const savedJobs: SavedJob[] = savedJobsData?.data?.result || [];
 
@@ -133,23 +109,30 @@ export default function MyJobsPage() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-foreground">Việc làm của tôi</h1>
+    <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+          Việc làm của tôi
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Quản lý các công việc đã ứng tuyển và đã lưu
+        </p>
+      </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-border">
+      <div className="flex gap-2 border-b border-border overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium transition ${
+            className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium transition-all whitespace-nowrap ${
               activeTab === tab.id
                 ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
             }`}
           >
             {tab.icon}
-            <span>{tab.label}</span>
+            <span className="hidden sm:inline">{tab.label}</span>
             <span className="ml-1 text-xs bg-secondary px-2 py-1 rounded-full">
               {tab.count}
             </span>
@@ -158,68 +141,128 @@ export default function MyJobsPage() {
       </div>
 
       {/* Job List */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {isLoadingApplied || isLoadingSaved ? (
-          <Card className="p-8 bg-secondary/50 border border-dashed border-border text-center">
-            <p className="text-muted-foreground">Đang tải dữ liệu...</p>
-          </Card>
+          <LoadingState />
         ) : getTabContent().length > 0 ? (
-          getTabContent().map((job) => {
-            const isApplied = isResumeAppliedJob(job);
-            const jobData = isApplied
-              ? {
-                  id: job.jobId._id,
-                  name: job.jobId.name,
-                  companyName: job.companyId.name,
-                  location: job.jobId.location,
-                  salary: job.jobId.salary,
-                  createdAt: job.createdAt,
-                }
-              : {
-                  id: job._id,
-                  name: job.name,
-                  companyName: job.company.name,
-                  location: job.location,
-                  salary: job.salary,
-                  createdAt: undefined,
-                };
+          <div className="grid gap-4">
+            {getTabContent().map((job) => {
+              const isApplied = isResumeAppliedJob(job);
+              const jobData = isApplied
+                ? {
+                    id: job.jobId._id,
+                    name: job.jobId.name,
+                    companyName: job.companyId.name,
+                    status: job.status,
+                    location: job.jobId.location,
+                    salary: job.jobId.salary,
+                    createdAt: job.createdAt,
+                  }
+                : {
+                    id: job._id,
+                    name: job.name,
+                    companyName: job.company.name,
+                    status: job.status,
+                    location: job.location,
+                    salary: job.salary,
+                    createdAt: undefined,
+                  };
 
-            return (
-              <Card
-                key={jobData.id}
-                className="p-4 bg-card border border-border hover:border-primary transition cursor-pointer"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground text-lg">
-                      {jobData.name}
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      {jobData.companyName}
-                    </p>
-                    <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
-                      <span>{jobData.location}</span>
-                      <span className="text-primary font-medium">
-                        {jobData.salary.toLocaleString()} VND
-                      </span>
-                    </div>
-                    {jobData.createdAt && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Ứng tuyển:{" "}
-                        {new Date(jobData.createdAt).toLocaleDateString(
-                          "vi-VN"
+              return (
+                <Card
+                  key={jobData.id}
+                  className="p-4 md:p-5 bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all duration-300 group"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start gap-4">
+                    {/* Job Info */}
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <Link
+                          href={`/jobs/${jobData.id}`}
+                          className="inline-flex items-center gap-2 group/link"
+                        >
+                          <h3 className="font-semibold text-foreground text-lg group-hover/link:text-primary transition-colors">
+                            {jobData.name}
+                          </h3>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                        </Link>
+                        <p className="text-muted-foreground text-sm mt-1">
+                          {jobData.companyName}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 md:gap-4 text-sm">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <MapPin className="w-4 h-4 flex-shrink-0" />
+                          <span>{jobData.location}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-primary font-medium">
+                          <DollarSign className="w-4 h-4 flex-shrink-0" />
+                          <span>{jobData.salary.toLocaleString()} VND</span>
+                        </div>
+                        {jobData.createdAt && (
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Calendar className="w-4 h-4 flex-shrink-0" />
+                            <span className="text-xs">
+                              {new Date(jobData.createdAt).toLocaleDateString(
+                                "vi-VN"
+                              )}
+                            </span>
+                          </div>
                         )}
-                      </p>
-                    )}
+                      </div>
+
+                      {jobData.status && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Trạng thái:
+                          </span>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                              jobData.status === "PENDING"
+                                ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400"
+                                : jobData.status === "REVIEWING"
+                                ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                                : jobData.status === "APPROVED"
+                                ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                                : "bg-red-500/10 text-red-600 dark:text-red-400"
+                            }`}
+                          >
+                            {jobData.status}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="flex md:flex-col gap-2">
+                      <Link
+                        href={`/jobs/${jobData.id}`}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-sm whitespace-nowrap"
+                      >
+                        Xem chi tiết
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            );
-          })
+                </Card>
+              );
+            })}
+          </div>
         ) : (
-          <Card className="p-8 bg-secondary/50 border border-dashed border-border text-center">
-            <p className="text-muted-foreground">Chưa có việc làm nào</p>
-          </Card>
+          <EmptyState
+            icon={activeTab === "applied" ? Briefcase : Heart}
+            title={
+              activeTab === "applied"
+                ? "Chưa có công việc nào"
+                : "Chưa lưu công việc nào"
+            }
+            description={
+              activeTab === "applied"
+                ? "Bạn chưa ứng tuyển công việc nào. Hãy khám phá các cơ hội việc làm phù hợp với bạn!"
+                : "Bạn chưa lưu công việc nào. Lưu các công việc yêu thích để xem lại sau!"
+            }
+          />
         )}
       </div>
     </div>

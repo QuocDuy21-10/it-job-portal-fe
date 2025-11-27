@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { LanguageRequestSchema, type LanguageRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface LanguageModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function LanguageModal({
   initialData,
   mode,
 }: LanguageModalProps) {
+  const { t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -66,12 +68,12 @@ export default function LanguageModal({
       <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {mode === "add" ? "Thêm Ngôn Ngữ" : "Chỉnh Sửa Ngôn Ngữ"}
+            {mode === "add" ? t("cv.languages.addTitle") : t("cv.languages.editTitle")}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             {mode === "add"
-              ? "Thêm ngôn ngữ bạn sử dụng"
-              : "Cập nhật thông tin ngôn ngữ"}
+              ? t("cv.languages.addDescription")
+              : t("cv.languages.editDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -79,13 +81,13 @@ export default function LanguageModal({
           {/* Language Name */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-              Tên Ngôn Ngữ
+              {t("cv.languages.nameLabel")}
               <span className="text-destructive">*</span>
             </label>
             <input
               {...register("name")}
               type="text"
-              placeholder="e.g., English, Vietnamese, French"
+              placeholder={t("cv.languages.namePlaceholder")}
               className={`w-full px-4 py-3 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all ${
                 errors.name ? "border-destructive" : "border-border"
               }`}
@@ -101,7 +103,7 @@ export default function LanguageModal({
           {/* Proficiency Level */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-              Trình Độ
+              {t("cv.languages.proficiencyLabel")}
               <span className="text-destructive">*</span>
             </label>
             <select
@@ -133,14 +135,14 @@ export default function LanguageModal({
               className="flex-1 border-border hover:bg-secondary/80 transition-all"
             >
               <X className="w-4 h-4 mr-2" />
-              Hủy
+              {t("cv.languages.cancelButton")}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
             >
-              {isSubmitting ? "Đang lưu..." : mode === "add" ? "Thêm Ngôn Ngữ" : "Cập Nhật"}
+              {isSubmitting ? t("cv.languages.savingButton") : mode === "add" ? t("cv.languages.saveButton") : t("cv.languages.updateButton")}
             </Button>
           </div>
         </form>

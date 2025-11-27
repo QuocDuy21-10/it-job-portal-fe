@@ -5,7 +5,7 @@ import { isAdminRole } from "@/shared/constants/roles";
 
 const initialState: AuthState = {
   user: null,
-  isLoading: true,
+  isLoading: false, // ✅ FIX: Default false, chỉ set true khi thực sự đang fetch
   isAuthenticated: false,
   isRefreshToken: false,
   errorRefreshToken: "",

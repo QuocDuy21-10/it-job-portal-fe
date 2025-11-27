@@ -2,12 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/theme-provider";
-import { I18nProvider } from "@/contexts/i18n-provider";
-import { ClientLayout } from "@/components/client-layout";
-import ReduxProvider from "@/lib/redux/provider";
-import { GuestGuard } from "@/components/guest-guard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,23 +13,21 @@ export const metadata: Metadata = {
   keywords: "jobs, careers, employment, recruitment, job search, hiring",
 };
 
+/**
+ * Main Layout
+ * Layout cho các trang public (home, jobs, companies, etc.)
+ * ReduxProvider, ThemeProvider, I18nProvider đã được wrap ở root layout
+ */
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-        <ReduxProvider>
-          <ThemeProvider>
-            <I18nProvider>
-              <GuestGuard>
-                <Header />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <Toaster />
-              </GuestGuard>
-            </I18nProvider>
-          </ThemeProvider>
-        </ReduxProvider>
+    <>
+      <Header />
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </>
   );
 }

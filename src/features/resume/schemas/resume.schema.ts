@@ -73,6 +73,7 @@ export const ResumeAppliedJob = z.object({
     location: z.string(),
     salary: z.number(),
   }),
+  status: z.string(),
   companyId: z.object({
     _id: z.string(),
     name: z.string(),

@@ -131,7 +131,6 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
       <TableCell>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Briefcase className="h-4 w-4 text-gray-400" />
             <span className="font-medium text-gray-900 dark:text-gray-100">
               {job.name}
             </span>
@@ -146,7 +145,6 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-green-500" />
           <Badge variant="secondary" className="font-mono">
             {formatSalary(job.salary)} VND
           </Badge>
@@ -154,7 +152,6 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-gray-400" />
           <Badge className={getLevelColor()}>
             {job.level}
           </Badge>
@@ -163,14 +160,12 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
       <TableCell>
         {job.isActive ? (
           <div className="flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-green-500" />
             <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
               Active
             </Badge>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <XCircle className="h-4 w-4 text-red-500" />
             <Badge variant="destructive" className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
               Inactive
             </Badge>

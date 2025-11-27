@@ -1,9 +1,18 @@
 "use client";
-import React from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Edit2, Mail, Phone, MapPin, Calendar, User as UserIcon, Link as LinkIcon, Briefcase } from "lucide-react";
 import CVFormSection from "@/components/sections/cv-form-section";
-import { PersonalInfoSchema, type PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
+import PersonalInfoModal from "../modals/personal-info-modal";
+import { PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PersonalInfoSectionProps {
   personalInfo: {
@@ -23,286 +32,167 @@ export default function PersonalInfoSection({
   personalInfo,
   onUpdate,
 }: PersonalInfoSectionProps) {
-  const {
-    control,
-    formState: { errors },
-  } = useForm<PersonalInfo>({
-    resolver: zodResolver(PersonalInfoSchema),
-    mode: "onChange",
-    values: {
-      fullName: personalInfo.fullName,
-      email: personalInfo.email,
-      phone: personalInfo.phone,
-      birthday: personalInfo.birthday,
-      gender: personalInfo.gender || "male",
-      address: personalInfo.address,
-      personalLink: personalInfo.personalLink,
-      bio: personalInfo.bio,
-    },
-  });
+  const { t } = useI18n();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (data: PersonalInfo) => {
+    // Update all fields
+    onUpdate("fullName", data.fullName);
+    onUpdate("email", data.email);
+    onUpdate("phone", data.phone);
+    if (data.birthday) onUpdate("birthday", data.birthday);
+    if (data.gender) onUpdate("gender", data.gender);
+    if (data.address) onUpdate("address", data.address || "");
+    if (data.personalLink) onUpdate("personalLink", data.personalLink || "");
+    if (data.bio) onUpdate("bio", data.bio || "");
+  };
+
+  const formatDate = (date?: Date) => {
+    if (!date) return null;
+    return new Date(date).toLocaleDateString("vi-VN");
+  };
+
+  const getGenderLabel = (gender?: string) => {
+    switch (gender) {
+      case "male":
+        return t("cv.personalInfo.male");
+      case "female":
+        return t("cv.personalInfo.female");
+      case "other":
+        return t("cv.personalInfo.other");
+      default:
+        return null;
+    }
+  };
 
   return (
-    <CVFormSection
-      title="Personal Information"
-      description="Update your personal details"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Controller
-          name="fullName"
-          control={control}
-          render={({ field }) => (
-            <InputField
-              label="Full Name *"
-              type="text"
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("fullName", e.target.value);
-              }}
-              placeholder="John Doe"
-              error={errors.fullName?.message}
-            />
-          )}
-        />
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <InputField
-              label="Email *"
-              type="email"
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("email", e.target.value);
-              }}
-              placeholder="john@example.com"
-              error={errors.email?.message}
-            />
-          )}
-        />
-        <Controller
-          name="phone"
-          control={control}
-          render={({ field }) => (
-            <InputField
-              label="Phone *"
-              type="tel"
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("phone", e.target.value);
-              }}
-              placeholder="+84 (555) 000-0000"
-              error={errors.phone?.message}
-            />
-          )}
-        />
-        <Controller
-          name="birthday"
-          control={control}
-          render={({ field }) => (
-            <InputField
-              label="Birthday"
-              type="date"
-              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ""}
-              onChange={(e) => {
-                const dateValue = e.target.value ? new Date(e.target.value) : undefined;
-                field.onChange(dateValue);
-                if (dateValue) onUpdate("birthday", dateValue);
-              }}
-              error={errors.birthday?.message}
-            />
-          )}
-        />
-        <Controller
-          name="gender"
-          control={control}
-          render={({ field }) => (
-            <SelectField
-              label="Gender *"
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("gender", e.target.value);
-              }}
-              options={[
-                { value: "male", label: "Male" },
-                { value: "female", label: "Female" },
-                { value: "other", label: "Other" },
-              ]}
-              error={errors.gender?.message}
-            />
-          )}
-        />
-        <Controller
-          name="address"
-          control={control}
-          render={({ field }) => (
-            <InputField
-              label="Address"
-              type="text"
-              value={field.value || ""}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("address", e.target.value);
-              }}
-              placeholder="City, Country"
-              error={errors.address?.message}
-            />
-          )}
-        />
-        <Controller
-          name="personalLink"
-          control={control}
-          render={({ field }) => (
-            <InputField
-              label="Personal Link"
-              type="url"
-              value={field.value || ""}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("personalLink", e.target.value);
-              }}
-              placeholder="https://example.com"
-              className="md:col-span-2"
-              error={errors.personalLink?.message}
-            />
-          )}
-        />
-        <Controller
-          name="bio"
-          control={control}
-          render={({ field }) => (
-            <TextAreaField
-              label="Bio"
-              value={field.value || ""}
-              onChange={(e) => {
-                field.onChange(e);
-                onUpdate("bio", e.target.value);
-              }}
-              placeholder="Tell us about yourself..."
-              rows={4}
-              className="md:col-span-2"
-              error={errors.bio?.message}
-            />
-          )}
-        />
-      </div>
-    </CVFormSection>
+    <>
+      <CVFormSection
+        title={t("cv.personalInfo.title")}
+        description={t("cv.personalInfo.description")}
+        actionButton={
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  {t("cv.personalInfo.editButton")}
+                </button>
+        }
+      >
+        <Card className="p-6 bg-gradient-to-br from-card to-secondary/20 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Full Name */}
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                <UserIcon className="w-4 h-4 text-primary" />
+                {t("cv.personalInfo.fullName")}
+              </div>
+              <p className="text-base font-semibold text-foreground">
+                {personalInfo.fullName || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+              </p>
+            </div>
+
+            {/* Email */}
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                <Mail className="w-4 h-4 text-primary" />
+                {t("cv.personalInfo.email")}
+              </div>
+              <p className="text-base text-foreground break-all">
+                {personalInfo.email || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+              </p>
+            </div>
+
+            {/* Phone */}
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                <Phone className="w-4 h-4 text-primary" />
+                {t("cv.personalInfo.phone")}
+              </div>
+              <p className="text-base text-foreground">
+                {personalInfo.phone || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+              </p>
+            </div>
+
+            {/* Birthday */}
+            {personalInfo.birthday && (
+              <div>
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.birthday")}
+                </div>
+                <p className="text-base text-foreground">
+                  {formatDate(personalInfo.birthday)}
+                </p>
+              </div>
+            )}
+
+            {/* Gender */}
+            {personalInfo.gender && (
+              <div>
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <Briefcase className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.gender")}
+                </div>
+                <p className="text-base text-foreground">
+                  {getGenderLabel(personalInfo.gender)}
+                </p>
+              </div>
+            )}
+
+            {/* Address */}
+            {personalInfo.address && (
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.address")}
+                </div>
+                <p className="text-base text-foreground">
+                  {personalInfo.address}
+                </p>
+              </div>
+            )}
+
+            {/* Personal Link */}
+            {personalInfo.personalLink && (
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <LinkIcon className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.personalLink")}
+                </div>
+                <a
+                  href={personalInfo.personalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-base text-primary hover:text-primary/80 hover:underline break-all"
+                >
+                  {personalInfo.personalLink}
+                </a>
+              </div>
+            )}
+
+            {/* Bio */}
+            {personalInfo.bio && (
+              <div className="md:col-span-2">
+                <div className="text-sm font-medium text-muted-foreground mb-2">
+                  {t("cv.personalInfo.bio")}
+                </div>
+                <p className="text-base text-foreground whitespace-pre-wrap">
+                  {personalInfo.bio}
+                </p>
+              </div>
+            )}
+          </div>
+        </Card>
+      </CVFormSection>
+
+      <PersonalInfoModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
+        initialData={personalInfo as PersonalInfo}
+      />
+    </>
   );
 }
-
-const InputField = ({
-  label,
-  type = "text",
-  value,
-  onChange,
-  placeholder,
-  className = "",
-  error,
-}: {
-  label: string;
-  type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  className?: string;
-  error?: string;
-}) => {
-  return (
-    <div className={className}>
-      <label className="block text-sm font-medium mb-2 text-foreground">
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-          error ? "border-destructive focus:ring-destructive/50" : "border-border"
-        }`}
-      />
-      {error && (
-        <p className="mt-1 text-xs text-destructive">{error}</p>
-      )}
-    </div>
-  );
-};
-
-const SelectField = ({
-  label,
-  value,
-  onChange,
-  options,
-  error,
-}: {
-  label: string;
-  value?: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: Array<{ value: string; label: string }>;
-  error?: string;
-}) => {
-  return (
-    <div>
-      <label className="block text-sm font-medium mb-2 text-foreground">
-        {label}
-      </label>
-      <select
-        value={value}
-        onChange={onChange}
-        className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-          error ? "border-destructive focus:ring-destructive/50" : "border-border"
-        }`}
-      >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      {error && (
-        <p className="mt-1 text-xs text-destructive">{error}</p>
-      )}
-    </div>
-  );
-};
-
-const TextAreaField = ({
-  label,
-  value,
-  onChange,
-  placeholder,
-  rows = 3,
-  className = "",
-  error,
-}: {
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  placeholder?: string;
-  rows?: number;
-  className?: string;
-  error?: string;
-}) => {
-  return (
-    <div className={className}>
-      <label className="block text-sm font-medium mb-2 text-foreground">
-        {label}
-      </label>
-      <textarea
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        rows={rows}
-        className={`w-full px-3 py-2 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${
-          error ? "border-destructive focus:ring-destructive/50" : "border-border"
-        }`}
-      />
-      {error && (
-        <p className="mt-1 text-xs text-destructive">{error}</p>
-      )}
-    </div>
-  );
-};

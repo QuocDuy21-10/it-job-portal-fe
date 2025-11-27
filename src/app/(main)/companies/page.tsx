@@ -12,9 +12,11 @@ import parse from "html-react-parser";
 import { PageBreadcrumb } from "@/components/sections/page-breadcrumb";
 import { TooltipIcon } from "@/components/sections/tooltip-icon";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function CompanyListPage() {
   const router = useRouter();
+  const { t } = useI18n();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export default function CompanyListPage() {
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <PageBreadcrumb
-          items={[{ label: "Companies" }]}
+          items={[{ label: t("companyList.breadcrumb") }]}
           className="mb-6"
         />
 
@@ -64,16 +66,16 @@ export default function CompanyListPage() {
         <div className="mb-12 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary mb-4">
             <Building2 className="h-4 w-4" />
-            <span>Discover Top Employers</span>
+            <span>{t("companyList.topEmployers")}</span>
           </div>
           <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
-            Find Your Next{" "}
+            {t("companyList.findYourNext")}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              Employer
+              {t("companyList.employer")}
             </span>
           </h1>
           <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
-            Browse top companies and explore exciting career opportunities
+            {t("companyList.browseTopCompanies")}
           </p>
         </div>
 
@@ -84,7 +86,7 @@ export default function CompanyListPage() {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search companies by name or description..."
+                placeholder={t("companyList.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-12 py-4 bg-card/80 backdrop-blur-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-foreground placeholder-muted-foreground transition-all duration-200 shadow-sm hover:shadow-md"
@@ -101,7 +103,7 @@ export default function CompanyListPage() {
           </TooltipIcon>
           {total > 0 && (
             <p className="mt-3 text-center text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{total}</span> compan{total !== 1 ? "ies" : "y"} found
+              <span className="font-semibold text-foreground">{total}</span> {t("companyList.companiesFound")}
             </p>
           )}
         </div>
@@ -109,11 +111,11 @@ export default function CompanyListPage() {
         {/* Companies Grid */}
         {isLoading ? (
           <div className="text-center py-16">
-            <span className="text-muted-foreground">Loading companies...</span>
+            <span className="text-muted-foreground">{t("companyList.loading")}</span>
           </div>
         ) : error ? (
           <div className="text-center py-16">
-            <span className="text-destructive">Error loading companies.</span>
+            <span className="text-destructive">{t("companyList.errorLoading")}</span>
           </div>
         ) : companies.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -153,10 +155,10 @@ export default function CompanyListPage() {
                 {/* View Details Link */}
                 <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">
-                    {company.jobCount || 0} open positions
+                    {company.jobCount || 0} {t("companyList.openPositions")}
                   </span>
                   <span className="text-sm font-medium text-primary group-hover:translate-x-1 transition-transform duration-300">
-                    View Details →
+                    {t("companyList.viewDetails")} →
                   </span>
                 </div>
               </Card>
@@ -169,15 +171,15 @@ export default function CompanyListPage() {
                 <Search className="w-16 h-16 text-muted-foreground/30" />
               </div>
             </div>
-            <h3 className={`${TYPOGRAPHY.h3} text-foreground mb-3`}>No companies found</h3>
+            <h3 className={`${TYPOGRAPHY.h3} text-foreground mb-3`}>{t("companyList.noCompaniesFound")}</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Try adjusting your search query to find what you're looking for
+              {t("companyList.tryAdjustingSearch")}
             </p>
             <Button 
               variant="outline" 
               className="bg-card hover:bg-secondary" 
-              onClick={() => setSearchQuery("")}>
-              Clear Search
+              onClick={() => setSearchQuery("")}> 
+              {t("companyList.clearSearch")}
             </Button>
           </div>
         )}
@@ -191,10 +193,10 @@ export default function CompanyListPage() {
               disabled={page === 1}
               onClick={() => setPage((p: number) => Math.max(1, p - 1))}
             >
-              Previous
+              {t("companyList.previous")}
             </Button>
             <span className="px-3 py-2 text-sm text-muted-foreground">
-              Page {page} of {totalPages}
+              {t("companyList.pageOf").replace("{page}", page.toString()).replace("{totalPages}", totalPages.toString())}
             </span>
             <Button
               variant="outline"
@@ -202,7 +204,7 @@ export default function CompanyListPage() {
               disabled={page === totalPages}
               onClick={() => setPage((p: number) => Math.min(totalPages, p + 1))}
             >
-              Next
+              {t("companyList.next")}
             </Button>
           </div>
         )}

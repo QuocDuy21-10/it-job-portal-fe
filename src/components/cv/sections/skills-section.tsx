@@ -2,6 +2,7 @@
 
 import { Plus, Edit, Trash2, Award } from 'lucide-react';
 import { Card } from "@/components/ui/card";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   Tooltip,
   TooltipContent,
@@ -39,11 +40,12 @@ export default function SkillsSection({
   onUpdate,
   onRemove,
 }: SkillsSectionProps) {
+  const { t } = useI18n();
   const skillModal = useSkillModal(skills, onAdd, onUpdate);
 
   const handleRemove = (id: string, name: string) => {
-    toast.success("Đã xóa kỹ năng", {
-      description: `Kỹ năng "${name}" đã được xóa`,
+    toast.success(t("cv.skills.deleteSuccess"), {
+      description: t("cv.skills.deleteSuccessDesc").replace("{name}", name),
       duration: 2000,
     });
     onRemove(id);
@@ -52,26 +54,17 @@ export default function SkillsSection({
   return (
     <>
       <CVFormSection
-        title="Kỹ Năng Chuyên Môn"
-        description={`Thêm các kỹ năng của bạn (${skills.length}/20)`}
+        title={t("cv.skills.title")}
+        description={`${t("cv.skills.description")} (${skills.length}/20)`}
         actionButton={
           skills.length < 20 && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
                   <button
                     onClick={skillModal.openAddModal}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all hover:scale-105"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg"
                   >
                     <Plus className="w-4 h-4" />
-                    Thêm Kỹ Năng
+                    {t("cv.skills.addButton")}
                   </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Thêm kỹ năng chuyên môn mới</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           )
         }
       >
@@ -79,10 +72,10 @@ export default function SkillsSection({
           <div className="flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-br from-secondary/30 to-secondary/10 rounded-xl border-2 border-dashed border-border/50">
             <Award className="w-16 h-16 text-muted-foreground/30 mb-4" />
             <p className="text-base font-medium text-muted-foreground mb-2">
-              Chưa có kỹ năng nào
+              {t("cv.skills.noData")}
             </p>
             <p className="text-sm text-muted-foreground/70 text-center max-w-md">
-              Thêm các kỹ năng chuyên môn để nổi bật hồ sơ của bạn
+              {t("cv.skills.noDataDesc")}
             </p>
           </div>
         ) : (
@@ -117,11 +110,11 @@ export default function SkillsSection({
                             className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium transition-all hover:scale-105"
                           >
                             <Edit className="w-3.5 h-3.5" />
-                            Sửa
+                            {t("cv.skills.edit")}
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Chỉnh sửa kỹ năng này</p>
+                          <p>{t("cv.skills.editTooltip")}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -134,11 +127,11 @@ export default function SkillsSection({
                             className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-destructive/10 hover:bg-destructive/20 text-destructive text-xs font-medium transition-all hover:scale-105"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
-                            Xóa
+                            {t("cv.skills.delete")}
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Xóa kỹ năng này</p>
+                          <p>{t("cv.skills.deleteTooltip")}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>

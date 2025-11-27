@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Loader2 } from "lucide-react";
@@ -29,14 +29,26 @@ import {
   PasswordInput,
   SocialAuthButtons,
   AuthFooter,
+  VerificationAlert,
 } from "@/components/auth";
 
-export default function LoginPage() {
+function LoginContent() {
   const [socialLoading, setSocialLoading] = useState<"google" | "facebook" | null>(null);
+  const [showVerifiedMessage, setShowVerifiedMessage] = useState(false);
+  const hasShownToast = useRef(false);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Check if user just verified their email (chỉ hiện toast 1 lần)
+  useEffect(() => {
+    if (searchParams?.get("verified") === "true" && !hasShownToast.current) {
+      setShowVerifiedMessage(true);
+      toast.success("Email verified successfully! You can now sign in.");
+      hasShownToast.current = true;
+    }
+  }, [searchParams]);
 
   /**
    * Helper function to determine redirect route after login
@@ -159,6 +171,17 @@ export default function LoginPage() {
         title="Sign In"
         description="Enter your credentials to access your account"
       >
+        {/* Success message after email verification */}
+        {showVerifiedMessage && (
+          <div className="mb-5">
+            <VerificationAlert
+              type="success"
+              title="Email Verified!"
+              message="Your email has been successfully verified. You can now sign in to your account."
+            />
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Email Input */}
           <div className="space-y-2">
@@ -243,5 +266,19 @@ export default function LoginPage() {
         link={{ text: "Sign up", href: "/register" }}
       />
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

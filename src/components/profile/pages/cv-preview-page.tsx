@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Download, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, Loader2, FileText, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ICVProfile } from "@/shared/types/cv";
 import { useCV } from "@/hooks/use-cv";
 import DownloadPDFButton from "@/components/pdf/download-pdf-button";
@@ -145,22 +146,26 @@ export default function CVPreviewPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card border-b border-border sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+      <div className="bg-card border-b border-border sticky top-0 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
               <Button
                 onClick={() => router.push("/profile?tab=create-cv")}
                 variant="outline"
                 size="sm"
+                className="flex-shrink-0"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Quay lại
               </Button>
               <div>
-                <h1 className="text-2xl font-bold">Xem trước CV</h1>
-                <p className="text-sm text-muted-foreground">
-                  Preview và tải xuống CV của bạn
+                <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  Xem trước CV
+                </h1>
+                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
+                  Chọn template và tải xuống CV của bạn
                 </p>
               </div>
             </div>
@@ -176,75 +181,77 @@ export default function CVPreviewPage() {
       </div>
 
       {/* Template Selector & Preview Toggle */}
-      <div className="bg-secondary border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setSelectedTemplate("classic")}
-                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                  selectedTemplate === "classic"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card text-foreground hover:bg-border"
-                }`}
-              >
-                Classic
-              </button>
-              <button
-                onClick={() => setSelectedTemplate("modern")}
-                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                  selectedTemplate === "modern"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card text-foreground hover:bg-border"
-                }`}
-              >
-                Modern
-              </button>
-              <button
-                onClick={() => setSelectedTemplate("minimal")}
-                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                  selectedTemplate === "minimal"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card text-foreground hover:bg-border"
-                }`}
-              >
-                Minimal
-              </button>
+      <div className="bg-secondary/50 border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: "classic", name: "Classic", desc: "Truyền thống" },
+                { id: "modern", name: "Modern", desc: "Hiện đại" },
+                { id: "minimal", name: "Minimal", desc: "Tối giản" },
+              ].map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setSelectedTemplate(template.id)}
+                  className={`px-4 py-2.5 rounded-lg font-medium transition-all text-sm ${
+                    selectedTemplate === template.id
+                      ? "bg-primary text-primary-foreground shadow-md scale-105"
+                      : "bg-card text-foreground hover:bg-border hover:shadow-sm"
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <span>{template.name}</span>
+                    <span className="text-xs opacity-80">{template.desc}</span>
+                  </div>
+                </button>
+              ))}
             </div>
-
-            <button
+            <Button
               onClick={() => setShowPDFPreview(!showPDFPreview)}
-              className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
-                showPDFPreview
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-foreground hover:bg-border"
-              }`}
+              variant={showPDFPreview ? "default" : "outline"}
+              size="sm"
+              className="w-full md:w-auto"
             >
-              {showPDFPreview ? "📄 Xem HTML" : "📄 Xem PDF"}
-            </button>
+              {showPDFPreview ? (
+                <>
+                  <EyeOff className="w-4 h-4 mr-2" />
+                  Ẩn PDF Preview
+                </>
+              ) : (
+                <>
+                  <Eye className="w-4 h-4 mr-2" />
+                  Hiện PDF Preview
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </div>
 
       {/* CV Preview */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 ">
         {showPDFPreview ? (
-          // Live PDF Preview - Tăng height để xem tốt hơn
-          <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg min-h-[calc(100vh-240px)]">
+          <Card className="p-4 md:p-6 bg-card border border-border shadow-lg ">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <FileText className="w-5 h-5 text-primary" />
+                PDF Preview
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Xem trước CV dưới dạng PDF
+              </p>
+            </div>
             <PDFPreview
               cvData={cvData}
               template={selectedTemplate as any}
-              height="calc(100vh - 280px)"
-              className="rounded-lg overflow-hidden shadow-lg"
             />
-          </div>
+          </Card>
         ) : (
-          // HTML Preview
-          <div className="space-y-8">
+          <Card className="p-6 md:p-8 bg-white dark:bg-card border border-border shadow-lg">
             {selectedTemplate === "classic" && <ClassicTemplate cvData={cvData} />}
             {selectedTemplate === "modern" && <ModernTemplate cvData={cvData} />}
             {selectedTemplate === "minimal" && <MinimalTemplate cvData={cvData} />}
-          </div>
+          </Card>
         )}
       </div>
     </div>

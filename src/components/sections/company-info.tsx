@@ -4,6 +4,7 @@ import { Building2, MapPin, Users } from "lucide-react";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface CompanyInfoProps {
   company: {
@@ -16,6 +17,7 @@ interface CompanyInfoProps {
 }
 
 export default function CompanyInfo({ company }: CompanyInfoProps) {
+  const { t } = useI18n();
   return (
     <div className="space-y-4 sticky top-20">
       <Card className="p-6 bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20">
@@ -40,7 +42,7 @@ export default function CompanyInfo({ company }: CompanyInfoProps) {
           <div className="flex items-start gap-3">
             <Users className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
             <div>
-              <p className="text-sm text-muted-foreground">Employees</p>
+              <p className="text-sm text-muted-foreground">{t("companyInfo.employees")}</p>
               <p className="font-semibold">{company.employees}</p>
             </div>
           </div>
@@ -48,7 +50,7 @@ export default function CompanyInfo({ company }: CompanyInfoProps) {
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
             <div>
-              <p className="text-sm text-muted-foreground">Address</p>
+              <p className="text-sm text-muted-foreground">{t("companyInfo.address")}</p>
               <p className="font-semibold text-sm">{company.address}</p>
             </div>
           </div>
@@ -57,10 +59,10 @@ export default function CompanyInfo({ company }: CompanyInfoProps) {
         {/* Action Buttons */}
         <div className="space-y-2 mt-6 pt-6 border-t border-border">
           <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-            <a href={`/companies/${company.id}`}>View Company Profile</a>
+            <a href={`/companies/${company.id}`}>{t("companyInfo.viewProfile")}</a>
           </Button>
           <button className="w-full px-4 py-2 border border-border text-foreground hover:bg-secondary rounded-lg font-medium transition">
-            Follow Company
+            {t("companyInfo.followCompany")}
           </button>
         </div>
       </Card>
@@ -68,8 +70,7 @@ export default function CompanyInfo({ company }: CompanyInfoProps) {
       {/* Additional Info Card */}
       <Card className="p-4 bg-accent/5 border border-accent/20">
         <p className="text-sm text-muted-foreground">
-          💡 <span className="font-medium">Tip:</span> Follow this company to
-          receive notifications about new job openings.
+          💡 <span className="font-medium">{t("companyInfo.tip")}</span> {t("companyInfo.followTip")}
         </p>
       </Card>
     </div>

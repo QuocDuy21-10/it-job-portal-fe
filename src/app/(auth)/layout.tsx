@@ -30,7 +30,6 @@ export default function AuthLayout({
 
   useEffect(() => {
     // Redirect ngay khi phát hiện user đã authenticated
-    // Không cần đợi isLoading = false
     if (isAuthenticated) {
       // Lấy route mặc định dựa trên role
       const defaultRoute = getDefaultRoute(userRole);
@@ -40,21 +39,26 @@ export default function AuthLayout({
     }
   }, [isAuthenticated, userRole, router]);
 
-  // Hiển thị loading khi:
-  // 1. Đang fetch user info lần đầu (isLoading = true)
-  // 2. Hoặc đã authenticated và đang redirect
-  // if (isLoading || isAuthenticated) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-background">
-  //       <div className="text-center space-y-4">
-  //         <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-  //         <p className="text-sm text-muted-foreground">
-  //           {/* {isAuthenticated ? "Đang chuyển hướng..." : "Đang kiểm tra..."} */}
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  // Hiển thị loading CHỈ KHI:
+  // - Đang fetch user info (isLoading = true) VÀ chưa authenticated
+  // - Nếu đã authenticated, redirect ngay, không cần loading
+  if (isLoading && !isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">
+            Đang kiểm tra...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Nếu đã authenticated, đang redirect → Không render children
+  if (isAuthenticated) {
+    return null;
+  }
 
   // Chỉ render children khi: !isLoading && !isAuthenticated
   return <>{children}</>;

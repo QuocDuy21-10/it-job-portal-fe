@@ -7,6 +7,7 @@ import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
 import { ClientLayout } from "@/components/client-layout";
 import { AuthModal } from "@/components/modals/auth-modal";
+import { AuthInitializer } from "@/components/auth-initializer";
 import ReduxProvider from "@/lib/redux/provider";
 import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
 
@@ -38,6 +39,8 @@ export default function RootLayout({
             <ThemeProvider>
               <I18nProvider>
                 <AuthModalProvider>
+                  {/* Fetch user data on app initialization */}
+                  <AuthInitializer />
                   <ClientLayout />
                   {/* <Header /> */}
                   <main className="flex-1">{children}</main>

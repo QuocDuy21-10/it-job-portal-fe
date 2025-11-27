@@ -132,7 +132,6 @@ function PermissionTableRow({
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Lock className="h-4 w-4 text-gray-400" />
           <span className="font-medium text-gray-900 dark:text-gray-100">
             {permission.name}
           </span>
@@ -140,7 +139,6 @@ function PermissionTableRow({
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Code className="h-4 w-4 text-gray-400" />
           <code className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
             {permission.apiPath}
           </code>
@@ -156,7 +154,6 @@ function PermissionTableRow({
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Layers className="h-4 w-4 text-gray-400" />
           <Badge variant="secondary" className="font-normal">
             {permission.module}
           </Badge>

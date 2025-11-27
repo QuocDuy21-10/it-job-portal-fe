@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SkillRequestSchema, type SkillRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface SkillModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function SkillModal({
   initialData,
   mode,
 }: SkillModalProps) {
+  const { t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -66,12 +68,12 @@ export default function SkillModal({
       <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {mode === "add" ? "Thêm Kỹ Năng" : "Chỉnh Sửa Kỹ Năng"}
+            {mode === "add" ? t("cv.skills.addTitle") : t("cv.skills.editTitle")}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             {mode === "add"
-              ? "Thêm kỹ năng chuyên môn của bạn"
-              : "Cập nhật thông tin kỹ năng"}
+              ? t("cv.skills.addDescription")
+              : t("cv.skills.editDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -79,13 +81,13 @@ export default function SkillModal({
           {/* Skill Name */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-              Tên Kỹ Năng
+              {t("cv.skills.nameLabel")}
               <span className="text-destructive">*</span>
             </label>
             <input
               {...register("name")}
               type="text"
-              placeholder="e.g., React, Python, UI/UX Design"
+              placeholder={t("cv.skills.namePlaceholder")}
               className={`w-full px-4 py-3 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all ${
                 errors.name ? "border-destructive" : "border-border"
               }`}
@@ -101,7 +103,7 @@ export default function SkillModal({
           {/* Skill Level */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-1">
-              Trình Độ
+              {t("cv.skills.levelLabel")}
               <span className="text-destructive">*</span>
             </label>
             <select
@@ -133,14 +135,14 @@ export default function SkillModal({
               className="flex-1 border-border hover:bg-secondary/80 transition-all"
             >
               <X className="w-4 h-4 mr-2" />
-              Hủy
+              {t("cv.skills.cancelButton")}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
             >
-              {isSubmitting ? "Đang lưu..." : mode === "add" ? "Thêm Kỹ Năng" : "Cập Nhật"}
+              {isSubmitting ? t("cv.skills.savingButton") : mode === "add" ? t("cv.skills.saveButton") : t("cv.skills.updateButton")}
             </Button>
           </div>
         </form>

@@ -313,13 +313,13 @@ export default function JobDetailPage() {
             </Card>
 
             {/* Related Jobs Section */}
-            <div className="pt-4">
+            {/* <div className="pt-4">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Việc làm liên quan</h2>
               </div>
               <RelatedJobsGrid />
-            </div>
+            </div> */}
           </div>
 
           {/* Right Column - Company Info */}

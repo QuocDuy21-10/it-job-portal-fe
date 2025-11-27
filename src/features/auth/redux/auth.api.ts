@@ -5,7 +5,6 @@ import {
   LoginResponse,
   RegisterFormData,
   ForgotPasswordFormData,
-  ResetPasswordFormData,
   ChangePasswordFormData,
 } from "../schemas/auth.schema";
 import { ApiResponse } from "@/shared/base/api-response.base";
@@ -134,6 +133,8 @@ export const {
   useGetMeQuery,
   useLazyGetMeQuery,
   useRegisterMutation,
+  useVerifyEmailMutation,
+  useResendCodeMutation,
   useLogoutMutation,
   useRefreshTokenMutation,
   useGoogleLoginMutation,

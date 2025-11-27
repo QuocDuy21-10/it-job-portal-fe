@@ -6,34 +6,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Loader2, AlertCircle, FileText, Home } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Link from "next/link";
 import { useCV } from "@/hooks/use-cv";
 import { 
   UpsertCVProfileRequestSchema,
   type UpsertCVProfileRequest,
-  type PersonalInfo,
-  type Education,
-  type Experience,
-  type Skill,
-  type Language,
-  type Project,
-  type Certificate,
-  type Award,
 } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 // Section imports
 import PersonalInfoSection from "@/components/cv/sections/personal-info-section";
@@ -131,6 +115,7 @@ const initialCVData: CVData = {
 };
 
 export default function CreateCVPage() {
+  const { t } = useI18n();
   const [cvData, setCVData] = useState<CVData>(initialCVData);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
@@ -289,15 +274,15 @@ export default function CreateCVPage() {
         })),
       };
 
-      // Validate the form data
-      const validationResult = await trigger();
+      // // Validate the form data
+      // const validationResult = await trigger();
       
       // Manual validation using Zod
       const zodValidation = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
       
       if (!zodValidation.success) {
         const firstError = zodValidation.error.issues[0];
-        toast.error("Lỗi Validation", {
+        toast.error(t("cvPage.validationError"), {
           description: `${firstError.path.join('.')}: ${firstError.message}`,
           duration: 4000,
         });
@@ -307,7 +292,7 @@ export default function CreateCVPage() {
       const result = await upsertCV(dataToValidate);
 
       if (result) {
-        toast.success("Lưu CV thành công!");
+        toast.success(t("cvPage.saveSuccess"));
         
         // Convert API response back to ICVProfile format
         setCVData({
@@ -387,93 +372,69 @@ export default function CreateCVPage() {
   }, [error, clearError]);
 
   // Validation summary helper
-  const getValidationErrors = () => {
-    const dataToValidate: UpsertCVProfileRequest = {
-      personalInfo: {
-        fullName: cvData.personalInfo.fullName,
-        phone: cvData.personalInfo.phone,
-        email: cvData.personalInfo.email,
-        birthday: cvData.personalInfo.birthday || undefined,
-        gender: cvData.personalInfo.gender || "male",
-        address: cvData.personalInfo.address || undefined,
-        personalLink: cvData.personalInfo.personalLink || undefined,
-        bio: cvData.personalInfo.bio || undefined,
-      },
-      education: cvData.education.map(edu => ({
-        school: edu.school,
-        degree: edu.degree,
-        field: edu.field,
-        startDate: typeof edu.startDate === 'string' ? edu.startDate : edu.startDate.toISOString(),
-        endDate: edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : edu.endDate.toISOString()) : undefined,
-        description: edu.description || undefined,
-      })),
-      experience: cvData.experience.map(exp => ({
-        company: exp.company,
-        position: exp.position,
-        startDate: typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toISOString(),
-        endDate: exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : exp.endDate.toISOString()) : undefined,
-        description: exp.description || undefined,
-      })),
-      skills: cvData.skills.map(skill => ({
-        name: skill.name,
-        level: skill.level,
-      })),
-      languages: cvData.languages.map(lang => ({
-        name: lang.name,
-        proficiency: lang.proficiency,
-      })),
-      projects: cvData.projects.map(proj => ({
-        name: proj.name,
-        description: proj.description,
-        link: proj.link || undefined,
-      })),
-      certificates: cvData.certificates.map(cert => ({
-        name: cert.name,
-        issuer: cert.issuer,
-        date: typeof cert.date === 'string' ? cert.date : cert.date.toISOString(),
-      })),
-      awards: cvData.awards.map(award => ({
-        name: award.name,
-        date: typeof award.date === 'string' ? award.date : award.date.toISOString(),
-        description: award.description || undefined,
-      })),
-    };
+  // const getValidationErrors = () => {
+  //   const dataToValidate: UpsertCVProfileRequest = {
+  //     personalInfo: {
+  //       fullName: cvData.personalInfo.fullName,
+  //       phone: cvData.personalInfo.phone,
+  //       email: cvData.personalInfo.email,
+  //       birthday: cvData.personalInfo.birthday || undefined,
+  //       gender: cvData.personalInfo.gender || "male",
+  //       address: cvData.personalInfo.address || undefined,
+  //       personalLink: cvData.personalInfo.personalLink || undefined,
+  //       bio: cvData.personalInfo.bio || undefined,
+  //     },
+  //     education: cvData.education.map(edu => ({
+  //       school: edu.school,
+  //       degree: edu.degree,
+  //       field: edu.field,
+  //       startDate: typeof edu.startDate === 'string' ? edu.startDate : edu.startDate.toISOString(),
+  //       endDate: edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : edu.endDate.toISOString()) : undefined,
+  //       description: edu.description || undefined,
+  //     })),
+  //     experience: cvData.experience.map(exp => ({
+  //       company: exp.company,
+  //       position: exp.position,
+  //       startDate: typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toISOString(),
+  //       endDate: exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : exp.endDate.toISOString()) : undefined,
+  //       description: exp.description || undefined,
+  //     })),
+  //     skills: cvData.skills.map(skill => ({
+  //       name: skill.name,
+  //       level: skill.level,
+  //     })),
+  //     languages: cvData.languages.map(lang => ({
+  //       name: lang.name,
+  //       proficiency: lang.proficiency,
+  //     })),
+  //     projects: cvData.projects.map(proj => ({
+  //       name: proj.name,
+  //       description: proj.description,
+  //       link: proj.link || undefined,
+  //     })),
+  //     certificates: cvData.certificates.map(cert => ({
+  //       name: cert.name,
+  //       issuer: cert.issuer,
+  //       date: typeof cert.date === 'string' ? cert.date : cert.date.toISOString(),
+  //     })),
+  //     awards: cvData.awards.map(award => ({
+  //       name: award.name,
+  //       date: typeof award.date === 'string' ? award.date : award.date.toISOString(),
+  //       description: award.description || undefined,
+  //     })),
+  //   };
 
-    const result = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
-    return result.success ? [] : result.error.issues;
-  };
+  //   const result = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
+  //   return result.success ? [] : result.error.issues;
+  // };
 
-  const validationErrors = getValidationErrors();
+  // const validationErrors = getValidationErrors();
 
   return (
     <div className="bg-background min-h-screen">
       {/* Gradient Header */}
       <div className="bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20 border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Breadcrumb */}
-          {/* <Breadcrumb className="mb-4">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="flex items-center gap-1">
-                    <Home className="w-4 h-4" />
-                    Trang chủ
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/profile">Hồ sơ</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Tạo CV</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb> */}
-
           {/* Header Title */}
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
@@ -503,7 +464,7 @@ export default function CreateCVPage() {
             {/* Main Form Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Validation Errors Summary */}
-              {validationErrors.length > 0 && (
+              {/* {validationErrors.length > 0 && (
                 <div className="bg-gradient-to-r from-destructive/10 to-destructive/5 border-l-4 border-destructive rounded-lg p-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-lg bg-destructive/10">
@@ -532,47 +493,9 @@ export default function CreateCVPage() {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
 
-              {/* Action Buttons */}
-              <div className="flex gap-3 flex-wrap sticky top-4 z-10 bg-gradient-to-r from-background via-background/95 to-background/90 backdrop-blur-sm p-4 rounded-xl border border-border/50 shadow-lg">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={handleUpdateCV}
-                        disabled={isLoading || validationErrors.length > 0}
-                        size="lg"
-                        className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                            Đang lưu CV...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="w-5 h-5 mr-2" />
-                            Lưu CV
-                            {validationErrors.length > 0 && (
-                              <span className="ml-2 px-2 py-0.5 rounded-full bg-destructive/20 text-xs">
-                                {validationErrors.length} lỗi
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        {validationErrors.length > 0
-                          ? `Vui lòng sửa ${validationErrors.length} lỗi trước khi lưu`
-                          : "Lưu thông tin CV của bạn"}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+
 
               {/* Form Sections */}
               <PersonalInfoSection
@@ -759,7 +682,12 @@ export default function CreateCVPage() {
 
             {/* Sidebar - Completion Progress */}
             <div className="lg:col-span-1">
-              <CompletionProgress cvData={cvData} />
+              <CompletionProgress 
+                cvData={cvData}
+                onSave={handleUpdateCV}
+                isSaving={isLoading}
+                // validationErrors={validationErrors}
+              />
             </div>
           </div>
         )}

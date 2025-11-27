@@ -73,6 +73,7 @@ export const SavedJobSchema = z.object({
     name: z.string(),
     logo: z.string(),
   }),
+  status: z.string(),
   location: z.string(),
   salary: z.number(),
   level: z.string(),

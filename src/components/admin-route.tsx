@@ -17,6 +17,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   const isAdmin = useAppSelector(selectIsAdmin);
 
   useEffect(() => {
+    // Chỉ kiểm tra redirect sau khi loading xong
     if (!isLoading) {
       if (!isAuthenticated) {
         router.push("/login");
@@ -26,8 +27,12 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, isLoading, isAdmin, router]);
 
-  // Show loading state
-  if (isLoading) {
+  // Show loading CHỈ KHI:
+  // - isLoading = true VÀ chưa có thông tin xác thực đầy đủ
+  // - Nếu đã có isAuthenticated + isAdmin → KHÔNG show loading (trường hợp reload)
+  const shouldShowLoading = isLoading && !(isAuthenticated && isAdmin);
+  
+  if (shouldShowLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

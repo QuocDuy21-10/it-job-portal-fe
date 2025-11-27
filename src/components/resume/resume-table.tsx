@@ -138,7 +138,6 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Mail className="h-4 w-4 text-gray-400" />
           <span className="font-medium text-gray-900 dark:text-gray-100">
             {resume.email}
           </span>
@@ -186,7 +185,6 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Trophy className="h-4 w-4 text-orange-500" />
           <Badge className={getPriorityColor()}>
             {resume.priority || "-"}
           </Badge>
@@ -194,7 +192,6 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Target className="h-4 w-4 text-blue-500" />
           {typeof resume.aiAnalysis?.matchingScore === "number" ? (
             <Badge className={getScoreColor(resume.aiAnalysis.matchingScore)}>
               {resume.aiAnalysis.matchingScore}%

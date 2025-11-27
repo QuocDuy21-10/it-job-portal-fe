@@ -126,7 +126,6 @@ function RoleTableRow({
         <div className="flex items-center gap-3">
           {/* Role Avatar */}
           <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-gray-400" />
             <span className="font-medium text-gray-900 dark:text-gray-100">
               {role.name}
             </span>

@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileText, Briefcase, Heart, Mail } from "lucide-react";
+import { FileText, Briefcase, Heart, User, TrendingUp } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
+import { StatCard } from "../shared/stat-card";
+import { SectionCard } from "../shared/section-card";
+import Link from "next/link";
 
 export default function OverviewPage() {
   const [takeOutAppliedJob, { isLoading }] = useTakeOutAppliedJobMutation();
@@ -30,84 +33,109 @@ export default function OverviewPage() {
     fetchAppliedJobs();
   }, [takeOutAppliedJob]);
 
-  const [stats] = useState({
-    appliedJobs: appliedJobs.length,
-    // savedJobs: 8,
-    // jobInvitations: 3,
-  });
-
-  console.log(appliedJobs.length);
-
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+          Tổng quan
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Chào mừng trở lại! Đây là tổng quan về hoạt động của bạn
+        </p>
+      </div>
+
       {/* Profile Header */}
-      <Card className="p-6 bg-card border border-border">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center text-accent-foreground text-2xl font-semibold flex-shrink-0">
+      <Card className="p-6 bg-gradient-to-br from-primary/5 via-card to-card border border-border hover:border-primary/30 transition-all duration-300">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center text-primary-foreground text-2xl font-semibold shadow-lg flex-shrink-0">
             JD
           </div>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-foreground">John Doe</h1>
-            <p className="text-muted-foreground">john@example.com</p>
+          <div className="flex-1 text-center md:text-left">
+            <h2 className="text-2xl font-bold text-foreground">John Doe</h2>
+            <p className="text-muted-foreground mt-1">john@example.com</p>
+            <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
+                Tài khoản đã xác thực
+              </span>
+            </div>
           </div>
-          <Button className="bg-primary hover:bg-primary/90">
-            Cập nhật hồ sơ
-          </Button>
-        </div>
-      </Card>
-
-      {/* CV Section */}
-      <Card className="p-6 bg-card border border-border">
-        <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" />
-          CV đính kèm
-        </h2>
-        <div className="bg-secondary/50 border border-dashed border-border rounded-lg p-8 text-center">
-          <p className="text-muted-foreground mb-3">Chưa có</p>
-          <a href="#" className="text-primary font-medium hover:underline">
-            Quản lý hồ sơ đính kèm
-          </a>
+          <Link href="/profile?tab=create-cv">
+            <Button className="bg-primary hover:bg-primary/90 shadow-md">
+              <User className="w-4 h-4 mr-2" />
+              Cập nhật hồ sơ
+            </Button>
+          </Link>
         </div>
       </Card>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 bg-card border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Đã ứng tuyển</p>
-              <p className="text-3xl font-bold text-primary mt-2">
-                {stats.appliedJobs}
-              </p>
-            </div>
-            <Briefcase className="w-8 h-8 text-primary/30" />
-          </div>
-        </Card>
-
-        <Card className="p-6 bg-card border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Đã lưu</p>
-              <p className="text-3xl font-bold text-accent mt-2">
-                {/* {stats.savedJobs} */}
-              </p>
-            </div>
-            <Heart className="w-8 h-8 text-accent/30" />
-          </div>
-        </Card>
-
-        <Card className="p-6 bg-card border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Lời mời việc</p>
-              <p className="text-3xl font-bold text-green-500 mt-2">
-                {/* {stats.jobInvitations} */}
-              </p>
-            </div>
-            <Mail className="w-8 h-8 text-green-500/30" />
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <StatCard
+          title="Đã ứng tuyển"
+          value={appliedJobs.length}
+          icon={Briefcase}
+          iconColor="text-primary/30"
+          valueColor="text-primary"
+        />
+        <StatCard
+          title="Đã lưu"
+          value={0}
+          icon={Heart}
+          iconColor="text-red-500/30"
+          valueColor="text-red-500"
+        />
       </div>
+
+      {/* CV Section */}
+      <SectionCard title="CV đính kèm" icon={FileText}>
+        <div className="bg-secondary/30 border border-dashed border-border rounded-lg p-8 text-center hover:bg-secondary/50 transition-colors">
+          <FileText className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+          <p className="text-muted-foreground mb-3">Chưa có CV đính kèm</p>
+          <Link href="/profile/my-cv">
+            <button className="text-primary font-medium hover:underline transition-colors">
+              Quản lý hồ sơ đính kèm →
+            </button>
+          </Link>
+        </div>
+      </SectionCard>
+
+      {/* Quick Actions */}
+      <Card className="p-6 bg-card border border-border">
+        <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          Hành động nhanh
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Link href="/profile?tab=create-cv">
+            <button className="w-full p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/40 rounded-lg text-left transition-all group">
+              <FileText className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
+              <h3 className="font-medium text-foreground">Tạo CV mới</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Xây dựng CV chuyên nghiệp
+              </p>
+            </button>
+          </Link>
+          <Link href="/jobs">
+            <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
+              <Briefcase className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
+              <h3 className="font-medium text-foreground">Tìm việc làm</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Khám phá cơ hội mới
+              </p>
+            </button>
+          </Link>
+          <Link href="/profile?tab=my-jobs">
+            <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
+              <Heart className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
+              <h3 className="font-medium text-foreground">Việc đã lưu</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Xem công việc yêu thích
+              </p>
+            </button>
+          </Link>
+        </div>
+      </Card>
     </div>
   );
 }
