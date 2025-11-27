@@ -12,12 +12,13 @@ export const userApi = baseApi.injectEndpoints({
     getUsers: builder.query<
       ApiResponse<{
         result: User[];
-        meta: {
-          totalItems: number;
-          itemCount: number;
-          itemsPerPage: number;
-          totalPages: number;
-          currentPage: number;
+         meta: {
+          pagination: {
+            current_page: number;
+            per_page: number;
+            total_pages: number;
+            total: number;
+          };
         };
       }>,
       {

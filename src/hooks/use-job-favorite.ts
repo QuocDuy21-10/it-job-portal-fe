@@ -44,13 +44,13 @@ export function useJobFavorite(jobId: string) {
 
       // 3. OPTIMISTIC UPDATE: Đảo ngược trạng thái UI ngay lập tức
       const previousState = optimisticIsSaved; // Lưu trạng thái cũ để revert nếu lỗi
-      setOptimisticIsSaved(!previousState); // Cập nhật UI ngay -> Icon đổi màu liền
+      setOptimisticIsSaved(!previousState); 
 
       try {
         if (previousState) {
           // Nếu đang là true (đã lưu) -> Gọi API bỏ lưu
           await unsaveJob(jobId).unwrap();
-          toast.success("Đã bỏ lưu công việc", { duration: 1000 }); // Giảm duration toast cho đỡ phiền
+          toast.success("Đã bỏ lưu công việc", { duration: 1000 }); 
         } else {
           // Nếu đang là false (chưa lưu) -> Gọi API lưu
           await saveJob(jobId).unwrap();

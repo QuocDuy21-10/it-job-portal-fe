@@ -32,7 +32,7 @@ export const resumeApi = baseApi.injectEndpoints({
       }
     >({
       query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
-        let query = `page=${page}&limit=${limit}`;
+        let query = `page=${page}&limit=${limit}&populate=companyId,jobId&fields=companyId.name,jobId.name`;
         if (filter) query += `&${filter}`;
         if (sort) query += `&${sort}`;
 

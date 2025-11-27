@@ -39,6 +39,21 @@ export const ResumeEntitySchema = ResumeSchema.extend({
       email: z.string(),
     })
     .optional(),
+}).extend({
+  companyId: z.union([
+    z.string(),
+    z.object({
+      _id: z.string(),
+      name: z.string(),
+    }),
+  ]).optional(),
+  jobId: z.union([
+    z.string(),
+    z.object({
+      _id: z.string(),
+      name: z.string(),
+    }),
+  ]).optional(),
 });
 
 export const CreateResumeFormData = z.object({

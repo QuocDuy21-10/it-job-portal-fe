@@ -12,11 +12,12 @@ export const permissionApi = baseApi.injectEndpoints({
       ApiResponse<{
         result: Permission[];
         meta: {
-          totalItems: number;
-          itemCount: number;
-          itemsPerPage: number;
-          totalPages: number;
-          currentPage: number;
+          pagination: {
+            current_page: number;
+            per_page: number;
+            total_pages: number;
+            total: number;
+          };
         };
       }>,
       {

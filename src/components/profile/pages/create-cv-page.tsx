@@ -307,10 +307,7 @@ export default function CreateCVPage() {
       const result = await upsertCV(dataToValidate);
 
       if (result) {
-        toast.success("Lưu CV thành công!", {
-          description: "CV của bạn đã được lưu.",
-          duration: 3000,
-        });
+        toast.success("Lưu CV thành công!");
         
         // Convert API response back to ICVProfile format
         setCVData({
@@ -384,10 +381,7 @@ export default function CreateCVPage() {
 
   useEffect(() => {
     if (error) {
-      toast.error("Có lỗi xảy ra", {
-        description: error,
-        duration: 4000,
-      });
+      toast.error("Có lỗi xảy ra");
       clearError();
     }
   }, [error, clearError]);

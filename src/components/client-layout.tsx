@@ -31,11 +31,7 @@ export function ClientLayout() {
       }
 
       toast.error(
-        errorRefreshToken || "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
-        {
-          duration: 5000,
-          position: "top-center",
-        }
+        errorRefreshToken || "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
       );
 
       // Reset trạng thái refresh token trong Redux

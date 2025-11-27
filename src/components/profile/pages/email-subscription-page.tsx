@@ -52,34 +52,22 @@ export default function EmailSubscriptionPage() {
   const handleRegister = async () => {
     // Validation
     if (!user) {
-      toast.error("Vui lòng đăng nhập để sử dụng tính năng này", {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.error("Vui lòng đăng nhập để sử dụng tính năng này");
       return;
     }
 
     if (selectedSkills.length === 0) {
-      toast.error("Vui lòng chọn ít nhất một kỹ năng", {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.error("Vui lòng chọn ít nhất một kỹ năng");
       return;
     }
 
     if (!selectedLocation) {
-      toast.error("Vui lòng chọn địa điểm", {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.error("Vui lòng chọn địa điểm");
       return;
     }
 
     if (totalSubscriptions >= maxAllowed) {
-      toast.error(`Bạn chỉ có thể đăng ký tối đa ${maxAllowed} lần`, {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.error(`Bạn chỉ có thể đăng ký tối đa ${maxAllowed} lần`);
       return;
     }
 
@@ -91,10 +79,7 @@ export default function EmailSubscriptionPage() {
         location: selectedLocation,
       }).unwrap();
 
-      toast.success("Đăng ký nhận công việc thành công!", {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.success("Đăng ký nhận công việc thành công!");
 
       // Reset form
       setSelectedSkills([]);
@@ -106,10 +91,7 @@ export default function EmailSubscriptionPage() {
         error?.message ||
         "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.";
 
-      toast.error(errorMessage, {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.error(errorMessage);
 
       console.error("Error creating subscriber:", error);
     }
@@ -118,20 +100,14 @@ export default function EmailSubscriptionPage() {
   const handleDeleteSubscription = async (id: string) => {
     try {
       await deleteSubscriber(id).unwrap();
-      toast.success("Huỷ đăng ký thành công!", {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.success("Huỷ đăng ký thành công!");
       refetch();
     } catch (error: any) {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
         "Có lỗi xảy ra khi huỷ đăng ký. Vui lòng thử lại.";
-      toast.error(errorMessage, {
-        duration: 4000,
-        position: "top-center",
-      });
+      toast.error(errorMessage);
     }
   };
 

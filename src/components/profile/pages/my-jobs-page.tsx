@@ -56,10 +56,7 @@ export default function MyJobsPage() {
           error?.message ||
           "Không thể tải danh sách công việc đã ứng tuyển";
 
-        toast.error(errorMessage, {
-          duration: 4000,
-          position: "top-center",
-        });
+        toast.error(errorMessage);
         console.error("Error fetching applied jobs:", error);
       }
     };

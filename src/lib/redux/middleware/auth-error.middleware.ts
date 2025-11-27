@@ -16,11 +16,7 @@ export const authErrorMiddleware: Middleware =
         console.log("🚫 [Middleware] 403 Forbidden - User lacks permission");
         
         toast.error(
-          message || "Bạn không có quyền thực hiện hành động này",
-          {
-            duration: 4000,
-            position: "top-center",
-          }
+          message || "Bạn không có quyền thực hiện hành động này"
         );
 
         // Optional: Có thể dispatch action để log analytics
@@ -29,20 +25,13 @@ export const authErrorMiddleware: Middleware =
 
       if (status === 404) {
         console.log("🔍 [Middleware] 404 Not Found");
-        
-        // Không show toast cho 404 (có thể quá nhiều)
-        // Component sẽ tự xử lý hiển thị UI "Không tìm thấy"
       }
 
       if (status === 500) {
         console.error("💥 [Middleware] 500 Internal Server Error");
         
         toast.error(
-          message || "Lỗi server. Vui lòng thử lại sau",
-          {
-            duration: 5000,
-            position: "top-center",
-          }
+          message || "Lỗi server. Vui lòng thử lại sau"
         );
 
         // Optional: Có thể gửi error report về monitoring service
@@ -54,18 +43,11 @@ export const authErrorMiddleware: Middleware =
         
         toast.error(
           "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
-          {
-            duration: 6000,
-            position: "top-center",
-          }
         );
       }
 
       if (status === 400) {
         console.log("⚠️ [Middleware] 400 Bad Request");
-        
-        // Thường là lỗi validation, component tự xử lý
-        // Không show toast global
       }
     }
 

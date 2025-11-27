@@ -19,9 +19,7 @@ export default function ShareCompany({ company }: ShareCompanyProps) {
     try {
       await navigator.clipboard.writeText(companyLink);
       setCopied(true);
-      toast.success("Sao chép thành công", {
-        style: { background: "#2563eb", color: "#fff" },
-      });
+      toast.success("Sao chép thành công");
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
