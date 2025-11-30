@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useJobList } from "@/hooks/use-job-list";
 import { Pagination } from "@/components/pagination";
 import Link from "next/link";
-import { Search, MapPin, Building2, Briefcase, DollarSign, X, Filter, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Search, MapPin, Building2, Briefcase, DollarSign, X, Filter, ChevronRight, SlidersHorizontal, ArrowUpDown, Wallet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SingleSelect } from "@/components/single-select";
 import provinces from "@/shared/data/provinces.json";
@@ -40,12 +40,6 @@ export default function JobsPage() {
   const searchParams = useSearchParams();
   const { t, mounted: i18nMounted } = useI18n();
 
-  // Single-select location state
-  const [selectedProvince, setSelectedProvince] = React.useState<string>(() => {
-    const initial = searchParams.get("location");
-    return initial || "";
-  });
-
   // UI state
   const [showFilters, setShowFilters] = React.useState(true);
   const [showMobileFilters, setShowMobileFilters] = React.useState(false);
@@ -58,37 +52,40 @@ export default function JobsPage() {
     isLoading,
     searchInput,
     setSearchInput,
+    locationInput,
+    setLocationInput,
     jobType,
     setJobType,
     experience,
     setExperience,
+    salaryRange,
+    setSalaryRange,
+    sortBy,
+    setSortBy,
     setPage,
     setLimit,
     searchQuery,
-    // locationQuery,
+    locationQuery,
   } = useJobList({
     initialPage: Number(searchParams.get("page")) || 1,
     initialLimit: Number(searchParams.get("limit")) || 10,
     initialSearch: searchParams.get("q") || "",
+    initialLocation: searchParams.get("location") || "",
     initialJobType: searchParams.get("type") || "all",
     initialExperience: searchParams.get("experience") || "all",
+    initialSalaryRange: searchParams.get("salary") || "all",
+    initialSort: searchParams.get("sort") || "-createdAt",
   });
-
-  // Update URL when filters change (debounced values)
-  // Đồng bộ lại selectedProvince khi URL thay đổi (nếu user thao tác back/forward)
-  useEffect(() => {
-    const initial = searchParams.get("location");
-    setSelectedProvince(initial || "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.get("location")]);
 
   useEffect(() => {
     const params = new URLSearchParams();
 
     if (searchQuery) params.set("q", searchQuery);
-    if (selectedProvince) params.set("location", selectedProvince);
+    if (locationQuery) params.set("location", locationQuery);
     if (jobType !== "all") params.set("type", jobType);
     if (experience !== "all") params.set("experience", experience);
+    if (salaryRange !== "all") params.set("salary", salaryRange);
+    if (sortBy !== "-createdAt") params.set("sort", sortBy);
     if (currentPage > 1) params.set("page", currentPage.toString());
     if (pageSize !== 10) params.set("limit", pageSize.toString());
 
@@ -99,9 +96,11 @@ export default function JobsPage() {
     router.replace(url, { scroll: false });
   }, [
     searchQuery,
-    selectedProvince,
+    locationQuery,
     jobType,
     experience,
+    salaryRange,
+    sortBy,
     currentPage,
     pageSize,
     router,
@@ -110,21 +109,24 @@ export default function JobsPage() {
   // Clear all filters
   const clearAllFilters = () => {
     setSearchInput("");
-    setSelectedProvince("");
+    setLocationInput("");
     setJobType("all");
     setExperience("all");
+    setSalaryRange("all");
+    setSortBy("-createdAt");
     setPage(1);
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchQuery || selectedProvince || jobType !== "all" || experience !== "all";
+  const hasActiveFilters = searchQuery || locationQuery || jobType !== "all" || experience !== "all" || salaryRange !== "all" || sortBy !== "-createdAt";
 
   // Count active filters
   const activeFilterCount = [
     searchQuery,
-    selectedProvince,
+    locationQuery,
     jobType !== "all",
     experience !== "all",
+    salaryRange !== "all",
   ].filter(Boolean).length;
 
   return (
@@ -235,11 +237,11 @@ export default function JobsPage() {
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSearchInput("")} />
                     </Badge>
                   )}
-                  {selectedProvince && (
+                  {locationQuery && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
                       <MapPin className="w-3 h-3" />
-                      {provinces.find(p => p.value === selectedProvince)?.label}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSelectedProvince("")} />
+                      {provinces.find(p => p.value === locationQuery)?.label || locationQuery}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setLocationInput("")} />
                     </Badge>
                   )}
                   {jobType !== "all" && (
@@ -252,6 +254,16 @@ export default function JobsPage() {
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
                       {jobLevels.find(l => l.value === experience)?.label}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setExperience("all")} />
+                    </Badge>
+                  )}
+                  {salaryRange !== "all" && (
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                      <Wallet className="w-3 h-3" />
+                      {salaryRange === "0-10000000" && "Dưới 10 triệu"}
+                      {salaryRange === "10000000-20000000" && "10-20 triệu"}
+                      {salaryRange === "20000000-50000000" && "20-50 triệu"}
+                      {salaryRange === "50000000-999999999" && "Trên 50 triệu"}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSalaryRange("all")} />
                     </Badge>
                   )}
                 </div>
@@ -283,7 +295,7 @@ export default function JobsPage() {
             {/* Advanced Filters Panel */}
             {(showFilters || showMobileFilters) && (
               <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Location Single-Select */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
@@ -292,8 +304,8 @@ export default function JobsPage() {
                     </label>
                     <SingleSelect
                       options={provinces}
-                      value={selectedProvince}
-                      onChange={setSelectedProvince}
+                      value={locationInput}
+                      onChange={setLocationInput}
                       placeholder="Chọn tỉnh/thành phố..."
                       searchPlaceholder="Tìm kiếm..."
                       disabled={isLoading}
@@ -304,7 +316,7 @@ export default function JobsPage() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Briefcase className="w-4 h-4 text-purple-600" />
-                      Hình thức làm việc
+                      Hình thức
                     </label>
                     <Select value={jobType} onValueChange={setJobType}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
@@ -339,6 +351,26 @@ export default function JobsPage() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Salary Range */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Wallet className="w-4 h-4 text-green-600" />
+                      Mức lương
+                    </label>
+                    <Select value={salaryRange} onValueChange={setSalaryRange}>
+                      <SelectTrigger className="w-full bg-white dark:bg-slate-900">
+                        <SelectValue placeholder="Chọn mức lương" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tất cả mức lương</SelectItem>
+                        <SelectItem value="0-10000000">Dưới 10 triệu</SelectItem>
+                        <SelectItem value="10000000-20000000">10 - 20 triệu</SelectItem>
+                        <SelectItem value="20000000-50000000">20 - 50 triệu</SelectItem>
+                        <SelectItem value="50000000-999999999">Trên 50 triệu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             )}
@@ -348,7 +380,7 @@ export default function JobsPage() {
         {/* Job List */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Results Header */}
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">
                 {isLoading ? (
@@ -362,6 +394,25 @@ export default function JobsPage() {
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 Cập nhật liên tục mỗi ngày
               </p>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 whitespace-nowrap">
+                <ArrowUpDown className="w-4 h-4" />
+                Sắp xếp:
+              </label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[200px] bg-white dark:bg-slate-900">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="-createdAt">Mới nhất</SelectItem>
+                  <SelectItem value="createdAt">Cũ nhất</SelectItem>
+                  <SelectItem value="-salary">Lương cao - thấp</SelectItem>
+                  <SelectItem value="salary">Lương thấp - cao</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

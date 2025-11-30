@@ -8,6 +8,8 @@ interface UseJobListProps {
   initialLocation?: string;
   initialJobType?: string;
   initialExperience?: string;
+  initialSalaryRange?: string;
+  initialSort?: string;
 }
 
 export function useJobList({
@@ -17,6 +19,8 @@ export function useJobList({
   initialLocation = "",
   initialJobType = "all",
   initialExperience = "all",
+  initialSalaryRange = "all",
+  initialSort = "-createdAt",
 }: UseJobListProps = {}) {
   const [page, setPage] = useState(initialPage);
   const [limit, setLimit] = useState(initialLimit);
@@ -31,6 +35,8 @@ export function useJobList({
 
   const [jobType, setJobType] = useState(initialJobType);
   const [experience, setExperience] = useState(initialExperience);
+  const [salaryRange, setSalaryRange] = useState(initialSalaryRange);
+  const [sortBy, setSortBy] = useState(initialSort);
 
   // Debounce search and location inputs
   useEffect(() => {
@@ -54,11 +60,11 @@ export function useJobList({
   // Reset to first page when filters change
   useEffect(() => {
     setPage(1);
-  }, [jobType, experience]);
+  }, [jobType, experience, salaryRange, sortBy]);
 
   // Construct filter string
   const getFilterString = () => {
-    const filters = [];
+    const filters = [`isActive=true`];
 
     if (searchQuery) {
       filters.push(`name=/${searchQuery}/i`);
@@ -76,7 +82,19 @@ export function useJobList({
       filters.push(`level=${experience}`);
     }
 
+    // Salary range filter (format giống admin page)
+    if (salaryRange !== "all") {
+      const [min, max] = salaryRange.split("-");
+      if (min) filters.push(`salary>=${min}`);
+      if (max) filters.push(`salary<=${max}`);
+    }
+
     return filters.join("&");
+  };
+
+  // Construct sort string
+  const getSortString = () => {
+    return `sort=${sortBy}`;
   };
 
   // Get jobs with RTK Query
@@ -88,7 +106,7 @@ export function useJobList({
     page,
     limit,
     filter: getFilterString(),
-    sort: "sort=-createdAt",
+    sort: getSortString(),
   });
 
   return {
@@ -114,6 +132,10 @@ export function useJobList({
     setJobType,
     experience,
     setExperience,
+    salaryRange,
+    setSalaryRange,
+    sortBy,
+    setSortBy,
 
     // Pagination
     setPage,
