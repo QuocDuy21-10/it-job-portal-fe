@@ -85,12 +85,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      title="Join JobPortal Today"
+      description="Create your account and unlock access to thousands of job opportunities. Start your career journey with us."
+    >
       <AuthHeader
-        title="Create Your Account"
-        description="Join thousands of professionals today"
       />
-
       <AuthCard
         title="Sign Up"
         description="Fill in your details to get started"

@@ -2,8 +2,6 @@ import Link from "next/link";
 import { Briefcase } from "lucide-react";
 
 interface AuthHeaderProps {
-  title: string;
-  description: string;
   showLogo?: boolean;
 }
 
@@ -12,8 +10,6 @@ interface AuthHeaderProps {
  * Displays logo, title, and description with consistent styling
  */
 export function AuthHeader({ 
-  title, 
-  description, 
   showLogo = true 
 }: AuthHeaderProps) {
   return (
@@ -33,14 +29,6 @@ export function AuthHeader({
         </Link>
       )}
       
-      <div className="space-y-2 pt-2">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-          {title}
-        </h1>
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
-          {description}
-        </p>
-      </div>
     </div>
   );
 }

@@ -159,12 +159,13 @@ function LoginContent() {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout 
+      title="Welcome Back to JobPortal"
+      description="Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations."
+    >
       <GoogleOneTap disabled={isLoading || isGoogleLoading} />
 
       <AuthHeader
-        title="Welcome Back"
-        description="Log in to your account to continue"
       />
 
       <AuthCard

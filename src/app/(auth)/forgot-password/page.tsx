@@ -72,12 +72,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      title="Reset Your Password"
+      description="Don't worry! It happens. Enter your email and we'll send you instructions to reset your password."
+    >
       <AuthHeader
-        title="Forgot Password?"
-        description="Enter your email to receive password reset instructions"
       />
-
       <AuthCard
         title="Reset Password"
         description="We'll send a reset link to your email"
