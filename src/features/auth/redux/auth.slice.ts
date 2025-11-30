@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { authApi } from "./auth.api";
 import { AuthState, UserInfo } from "../schemas/auth.schema";
-import { isAdminRole } from "@/shared/constants/roles";
+import { isAdminRole, isSuperAdmin } from "@/shared/constants/roles";
 
 const initialState: AuthState = {
   user: null,
@@ -248,10 +248,16 @@ export const selectHasRole =
     return state.auth.user?.role.name === roleName;
   };
 
-// ✅ NEW: Selector để check if user is admin
+// ✅ Selector để check if user có quyền truy cập admin panel
 export const selectIsAdmin = createSelector(
   [selectUserRole],
   (role) => isAdminRole(role)
+);
+
+// ✅ Selector để check if user là SUPER_ADMIN (bypass tất cả permission check)
+export const selectIsSuperAdmin = createSelector(
+  [selectUserRole],
+  (role) => isSuperAdmin(role)
 );
 
 // ✅ NEW: Selector để lấy jobFavorites

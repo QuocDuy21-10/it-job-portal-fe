@@ -18,7 +18,7 @@ export type RoleName = (typeof ROLES)[keyof typeof ROLES];
 export const DEFAULT_ROUTES_BY_ROLE: Record<string, string> = {
   [ROLES.SUPER_ADMIN]: "/admin",
   [ROLES.ADMIN]: "/admin",
-  [ROLES.HR]: "/admin/resumes",
+  [ROLES.HR]: "/admin/",
   [ROLES.NORMAL_USER]: "/",
 };
 
@@ -33,10 +33,19 @@ export function getDefaultRoute(role?: string): string {
 }
 
 /**
- * Kiểm tra xem role có phải là admin hay không
+ * Kiểm tra xem role có phải là admin hay không (có quyền truy cập admin panel)
  * @param role - Tên role của user
  */
 export function isAdminRole(role?: string): boolean {
   if (!role) return false;
-  return role === ROLES.SUPER_ADMIN || role === ROLES.ADMIN;
+  return role === ROLES.SUPER_ADMIN || role === ROLES.ADMIN || role === ROLES.HR;
+}
+
+/**
+ * Kiểm tra xem role có phải là SUPER_ADMIN (bypass tất cả permission check)
+ * @param role - Tên role của user
+ */
+export function isSuperAdmin(role?: string): boolean {
+  if (!role) return false;
+  return role === ROLES.SUPER_ADMIN;
 }

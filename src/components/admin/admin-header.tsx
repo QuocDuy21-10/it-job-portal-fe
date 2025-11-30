@@ -73,7 +73,6 @@ export function AdminHeader({
             JobPortal
         </span>
         </Link>
-        {/* Left Section - Mobile Menu Toggle & Search */}
         <div className="flex items-center gap-4 flex-1">
           {/* Mobile Menu Toggle */}
           <Button

@@ -2,18 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAppSelector } from "@/lib/redux/hooks";
-import {
-  selectUserPermissions,
-  selectIsAdmin,
-} from "@/features/auth/redux/auth.slice";
-import {
-  ADMIN_NAVIGATION,
-  filterNavigationByPermissions,
-} from "@/shared/config/admin-navigation";
+import { ADMIN_NAVIGATION } from "@/shared/config/admin-navigation";
+import { useFilteredNavigation } from "@/hooks/use-permission-check";
 import {
   Tooltip,
   TooltipContent,
@@ -46,24 +38,12 @@ export function AdminSidebar({
   isLoggingOut = false,
 }: AdminSidebarProps) {
   const pathname = usePathname();
-  const isAdmin = useAppSelector(selectIsAdmin);
-  const userPermissions = useAppSelector(selectUserPermissions);
 
-  // Memoize allowed modules để tránh re-compute
-  const allowedModules = useMemo(() => {
-    return new Set<string>(
-      userPermissions.map((p) => String(p.module).toUpperCase())
-    );
-  }, [userPermissions]);
-
-  // Filter navigation dựa trên permissions
-  const filteredNavigation = useMemo(() => {
-    return filterNavigationByPermissions(
-      ADMIN_NAVIGATION,
-      allowedModules,
-      isAdmin
-    );
-  }, [allowedModules, isAdmin]);
+  /**
+   * Filter navigation dựa trên permissions
+   * Sử dụng custom hook để tái sử dụng logic
+   */
+  const filteredNavigation = useFilteredNavigation(ADMIN_NAVIGATION);
 
   return (
     <aside

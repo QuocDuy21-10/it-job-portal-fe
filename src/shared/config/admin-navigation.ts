@@ -106,6 +106,7 @@ export const ADMIN_SECONDARY_NAVIGATION: NavigationItem[] = [
  * @param items Navigation items to filter
  * @param allowedModules Set of module names user has access to
  * @param isAdmin Whether user is admin (bypass permission check)
+ * @returns Filtered navigation items based on user permissions
  */
 export function filterNavigationByPermissions(
   items: NavigationItem[],
@@ -116,10 +117,49 @@ export function filterNavigationByPermissions(
     // Dashboard và items không có module requirement luôn hiển thị
     if (!item.module) return true;
     
-    // Admin có full access
+    // SUPER_ADMIN có full access to all modules
     if (isAdmin) return true;
     
-    // Check permission
-    return allowedModules.has(String(item.module));
+    // Check if user has permission for this module
+    // Convert to uppercase để đảm bảo case-insensitive matching
+    const moduleUpper = String(item.module).toUpperCase();
+    return allowedModules.has(moduleUpper);
   });
+}
+
+/**
+ * Check if user has specific permission
+ * @param userPermissions Array of user permissions from Redux
+ * @param requiredModule Module name to check
+ * @param requiredMethod Optional HTTP method to check (GET, POST, PATCH, DELETE)
+ * @returns Boolean indicating if user has the permission
+ */
+export function hasPermission(
+  userPermissions: Array<{ module: string; method?: string; apiPath?: string }>,
+  requiredModule: string,
+  requiredMethod?: string
+): boolean {
+  return userPermissions.some((permission) => {
+    const moduleMatch = String(permission.module).toUpperCase() === String(requiredModule).toUpperCase();
+    
+    // Nếu không yêu cầu method cụ thể, chỉ cần match module
+    if (!requiredMethod) return moduleMatch;
+    
+    // Nếu yêu cầu method, phải match cả module và method
+    const methodMatch = String(permission.method).toUpperCase() === String(requiredMethod).toUpperCase();
+    return moduleMatch && methodMatch;
+  });
+}
+
+/**
+ * Get allowed modules from user permissions
+ * @param userPermissions Array of user permissions
+ * @returns Set of unique module names
+ */
+export function getAllowedModules(
+  userPermissions: Array<{ module: string }>
+): Set<string> {
+  return new Set(
+    userPermissions.map((p) => String(p.module).toUpperCase())
+  );
 }

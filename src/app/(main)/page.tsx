@@ -27,7 +27,6 @@ import { CompanyCard } from "@/components/company/company-card";
 import { SimplePagination } from "@/components/simple-pagination";
 import { SectionHeader } from "@/components/sections/section-header";
 import { SectionContainer } from "@/components/sections/section-container";
-import { TooltipIcon } from "@/components/sections/tooltip-icon";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 
 export default function Home() {
@@ -56,6 +55,7 @@ export default function Home() {
   } = useGetJobsQuery({
     page: jobsPage,
     limit: ITEMS_PER_PAGE,
+    filter: "isActive=true",
     sort: "sort=-createdAt",
   });
 

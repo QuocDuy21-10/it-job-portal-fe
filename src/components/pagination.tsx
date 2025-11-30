@@ -39,14 +39,6 @@ export function Pagination({
     }
   };
 
-  const handleFirst = () => {
-    onPageChange(1);
-  };
-
-  const handleLast = () => {
-    onPageChange(totalPages);
-  };
-
   const handlePageSizeChange = (value: string) => {
     const newPageSize = Number(value);
     onPageSizeChange(newPageSize);

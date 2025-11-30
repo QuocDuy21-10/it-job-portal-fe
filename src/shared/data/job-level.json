@@ -2,7 +2,7 @@
   { "label": "All Types", "value": "all" },
   { "label": "Internship", "value": "Internship" },
   { "label": "Junior", "value": "Junior" },
-  { "label": "Mid", "value": "Mid-Level" },
+  { "label": "Mid", "value": "Mid" },
   { "label": "Senior", "value": "Senior" },
   { "label": "Lead", "value": "Lead" },
   { "label": "Manager", "value": "Manager" }

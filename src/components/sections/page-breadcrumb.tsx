@@ -26,7 +26,6 @@ export function PageBreadcrumb({ items, className }: PageBreadcrumbProps) {
         href="/"
         className="flex items-center gap-1 hover:text-foreground transition-colors"
       >
-        <Home className="h-4 w-4" />
         <span>{t("breadcrumb.home")}</span>
       </Link>
       {items.map((item, index) => (

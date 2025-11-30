@@ -13,6 +13,7 @@ import { PageBreadcrumb } from "@/components/sections/page-breadcrumb";
 import { TooltipIcon } from "@/components/sections/tooltip-icon";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
 import { useI18n } from "@/hooks/use-i18n";
+import { Pagination } from "@/components/pagination";
 
 export default function CompanyListPage() {
   const router = useRouter();
@@ -21,7 +22,8 @@ export default function CompanyListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const limit = 9;
+  const [pageSize, setPageSize] = useState(9);
+  const limit = pageSize;
   const debouncedSearch = useDebounce(searchQuery, 400);
 
   // Build filter string for API
@@ -81,26 +83,25 @@ export default function CompanyListPage() {
 
         {/* Search Bar */}
         <div className="mb-10">
-          <TooltipIcon content="Search companies by name or description" side="bottom">
             <div className="relative max-w-2xl mx-auto">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
               <input
                 type="text"
                 placeholder={t("companyList.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-12 py-4 bg-card/80 backdrop-blur-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-foreground placeholder-muted-foreground transition-all duration-200 shadow-sm hover:shadow-md"
+                className="w-full pl-12 pr-12 py-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-foreground placeholder:text-muted-foreground transition-all duration-200 shadow-sm hover:shadow-md"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-secondary rounded-md"
+                  aria-label="Clear search"
                 >
                   <X className="w-5 h-5" />
                 </button>
               )}
             </div>
-          </TooltipIcon>
           {total > 0 && (
             <p className="mt-3 text-center text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">{total}</span> {t("companyList.companiesFound")}
@@ -183,31 +184,20 @@ export default function CompanyListPage() {
             </Button>
           </div>
         )}
-      </div>
+
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-10 gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page === 1}
-              onClick={() => setPage((p: number) => Math.max(1, p - 1))}
-            >
-              {t("companyList.previous")}
-            </Button>
-            <span className="px-3 py-2 text-sm text-muted-foreground">
-              {t("companyList.pageOf").replace("{page}", page.toString()).replace("{totalPages}", totalPages.toString())}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page === totalPages}
-              onClick={() => setPage((p: number) => Math.min(totalPages, p + 1))}
-            >
-              {t("companyList.next")}
-            </Button>
+        {total > 0 && (
+          <div className="mt-12 flex justify-center">
+            <Pagination
+              currentPage={page}
+              pageSize={pageSize}
+              totalItems={total}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+            />
           </div>
         )}
+      </div>
     </div>
   )
 }
