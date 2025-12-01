@@ -79,11 +79,19 @@ export const ALL_PERMISSIONS = {
     UPDATE: { method: "PATCH", apiPath: "/api/v1/users/:id", module: "USERS" },
     DELETE: { method: "DELETE", apiPath: "/api/v1/users/:id", module: "USERS" },
   },
+  STATISTICS: {
+    VIEW_DASHBOARD: {
+      method: "GET",
+      apiPath: "/api/v1/statistics/dashboard",
+      module: "STATISTICS",
+    },
+  },
 };
 
 export const ALL_MODULES = {
   AUTH: "AUTH",
   COMPANIES: "COMPANIES",
+  STATISTICS: "STATISTICS",
   FILES: "FILES",
   JOBS: "JOBS",
   PERMISSIONS: "PERMISSIONS",

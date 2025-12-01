@@ -16,7 +16,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import RelatedJobsGrid from "@/components/sections/related-jobs-grid";
+// import RelatedJobsGrid from "@/components/sections/related-jobs-grid";
 import CompanyInfo from "@/components/sections/company-info";
 import ApplyModal from "@/components/modals/apply-modal";
 

@@ -123,7 +123,7 @@ export default function ApplyModal({
           {/* Name */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Họ và Tên *
+              Họ và Tên  <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
@@ -139,7 +139,7 @@ export default function ApplyModal({
           {/* Phone */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Số điện thoại *
+              Số điện thoại  <span className="text-destructive">*</span>
             </label>
             <input
               type="tel"
@@ -154,7 +154,7 @@ export default function ApplyModal({
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-2">Email *</label>
+            <label className="block text-sm font-medium mb-2">Email <span className="text-destructive">*</span></label>
             <input
               type="email"
               name="email"
@@ -169,7 +169,7 @@ export default function ApplyModal({
           {/* CV Upload */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Tải lên CV (Upload CV) *
+              Tải lên CV <span className="text-destructive">*</span>
             </label>
             <input
               type="file"

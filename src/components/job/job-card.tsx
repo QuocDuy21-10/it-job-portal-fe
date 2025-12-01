@@ -98,7 +98,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                     {job.location}
                   </Badge>
                   <span className="text-sm font-semibold text-primary">
-                    ${job.salary?.toLocaleString()}
+                    {job.salary?.toLocaleString()} VNĐ
                   </span>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
               <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 sm:min-w-[120px]">
                 {job.createdAt && (
                   <span className="text-xs text-muted-foreground">
-                    {new Date(job.createdAt).toLocaleDateString("en-US", {
+                    {new Date(job.createdAt).toLocaleDateString("vi-VN", {
                       month: "short",
                       day: "numeric",
                     })}
@@ -170,7 +170,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
 
                 <div className="flex items-center gap-2 mt-auto">
                   <span className="text-sm font-semibold text-primary">
-                    ${job.salary?.toLocaleString()}
+                    {job.salary?.toLocaleString()} VNĐ
                   </span>
                   
                   <FavoriteButton 
@@ -234,11 +234,11 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
 
           <div className="flex items-center justify-between pt-4 border-t border-dashed">
             <span className="text-base font-bold text-primary">
-              ${job.salary?.toLocaleString()}
+              {job.salary?.toLocaleString()} VNĐ
             </span>
             <span className="text-xs text-muted-foreground font-medium">
               {job.createdAt &&
-                new Date(job.createdAt).toLocaleDateString("en-US", {
+                new Date(job.createdAt).toLocaleDateString("vi-VN", {
                   month: "short",
                   day: "numeric",
                   year: "numeric"

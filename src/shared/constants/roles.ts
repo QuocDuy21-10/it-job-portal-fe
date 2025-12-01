@@ -18,7 +18,7 @@ export type RoleName = (typeof ROLES)[keyof typeof ROLES];
 export const DEFAULT_ROUTES_BY_ROLE: Record<string, string> = {
   [ROLES.SUPER_ADMIN]: "/admin",
   [ROLES.ADMIN]: "/admin",
-  [ROLES.HR]: "/admin/",
+  [ROLES.HR]: "/admin/resumes",
   [ROLES.NORMAL_USER]: "/",
 };
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import ChatWidget from "@/components/chatbot/chat-widget";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,11 +14,6 @@ export const metadata: Metadata = {
   keywords: "jobs, careers, employment, recruitment, job search, hiring",
 };
 
-/**
- * Main Layout
- * Layout cho các trang public (home, jobs, companies, etc.)
- * ReduxProvider, ThemeProvider, I18nProvider đã được wrap ở root layout
- */
 export default function MainLayout({
   children,
 }: {
@@ -28,6 +24,8 @@ export default function MainLayout({
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      {/* AI Chatbot Widget - Hiển thị trên mọi trang main */}
+      <ChatWidget />
     </>
   );
 }

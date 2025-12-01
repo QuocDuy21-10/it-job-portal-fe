@@ -142,6 +142,7 @@ export function PermissionForm({
                 <SelectContent>
                   <SelectItem value="USERS">USER</SelectItem>
                   <SelectItem value="ROLES">ROLE</SelectItem>
+                  <SelectItem value="STATISTICS">STATISTIC</SelectItem>
                   <SelectItem value="PERMISSIONS">PERMISSION</SelectItem>
                   <SelectItem value="COMPANIES">COMPANY</SelectItem>
                   <SelectItem value="JOBS">JOB</SelectItem>

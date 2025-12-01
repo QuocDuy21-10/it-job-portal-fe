@@ -74,21 +74,6 @@ export default function CompanyInfo({ company, className }: CompanyInfoProps) {
         <CardContent className="pt-5 pb-6 space-y-5">
           {/* Company Details */}
           <div className="space-y-4">
-            {/* Employees Info */}
-            <div className="flex items-start gap-3 group">
-              <div className="mt-0.5 p-2 rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-                <Users className="w-4 h-4" aria-hidden="true" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                  {t("companyInfo.employees")}
-                </p>
-                <p className="text-sm font-semibold text-foreground truncate">
-                  {company.employees}
-                </p>
-              </div>
-            </div>
-
             {/* Address Info */}
             <div className="flex items-start gap-3 group">
               <div className="mt-0.5 p-2 rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">

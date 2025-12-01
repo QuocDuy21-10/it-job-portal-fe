@@ -36,6 +36,7 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
     name: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+    module: ALL_MODULES.STATISTICS,
     description: "Tổng quan thống kê",
   },
   {
@@ -82,24 +83,6 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
   },
 ];
 
-/**
- * Secondary navigation items (optional)
- * Có thể dùng cho Settings, Analytics, etc.
- */
-export const ADMIN_SECONDARY_NAVIGATION: NavigationItem[] = [
-  {
-    name: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-    description: "Phân tích dữ liệu",
-  },
-  {
-    name: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-    description: "Cài đặt hệ thống",
-  },
-];
 
 /**
  * Filter navigation items based on user permissions

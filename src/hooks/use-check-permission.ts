@@ -26,7 +26,7 @@ export function useCheckPermission() {
   /**
    * Kiểm tra xem user có quyền thực hiện action hay không
    * So sánh: method, apiPath (loại bỏ :id), module
-   */
+   */ 
   const hasPermission = useMemo(
     () => (permission: PermissionCheck): boolean => {
       if (!userPermissions || userPermissions.length === 0) {
