@@ -11,11 +11,12 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 import CVPdfDocument from "@/components/pdf/cv-pdf-document";
 import { ICVProfile } from "@/shared/types/cv";
 import { Loader2 } from "lucide-react";
+import { generateCVDataKey } from "@/lib/pdf/helpers";
 
 interface PDFPreviewProps {
   cvData: ICVProfile;
@@ -42,6 +43,12 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({
     setIsClient(true);
   }, []);
 
+  // Generate stable key based on data content to fix "Eo is not a function" bug
+  // Solution from: https://github.com/diegomura/react-pdf/issues/3178
+  const renderKey = useMemo(() => {
+    return generateCVDataKey(cvData, template);
+  }, [cvData, template]);
+
   if (!isClient) {
     return (
       <div
@@ -58,7 +65,12 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({
 
   return (
     <div className={className} style={{ width, height }}>
-      <PDFViewer width="100%" height="100%" showToolbar={true}>
+      <PDFViewer 
+        key={renderKey} 
+        width="100%" 
+        height="100%" 
+        showToolbar={true}
+      >
         <CVPdfDocument cvData={cvData} template={template} />
       </PDFViewer>
     </div>

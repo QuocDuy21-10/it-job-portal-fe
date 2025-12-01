@@ -10,12 +10,13 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CVPdfDocument from "@/components/pdf/cv-pdf-document";
 import { ICVProfile } from "@/shared/types/cv";
+import { generateCVDataKey } from "@/lib/pdf/helpers";
 
 interface DownloadPDFButtonProps {
   cvData: ICVProfile;
@@ -45,6 +46,12 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
     setIsClient(true);
   }, []);
 
+  // Generate stable key based on data content to fix "Eo is not a function" bug
+  // Solution from: https://github.com/diegomura/react-pdf/issues/3178
+  const renderKey = useMemo(() => {
+    return generateCVDataKey(cvData, template);
+  }, [cvData, template]);
+
   if (!isClient) {
     // Hiển thị loading button khi chưa mount
     return (
@@ -64,6 +71,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
 
   return (
     <PDFDownloadLink
+      key={renderKey}
       document={<CVPdfDocument cvData={cvData} template={template} />}
       fileName={generateFileName()}
     >
