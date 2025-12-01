@@ -12,7 +12,7 @@ interface UseCV {
   isLoading: boolean;
   error: string | null;
   cvData: CVProfile | null;
-  upsertCV: (data: UpsertCVProfileRequest) => Promise<CVProfile | null>;
+  upsertCV: (data: UpsertCVProfileRequest, avatarFile?: File) => Promise<CVProfile | null>;
   fetchMyCVProfile: () => Promise<CVProfile | null>;
   clearError: () => void;
   refetch: () => void;
@@ -75,11 +75,11 @@ export const useCV = (): UseCV => {
    * Upsert CV Profile (Create or Update)
    * POST /cv-profiles/upsert
    */
-  const upsertCV = useCallback(async (data: UpsertCVProfileRequest): Promise<CVProfile | null> => {
+  const upsertCV = useCallback(async (data: UpsertCVProfileRequest, avatarFile?: File): Promise<CVProfile | null> => {
     setError(null);
 
     try {
-      const result = await upsertCVMutation(data).unwrap();
+      const result = await upsertCVMutation({ data, avatar: avatarFile }).unwrap();
       
       if (result.data?.data) {
         return result.data.data;

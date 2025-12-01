@@ -55,6 +55,7 @@ export function useProjectModal(
       });
     } else if (mode === "edit" && currentProject) {
       onUpdate(currentProject.id, "name", data.name);
+      onUpdate(currentProject.id, "position", data.position);
       onUpdate(currentProject.id, "description", data.description);
       onUpdate(currentProject.id, "link", data.link || "");
       toast.success("Cập nhật dự án thành công", {

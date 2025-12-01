@@ -39,6 +39,7 @@ export default function ProjectModal({
     mode: "onChange",
     defaultValues: {
       name: "",
+      position: "",
       description: "",
       link: "",
     },
@@ -48,6 +49,7 @@ export default function ProjectModal({
     if (isOpen) {
       reset(project || {
         name: "",
+        position: "",
         description: "",
         link: "",
       });
@@ -94,6 +96,32 @@ export default function ProjectModal({
                 {errors.name && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
                     <span className="font-medium">⚠</span> {errors.name.message}
+                  </p>
+                )}
+              </div>
+            )}
+          />
+
+          {/* Project Position */}
+          <Controller
+            name="position"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  {t("cv.projects.positionLabel")} <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...field}
+                  placeholder={t("cv.projects.positionPlaceholder")}
+                  className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
+                    errors.position ? "border-destructive focus:ring-destructive/50" : "border-border"
+                  }`}
+                />
+                {errors.position && (
+                  <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
+                    <span className="font-medium">⚠</span> {errors.position.message}
                   </p>
                 )}
               </div>

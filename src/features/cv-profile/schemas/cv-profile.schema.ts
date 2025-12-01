@@ -2,6 +2,8 @@ import { z } from "zod";
 
 // Personal Info Schema (with detailed validation)
 export const PersonalInfoSchema = z.object({
+  avatar: z.string().optional(),
+  title: z.string().min(2, "Tiêu đề phải có ít nhất 2 ký tự").max(100, "Tiêu đề không được quá 100 ký tự").optional(),
   fullName: z.string().min(2, "Họ tên phải có ít nhất 2 ký tự").max(100, "Họ tên không được quá 100 ký tự"),
   phone: z.string().min(10, "Số điện thoại không hợp lệ").max(15, "Số điện thoại không hợp lệ"),
   email: z.string().email("Email không hợp lệ"),
@@ -79,6 +81,7 @@ export const LanguageSchema = LanguageRequestSchema.extend({
 export const ProjectRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
   name: z.string().min(2, "Tên dự án phải có ít nhất 2 ký tự").max(200, "Tên dự án không được quá 200 ký tự"),
+  position: z.string().min(2, "Vị trí phải có ít nhất 2 ký tự").max(100, "Vị trí không được quá 100 ký tự"),
   description: z.string().min(10, "Mô tả phải có ít nhất 10 ký tự").max(1000, "Mô tả không được quá 1000 ký tự"),
   link: z.string().url("Link không hợp lệ").optional().or(z.literal("")),
 });

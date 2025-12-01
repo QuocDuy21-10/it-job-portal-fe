@@ -5,6 +5,8 @@ export interface ICVProfile {
   _id?: string;
   userId?: string;
   personalInfo: {
+    avatar?: string;
+    title?: string;
     fullName: string;
     phone: string;
     email: string;
@@ -44,6 +46,7 @@ export interface ICVProfile {
   projects: Array<{
     id: string;
     name: string;
+    position: string;
     description: string;
     link?: string;
   }>;

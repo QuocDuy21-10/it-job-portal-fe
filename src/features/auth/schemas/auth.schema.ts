@@ -55,6 +55,7 @@ export const LoginResponseSchema = z.object({
     _id: z.string(),
     email: z.string(),
     name: z.string(),
+    avatar: z.string().optional(),
     role: z.object({
       _id: z.string(),
       name: z.string(),
@@ -68,6 +69,8 @@ export const LoginResponseSchema = z.object({
         module: z.string(),
       })
     ),
+    savedJobs: z.array(z.string()),
+    companyFollowed: z.array(z.string()),
   }),
 });
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;

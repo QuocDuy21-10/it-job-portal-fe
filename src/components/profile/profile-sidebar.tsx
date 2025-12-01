@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
-  ChevronLeft,
-  ChevronRight,
+  ArrowLeft,
   BarChart3,
   FileText,
   Edit3,
@@ -11,6 +10,7 @@ import {
   Mail,
   Bell,
   Settings,
+  type LucideIcon,
 } from "lucide-react";
 import {
   Tooltip,
@@ -32,8 +32,9 @@ export type PageType =
 interface MenuItem {
   id: PageType;
   label: string;
-  icon: React.ReactNode;
+  icon: LucideIcon;
   badge?: number;
+  description?: string;
 }
 
 interface ProfileSidebarProps {
@@ -45,193 +46,214 @@ export default function ProfileSidebar({
   currentPage,
   onPageChange,
 }: ProfileSidebarProps) {
+  // Auto-detect screen size và set initial state
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Detect screen size và set initial expanded state
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const mobile = window.innerWidth < 768; // md breakpoint
+      setIsMobile(mobile);
+      
+      // Desktop/Tablet: expanded, Mobile: collapsed
+      if (!mobile && !isExpanded) {
+        setIsExpanded(true);
+      } else if (mobile && isExpanded) {
+        setIsExpanded(false);
+      }
+    };
+
+    // Initial check
+    checkScreenSize();
+
+    // Listen for resize
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  const handleToggle = () => {
+    setIsExpanded(!isExpanded);
+  };
   // Memoize menu items để tránh re-render không cần thiết
   const menuItems: MenuItem[] = useMemo(
     () => [
       {
         id: "overview",
         label: "Tổng quan",
-        icon: <BarChart3 className="w-5 h-5" />,
+        icon: BarChart3,
+        description: "Xem tổng quan hoạt động",
       },
       {
         id: "my-cv",
         label: "My CV",
-        icon: <FileText className="w-5 h-5" />,
+        icon: FileText,
+        description: "Quản lý CV đã tạo",
       },
       {
         id: "create-cv",
         label: "Tạo CV",
-        icon: <Edit3 className="w-5 h-5" />,
+        icon: Edit3,
+        description: "Tạo CV mới",
       },
       {
         id: "my-jobs",
         label: "Việc làm của tôi",
-        icon: <Briefcase className="w-5 h-5" />,
+        icon: Briefcase,
+        description: "Công việc đã ứng tuyển & lưu",
       },
       {
         id: "email-subscription",
         label: "Đăng ký nhận email",
-        icon: <Mail className="w-5 h-5" />,
+        icon: Mail,
+        description: "Quản lý đăng ký email",
       },
       {
         id: "notifications",
         label: "Thông báo",
-        icon: <Bell className="w-5 h-5" />,
+        icon: Bell,
         badge: 0, // Có thể thêm logic đếm thông báo
+        description: "Xem thông báo",
       },
       {
         id: "settings",
-        label: "Thông tin cá nhân",
-        icon: <Settings className="w-5 h-5" />,
+        label: "Cài đặt",
+        icon: Settings,
+        description: "Cài đặt tài khoản",
       },
     ],
     []
   );
 
   return (
-    <TooltipProvider delayDuration={200}>
+    <TooltipProvider>
       <aside
         className={cn(
-          "bg-gradient-to-b from-card to-card/95",
-          "border-r border-border/50",
-          "transition-all duration-300 ease-in-out",
-          "flex flex-col h-full",
-          "shadow-lg backdrop-blur-sm",
-          isExpanded ? "w-64" : "w-20",
-          // Mobile responsive
-          "max-md:fixed max-md:left-0 max-md:top-0 max-md:bottom-0 max-md:z-40",
-          !isExpanded && "max-md:-translate-x-full"
+          "flex flex-col fixed inset-y-0 left-0",
+          "border-r border-gray-200 dark:border-gray-800",
+          "bg-white dark:bg-gray-900",
+          "pt-16 transition-all duration-300 z-20",
+          "shadow-sm",
+          // Responsive width
+          isExpanded ? "w-64" : "w-16",
+          // Mobile: can be hidden/shown
+          isMobile && !isExpanded && "md:flex"
         )}
       >
-        {/* Header with gradient */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent" />
-          <div className="relative p-4 border-b border-border/50 flex items-center justify-between">
-            {isExpanded && (
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md">
-                  <Settings className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <h1 className="font-bold text-lg bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  My Profile
-                </h1>
+        {/* Sidebar Header - Toggle Button */}
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          {isExpanded && (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">P</span>
               </div>
-            )}
+              <span className="font-semibold text-gray-900 dark:text-gray-100 text-base">
+                My Profile
+              </span>
+            </div>
+          )}
+          <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => setIsExpanded(!isExpanded)}
+                  onClick={handleToggle}
                   className={cn(
-                    "p-2 rounded-lg",
-                    "hover:bg-primary/10 active:bg-primary/20",
-                    "transition-all duration-200",
-                    "hover:scale-110 active:scale-95",
-                    "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                    "p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800",
+                    "rounded-md transition-colors",
                     !isExpanded && "mx-auto"
                   )}
-                  aria-label={isExpanded ? "Thu gọn menu" : "Mở rộng menu"}
+                  aria-label={isExpanded ? "Thu gọn sidebar" : "Mở rộng sidebar"}
+                  type="button"
                 >
-                  {isExpanded ? (
-                    <ChevronLeft className="w-5 h-5 text-primary" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5 text-primary" />
-                  )}
+                  <ArrowLeft
+                    className={cn(
+                      "w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-300",
+                      !isExpanded && "rotate-180"
+                    )}
+                    aria-hidden="true"
+                  />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
-                <p>{isExpanded ? "Thu gọn menu" : "Mở rộng menu"}</p>
+                {isExpanded ? "Thu gọn" : "Mở rộng"}
               </TooltipContent>
             </Tooltip>
-          </div>
+          </TooltipProvider>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {menuItems.map((item) => {
-            const isActive = currentPage === item.id;
-            
-            return (
-              <Tooltip key={item.id}>
-                <TooltipTrigger asChild>
+        {/* Sidebar Navigation */}
+        <div className="flex flex-col flex-1 overflow-y-auto">
+          <nav
+            className={cn(
+              "flex-1 py-4 space-y-1 transition-all duration-300",
+              isExpanded ? "px-3" : "px-2"
+            )}
+          >
+            <TooltipProvider>
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id;
+
+                const navButton = (
                   <button
+                    key={item.id}
                     onClick={() => onPageChange(item.id)}
                     className={cn(
-                      "group relative w-full flex items-center gap-3 px-3 py-3 rounded-xl",
-                      "transition-all duration-200",
-                      "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                      "w-full group flex items-center py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
+                      isExpanded ? "px-3 gap-3" : "px-2 justify-center",
                       isActive
-                        ? [
-                            "bg-gradient-to-r from-primary/15 to-primary/10",
-                            "text-primary shadow-md shadow-primary/10",
-                            "border border-primary/20",
-                            "font-semibold",
-                          ]
-                        : [
-                            "text-muted-foreground",
-                            "hover:bg-secondary/80 hover:text-foreground",
-                            "hover:shadow-sm hover:border hover:border-border/50",
-                            "active:scale-95",
-                          ],
-                      !isExpanded && "justify-center"
+                        ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 shadow-sm"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                     )}
                   >
-                    {/* Active indicator */}
-                    {isActive && !isExpanded && (
-                      <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full shadow-lg shadow-primary/50" />
-                    )}
-
-                    {/* Icon */}
-                    <span
+                    <Icon
                       className={cn(
-                        "flex-shrink-0 transition-transform duration-200",
-                        "group-hover:scale-110",
-                        isActive && "drop-shadow-md"
+                        "flex-shrink-0 h-5 w-5 transition-colors",
+                        isExpanded ? "" : "mx-auto",
+                        isActive
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
                       )}
-                    >
-                      {item.icon}
-                    </span>
-
-                    {/* Label */}
+                      aria-hidden="true"
+                    />
                     {isExpanded && (
-                      <span className="text-sm font-medium truncate flex-1 text-left">
-                        {item.label}
-                      </span>
+                      <span className="flex-1 text-left">{item.label}</span>
                     )}
-
-                    {/* Badge */}
                     {isExpanded && item.badge !== undefined && item.badge > 0 && (
-                      <span className="flex-shrink-0 min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center">
+                      <span className="badge-primary text-xs px-2 py-0.5">
                         {item.badge > 99 ? "99+" : item.badge}
                       </span>
                     )}
-
-                    {/* Hover effect overlay */}
-                    <span
-                      className={cn(
-                        "absolute inset-0 rounded-xl opacity-0",
-                        "group-hover:opacity-100 transition-opacity",
-                        "bg-gradient-to-r from-primary/5 to-transparent",
-                        "pointer-events-none"
-                      )}
-                    />
                   </button>
-                </TooltipTrigger>
-                {!isExpanded && (
-                  <TooltipContent side="right" className="font-medium">
-                    <p>{item.label}</p>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span className="ml-2 px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground text-xs">
-                        {item.badge}
-                      </span>
-                    )}
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            );
-          })}
-        </nav>
+                );
+
+                // Wrap với Tooltip khi collapsed
+                if (!isExpanded) {
+                  return (
+                    <Tooltip key={item.id}>
+                      <TooltipTrigger asChild>{navButton}</TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{item.label}</p>
+                        {item.description && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item.description}
+                          </p>
+                        )}
+                        {item.badge !== undefined && item.badge > 0 && (
+                          <span className="ml-2 text-xs">
+                            ({item.badge})
+                          </span>
+                        )}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }
+
+                return navButton;
+              })}
+            </TooltipProvider>
+          </nav>
+        </div>
       </aside>
     </TooltipProvider>
   );

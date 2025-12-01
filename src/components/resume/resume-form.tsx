@@ -42,8 +42,8 @@ export function ResumeForm({
       userId: initialData?.userId || "",
       url: initialData?.url || "",
       status: initialData?.status || "PENDING",
-      companyId: initialData?.companyId || undefined,
-      jobId: initialData?.jobId || undefined,
+      // companyId: initialData?.companyId || undefined,
+      // jobId: initialData?.jobId || undefined,
       histories: initialData?.histories || [],
     },
     mode: "onChange",
@@ -56,8 +56,8 @@ export function ResumeForm({
         userId: initialData.userId || "",
         url: initialData.url || "",
         status: initialData.status || "PENDING",
-        companyId: initialData.companyId,
-        jobId: initialData.jobId,
+        // companyId: initialData.companyId,
+        // jobId: initialData.jobId,
         histories: initialData.histories || [],
       });
     }
@@ -69,8 +69,8 @@ export function ResumeForm({
       userId: form.getValues("userId"),
       url: form.getValues("url"),
       status: values.status,
-      companyId: form.getValues("companyId"),
-      jobId: form.getValues("jobId"),
+      // companyId: form.getValues("companyId"),
+      // jobId: form.getValues("jobId"),
       histories: form.getValues("histories") || [],
     };
 
@@ -128,7 +128,7 @@ export function ResumeForm({
             )}
           />
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="jobId"
             render={({ field }) => (
@@ -140,9 +140,9 @@ export function ResumeForm({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="companyId"
@@ -185,7 +185,7 @@ export function ResumeForm({
               </FormItem>
             )}
           />
-        </div>
+        {/* </div>  */}
 
         <div className="flex justify-end gap-2">
           <Button type="submit" disabled={isLoading}>

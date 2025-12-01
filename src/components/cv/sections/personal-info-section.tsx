@@ -7,15 +7,11 @@ import CVFormSection from "@/components/sections/cv-form-section";
 import PersonalInfoModal from "../modals/personal-info-modal";
 import { PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface PersonalInfoSectionProps {
   personalInfo: {
+    avatar?: string;
+    title?: string;
     fullName: string;
     email: string;
     phone: string;
@@ -26,17 +22,21 @@ interface PersonalInfoSectionProps {
     bio?: string;
   };
   onUpdate: (field: string, value: string | Date) => void;
+  onAvatarChange?: (file: File) => void; // New prop for handling avatar file
 }
 
 export default function PersonalInfoSection({
   personalInfo,
   onUpdate,
+  onAvatarChange,
 }: PersonalInfoSectionProps) {
   const { t } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = (data: PersonalInfo) => {
+  const handleSubmit = (data: PersonalInfo, avatarFile?: File) => {
     // Update all fields
+    if (data.avatar) onUpdate("avatar", data.avatar || "");
+    if (data.title) onUpdate("title", data.title || "");
     onUpdate("fullName", data.fullName);
     onUpdate("email", data.email);
     onUpdate("phone", data.phone);
@@ -45,6 +45,11 @@ export default function PersonalInfoSection({
     if (data.address) onUpdate("address", data.address || "");
     if (data.personalLink) onUpdate("personalLink", data.personalLink || "");
     if (data.bio) onUpdate("bio", data.bio || "");
+    
+    // Handle avatar file separately
+    if (avatarFile && onAvatarChange) {
+      onAvatarChange(avatarFile);
+    }
   };
 
   const formatDate = (date?: Date) => {
@@ -64,6 +69,7 @@ export default function PersonalInfoSection({
         return null;
     }
   };
+  console.log("avatar", personalInfo.avatar);
 
   return (
     <>
@@ -82,6 +88,34 @@ export default function PersonalInfoSection({
       >
         <Card className="p-6 bg-gradient-to-br from-card to-secondary/20 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Avatar */}
+            {personalInfo.avatar && (
+              <div className="md:col-span-2 flex justify-center">
+                <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20">
+                  <img
+                    src={`${personalInfo.avatar}`}
+                    
+                    alt={personalInfo.fullName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+            
+
+            {/* Title */}
+            {personalInfo.title && (
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                  <Briefcase className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.title")}
+                </div>
+                <p className="text-base font-semibold text-foreground">
+                  {personalInfo.title}
+                </p>
+              </div>
+            )}
+
             {/* Full Name */}
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">

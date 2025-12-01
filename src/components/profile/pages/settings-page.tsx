@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, Lock, Trash2, User, Mail } from "lucide-react";
-import { useChangePasswordMutation } from "@/features/auth/redux/auth.api";
+import { AlertCircle, Lock, Trash2, User, Mail, Eye, EyeOff } from "lucide-react";
+import { useChangePasswordMutation, useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { ChangePasswordSchema, ChangePasswordFormData } from "@/features/auth/schemas/auth.schema";
 import { toast } from "sonner";
 import { Modal } from "../shared/modal";
@@ -21,7 +21,11 @@ export default function SettingsPage({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { data: meData } = useGetMeQuery();
+  const user = meData?.data?.user;
   const {
     register,
     handleSubmit,
@@ -62,7 +66,7 @@ export default function SettingsPage({
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Thông tin cá nhân
+          Cài đặt tài khoản
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Quản lý thông tin tài khoản và cài đặt bảo mật
@@ -79,7 +83,7 @@ export default function SettingsPage({
                 Email
               </label>
               <div className="px-3 py-2.5 bg-secondary text-foreground rounded-lg text-sm border border-border">
-                john@example.com
+                {user?.email || "Chưa có email"}
               </div>
             </div>
             <div>
@@ -88,7 +92,7 @@ export default function SettingsPage({
                 Tên đăng nhập
               </label>
               <div className="px-3 py-2.5 bg-secondary text-foreground rounded-lg text-sm border border-border">
-                johndoe
+                {user?.name || "Chưa có tên đăng nhập"}
               </div>
             </div>
           </div>
@@ -160,14 +164,29 @@ export default function SettingsPage({
             <label className="block text-sm font-medium text-foreground mb-2">
               Mật khẩu hiện tại
             </label>
-            <input
-              type="password"
-              {...register("currentPassword")}
-              className="w-full px-3 py-2.5 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-              autoComplete="current-password"
-              disabled={isChangingPassword}
-              placeholder="Nhập mật khẩu hiện tại"
-            />
+            <div className="relative">
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                {...register("currentPassword")}
+                className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                autoComplete="current-password"
+                disabled={isChangingPassword}
+                placeholder="Nhập mật khẩu hiện tại"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword((s) => !s)}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                aria-pressed={showCurrentPassword}
+                aria-label={showCurrentPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              >
+                {showCurrentPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
             {errors.currentPassword && (
               <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
@@ -179,14 +198,29 @@ export default function SettingsPage({
             <label className="block text-sm font-medium text-foreground mb-2">
               Mật khẩu mới
             </label>
-            <input
-              type="password"
-              {...register("newPassword")}
-              className="w-full px-3 py-2.5 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-              autoComplete="new-password"
-              disabled={isChangingPassword}
-              placeholder="Nhập mật khẩu mới"
-            />
+            <div className="relative">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                {...register("newPassword")}
+                className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                autoComplete="new-password"
+                disabled={isChangingPassword}
+                placeholder="Nhập mật khẩu mới"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword((s) => !s)}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                aria-pressed={showNewPassword}
+                aria-label={showNewPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              >
+                {showNewPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
             {errors.newPassword && (
               <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
@@ -198,14 +232,29 @@ export default function SettingsPage({
             <label className="block text-sm font-medium text-foreground mb-2">
               Xác nhận mật khẩu mới
             </label>
-            <input
-              type="password"
-              {...register("confirmPassword")}
-              className="w-full px-3 py-2.5 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-              autoComplete="new-password"
-              disabled={isChangingPassword}
-              placeholder="Nhập lại mật khẩu mới"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                {...register("confirmPassword")}
+                className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                autoComplete="new-password"
+                disabled={isChangingPassword}
+                placeholder="Nhập lại mật khẩu mới"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((s) => !s)}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                aria-pressed={showConfirmPassword}
+                aria-label={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />

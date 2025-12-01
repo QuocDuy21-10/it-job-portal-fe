@@ -3,14 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save, Loader2, AlertCircle, FileText, Home } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Loader2, FileText } from 'lucide-react';
 import { useCV } from "@/hooks/use-cv";
 import { 
   UpsertCVProfileRequestSchema,
@@ -34,6 +27,8 @@ interface CVData {
   _id?: string;
   userId?: string;
   personalInfo: {
+    avatar?: string;
+    title?: string;
     fullName: string;
     phone: string;
     email: string;
@@ -73,6 +68,7 @@ interface CVData {
   projects: Array<{
     id: string;
     name: string;
+    position: string;
     description: string;
     link?: string;
   }>;
@@ -96,6 +92,8 @@ interface CVData {
 
 const initialCVData: CVData = {
   personalInfo: {
+    avatar: "",
+    title: "",
     fullName: "",
     phone: "",
     email: "",
@@ -118,6 +116,7 @@ export default function CreateCVPage() {
   const { t } = useI18n();
   const [cvData, setCVData] = useState<CVData>(initialCVData);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [avatarFile, setAvatarFile] = useState<File | undefined>(undefined); // Store avatar file
 
   const { isLoading, error, upsertCV, fetchMyCVProfile, clearError } = useCV();
 
@@ -141,6 +140,8 @@ export default function CreateCVPage() {
           _id: result._id,
           userId: result.userId,
           personalInfo: {
+            avatar: result.personalInfo?.avatar || "",
+            title: result.personalInfo?.title || "",
             fullName: result.personalInfo?.fullName,
             phone: result.personalInfo?.phone,
             email: result.personalInfo?.email,
@@ -180,6 +181,7 @@ export default function CreateCVPage() {
           projects: result.projects.map((proj: any) => ({
             id: proj.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate ID if missing
             name: proj.name,
+            position: proj.position || "",
             description: proj.description,
             link: proj.link || "",
           })),
@@ -218,6 +220,8 @@ export default function CreateCVPage() {
       // Prepare data for validation
       const dataToValidate: UpsertCVProfileRequest = {
         personalInfo: {
+          avatar: cvData.personalInfo.avatar || undefined,
+          title: cvData.personalInfo.title || undefined,
           fullName: cvData.personalInfo.fullName,
           phone: cvData.personalInfo.phone,
           email: cvData.personalInfo.email,
@@ -257,6 +261,7 @@ export default function CreateCVPage() {
         projects: cvData.projects.map(proj => ({
           id: proj.id, // Include id for upsert
           name: proj.name,
+          position: proj.position,
           description: proj.description,
           link: proj.link || undefined,
         })),
@@ -289,10 +294,13 @@ export default function CreateCVPage() {
         return;
       }
 
-      const result = await upsertCV(dataToValidate);
+      const result = await upsertCV(dataToValidate, avatarFile);
 
       if (result) {
         toast.success(t("cvPage.saveSuccess"));
+        
+        // Clear avatar file after successful save
+        setAvatarFile(undefined);
         
         // Convert API response back to ICVProfile format
         setCVData({
@@ -300,6 +308,8 @@ export default function CreateCVPage() {
           userId: result.userId,
           personalInfo: {
             fullName: result.personalInfo.fullName,
+            avatar: result.personalInfo.avatar || "",
+            title: result.personalInfo.title || "",
             phone: result.personalInfo.phone,
             email: result.personalInfo.email,
             birthday: result.personalInfo.birthday ? new Date(result.personalInfo.birthday) : undefined,
@@ -338,6 +348,7 @@ export default function CreateCVPage() {
           projects: result.projects.map((proj: any) => ({
             id: proj.id || "",
             name: proj.name,
+            position: proj.position || "",
             description: proj.description,
             link: proj.link || "",
           })),
@@ -366,7 +377,9 @@ export default function CreateCVPage() {
 
   useEffect(() => {
     if (error) {
-      toast.error("Có lỗi xảy ra");
+      toast.error("Có lỗi xảy ra", {
+        description: error,
+      });
       clearError();
     }
   }, [error, clearError]);
@@ -509,6 +522,7 @@ export default function CreateCVPage() {
                     },
                   }))
                 }
+                onAvatarChange={(file) => setAvatarFile(file)}
               />
 
               <EducationSection

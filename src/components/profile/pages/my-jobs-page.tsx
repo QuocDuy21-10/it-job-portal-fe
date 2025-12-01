@@ -197,7 +197,6 @@ export default function MyJobsPage() {
                           <span>{jobData.location}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-primary font-medium">
-                          <DollarSign className="w-4 h-4 flex-shrink-0" />
                           <span>{jobData.salary.toLocaleString()} VND</span>
                         </div>
                         {jobData.createdAt && (

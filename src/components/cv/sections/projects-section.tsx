@@ -105,6 +105,11 @@ export default function ProjectsSection({
                       <h3 className="font-semibold text-foreground text-sm mb-1 truncate">
                         {project.name}
                       </h3>
+                      {project.position && (
+                        <p className="text-xs text-muted-foreground font-medium mb-1">
+                          {project.position}
+                        </p>
+                      )}
                       {project.link && (
                         <a 
                           href={project.link}

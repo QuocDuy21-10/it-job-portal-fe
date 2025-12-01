@@ -165,9 +165,9 @@ function JobCard({ job }: { job: any }) {
 
 export default function JobListing({ companyId, searchQuery, selectedLocation }: JobListingProps) {
   // Xây dựng filter string cho API
-  let filter = "";
+  let filter = "isActive=true";
   if (companyId) {
-    filter += `company._id=${companyId}`;
+    filter += `&company._id=${companyId}`;
   }
   if (searchQuery) {
     if (filter) filter += "&";

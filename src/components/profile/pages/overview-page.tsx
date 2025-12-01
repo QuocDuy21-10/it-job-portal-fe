@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileText, Briefcase, Heart, User, TrendingUp } from "lucide-react";
+import { FileText, Briefcase, Heart, User, TrendingUp, Building2 } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
+import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 import { StatCard } from "../shared/stat-card";
 import { SectionCard } from "../shared/section-card";
@@ -13,6 +14,10 @@ import Link from "next/link";
 export default function OverviewPage() {
   const [takeOutAppliedJob, { isLoading }] = useTakeOutAppliedJobMutation();
   const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
+  const { data: meData } = useGetMeQuery();
+  const user = meData?.data?.user;
+  const jobFavoritesCount = meData?.data?.user?.savedJobs?.length || 0;
+  const companyFollowingCount = meData?.data?.user?.companyFollowed?.length || 0;
 
   // Fetch applied jobs on component mount
   useEffect(() => {
@@ -48,12 +53,17 @@ export default function OverviewPage() {
       {/* Profile Header */}
       <Card className="p-6 bg-gradient-to-br from-primary/5 via-card to-card border border-border hover:border-primary/30 transition-all duration-300">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center text-primary-foreground text-2xl font-semibold shadow-lg flex-shrink-0">
-            JD
+          <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 overflow-hidden bg-gradient-to-br from-primary to-primary/70">
+            <img
+              src={user?.avatar || "/images/avatar-default.jpg"}
+              alt={user?.name || "Avatar"}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-foreground">John Doe</h2>
-            <p className="text-muted-foreground mt-1">john@example.com</p>
+            <h2 className="text-2xl font-bold text-foreground">{user?.name || "Chưa có tên"}</h2>
+            <p className="text-muted-foreground mt-1">{user?.email || "Chưa có email"}</p>
             <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
                 Tài khoản đã xác thực
@@ -70,20 +80,27 @@ export default function OverviewPage() {
       </Card>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
-          title="Đã ứng tuyển"
+          title="Việc đã ứng tuyển"
           value={appliedJobs.length}
           icon={Briefcase}
           iconColor="text-primary/30"
           valueColor="text-primary"
         />
         <StatCard
-          title="Đã lưu"
-          value={0}
+          title="Việc đã lưu"
+          value={jobFavoritesCount}
           icon={Heart}
           iconColor="text-red-500/30"
           valueColor="text-red-500"
+        />
+        <StatCard
+          title="Công ty đã theo dõi"
+          value={companyFollowingCount}
+          icon={Building2}
+          iconColor="text-amber-500/30"
+          valueColor="text-amber-500"
         />
       </div>
 

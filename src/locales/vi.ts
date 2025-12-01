@@ -128,6 +128,8 @@ export const vi = {
   cv: {
     personalInfo: {
       title: "Thông tin cá nhân",
+      titleLabel: "Tiêu đề",
+      titlePlaceholder: "Chuyên gia phát triển phần mềm",
       description: "Cập nhật thông tin cá nhân của bạn",
       editButton: "Chỉnh sửa",
       editTooltip: "Chỉnh sửa thông tin cá nhân",
@@ -299,7 +301,7 @@ export const vi = {
       noData: "Chưa có dự án nào",
       addTitle: "Thêm Dự Án",
       editTitle: "Chỉnh sửa Dự Án",
-      nameLabel: "Tên dự án *",
+      nameLabel: "Tên dự án",
       namePlaceholder: "Dự Án Tuyệt Vời",
       descriptionLabel: "Mô tả",
       descriptionPlaceholder: "Mô tả dự án của bạn",
@@ -307,6 +309,8 @@ export const vi = {
       linkPlaceholder: "https://example.com",
       saveLabel: "Thêm",
       updateLabel: "Cập nhật",
+      positionLabel: "Vị trí",
+      positionPlaceholder: "Vai trò của bạn trong dự án",
     },
     certificates: {
       title: "Chứng Chỉ & Chứng Nhận",

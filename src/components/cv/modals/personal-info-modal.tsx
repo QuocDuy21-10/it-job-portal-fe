@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X, Upload, Trash2, Camera, AlertCircle } from "lucide-react";
+import { X, Upload, Trash2, Camera, AlertCircle, Briefcase } from "lucide-react";
 import { PersonalInfoSchema, PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 
@@ -13,7 +13,7 @@ import { useI18n } from "@/hooks/use-i18n";
 interface PersonalInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: PersonalInfo) => void;
+  onSubmit: (data: PersonalInfo, avatarFile?: File) => void;
   initialData?: PersonalInfo;
 }
 
@@ -25,6 +25,7 @@ export default function PersonalInfoModal({
 }: PersonalInfoModalProps) {
   const { t } = useI18n();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -32,9 +33,12 @@ export default function PersonalInfoModal({
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<PersonalInfo>({
     resolver: zodResolver(PersonalInfoSchema),
     defaultValues: initialData || {
+      avatar: "",
+      title: "",
       fullName: "",
       email: "",
       phone: "",
@@ -49,17 +53,38 @@ export default function PersonalInfoModal({
   useEffect(() => {
     if (isOpen && initialData) {
       reset(initialData);
+      setAvatarPreview(initialData.avatar || null);
+      setAvatarFile(null); // Reset file when opening with initial data
     }
   }, [isOpen, initialData, reset]);
 
   const handleFormSubmit = async (data: PersonalInfo) => {
-    onSubmit(data);
+    const submitData = {
+      ...data,
+      avatar: avatarPreview || "", // Keep existing avatar URL if no new file
+    };
+    onSubmit(submitData, avatarFile || undefined);
     onClose();
   };
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        alert("Chỉ chấp nhận file ảnh định dạng JPEG, PNG, GIF, WEBP");
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        alert("Kích thước file không được vượt quá 5MB");
+        return;
+      }
+      
+      setAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string);
@@ -70,6 +95,7 @@ export default function PersonalInfoModal({
 
   const handleRemoveAvatar = () => {
     setAvatarPreview(null);
+    setAvatarFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -139,6 +165,33 @@ export default function PersonalInfoModal({
 
           {/* Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Title */}
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <div className="md:col-span-2">
+                  <label className="flex items-center gap-2 text-sm font-medium mb-2 text-foreground">
+                    {t("cv.personalInfo.titleLabel")}
+                  </label>
+                  <input
+                    {...field}
+                    value={field.value || ""}
+                    type="text"
+                    placeholder={t("cv.personalInfo.titlePlaceholder")}
+                    className={`w-full px-4 py-3 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all ${
+                      errors.title ? "border-destructive" : "border-border"
+                    }`}
+                  />
+                  {errors.title && (
+                    <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
+                      <span className="font-medium">⚠</span> {errors.title.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
             {/* Full Name */}
             <Controller
               name="fullName"
