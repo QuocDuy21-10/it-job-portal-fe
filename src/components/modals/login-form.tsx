@@ -13,6 +13,7 @@ import { SocialAuthButtons } from "@/components/auth";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { getDefaultRoute } from "@/shared/constants/roles";
+import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
   LoginSchema,
@@ -62,6 +63,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
       if (response.statusCode === 201) {
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
+          setLoggingOutFlag(false);
         }
 
         if (response.data?.user) {
@@ -99,6 +101,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
       if (response.statusCode === 201) {
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
+          setLoggingOutFlag(false);
         }
 
         if (response.data?.user) {

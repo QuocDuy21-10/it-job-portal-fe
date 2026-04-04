@@ -15,18 +15,27 @@ export const setRefreshTokenFailedCallback = (
   onRefreshTokenFailed = callback;
 };
 
-// CREATE AXIOS INSTANCE
+// Flag to prevent refresh token calls after logout
+let isLoggingOut = false;
+
+export const setLoggingOutFlag = (value: boolean) => {
+  isLoggingOut = value;
+};
+
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
-  withCredentials: true, // Send cookie (refresh token)
-  // Don't set Content-Type here - let axios auto-detect based on data type
-  // For JSON: axios will set application/json
-  // For FormData: axios will set multipart/form-data with boundary
+  withCredentials: true, 
 });
 
 const handleRefreshToken = async (): Promise<string | null> => {
   return await mutex.runExclusive(async () => {
+    // Skip refresh if user has logged out (may have changed while waiting for mutex)
+    if (isLoggingOut || !localStorage.getItem("access_token")) {
+      console.log("[Axios] Skipping refresh — user logged out");
+      return null;
+    }
+
     try {
       console.log("[Axios] Attempting to refresh token...");
 
@@ -41,7 +50,6 @@ const handleRefreshToken = async (): Promise<string | null> => {
       const newAccessToken = response.data?.data?.access_token;
 
       if (newAccessToken) {
-        // Save new token to localStorage
         localStorage.setItem("access_token", newAccessToken);
         console.log("[Axios] Token refreshed successfully");
         return newAccessToken;
@@ -99,6 +107,12 @@ axiosInstance.interceptors.response.use(
       const hasNoRetryHeader = originalRequest.headers?.[NO_RETRY_HEADER];
 
       if (!isAuthApi && !hasNoRetryHeader) {
+        // Skip refresh if user has logged out
+        if (isLoggingOut || !localStorage.getItem("access_token")) {
+          console.log("[Axios] Skipping 401 refresh — user logged out");
+          return Promise.reject(error);
+        }
+
         console.log("[Axios] Got 401, attempting token refresh...");
 
         // Call refresh token
@@ -111,23 +125,13 @@ axiosInstance.interceptors.response.use(
             originalRequest.headers[NO_RETRY_HEADER] = "true"; // Đánh dấu đã retry
           }
 
-          // Gửi lại request cũ với token mới
           console.log("[Axios] Retrying original request with new token...");
           return axiosInstance(originalRequest);
         } else {
-          // Refresh thất bại - Gọi callback để xử lý
           console.log(
             "[Axios] Refresh token failed, calling callback..."
           );
 
-          // Gọi callback thay vì dispatch trực tiếp (tránh circular dependency)
-          if (onRefreshTokenFailed) {
-            onRefreshTokenFailed(
-              "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
-            );
-          }
-
-          // Clear token - KHÔNG redirect ở đây (ClientLayout sẽ xử lý)
           localStorage.removeItem("access_token");
         }
       }
@@ -148,11 +152,9 @@ axiosInstance.interceptors.response.use(
         );
       }
 
-      // Clear token - KHÔNG redirect ở đây
       localStorage.removeItem("access_token");
     }
 
-    // Trả về error cho các trường hợp khác
     return Promise.reject(error);
   }
 );

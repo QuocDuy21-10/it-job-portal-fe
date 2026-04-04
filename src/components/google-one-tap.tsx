@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useGoogleLoginMutation } from "@/features/auth/redux/auth.api";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
+import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 
 interface GoogleOneTapProps {
   disabled?: boolean;
@@ -35,6 +36,7 @@ export function GoogleOneTap({ disabled = false }: GoogleOneTapProps) {
           // Lưu access token vào localStorage
           if (response.data?.access_token) {
             localStorage.setItem("access_token", response.data.access_token);
+            setLoggingOutFlag(false);
           }
           // Dispatch action để update Redux state
           if (response.data?.user) {
