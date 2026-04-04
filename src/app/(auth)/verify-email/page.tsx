@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils";
 function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const userId = searchParams.get("userId");
   const email = searchParams.get("email");
   const autoVerifyRef = useRef(false);
 
@@ -35,7 +34,7 @@ function VerifyEmailContent() {
     handleVerify,
     handleResend,
   } = useVerification({
-    userId: userId || "",
+    email: email || "",
     onSuccess: () => {
       toast.success("Xác thực thành công!");
       // Chuyển về trang login sau khi verify thành công
@@ -49,12 +48,12 @@ function VerifyEmailContent() {
     resendCooldown: 60, // 60 giây
   });
 
-  // Redirect nếu không có userId
+  // Redirect nếu không có email
   useEffect(() => {
-    if (!userId) {
+    if (!email) {
       router.replace("/register");
     }
-  }, [userId, router]);
+  }, [email, router]);
 
   // Auto verify khi nhập đủ 6 số (chỉ chạy 1 lần)
   useEffect(() => {
@@ -69,7 +68,7 @@ function VerifyEmailContent() {
     }
   }, [otp, isVerifying, handleVerify]);
 
-  if (!userId) {
+  if (!email) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

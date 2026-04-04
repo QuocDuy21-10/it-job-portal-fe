@@ -54,11 +54,10 @@ export default function RegisterPage() {
     try {
       const response = await signUp(data).unwrap();
       if (response.statusCode === 201) {
-        const userId = response.data?._id;
         toast.success("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
-        
-        // Chuyển sang trang verify email với userId và email
-        router.push(`/verify-email?userId=${userId}&email=${encodeURIComponent(data.email)}`);
+
+        // Chuyển sang trang verify email (email only)
+        router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
     } catch (error: any) {
       console.error("Register error:", error);

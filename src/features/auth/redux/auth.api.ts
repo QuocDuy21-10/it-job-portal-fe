@@ -41,7 +41,7 @@ export const authApi = baseApi.injectEndpoints({
 
     verifyEmail: builder.mutation<
       ApiResponse<{ message: string }>,
-      { _id: string; code: string }
+      { email: string; code: string }
     >({
       query: (data) => ({
         url: "/auth/verify",
@@ -52,7 +52,7 @@ export const authApi = baseApi.injectEndpoints({
 
     resendCode: builder.mutation<
       ApiResponse<{ message: string }>,
-      { id: string }
+      { email: string }
     >({
       query: (data) => ({
         url: "/auth/resend-code",

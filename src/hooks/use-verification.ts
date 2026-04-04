@@ -3,14 +3,14 @@ import { useVerifyEmailMutation, useResendCodeMutation } from "@/features/auth/r
 import { toast } from "sonner";
 
 interface UseVerificationProps {
-  userId: string;
+  email: string;
   onSuccess?: () => void;
   onError?: (message: string) => void;
   resendCooldown?: number; // seconds
 }
 
 export function useVerification({
-  userId,
+  email,
   onSuccess,
   onError,
   resendCooldown = 60,
@@ -59,8 +59,13 @@ export function useVerification({
       isVerifyingRef.current = true;
 
       try {
+        if (!email) {
+          onError?.("Email không hợp lệ");
+          return;
+        }
+
         const response = await verifyEmail({
-          _id: userId,
+          email,
           code: verificationCode,
         }).unwrap();
 
@@ -78,15 +83,19 @@ export function useVerification({
         isVerifyingRef.current = false;
       }
     },
-    [otp, userId, verifyEmail, onSuccess, onError]
+    [otp, email, verifyEmail, onSuccess, onError]
   );
 
   // Resend OTP
   const handleResend = useCallback(async () => {
     if (!canResend || isResending) return;
+    if (!email) {
+      toast.error("Email không hợp lệ");
+      return;
+    }
 
     try {
-      const response = await resendCode({ id: userId }).unwrap();
+      const response = await resendCode({ email }).unwrap();
 
       if (response.statusCode === 201) {
         toast.success(response.data?.message || "Đã gửi lại mã xác thực");
@@ -100,7 +109,7 @@ export function useVerification({
         "Không thể gửi lại mã. Vui lòng thử lại sau";
       toast.error(errorMessage);
     }
-  }, [canResend, isResending, userId, resendCode, resetCountdown]);
+  }, [canResend, isResending, email, resendCode, resetCountdown]);
 
   return {
     otp,
