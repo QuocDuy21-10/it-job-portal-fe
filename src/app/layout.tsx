@@ -10,6 +10,7 @@ import { AuthModal } from "@/components/modals/auth-modal";
 import { AuthInitializer } from "@/components/auth-initializer";
 import ReduxProvider from "@/lib/redux/provider";
 import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
+import { SocketProvider } from "@/lib/socket/socket-provider";
 
 const roboto = Roboto({
   subsets: ["latin", "vietnamese"], 
@@ -39,14 +40,14 @@ export default function RootLayout({
             <ThemeProvider>
               <I18nProvider>
                 <AuthModalProvider>
+                <SocketProvider>
                   {/* Fetch user data on app initialization */}
                   <AuthInitializer />
                   <ClientLayout />
-                  {/* <Header /> */}
-                  <main className="flex-1">{children}</main>
-                  {/* <Footer /> */}
+                  <div className="flex-1">{children}</div>
                   <AuthModal />
                   <Toaster />
+                </SocketProvider>
                 </AuthModalProvider>
               </I18nProvider>
             </ThemeProvider>

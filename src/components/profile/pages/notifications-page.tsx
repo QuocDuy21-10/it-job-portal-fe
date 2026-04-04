@@ -2,85 +2,67 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Circle, Bell, CheckCheck } from "lucide-react";
+import { Circle, Bell, CheckCheck, Briefcase, FileText, Loader2 } from "lucide-react";
 import { StatCard } from "../shared/stat-card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetNotificationsQuery } from "@/features/notification/redux/notification.api";
+import { useNotification, getNotificationLink } from "@/hooks/use-notification";
+import { Notification } from "@/features/notification/schemas/notification.schema";
+import { useRouter } from "next/navigation";
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: "job" | "system" | "message";
-  isRead: boolean;
-  createdAt: string;
-}
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case "APPLICATION_STATUS_CHANGE":
+      return "bg-primary/10 text-primary";
+    case "NEW_APPLICATION":
+      return "bg-accent/10 text-accent";
+    default:
+      return "bg-secondary text-foreground";
+  }
+};
+
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "APPLICATION_STATUS_CHANGE":
+      return <Briefcase className="w-5 h-5" />;
+    case "NEW_APPLICATION":
+      return <FileText className="w-5 h-5" />;
+    default:
+      return <Bell className="w-5 h-5" />;
+  }
+};
+
+const getTypeLabel = (type: string) => {
+  switch (type) {
+    case "APPLICATION_STATUS_CHANGE":
+      return "Trạng thái ứng tuyển";
+    case "NEW_APPLICATION":
+      return "Đơn ứng tuyển mới";
+    default:
+      return "Thông báo";
+  }
+};
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      title: "Công việc mới phù hợp",
-      message:
-        "Vị trí Senior React Developer tại Tech Corp phù hợp với hồ sơ của bạn",
-      type: "job",
-      isRead: false,
-      createdAt: "2024-01-15T10:30:00",
-    },
-    {
-      id: "2",
-      title: "Thư phản hồi từ nhà tuyển dụng",
-      message: "StartUp Inc đã xem hồ sơ của bạn",
-      type: "message",
-      isRead: false,
-      createdAt: "2024-01-14T15:45:00",
-    },
-    {
-      id: "3",
-      title: "Cập nhật hệ thống",
-      message: "Chúng tôi đã cập nhật tính năng tìm kiếm công việc",
-      type: "system",
-      isRead: true,
-      createdAt: "2024-01-13T09:00:00",
-    },
-  ]);
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const router = useRouter();
+  const { unreadCount, markAsRead, markAllAsRead } = useNotification();
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-  const readCount = notifications.filter((n) => n.isRead).length;
+  const { data, isLoading } = useGetNotificationsQuery({ page, limit });
 
-  const markAsRead = (id: string) => {
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
-  };
+  const notifications = data?.data?.result ?? [];
+  const meta = data?.data?.meta;
+  const totalCount = meta?.total ?? 0;
+  const totalPages = meta?.pages ?? 1;
+  const readCount = totalCount - unreadCount;
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "job":
-        return "bg-primary/10 text-primary";
-      case "message":
-        return "bg-accent/10 text-accent";
-      case "system":
-        return "bg-blue-500/10 text-blue-500";
-      default:
-        return "bg-secondary text-foreground";
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.isRead) {
+      markAsRead(notification._id);
     }
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "job":
-        return "🎯";
-      case "message":
-        return "💬";
-      case "system":
-        return "⚙️";
-      default:
-        return "📢";
-    }
+    router.push(getNotificationLink(notification));
   };
 
   return (
@@ -110,7 +92,7 @@ export default function NotificationsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
           title="Tổng thông báo"
-          value={notifications.length}
+          value={totalCount}
           icon={Bell}
           iconColor="text-primary/30"
           valueColor="text-foreground"
@@ -124,7 +106,7 @@ export default function NotificationsPage() {
         />
         <StatCard
           title="Đã đọc"
-          value={readCount}
+          value={readCount > 0 ? readCount : 0}
           icon={CheckCheck}
           iconColor="text-green-500/30"
           valueColor="text-green-500"
@@ -133,16 +115,29 @@ export default function NotificationsPage() {
 
       {/* Notifications List */}
       <div className="space-y-3">
-        {notifications.length > 0 ? (
-          notifications.map((notification) => (
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i} className="p-4 md:p-5 border">
+              <div className="flex items-start gap-4">
+                <Skeleton className="h-12 w-12 rounded-lg flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-1/2" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+              </div>
+            </Card>
+          ))
+        ) : notifications.length > 0 ? (
+          notifications.map((notification: Notification) => (
             <Card
-              key={notification.id}
+              key={notification._id}
               className={`p-4 md:p-5 border transition-all duration-300 cursor-pointer group ${
                 notification.isRead
                   ? "bg-card border-border hover:border-border"
                   : "bg-primary/5 border-primary/30 hover:border-primary/50 hover:shadow-md"
               }`}
-              onClick={() => markAsRead(notification.id)}
+              onClick={() => handleNotificationClick(notification)}
             >
               <div className="flex items-start gap-4">
                 <div
@@ -150,9 +145,7 @@ export default function NotificationsPage() {
                     notification.type
                   )}`}
                 >
-                  <span className="text-xl">
-                    {getTypeIcon(notification.type)}
-                  </span>
+                  {getTypeIcon(notification.type)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
@@ -186,11 +179,7 @@ export default function NotificationsPage() {
                         notification.type
                       )}`}
                     >
-                      {notification.type === "job"
-                        ? "Việc làm"
-                        : notification.type === "message"
-                        ? "Tin nhắn"
-                        : "Hệ thống"}
+                      {getTypeLabel(notification.type)}
                     </span>
                   </div>
                 </div>
@@ -209,6 +198,31 @@ export default function NotificationsPage() {
           </Card>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            Trước
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Trang {page} / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Sau
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

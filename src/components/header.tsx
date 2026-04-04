@@ -14,14 +14,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/hooks/use-i18n";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useAuth } from "@/hooks/use-auth";
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { useRouter } from "next/navigation";
+import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUserRole } from "@/features/auth/redux/auth.slice";
 import { isAdminRole } from "@/shared/constants/roles";
 import { TooltipIcon } from "@/components/sections/tooltip-icon";
+import { NotificationBell } from "@/components/notification/notification-bell";
 import { TRANSITIONS } from "@/shared/constants/design";
 
 export function Header() {
@@ -29,24 +30,21 @@ export function Header() {
   const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  console.log("user", user);
+  console.log("isAuthenticated", isAuthenticated);
+
   const userRole = useAppSelector(selectUserRole);
   const [logout] = useLogoutMutation();
   const router = useRouter();
 
-  // Only fetch user data if token exists - prevent infinite 401 loop
-  const hasToken =
-    typeof window !== "undefined" && localStorage.getItem("access_token");
-
-  useGetMeQuery(undefined, {
-    skip: !hasToken, // Skip query if no token
-  });
-
   const handleSignOut = async () => {
     try {
+      setLoggingOutFlag(true);
       await logout().unwrap();
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
+      setLoggingOutFlag(false);
     }
   };
 
@@ -82,8 +80,9 @@ export function Header() {
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
           </Link>
 
-          {isAuthenticated && user ? (
+          {i18nMounted && isAuthenticated && user ? (
             <>
+              <NotificationBell />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <button
@@ -237,62 +236,187 @@ export function Header() {
         </TooltipIcon>
       </nav>
 
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-background/95 backdrop-blur-md animate-in slide-in-from-top-2 duration-300">
-          <div className="container mx-auto px-4 py-4 space-y-3">
-            <Link
-              href="/jobs"
-              className="block py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {i18nMounted ? t("nav.findJobs") : "Find Jobs"}
-            </Link>
-            <Link
-              href="/companies"
-              className="block py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {i18nMounted ? t("nav.companies") : "Companies"}
-            </Link>
+        <div className="md:hidden border-t bg-background/95 backdrop-blur-md animate-in slide-in-from-top-2 duration-300 max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="container mx-auto px-4 py-4 space-y-4">
+            {/* User Profile Section - Only show if authenticated */}
+            {i18nMounted && isAuthenticated && user && (
+              <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+                <div className="flex-shrink-0">
+                  <img
+                    src={user?.avatar || '/images/avatar-default.jpg'}
+                    alt={user?.name || user?.email || "avatar"}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/30"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  {user?.name && (
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {user.name}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground truncate">
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+            )}
 
-            <div className="flex flex-col gap-2 pt-2">
-              {isAuthenticated && user ? (
-                <>
-                  <div className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 border dark:border-gray-700 rounded-md">
-                    {user.email}
+            {/* Navigation Links */}
+            <div className="space-y-1">
+              <Link
+                href="/jobs"
+                className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Briefcase className="h-5 w-5 flex-shrink-0" />
+                <span>{i18nMounted ? t("nav.findJobs") : "Find Jobs"}</span>
+              </Link>
+              <Link
+                href="/companies"
+                className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Briefcase className="h-5 w-5 flex-shrink-0" />
+                <span>{i18nMounted ? t("nav.companies") : "Companies"}</span>
+              </Link>
+            </div>
+
+            {/* User Menu Items - Only show if authenticated */}
+            {isAuthenticated && user && (
+              <>
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2">
+                    {t("nav.myAccount")}
+                  </p>
+                  <div className="space-y-1">
+                    <Link
+                      href="/profile?tab=overview"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <User className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.dashboard") : "Dashboard"}</span>
+                    </Link>
+
+                    {isAdminRole(userRole) && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Settings className="h-5 w-5 flex-shrink-0" />
+                        <span>{i18nMounted ? t("nav.adminDashboard") : "Admin Dashboard"}</span>
+                      </Link>
+                    )}
+
+                    <Link
+                      href="/profile?tab=my-cv"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <FileText className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.myCV") : "My CV"}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=create-cv"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <PlusCircle className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.createCV") : "Create CV"}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=my-jobs"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Briefcase className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.myJobs") : "My Jobs"}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=email-subscription"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Mail className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.emailSubscription") : "Email Subscription"}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=notifications"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Bell className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.notifications") : "Notifications"}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=settings"
+                      className="flex items-center gap-3 py-3 px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Settings className="h-5 w-5 flex-shrink-0" />
+                      <span>{i18nMounted ? t("nav.settings") : "Settings"}</span>
+                    </Link>
                   </div>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link
-                      href="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <User className="mr-2 h-4 w-4" />
-                      {i18nMounted ? t("nav.profile") : "Profile"}
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full text-red-600"
-                    onClick={() => {
-                      handleSignOut();
-                      setMobileMenuOpen(false);
-                    }}
+                </div>
+              </>
+            )}
+
+            {/* Theme & Language Settings */}
+            <div className="border-t border-border pt-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-3">
+                {i18nMounted ? t("nav.preferences") : "Preferences"}
+              </p>
+              <div className="space-y-3 px-4">
+                {/* Theme Toggle */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground/80">
+                    {i18nMounted ? t("nav.theme") : "Theme"}
+                  </span>
+                  <ThemeToggle />
+                </div>
+
+                {/* Language Select */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground/80">
+                    {i18nMounted ? t("nav.language") : "Language"}
+                  </span>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value as "en" | "vi")}
+                    className="px-3 py-2 border border-border rounded-lg bg-card text-foreground text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    {i18nMounted ? t("nav.signOut") : "Sign Out"}
-                  </Button>
-                </>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="vi">🇻🇳 Tiếng Việt</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Auth Buttons or Sign Out */}
+            <div className="border-t border-border pt-3">
+              {isAuthenticated && user ? (
+                <Button
+                  variant="outline"
+                  className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30 hover:border-destructive transition-all"
+                  onClick={() => {
+                    handleSignOut();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="mr-2 h-5 w-5" />
+                  <span className="font-medium">{i18nMounted ? t("nav.signOut") : "Sign Out"}</span>
+                </Button>
               ) : (
-                <>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link
-                      href="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {i18nMounted ? t("nav.signIn") : "Sign In"}
-                    </Link>
-                  </Button>
-                  <Button asChild className="w-full">
+                <div className="flex flex-col gap-3">
+                  <Button asChild size="lg" className="w-full shadow-sm">
                     <Link
                       href="/register"
                       onClick={() => setMobileMenuOpen(false)}
@@ -300,27 +424,20 @@ export function Header() {
                       {i18nMounted ? t("nav.signUp") : "Sign Up"}
                     </Link>
                   </Button>
-                </>
+                  <Button asChild variant="outline" size="lg" className="w-full">
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {i18nMounted ? t("nav.signIn") : "Sign In"}
+                    </Link>
+                  </Button>
+                </div>
               )}
-            </div>
-
-            {/* Mobile Theme & Language Toggle */}
-            <div className="flex items-center gap-4 pt-4 border-t dark:border-gray-700">
-              <ThemeToggle />
-              <div className="flex-1">
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value as "en" | "vi")}
-                  className="w-full px-3 py-2 border dark:border-gray-700 rounded-md bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300"
-                >
-                  <option value="en">English</option>
-                  <option value="vi">Tiếng Việt</option>
-                </select>
-              </div>
             </div>
           </div>
         </div>
-      )}
+      )}  
     </header>
   );
 }

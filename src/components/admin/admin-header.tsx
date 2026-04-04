@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { NotificationBell } from "@/components/notification/notification-bell";
 import Link from "next/link";
 
 interface AdminHeaderProps {
@@ -89,62 +90,7 @@ export function AdminHeader({
         {/* Right Section - Notifications & User Menu */}
         <div className="flex items-center gap-3">
           {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                >
-                  3
-                </Badge>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Thông báo</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <div className="max-h-96 overflow-y-auto">
-                {/* Sample notifications */}
-                <DropdownMenuItem className="flex flex-col items-start gap-1 p-3">
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="w-2 h-2 rounded-full bg-blue-600" />
-                    <span className="font-medium text-sm">User mới đăng ký</span>
-                    <span className="text-xs text-gray-500 ml-auto">5 phút trước</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 pl-4">
-                    Có 3 người dùng mới đăng ký tài khoản
-                  </p>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex flex-col items-start gap-1 p-3">
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="w-2 h-2 rounded-full bg-green-600" />
-                    <span className="font-medium text-sm">Job mới được đăng</span>
-                    <span className="text-xs text-gray-500 ml-auto">1 giờ trước</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 pl-4">
-                    5 tin tuyển dụng mới đang chờ duyệt
-                  </p>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex flex-col items-start gap-1 p-3">
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="w-2 h-2 rounded-full bg-orange-600" />
-                    <span className="font-medium text-sm">Company verification</span>
-                    <span className="text-xs text-gray-500 ml-auto">2 giờ trước</span>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 pl-4">
-                    2 công ty đang chờ xác thực
-                  </p>
-                </DropdownMenuItem>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="justify-center text-blue-600 hover:text-blue-700">
-                Xem tất cả thông báo
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <NotificationBell />
 
           {/* User Menu */}
           <DropdownMenu>
