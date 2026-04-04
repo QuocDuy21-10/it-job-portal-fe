@@ -84,7 +84,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-16 sm:py-24 lg:py-32 overflow-hidden">
+      <section className="relative z-20 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-16 sm:py-24 lg:py-32 overflow-x-clip">
         {/* Decorative background */}
         <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
         
@@ -151,14 +151,14 @@ export default function Home() {
                         onChange={setSelectedProvince}
                         placeholder={i18nMounted ? t("home.location") : "Location"}
                         searchPlaceholder="Tìm kiếm tỉnh/thành..."
-                        className="w-full h-12"
+                        className="w-full h-12 z-[100]"
                         leftIcon={<MapPin className="w-5 h-5" />}
                       />
                     </div>
                 </div>
                 {/* Search Button */}
                 <Button
-                  className="h-12 sm:col-span-2 lg:col-span-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  className="h-12 sm:col-span-2 lg:col-span-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                   onClick={handleSearch}
                 >
                   <Search className="mr-2 h-5 w-5" />
@@ -222,7 +222,7 @@ export default function Home() {
       </section>
 
       {/* Featured Jobs Section */}
-      <SectionContainer>
+      <SectionContainer variant="gray">
         <SectionHeader
           title={i18nMounted ? t("home.featuredJobs") : "Featured Jobs for You"}
           description={
@@ -236,28 +236,34 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {jobsLoading ? (
-              // Loading placeholders
+              // Loading placeholders — matches redesigned default JobCard dimensions
               Array.from({ length: 3 }).map((_, index) => (
-                <Card
-                  key={index}
-                  className="hover:shadow-lg transition-shadow duration-300"
-                >
-                  <CardContent className="p-6">
-                    <div className="animate-pulse space-y-4">
-                      <div className="flex items-start gap-4">
-                        <div className="h-12 w-12 rounded-lg bg-gray-200" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-3/4" />
-                          <div className="h-3 bg-gray-200 rounded w-1/2" />
+                <Card key={index}>
+                  <CardContent className="p-5">
+                    <div className="animate-pulse space-y-3">
+                      {/* Header: logo + title/company */}
+                      <div className="flex items-start gap-3 pr-9">
+                        <div className="h-12 w-12 rounded-xl bg-muted" />
+                        <div className="flex-1 space-y-1.5">
+                          <div className="h-4 bg-muted rounded w-3/4" />
+                          <div className="h-3 bg-muted rounded w-1/2" />
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <div className="h-6 bg-gray-200 rounded w-24" />
-                        <div className="h-6 bg-gray-200 rounded w-20" />
+                      {/* Skills */}
+                      <div className="flex gap-1.5">
+                        <div className="h-5 bg-muted rounded-md w-14" />
+                        <div className="h-5 bg-muted rounded-md w-16" />
+                        <div className="h-5 bg-muted rounded-md w-12" />
                       </div>
-                      <div className="flex justify-between pt-2 border-t">
-                        <div className="h-4 bg-gray-200 rounded w-16" />
-                        <div className="h-4 bg-gray-200 rounded w-12" />
+                      {/* Meta: location + type */}
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 bg-muted rounded w-20" />
+                        <div className="h-3 bg-muted rounded w-16" />
+                      </div>
+                      {/* Footer: salary + time */}
+                      <div className="flex justify-between pt-3 border-t border-border/40">
+                        <div className="h-4 bg-muted rounded w-20" />
+                        <div className="h-3 bg-muted rounded w-16" />
                       </div>
                     </div>
                   </CardContent>
@@ -480,7 +486,7 @@ export default function Home() {
                 asChild
                 size="lg"
                 variant="secondary"
-                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
               >
                 <Link href="/jobs">
                   <Search className="mr-2 h-5 w-5" />

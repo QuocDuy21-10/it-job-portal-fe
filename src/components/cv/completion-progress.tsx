@@ -13,6 +13,7 @@ interface CompletionProgressProps {
   onSave?: () => void;
   isSaving?: boolean;
   validationErrors?: any[];
+  isMobile?: boolean;
 }
 
 export default function CompletionProgress({
@@ -20,14 +21,75 @@ export default function CompletionProgress({
   onSave,
   isSaving = false,
   validationErrors = [],
+  isMobile = false,
 }: CompletionProgressProps) {
   const router = useRouter();
   const completion = calculateCVCompletion(cvData);
   const canPreview = completion >= 15;
   const { t } = useI18n();
 
+  // Mobile floating buttons view
+  if (isMobile) {
+    return (
+      <div className="flex flex-col gap-3">
+        {/* Preview Button */}
+        <Button
+          onClick={() => router.push("/profile/cv-preview")}
+          disabled={!canPreview}
+          className={cn(
+            "w-14 h-14 rounded-full shadow-2xl transition-all",
+            "disabled:opacity-50 disabled:cursor-not-allowed",
+            canPreview ? "bg-primary hover:bg-primary/90" : "bg-secondary"
+          )}
+          size="icon"
+        >
+          <Download className="w-6 h-6" />
+        </Button>
+
+        {/* Save Button */}
+        {onSave && (
+          <Button
+            onClick={onSave}
+            disabled={isSaving || validationErrors.length > 0}
+            className={cn(
+              "w-14 h-14 rounded-full shadow-2xl transition-all",
+              "bg-green-600 hover:bg-green-700",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
+            size="icon"
+          >
+            {isSaving ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <Save className="w-6 h-6" />
+            )}
+          </Button>
+        )}
+
+        {/* Progress Indicator Badge */}
+        <div className={cn(
+          "w-14 h-14 rounded-full shadow-lg flex items-center justify-center",
+          "bg-gradient-to-br from-card to-card/95 border-2",
+          completion >= 80 ? "border-green-500" :
+          completion >= 50 ? "border-primary" :
+          "border-orange-500"
+        )}>
+          <span className={cn(
+            "text-xs font-bold",
+            completion >= 80 ? "text-green-600 dark:text-green-500" :
+            completion >= 50 ? "text-primary" :
+            "text-orange-600 dark:text-orange-500"
+          )}>
+            {completion}%
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop sidebar view
   return (
-    <div className="sticky top-4 space-y-4">
+    <div className="space-y-4">
       {/* Progress Card */}
       <div className="p-6 bg-gradient-to-br from-card to-card/95 border border-border/50 rounded-xl shadow-lg backdrop-blur-sm">
         <div className="flex items-center gap-3 mb-4">

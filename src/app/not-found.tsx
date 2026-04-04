@@ -10,7 +10,7 @@ export default function NotFound() {
       <div className="max-w-2xl w-full text-center">
         {/* 404 Animation */}
         <div className="relative mb-8">
-          <h1 className="text-[100px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 leading-none">
+          <h1 className="text-[100px] font-bold text-transparent bg-clip-text bg-primary leading-none">
             404
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -53,7 +53,7 @@ export default function NotFound() {
           <Button
             asChild
             size="lg"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
           >
             <Link href="/" className="flex items-center gap-2">
               <Home className="w-5 h-5" />

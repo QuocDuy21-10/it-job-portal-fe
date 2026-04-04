@@ -24,7 +24,6 @@ export default function MainLayout({
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      {/* AI Chatbot Widget - Hiển thị trên mọi trang main */}
       <ChatWidget />
     </>
   );

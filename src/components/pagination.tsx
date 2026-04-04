@@ -133,7 +133,7 @@ export function Pagination({
                 onClick={() => onPageChange(page as number)}
                 className={`min-w-[40px] h-9 ${
                   currentPage === page
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
                     : "hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
                 aria-label={`Go to page ${page}`}

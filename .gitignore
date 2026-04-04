@@ -11,6 +11,12 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.github
+/design-system
+.swc
+.agents
+.agent
+
 
 # testing
 /coverage
@@ -41,3 +47,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+skills-lock.json

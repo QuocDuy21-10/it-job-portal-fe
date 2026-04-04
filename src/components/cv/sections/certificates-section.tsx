@@ -59,13 +59,13 @@ export default function CertificatesSection({
         title={t("cv.certificates.title")}
         description={t("cv.certificates.description")}
         actionButton={
-                <button
-                  onClick={openAddModal}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t("cv.certificates.addButton")}
-                </button>
+            <Button
+              onClick={openAddModal}
+              className="gap-2 bg-primary hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4" />
+              {t("cv.certificates.addButton")}
+            </Button>
         }
       >
         {certificates.length === 0 ? (
@@ -79,13 +79,7 @@ export default function CertificatesSection({
             <p className="text-xs text-muted-foreground mb-6 text-center max-w-md">
               Thêm chứng chỉ của bạn để tăng uy tín với nhà tuyển dụng
             </p>
-            <Button
-              onClick={openAddModal}
-              className="gap-2 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4" />
-              {t("cv.certificates.addButton")}
-            </Button>
+
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

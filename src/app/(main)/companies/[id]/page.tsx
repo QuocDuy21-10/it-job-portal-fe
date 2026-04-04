@@ -131,7 +131,7 @@ export default function CompanyDetailPage() {
                     <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                     <option value="Đà Nẵng">Đà Nẵng</option>
                   </select>
-                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white h-11 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90 h-11 shadow-md hover:shadow-lg transition-all duration-300">
                     <Search className="w-4 h-4 mr-2" />
                     Tìm kiếm
                   </Button>

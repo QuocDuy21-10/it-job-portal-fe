@@ -59,13 +59,13 @@ export default function AwardsSection({
         title={t("cv.awards.title")}
         description={t("cv.awards.description")}
         actionButton={
-                <button
-                  onClick={openAddModal}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t("cv.awards.addButton")}
-                </button>
+            <Button
+              onClick={openAddModal}
+              className="gap-2 bg-primary hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4" />
+              {t("cv.awards.addButton")}
+            </Button>
         }
       >
         {awards.length === 0 ? (
@@ -79,13 +79,7 @@ export default function AwardsSection({
             <p className="text-xs text-muted-foreground mb-6 text-center max-w-md">
               Thêm giải thưởng của bạn để làm nổi bật CV
             </p>
-            <Button
-              onClick={openAddModal}
-              className="gap-2 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4" />
-              {t("cv.awards.addButton")}
-            </Button>
+
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

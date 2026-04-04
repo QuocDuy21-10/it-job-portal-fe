@@ -29,9 +29,9 @@ import { cn } from "@/lib/utils";
 
 // Helper to format salary
 const formatSalary = (salary: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("vi-VN", {
     style: "currency",
-    currency: "USD",
+    currency: "VND",
     maximumFractionDigits: 0,
   }).format(salary);
 };
@@ -201,7 +201,7 @@ export default function JobDetailPage() {
                   }
                   setIsApplyModalOpen(true);
                 }}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold h-12 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
+                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold h-12 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <Briefcase className="w-5 h-5 mr-2" />
                 Ứng tuyển ngay
@@ -210,17 +210,19 @@ export default function JobDetailPage() {
                 onClick={toggleSaveJob}
                 disabled={isSavingJob}
                 variant="outline"
-                className={cn(
-                  "flex-1 sm:flex-none px-6 h-12 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2",
-                  isSaved
-                    ? "bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900 shadow-sm hover:shadow-md"
-                    : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:shadow-md"
+               className={cn(
+                        "p-2 rounded-full transition-all duration-300 flex-shrink-0",
+                        isSaved
+                          ? "bg-rose-100 dark:bg-rose-950 hover:bg-rose-200 dark:hover:bg-rose-900"
+                          : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
                 )}
               >
                 <Heart
                   className={cn(
-                    "w-5 h-5 transition-all",
-                    isSaved ? "fill-current" : ""
+                          "w-5 h-5 transition-all",
+                          isSaved
+                            ? "fill-rose-500 text-rose-500 dark:fill-rose-400 dark:text-rose-400"
+                            : "text-slate-400 dark:text-slate-500"
                   )}
                 />
                 {isSaved ? "Đã lưu" : "Lưu tin"}

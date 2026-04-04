@@ -17,9 +17,10 @@ export function SectionContainer({
     <section
       className={cn(
         SPACING.section.py,
-        variant === "gray" && "bg-secondary/30",
+        variant === "gray" && "",
         className
       )}
+      style={variant === "gray" ? { backgroundColor: "#f4f5f7" } : undefined}
     >
       <div className={SPACING.section.container}>{children}</div>
     </section>

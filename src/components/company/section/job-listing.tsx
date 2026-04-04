@@ -89,7 +89,6 @@ function JobCard({ job }: { job: any }) {
                 <Tooltip.Root delayDuration={200}>
                   <Tooltip.Trigger asChild>
                     <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 bg-emerald-50 dark:bg-emerald-950 px-3 py-1.5 rounded-lg group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900 transition-colors">
-                      <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                       <span className="font-medium">
                         {typeof job.salary === "number" ? job.salary.toLocaleString() + " VNĐ" : job.salary}
                       </span>
@@ -140,7 +139,7 @@ function JobCard({ job }: { job: any }) {
             <Tooltip.Root delayDuration={200}>
               <Tooltip.Trigger asChild>
                 <Button 
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white whitespace-nowrap h-fit shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap h-fit shadow-md hover:shadow-lg transition-all duration-300"
                   onClick={(e) => {
                     e.preventDefault();
                     window.location.href = `/jobs/${job._id}`;

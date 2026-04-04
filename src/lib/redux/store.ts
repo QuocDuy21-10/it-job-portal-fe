@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import { baseApi } from "./api";
 import authSlice from "@/features/auth/redux/auth.slice";
 import { setRefreshTokenFailedCallback } from "@/lib/axios/axios-instance";
@@ -10,12 +12,22 @@ import resumeReducer from '@/features/resume/redux/resume.slice';
 import permissionReducer from '@/features/permission/redux/permission.slice';
 import roleReducer from '@/features/role/redux/role.slice';
 import chatBotReducer from '@/features/chatbot/redux/chat-bot.slice';
+import notificationReducer from '@/features/notification/redux/notification.slice';
 import { authErrorMiddleware } from "./middleware/auth-error.middleware";
+
+// Redux Persist Configuration for auth slice
+const authPersistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["user", "isAuthenticated"], // Only persist user and auth status
+};
+
+const persistedAuthReducer = persistReducer(authPersistConfig, authSlice);
 
 export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
-    auth: authSlice,
+    auth: persistedAuthReducer,
     company: companyReducer,
     user: userReducer,
     job: jobReducer,
@@ -23,9 +35,14 @@ export const store = configureStore({
     permission: permissionReducer,
     role: roleReducer,
     chatBot: chatBotReducer,
+    notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    })
       .concat(baseApi.middleware)
       .concat(authErrorMiddleware),
 });
@@ -39,6 +56,8 @@ setRefreshTokenFailedCallback((message: string) => {
     })
   );
 });
+
+export const persistor = persistStore(store);
 
 export type AppStore = typeof store;
 export type RootState = ReturnType<typeof store.getState>;

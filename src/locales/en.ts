@@ -221,6 +221,7 @@ export const en = {
       descriptionPlaceholder: "Describe responsibilities and achievements",
       cancelButton: "Cancel",
       saveButton: "Save",
+      updateLabel: "Update",
     },
     experience: {
       title: "Work Experience",

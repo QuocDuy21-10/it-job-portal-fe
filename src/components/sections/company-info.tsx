@@ -95,7 +95,7 @@ export default function CompanyInfo({ company, className }: CompanyInfoProps) {
           {/* Action Button */}
           <Button 
             asChild 
-           className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
+           className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
             size="lg"
           >
             <a 
