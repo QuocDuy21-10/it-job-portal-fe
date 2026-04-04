@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -15,9 +15,14 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isLoading = useAppSelector(selectIsLoading);
   const isAdmin = useAppSelector(selectIsAdmin);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Chỉ kiểm tra redirect sau khi loading xong
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
     if (!isLoading) {
       if (!isAuthenticated) {
         router.push("/login");
@@ -25,11 +30,20 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
         router.push("/");
       }
     }
-  }, [isAuthenticated, isLoading, isAdmin, router]);
+  }, [isMounted, isAuthenticated, isLoading, isAdmin, router]);
 
-  // Show loading CHỈ KHI:
-  // - isLoading = true VÀ chưa có thông tin xác thực đầy đủ
-  // - Nếu đã có isAuthenticated + isAdmin → KHÔNG show loading (trường hợp reload)
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Đang kiểm tra quyền truy cập...</p>
+        </div>
+      </div>
+    );
+  }
+
   const shouldShowLoading = isLoading && !(isAuthenticated && isAdmin);
   
   if (shouldShowLoading) {
@@ -43,7 +57,6 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Don't render if not authenticated or not admin
   if (!isAuthenticated || !isAdmin) {
     return null;
   }

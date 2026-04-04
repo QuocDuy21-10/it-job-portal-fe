@@ -23,12 +23,14 @@ interface CompanyFormProps {
   initialData?: Partial<CreateCompanyFormData>;
   onSubmit: (data: CreateCompanyFormData) => Promise<boolean>;
   isLoading?: boolean;
+  onNewLogoUploaded?: (prev: string | null, next: string | null) => void;
 }
 
 export function CompanyForm({
   initialData,
   onSubmit,
   isLoading,
+  onNewLogoUploaded,
 }: CompanyFormProps) {
   // Khởi tạo form với React Hook Form + Zod resolver
   const form = useForm<CreateCompanyFormData>({
@@ -77,6 +79,8 @@ export function CompanyForm({
             value={form.watch("logo")}
             onChange={(fileName) => form.setValue("logo", fileName)}
             disabled={isLoading}
+            originalValue={initialData?.logo}
+            onNewFileUploaded={onNewLogoUploaded}
           />
         </div>
         <div className="grid gap-4 md:grid-cols-3 lg:gap-6">

@@ -24,7 +24,17 @@ export const fileApi = baseApi.injectEndpoints({
         };
       },
     }),
+    deleteFile: builder.mutation<
+      ApiResponse<{ deleted: boolean }>,
+      { fileName: string; folderType: string }
+    >({
+      query: ({ fileName, folderType }) => ({
+        url: "/files/remove",
+        method: "DELETE",
+        data: { fileName, folderType },
+      }),
+    }),
   }),
 });
 
-export const { useUploadFileMutation } = fileApi;
+export const { useUploadFileMutation, useDeleteFileMutation } = fileApi;

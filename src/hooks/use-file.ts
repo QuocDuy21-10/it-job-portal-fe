@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useUploadFileMutation } from "@/features/file/redux/file.api";
+import { useDeleteFileMutation, useUploadFileMutation } from "@/features/file/redux/file.api";
 
 export function useFileOperations() {
-  // Add upload mutation
   const [uploadFile, { isLoading: isUploading }] = useUploadFileMutation();
+  const [deleteFile] = useDeleteFileMutation();
 
-  // Add upload handler
   const handleUpload = async (file: File, folderType: string) => {
     try {
       const response = await uploadFile({ file, folderType }).unwrap();
@@ -21,9 +20,17 @@ export function useFileOperations() {
     }
   };
 
+  const handleDelete = (fileName: string, folderType: string): void => {
+    if (!fileName) return;
+    deleteFile({ fileName, folderType }).catch((error) => {
+      console.error("Delete file error:", error);
+    });
+  };
+
   return {
     isUploading,
     isMutating: isUploading,
     handleUpload,
+    handleDelete,
   };
 }

@@ -13,14 +13,17 @@ interface LogoUploadProps {
   value?: string;
   onChange: (fileName: string) => void;
   disabled?: boolean;
+  originalValue?: string;
+  onNewFileUploaded?: (prev: string | null, next: string | null) => void;
 }
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-export function LogoUpload({ value, onChange, disabled }: LogoUploadProps) {
+export function LogoUpload({ value, onChange, disabled, originalValue, onNewFileUploaded }: LogoUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sessionFileName, setSessionFileName] = useState<string | null>(null);
   const { handleUpload, isUploading } = useFileOperations();
 
   // Convert file to base64 for preview
@@ -33,7 +36,6 @@ export function LogoUpload({ value, onChange, disabled }: LogoUploadProps) {
     });
   };
 
-  // Validate file before upload
   const validateFile = (file: File): boolean => {
     setError(null);
 
@@ -50,7 +52,6 @@ export function LogoUpload({ value, onChange, disabled }: LogoUploadProps) {
     return true;
   };
 
-  // Handle file selection and upload
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -69,6 +70,9 @@ export function LogoUpload({ value, onChange, disabled }: LogoUploadProps) {
       // Upload file
       const fileName = await handleUpload(file, "company");
       if (fileName) {
+        // Notify parent about the session-upload change (prev → next)
+        onNewFileUploaded?.(sessionFileName, fileName);
+        setSessionFileName(fileName);
         onChange(fileName);
       } else {
         setPreview(null);
@@ -84,6 +88,9 @@ export function LogoUpload({ value, onChange, disabled }: LogoUploadProps) {
 
   // Handle logo removal
   const handleRemove = () => {
+    // Notify parent: session file being removed (prev → null)
+    onNewFileUploaded?.(sessionFileName, null);
+    setSessionFileName(null);
     onChange("");
     setPreview(null);
     setError(null);
