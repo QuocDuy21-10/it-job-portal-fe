@@ -14,30 +14,27 @@ import {
   setIsOpen,
   toggleChatbox,
 } from "@/features/chatbot/redux/chat-bot.slice";
+import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
 import { IMessage } from "@/shared/types/chat";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
-/**
- * Custom Hook cho Chatbot
- * Tập trung logic xử lý: gửi tin nhắn, load history, clear chat
- * Implement Optimistic UI pattern
- */
 export const useChat = () => {
   const dispatch = useAppDispatch();
   const { messages, isTyping, suggestedActions, isOpen } = useAppSelector(
     (state) => state.chatBot
   );
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   // RTK Query hooks
   const [sendMessageMutation] = useSendMessageMutation();
   const [getChatHistoryTrigger] = useLazyGetChatHistoryQuery();
   const [clearChatHistoryMutation] = useClearChatHistoryMutation();
 
-  /**
-   * Load lịch sử hội thoại từ server
-   */
+  // Load chat history from server
   const loadHistory = useCallback(async () => {
+    if (!isAuthenticated) return;
+
     try {
       const response = await getChatHistoryTrigger({
         page: 1,
@@ -49,12 +46,11 @@ export const useChat = () => {
         id: uuidv4(),
         role: msg.role,
         content: msg.content,
-        timestamp: msg.timestamp, // Giữ nguyên ISO string từ BE
-        recommendedJobs: msg.recommendedJobs, // Thêm recommended jobs nếu có
+        timestamp: msg.timestamp, 
+        recommendedJobs: msg.recommendedJobs, 
       }));
 
       // Sắp xếp theo timestamp tăng dần (cũ -> mới) để hiển thị đúng thứ tự
-      // Tin nhắn cũ nhất ở trên, mới nhất ở dưới
       const sortedMessages = formattedMessages.sort((a, b) => 
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
@@ -64,17 +60,15 @@ export const useChat = () => {
       console.error("Failed to load chat history:", error);
       toast.error("Không thể tải lịch sử chat");
     }
-  }, [getChatHistoryTrigger, dispatch]);
+  }, [isAuthenticated, getChatHistoryTrigger, dispatch]);
 
-  /**
-   * Gửi tin nhắn với Optimistic UI
-   * 1. Hiển thị tin nhắn user ngay lập tức
-   * 2. Gọi API
-   * 3. Hiển thị response từ AI
-   */
   const sendMessage = useCallback(
     async (content: string) => {
       if (!content.trim()) return;
+      if (!isAuthenticated) {
+        toast.error("Vui lòng đăng nhập để sử dụng AI Chat");
+        return;
+      }
       if (content.length > 1000) {
         toast.error("Tin nhắn không được vượt quá 1000 ký tự");
         return;
@@ -82,12 +76,11 @@ export const useChat = () => {
 
       const tempId = uuidv4();
 
-      // 1. Optimistic UI: Hiển thị tin nhắn user ngay
       const userMessage: IMessage = {
         id: tempId,
         role: "user",
         content: content.trim(),
-        timestamp: new Date().toISOString(), // ISO string cho Redux
+        timestamp: new Date().toISOString(), 
       };
 
       dispatch(addMessage(userMessage));
@@ -95,42 +88,37 @@ export const useChat = () => {
       dispatch(setSuggestedActions([])); // Clear suggested actions
 
       try {
-        // 2. Gọi API
         const response = await sendMessageMutation({
           message: content.trim(),
         }).unwrap();
 
-        // 3. Thêm tin nhắn AI vào UI
         const botMessage: IMessage = {
           id: uuidv4(),
           role: "assistant",
           content: response.response,
-          timestamp: response.timestamp, // Giữ nguyên ISO string từ BE
-          recommendedJobs: response.recommendedJobs, // Thêm recommended jobs nếu có
+          timestamp: response.timestamp, 
+          recommendedJobs: response.recommendedJobs, 
         };
 
         dispatch(addMessage(botMessage));
 
-        // 4. Cập nhật suggested actions nếu có
         if (response.suggestedActions && response.suggestedActions.length > 0) {
           dispatch(setSuggestedActions(response.suggestedActions));
         }
       } catch (error: any) {
         console.error("Failed to send message:", error);
 
-        // Thêm tin nhắn lỗi vào UI
         const errorMessage: IMessage = {
           id: uuidv4(),
           role: "assistant",
           content:
             error?.data?.message ||
             "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.",
-          timestamp: new Date().toISOString(), // ISO string cho Redux
+          timestamp: new Date().toISOString(), 
         };
 
         dispatch(addMessage(errorMessage));
 
-        // Hiển thị toast error
         if (error?.status === 429) {
           toast.error("Bạn đang gửi tin nhắn quá nhanh. Vui lòng chờ một chút.");
         } else {
@@ -140,13 +128,15 @@ export const useChat = () => {
         dispatch(setIsTyping(false));
       }
     },
-    [dispatch, sendMessageMutation]
+    [dispatch, sendMessageMutation, isAuthenticated]
   );
 
-  /**
-   * Xóa toàn bộ lịch sử chat
-   */
   const clearChat = useCallback(async () => {
+    if (!isAuthenticated) {
+      dispatch(clearMessages());
+      return;
+    }
+
     try {
       await clearChatHistoryMutation().unwrap();
       dispatch(clearMessages());
@@ -155,25 +145,16 @@ export const useChat = () => {
       console.error("Failed to clear chat:", error);
       toast.error("Không thể xóa lịch sử chat");
     }
-  }, [clearChatHistoryMutation, dispatch]);
+  }, [isAuthenticated, clearChatHistoryMutation, dispatch]);
 
-  /**
-   * Toggle chatbox mở/đóng
-   */
   const handleToggleChatbox = useCallback(() => {
     dispatch(toggleChatbox());
   }, [dispatch]);
 
-  /**
-   * Mở chatbox
-   */
   const openChatbox = useCallback(() => {
     dispatch(setIsOpen(true));
   }, [dispatch]);
 
-  /**
-   * Đóng chatbox
-   */
   const closeChatbox = useCallback(() => {
     dispatch(setIsOpen(false));
   }, [dispatch]);
@@ -184,6 +165,7 @@ export const useChat = () => {
     isTyping,
     suggestedActions,
     isOpen,
+    isAuthenticated,
 
     // Actions
     sendMessage,
