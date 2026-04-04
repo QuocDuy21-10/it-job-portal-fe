@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   BarChart3,
@@ -37,15 +38,35 @@ interface MenuItem {
   description?: string;
 }
 
+const VALID_TABS: PageType[] = [
+  "overview",
+  "my-cv",
+  "create-cv",
+  "my-jobs",
+  "email-subscription",
+  "notifications",
+  "settings",
+];
+
 interface ProfileSidebarProps {
-  currentPage: PageType;
-  onPageChange: (page: PageType) => void;
+  onExpandedChange?: (isExpanded: boolean) => void;
 }
 
 export default function ProfileSidebar({
-  currentPage,
-  onPageChange,
+  onExpandedChange,
 }: ProfileSidebarProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const currentPage: PageType = useMemo(() => {
+    const tab = searchParams.get("tab") as PageType;
+    return tab && VALID_TABS.includes(tab) ? tab : "overview";
+  }, [searchParams]);
+
+  const handlePageChange = (page: PageType) => {
+    router.push(`/profile?tab=${page}`, { scroll: false });
+  };
+
   // Auto-detect screen size và set initial state
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -59,8 +80,10 @@ export default function ProfileSidebar({
       // Desktop/Tablet: expanded, Mobile: collapsed
       if (!mobile && !isExpanded) {
         setIsExpanded(true);
+        onExpandedChange?.(true);
       } else if (mobile && isExpanded) {
         setIsExpanded(false);
+        onExpandedChange?.(false);
       }
     };
 
@@ -73,7 +96,9 @@ export default function ProfileSidebar({
   }, []);
 
   const handleToggle = () => {
-    setIsExpanded(!isExpanded);
+    const newExpanded = !isExpanded;
+    setIsExpanded(newExpanded);
+    onExpandedChange?.(newExpanded);
   };
   // Memoize menu items để tránh re-render không cần thiết
   const menuItems: MenuItem[] = useMemo(
@@ -197,7 +222,7 @@ export default function ProfileSidebar({
                 const navButton = (
                   <button
                     key={item.id}
-                    onClick={() => onPageChange(item.id)}
+                    onClick={() => handlePageChange(item.id)}
                     className={cn(
                       "w-full group flex items-center py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
                       isExpanded ? "px-3 gap-3" : "px-2 justify-center",

@@ -118,11 +118,11 @@ export default function EmailSubscriptionPage() {
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg">
                 <Mail className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold gradient-text-primary">
+                <h1 className="text-3xl font-bold text-primary">
                   Đăng ký nhận công việc
                 </h1>
                 <p className="text-muted-foreground mt-1">

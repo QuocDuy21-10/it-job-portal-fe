@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,10 @@ import { SectionCard } from "../shared/section-card";
 export default function SettingsPage({
   onNavigateToCCV,
 }: {
-  onNavigateToCCV: () => void;
+  onNavigateToCCV?: () => void;
 }) {
+  const router = useRouter();
+  const handleNavigateToCCV = onNavigateToCCV ?? (() => router.push("/profile?tab=create-cv", { scroll: false }));
   const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -97,7 +100,7 @@ export default function SettingsPage({
             </div>
           </div>
           <Button
-            onClick={onNavigateToCCV}
+            onClick={handleNavigateToCCV}
             className="bg-primary hover:bg-primary/90 w-full md:w-auto"
           >
             Cập nhật hồ sơ

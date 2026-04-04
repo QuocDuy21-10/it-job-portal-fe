@@ -7,13 +7,13 @@ import { Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GoogleOneTap } from "@/components/google-one-tap";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { getDefaultRoute } from "@/shared/constants/roles";
+import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
   LoginSchema,
@@ -80,20 +80,25 @@ function LoginContent() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const response = await login(data).unwrap();
-      
+
       if (response.statusCode === 201) {
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
+          setLoggingOutFlag(false);
         }
-        
+
         if (response.data?.user) {
           dispatch(setUserLoginInfo(response.data.user));
         }
-        
+
         toast.success("Welcome back! Login successful.");
-        
+
         const userRole = response.data?.user?.role?.name;
         const redirectUrl = getRedirectUrl(userRole);
+
+        // Đợi redux-persist lưu state vào localStorage trước khi redirect
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         router.push(redirectUrl);
       }
     } catch (error: any) {
@@ -123,16 +128,21 @@ function LoginContent() {
       if (response.statusCode === 201) {
         if (response.data?.access_token) {
           localStorage.setItem("access_token", response.data.access_token);
+          setLoggingOutFlag(false);
         }
-        
+
         if (response.data?.user) {
           dispatch(setUserLoginInfo(response.data.user));
         }
-        
+
         toast.success("Google login successful!");
-        
+
         const userRole = response.data?.user?.role?.name;
         const redirectUrl = getRedirectUrl(userRole);
+
+        // Đợi redux-persist lưu state vào localStorage trước khi redirect
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         router.push(redirectUrl);
       }
     } catch (error: any) {
@@ -159,12 +169,10 @@ function LoginContent() {
   };
 
   return (
-    <AuthLayout 
+    <AuthLayout
       title="Welcome Back to JobPortal"
       description="Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations."
     >
-      <GoogleOneTap disabled={isLoading || isGoogleLoading} />
-
       <AuthHeader
       />
 

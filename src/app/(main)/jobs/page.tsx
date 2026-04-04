@@ -186,19 +186,19 @@ export default function JobsPage() {
           </div>
         </div>
 
-        {/* Filter Bar */}
-        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-40">
+        {/* Filter Bar - Sticky on desktop only, static on mobile */}
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm lg:sticky lg:top-0 z-40">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 flex-1 overflow-x-auto">
-                {/* Toggle Filters Button */}
+                {/* Toggle Filters Button - Desktop only */}
                 <Tooltip.Root delayDuration={200}>
                   <Tooltip.Trigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowFilters(!showFilters)}
-                      className="hidden lg:flex items-center gap-2 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      className="hidden lg:flex items-center gap-2 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0"
                     >
                       <SlidersHorizontal className="w-4 h-4" />
                       Bộ lọc
@@ -220,53 +220,62 @@ export default function JobsPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowMobileFilters(!showMobileFilters)}
-                  className="lg:hidden flex items-center gap-2"
+                  className="lg:hidden flex items-center gap-2 flex-shrink-0"
                 >
                   <Filter className="w-4 h-4" />
                   Lọc
                   {activeFilterCount > 0 && (
-                    <Badge className="ml-1 bg-blue-600">{activeFilterCount}</Badge>
+                    <Badge className="ml-1 bg-blue-600 text-white">{activeFilterCount}</Badge>
                   )}
                 </Button>
 
-                {/* Active Filter Tags */}
-                <div className="flex items-center gap-2 flex-wrap">
+                {/* Active Filter Tags - Hide on small mobile when too many */}
+                <div className="hidden sm:flex items-center gap-2 flex-wrap">
                   {searchQuery && (
-                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
-                      Tìm: {searchQuery.substring(0, 20)}{searchQuery.length > 20 && '...'}
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
+                      Tìm: {searchQuery.substring(0, 15)}{searchQuery.length > 15 && '...'}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSearchInput("")} />
                     </Badge>
                   )}
                   {locationQuery && (
-                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       <MapPin className="w-3 h-3" />
                       {provinces.find(p => p.value === locationQuery)?.label || locationQuery}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setLocationInput("")} />
                     </Badge>
                   )}
                   {jobType !== "all" && (
-                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       {jobTypes.find(t => t.value === jobType)?.label}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setJobType("all")} />
                     </Badge>
                   )}
                   {experience !== "all" && (
-                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       {jobLevels.find(l => l.value === experience)?.label}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setExperience("all")} />
                     </Badge>
                   )}
                   {salaryRange !== "all" && (
-                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5">
+                    <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       <Wallet className="w-3 h-3" />
-                      {salaryRange === "0-10000000" && "Dưới 10 triệu"}
-                      {salaryRange === "10000000-20000000" && "10-20 triệu"}
-                      {salaryRange === "20000000-50000000" && "20-50 triệu"}
-                      {salaryRange === "50000000-999999999" && "Trên 50 triệu"}
+                      {salaryRange === "0-10000000" && "Dưới 10tr"}
+                      {salaryRange === "10000000-20000000" && "10-20tr"}
+                      {salaryRange === "20000000-50000000" && "20-50tr"}
+                      {salaryRange === "50000000-999999999" && "Trên 50tr"}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSalaryRange("all")} />
                     </Badge>
                   )}
                 </div>
+
+                {/* Mobile: Show active filter count instead of all badges */}
+                {activeFilterCount > 0 && (
+                  <div className="sm:hidden flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {activeFilterCount} bộ lọc đang áp dụng
+                    </Badge>
+                  </div>
+                )}
               </div>
 
               {/* Clear All Filters */}
@@ -277,10 +286,10 @@ export default function JobsPage() {
                       variant="ghost"
                       size="sm"
                       onClick={clearAllFilters}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-colors whitespace-nowrap"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-colors whitespace-nowrap flex-shrink-0"
                     >
-                      <X className="w-4 h-4 mr-1" />
-                      Xóa bộ lọc
+                      <X className="w-4 h-4 lg:mr-1" />
+                      <span className="hidden lg:inline">Xóa bộ lọc</span>
                     </Button>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
@@ -292,9 +301,10 @@ export default function JobsPage() {
                 </Tooltip.Root>
               )}
             </div>
-            {/* Advanced Filters Panel */}
-            {(showFilters || showMobileFilters) && (
-              <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+
+            {/* Desktop Advanced Filters Panel */}
+            {showFilters && (
+              <div className="hidden lg:block mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 animate-in slide-in-from-top-2 duration-200">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Location Single-Select */}
                   <div className="space-y-2">
@@ -374,6 +384,111 @@ export default function JobsPage() {
                 </div>
               </div>
             )}
+
+            {/* Mobile Advanced Filters Panel - Full width, collapsible */}
+            {showMobileFilters && (
+              <div className="lg:hidden mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 animate-in slide-in-from-top-2 duration-200">
+                <div className="space-y-4">
+                  {/* Location Single-Select */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-blue-600" />
+                      Địa điểm
+                    </label>
+                    <SingleSelect
+                      options={provinces}
+                      value={locationInput}
+                      onChange={setLocationInput}
+                      placeholder="Chọn tỉnh/thành phố..."
+                      searchPlaceholder="Tìm kiếm..."
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  {/* Job Type */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-purple-600" />
+                      Hình thức
+                    </label>
+                    <Select value={jobType} onValueChange={setJobType}>
+                      <SelectTrigger className="w-full bg-white dark:bg-slate-900">
+                        <SelectValue placeholder="Chọn hình thức" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobTypes.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Experience Level */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-emerald-600" />
+                      Cấp bậc
+                    </label>
+                    <Select value={experience} onValueChange={setExperience}>
+                      <SelectTrigger className="w-full bg-white dark:bg-slate-900">
+                        <SelectValue placeholder="Chọn cấp bậc" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobLevels.map((level) => (
+                          <SelectItem key={level.value} value={level.value}>
+                            {level.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Salary Range */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Wallet className="w-4 h-4 text-green-600" />
+                      Mức lương
+                    </label>
+                    <Select value={salaryRange} onValueChange={setSalaryRange}>
+                      <SelectTrigger className="w-full bg-white dark:bg-slate-900">
+                        <SelectValue placeholder="Chọn mức lương" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tất cả mức lương</SelectItem>
+                        <SelectItem value="0-10000000">Dưới 10 triệu</SelectItem>
+                        <SelectItem value="10000000-20000000">10 - 20 triệu</SelectItem>
+                        <SelectItem value="20000000-50000000">20 - 50 triệu</SelectItem>
+                        <SelectItem value="50000000-999999999">Trên 50 triệu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Apply/Close Button for Mobile */}
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={() => setShowMobileFilters(false)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Áp dụng
+                    </Button>
+                    {hasActiveFilters && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          clearAllFilters();
+                          setShowMobileFilters(false);
+                        }}
+                        className="flex-1 text-red-600 border-red-300 hover:bg-red-50"
+                      >
+                        Xóa bộ lọc
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -436,7 +551,7 @@ export default function JobsPage() {
                 {hasActiveFilters && (
                   <Button
                     onClick={clearAllFilters}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     Xóa tất cả bộ lọc
                   </Button>

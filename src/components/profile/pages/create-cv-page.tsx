@@ -22,73 +22,7 @@ import ProjectsSection from "@/components/cv/sections/projects-section";
 import CertificatesSection from "@/components/cv/sections/certificates-section";
 import AwardsSection from "@/components/cv/sections/awards-section";
 import CompletionProgress from "@/components/cv/completion-progress";
-
-interface CVData {
-  _id?: string;
-  userId?: string;
-  personalInfo: {
-    avatar?: string;
-    title?: string;
-    fullName: string;
-    phone: string;
-    email: string;
-    birthday?: Date;
-    gender?: "male" | "female" | "other";
-    address?: string;
-    personalLink?: string;
-    bio?: string;
-  };
-  education: Array<{
-    id: string;
-    school: string;
-    degree: string;
-    field: string;
-    startDate: Date | string;
-    endDate?: Date | string;
-    description?: string;
-  }>;
-  experience: Array<{
-    id: string;
-    company: string;
-    position: string;
-    startDate: Date | string;
-    endDate?: Date | string;
-    description?: string;
-  }>;
-  skills: Array<{
-    id: string;
-    name: string;
-    level: string;
-  }>;
-  languages: Array<{
-    id: string;
-    name: string;
-    proficiency: string;
-  }>;
-  projects: Array<{
-    id: string;
-    name: string;
-    position: string;
-    description: string;
-    link?: string;
-  }>;
-  certificates: Array<{
-    id: string;
-    name: string;
-    issuer: string;
-    date: Date | string;
-  }>;
-  awards: Array<{
-    id: string;
-    name: string;
-    date: Date | string;
-    description?: string;
-  }>;
-  isActive?: boolean;
-  lastUpdated?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { CVData, ICVProfile } from "@/shared/types/cv";
 
 const initialCVData: CVData = {
   personalInfo: {
@@ -384,65 +318,6 @@ export default function CreateCVPage() {
     }
   }, [error, clearError]);
 
-  // Validation summary helper
-  // const getValidationErrors = () => {
-  //   const dataToValidate: UpsertCVProfileRequest = {
-  //     personalInfo: {
-  //       fullName: cvData.personalInfo.fullName,
-  //       phone: cvData.personalInfo.phone,
-  //       email: cvData.personalInfo.email,
-  //       birthday: cvData.personalInfo.birthday || undefined,
-  //       gender: cvData.personalInfo.gender || "male",
-  //       address: cvData.personalInfo.address || undefined,
-  //       personalLink: cvData.personalInfo.personalLink || undefined,
-  //       bio: cvData.personalInfo.bio || undefined,
-  //     },
-  //     education: cvData.education.map(edu => ({
-  //       school: edu.school,
-  //       degree: edu.degree,
-  //       field: edu.field,
-  //       startDate: typeof edu.startDate === 'string' ? edu.startDate : edu.startDate.toISOString(),
-  //       endDate: edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : edu.endDate.toISOString()) : undefined,
-  //       description: edu.description || undefined,
-  //     })),
-  //     experience: cvData.experience.map(exp => ({
-  //       company: exp.company,
-  //       position: exp.position,
-  //       startDate: typeof exp.startDate === 'string' ? exp.startDate : exp.startDate.toISOString(),
-  //       endDate: exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : exp.endDate.toISOString()) : undefined,
-  //       description: exp.description || undefined,
-  //     })),
-  //     skills: cvData.skills.map(skill => ({
-  //       name: skill.name,
-  //       level: skill.level,
-  //     })),
-  //     languages: cvData.languages.map(lang => ({
-  //       name: lang.name,
-  //       proficiency: lang.proficiency,
-  //     })),
-  //     projects: cvData.projects.map(proj => ({
-  //       name: proj.name,
-  //       description: proj.description,
-  //       link: proj.link || undefined,
-  //     })),
-  //     certificates: cvData.certificates.map(cert => ({
-  //       name: cert.name,
-  //       issuer: cert.issuer,
-  //       date: typeof cert.date === 'string' ? cert.date : cert.date.toISOString(),
-  //     })),
-  //     awards: cvData.awards.map(award => ({
-  //       name: award.name,
-  //       date: typeof award.date === 'string' ? award.date : award.date.toISOString(),
-  //       description: award.description || undefined,
-  //     })),
-  //   };
-
-  //   const result = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
-  //   return result.success ? [] : result.error.issues;
-  // };
-
-  // const validationErrors = getValidationErrors();
-
   return (
     <div className="bg-background min-h-screen">
       {/* Gradient Header */}
@@ -476,40 +351,6 @@ export default function CreateCVPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Form Content */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Validation Errors Summary */}
-              {/* {validationErrors.length > 0 && (
-                <div className="bg-gradient-to-r from-destructive/10 to-destructive/5 border-l-4 border-destructive rounded-lg p-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-destructive/10">
-                      <AlertCircle className="w-5 h-5 text-destructive" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-destructive mb-3 text-lg">
-                        Vui lòng sửa {validationErrors.length} lỗi sau
-                      </h3>
-                      <ul className="space-y-2 text-sm text-destructive/90">
-                        {validationErrors.slice(0, 5).map((error, index) => (
-                          <li key={index} className="flex items-start gap-2 pl-2 border-l-2 border-destructive/30">
-                            <span className="text-destructive font-bold mt-0.5">→</span>
-                            <span className="font-medium">
-                              <span className="text-destructive/70">{error.path.join(' → ')}:</span>{' '}
-                              {error.message}
-                            </span>
-                          </li>
-                        ))}
-                        {validationErrors.length > 5 && (
-                          <li className="text-xs text-muted-foreground italic mt-3 pl-2">
-                            ... và {validationErrors.length - 5} lỗi khác
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )} */}
-
-
-
               {/* Form Sections */}
               <PersonalInfoSection
                 personalInfo={cvData.personalInfo}
@@ -694,14 +535,27 @@ export default function CreateCVPage() {
               />
             </div>
 
-            {/* Sidebar - Completion Progress */}
-            <div className="lg:col-span-1">
-              <CompletionProgress 
-                cvData={cvData}
-                onSave={handleUpdateCV}
-                isSaving={isLoading}
-                // validationErrors={validationErrors}
-              />
+            {/* Sidebar - Completion Progress - Desktop sticky, Mobile floating */}
+            <div className="lg:col-span-1 self-start">
+              {/* Desktop Sticky Sidebar */}
+              <div className="hidden lg:block sticky top-[4.5rem] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                <CompletionProgress 
+                  cvData={cvData}
+                  onSave={handleUpdateCV}
+                  isSaving={isLoading}
+                  // validationErrors={validationErrors}
+                />
+              </div>
+
+              {/* Mobile Floating Action Buttons */}
+              <div className="lg:hidden fixed bottom-6 right-4 z-50 flex flex-col gap-3">
+                <CompletionProgress 
+                  cvData={cvData}
+                  onSave={handleUpdateCV}
+                  isSaving={isLoading}
+                  isMobile
+                />
+              </div>
             </div>
           </div>
         )}
