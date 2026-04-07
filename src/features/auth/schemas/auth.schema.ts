@@ -60,15 +60,6 @@ export const LoginResponseSchema = z.object({
       _id: z.string(),
       name: z.string(),
     }),
-    permissions: z.array(
-      z.object({
-        _id: z.string(),
-        name: z.string(),
-        apiPath: z.string(),
-        method: z.string(),
-        module: z.string(),
-      })
-    ),
     savedJobs: z.array(z.string()),
     companyFollowed: z.array(z.string()),
   }),
@@ -309,15 +300,9 @@ export const AuthStateSchema = z.object({
         _id: z.string(),
         name: z.string(),
       }),
-      permissions: z.array(
-        z.object({
-          _id: z.string(),
-          name: z.string(),
-          apiPath: z.string(),
-          method: z.string(),
-          module: z.string(),
-        })
-      ),
+      jobFavorites: z.array(z.string()).optional(),
+      savedJobs: z.array(z.string()).optional(),
+      companyFollowed: z.array(z.string()).optional(),
     })
     .nullable(),
   isLoading: z.boolean(),
@@ -327,14 +312,6 @@ export const AuthStateSchema = z.object({
 });
 
 export type AuthState = z.infer<typeof AuthStateSchema>;
-
-export interface Permission {
-  _id: string;
-  name: string;
-  apiPath: string;
-  method: string;
-  module: string;
-}
 
 export interface Role {
   _id: string;
@@ -347,6 +324,7 @@ export interface UserInfo {
   avatar: string | null;
   name: string;
   role: Role;
-  permissions: Permission[];
   jobFavorites?: string[];
+  savedJobs?: string[];
+  companyFollowed?: string[];
 }

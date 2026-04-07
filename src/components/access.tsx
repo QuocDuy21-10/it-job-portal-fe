@@ -1,73 +1,36 @@
-/**
- * Access Control Component
- * Kiểm tra quyền và render children dựa trên permission
- * 
- * @example
- * // Ẩn hoàn toàn nếu không có quyền
- * <Access permission={ALL_PERMISSIONS.COMPANIES.UPDATE} hideChildren>
- *   <Button>Edit</Button>
- * </Access>
- * 
- * // Hiển thị message "Access Denied" nếu không có quyền
- * <Access permission={ALL_PERMISSIONS.COMPANIES.GET_PAGINATE}>
- *   <Table>...</Table>
- * </Access>
- */
-
 "use client";
 
 import React from "react";
-import { useCheckPermission } from "@/hooks/use-check-permission";
-
-interface Permission {
-  method: string;
-  apiPath: string;
-  module: string;
-}
+import { useAbility } from "@/lib/casl/casl-provider";
+import type { EAction, ESubject } from "@/lib/casl/ability";
 
 interface AccessProps {
-  /** Quyền cần kiểm tra */
-  permission: Permission;
-  
-  /** Nếu true: ẩn hoàn toàn khi không có quyền. Nếu false: hiển thị message "Access Denied" */
+  action: EAction;
+  subject: ESubject;
   hideChildren?: boolean;
-  
-  /** Nội dung cần render nếu có quyền */
   children: React.ReactNode;
-  
-  /** Custom message khi không có quyền (chỉ dùng khi hideChildren=false) */
   deniedMessage?: string;
 }
 
-/**
- * Component kiểm tra quyền truy cập
- * - Nếu có quyền → render children
- * - Nếu không có quyền:
- *   + hideChildren = true → không render gì
- *   + hideChildren = false → hiển thị message "Access Denied"
- */
 export function Access({
-  permission,
+  action,
+  subject,
   hideChildren = false,
   children,
   deniedMessage = "Bạn không có quyền truy cập tính năng này.",
 }: AccessProps) {
-  const { hasPermission } = useCheckPermission();
+  const ability = useAbility();
 
-  // Kiểm tra quyền
-  const isAllowed = hasPermission(permission);
+  const isAllowed = ability.can(action, subject);
 
-  // Có quyền → render children
   if (isAllowed) {
     return <>{children}</>;
   }
 
-  // Không có quyền và hideChildren = true → ẩn hoàn toàn
   if (hideChildren) {
     return null;
   }
 
-  // Không có quyền và hideChildren = false → hiển thị message
   return (
     <div className="flex items-center justify-center py-8 px-4">
       <div className="text-center">

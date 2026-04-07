@@ -9,6 +9,7 @@ import { ClientLayout } from "@/components/client-layout";
 import { AuthModal } from "@/components/modals/auth-modal";
 import { AuthInitializer } from "@/components/auth-initializer";
 import ReduxProvider from "@/lib/redux/provider";
+import { CaslProvider } from "@/lib/casl/casl-provider";
 import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
 import { SocketProvider } from "@/lib/socket/socket-provider";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
      <body className={`${roboto.variable} font-sans flex min-h-screen flex-col`}>
         <ReduxProvider>
+          <CaslProvider>
           <GoogleOAuthProvider>
             <ThemeProvider>
               <I18nProvider>
@@ -52,6 +54,7 @@ export default function RootLayout({
               </I18nProvider>
             </ThemeProvider>
           </GoogleOAuthProvider>
+          </CaslProvider>
         </ReduxProvider>
       </body>
     </html>

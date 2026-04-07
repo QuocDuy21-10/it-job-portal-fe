@@ -5,7 +5,6 @@
 
 export const ROLES = {
   SUPER_ADMIN: "SUPER ADMIN",
-  ADMIN: "ADMIN",
   HR: "HR",
   NORMAL_USER: "NORMAL USER",
 } as const;
@@ -17,7 +16,6 @@ export type RoleName = (typeof ROLES)[keyof typeof ROLES];
  */
 export const DEFAULT_ROUTES_BY_ROLE: Record<string, string> = {
   [ROLES.SUPER_ADMIN]: "/admin",
-  [ROLES.ADMIN]: "/admin",
   [ROLES.HR]: "/admin/resumes",
   [ROLES.NORMAL_USER]: "/",
 };
@@ -38,7 +36,7 @@ export function getDefaultRoute(role?: string): string {
  */
 export function isAdminRole(role?: string): boolean {
   if (!role) return false;
-  return role === ROLES.SUPER_ADMIN || role === ROLES.ADMIN || role === ROLES.HR;
+  return role === ROLES.SUPER_ADMIN || role === ROLES.HR;
 }
 
 /**

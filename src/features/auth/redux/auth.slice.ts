@@ -75,8 +75,6 @@ const authSlice = createSlice({
               _id: userData.role._id,
               name: userData.role.name,
             },
-            permissions: userData.permissions || [],
-            savedJobs: userData.savedJobs || [],
           };
           state.isAuthenticated = true;
         }
@@ -105,7 +103,6 @@ const authSlice = createSlice({
               _id: userData.role._id,
               name: userData.role.name,
             },
-            permissions: userData.permissions || [],
             jobFavorites: userData.jobFavorites || [],
           };
           state.isAuthenticated = true;
@@ -165,7 +162,6 @@ const authSlice = createSlice({
                 _id: userData.role._id,
                 name: userData.role.name,
               },
-              permissions: userData.permissions || [],
               jobFavorites: userData.jobFavorites || [],
             };
             state.isAuthenticated = true;
@@ -236,12 +232,6 @@ export const selectErrorRefreshToken = (state: { auth: AuthState }) =>
 export const selectUserRole = (state: { auth: AuthState }) =>
   state.auth.user?.role.name;
 
-// ✅ FIX: Sử dụng createSelector để memoize permissions
-export const selectUserPermissions = createSelector(
-  [selectUser],
-  (user) => user?.permissions ?? []
-);
-
 // Selector để check role
 export const selectHasRole =
   (roleName: string) => (state: { auth: AuthState }) => {
@@ -269,5 +259,5 @@ export const selectJobFavorites = createSelector(
 // ✅ NEW: Selector để lấy companyFollowing
 export const selectCompanyFollowing = createSelector(
   [selectUser],
-  (user) => user?.companyFollowing ?? []
+  (user) => user?.companyFollowed ?? []
 );

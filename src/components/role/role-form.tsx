@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { PermissionSelect } from "../permission/permission-select";
 
 interface RoleFormProps {
   initialData?: Partial<CreateRoleFormData>;
@@ -37,7 +36,6 @@ export function RoleForm({ initialData, onSubmit, isLoading }: RoleFormProps) {
       name: initialData?.name || "",
       description: initialData?.description || "",
       isActive: initialData?.isActive ?? true,
-      permissions: initialData?.permissions || [],
     },
     mode: "onChange",
   });
@@ -118,26 +116,6 @@ export function RoleForm({ initialData, onSubmit, isLoading }: RoleFormProps) {
             )}
           />
         </div>
-
-        <FormField
-          control={form.control}
-          name="permissions"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Permissions <span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <PermissionSelect
-                  selectedPermissions={field.value}
-                  onChange={field.onChange}
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <div className="flex justify-end gap-2">
           <Button type="submit" disabled={isLoading || !form.formState.isValid}>

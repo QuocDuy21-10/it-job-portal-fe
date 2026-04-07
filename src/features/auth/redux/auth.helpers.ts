@@ -9,16 +9,6 @@ export const updateUserLoginInfo = (dispatch: AppDispatch, user: UserInfo) => {
   dispatch(setUserLoginInfo(user));
 };
 
-export const checkPermission = (
-  permissions: UserInfo["permissions"],
-  module: string,
-  method: string
-): boolean => {
-  return permissions.some(
-    (permission) => permission.module === module && permission.method === method
-  );
-};
-
 export const checkRole = (userRole: string, requiredRole: string): boolean => {
   return userRole === requiredRole;
 };

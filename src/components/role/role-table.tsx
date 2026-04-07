@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import { Role } from "@/features/role/schemas/role.schema";
 import { Access } from "@/components/access";
-import { ALL_PERMISSIONS } from "@/shared/config/permissions";
+import { EAction } from "@/lib/casl/ability";
 
 interface RoleTableProps {
   roles: Role[];
@@ -43,7 +43,7 @@ export function RoleTable({
   }
 
   return (
-    <Access permission={ALL_PERMISSIONS.ROLES.GET_PAGINATE}>
+    <Access action={EAction.READ} subject="Role">
       <TooltipProvider>
         <div className="admin-card">
           <Table>
@@ -164,7 +164,7 @@ function RoleTableRow({
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Access permission={ALL_PERMISSIONS.ROLES.UPDATE} hideChildren>
+          <Access action={EAction.UPDATE} subject="Role" hideChildren>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -181,7 +181,7 @@ function RoleTableRow({
               </TooltipContent>
             </Tooltip>
           </Access>
-          <Access permission={ALL_PERMISSIONS.ROLES.DELETE} hideChildren>
+          <Access action={EAction.DELETE} subject="Role" hideChildren>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

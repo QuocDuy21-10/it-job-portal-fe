@@ -19,7 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/features/user/schemas/user.schema";
 import { useGetRoleQuery } from "@/features/role/redux/role.api";
 import { Access } from "@/components/access";
-import { ALL_PERMISSIONS } from "@/shared/config/permissions";
+import { EAction } from "@/lib/casl/ability";
 import { cn } from "@/lib/utils";
 
 interface UserTableProps {
@@ -44,7 +44,7 @@ export function UserTable({
   }
 
   return (
-    <Access permission={ALL_PERMISSIONS.USERS.GET_PAGINATE}>
+    <Access action={EAction.READ} subject="User">
       <div className="admin-card overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -251,7 +251,7 @@ function UserTableRow({
       <TableCell className="text-right">
         <TooltipProvider>
           <div className="flex justify-end gap-1">
-            <Access permission={ALL_PERMISSIONS.USERS.UPDATE} hideChildren>
+            <Access action={EAction.UPDATE} subject="User" hideChildren>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -268,7 +268,7 @@ function UserTableRow({
               </Tooltip>
             </Access>
 
-            <Access permission={ALL_PERMISSIONS.USERS.DELETE} hideChildren>
+            <Access action={EAction.DELETE} subject="User" hideChildren>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button

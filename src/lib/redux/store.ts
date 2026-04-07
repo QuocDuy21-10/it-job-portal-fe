@@ -9,7 +9,6 @@ import companyReducer from '@/features/company/redux/company.slice';
 import userReducer from '@/features/user/redux/user.slice';
 import jobReducer from '@/features/job/redux/job.slice';
 import resumeReducer from '@/features/resume/redux/resume.slice';
-import permissionReducer from '@/features/permission/redux/permission.slice';
 import roleReducer from '@/features/role/redux/role.slice';
 import chatBotReducer from '@/features/chatbot/redux/chat-bot.slice';
 import notificationReducer from '@/features/notification/redux/notification.slice';
@@ -32,7 +31,6 @@ export const store = configureStore({
     user: userReducer,
     job: jobReducer,
     resume: resumeReducer,
-    permission: permissionReducer,
     role: roleReducer,
     chatBot: chatBotReducer,
     notification: notificationReducer,

@@ -6,7 +6,6 @@ export const RoleSchema = z.object({
     .string()
     .min(2, "Role description must be at least 2 characters"),
   isActive: z.boolean(),
-  permissions: z.array(z.string()),
 });
 
 export const RoleEntitySchema = RoleSchema.extend({

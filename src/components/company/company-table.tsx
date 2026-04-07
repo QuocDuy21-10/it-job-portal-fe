@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Company } from "@/features/company/schemas/company.schema";
 import { Access } from "@/components/access";
-import { ALL_PERMISSIONS } from "@/shared/config/permissions";
+import { EAction } from "@/lib/casl/ability";
 
 interface CompanyTableProps {
   companies: Company[];
@@ -42,7 +42,7 @@ export function CompanyTable({
   }
 
   return (
-    <Access permission={ALL_PERMISSIONS.COMPANIES.GET_PAGINATE}>
+    <Access action={EAction.READ} subject="Company">
       <TooltipProvider>
         <div className="admin-card">
           <Table>
@@ -167,7 +167,7 @@ function CompanyTableRow({
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Access permission={ALL_PERMISSIONS.COMPANIES.UPDATE} hideChildren>
+          <Access action={EAction.UPDATE} subject="Company" hideChildren>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -184,7 +184,7 @@ function CompanyTableRow({
               </TooltipContent>
             </Tooltip>
           </Access>
-          <Access permission={ALL_PERMISSIONS.COMPANIES.DELETE} hideChildren>
+          <Access action={EAction.DELETE} subject="Company" hideChildren>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

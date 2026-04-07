@@ -106,7 +106,6 @@ describe("Header", () => {
           _id: "role-1",
           name: "NORMAL USER",
         },
-        permissions: [],
         jobFavorites: [],
       },
       isAuthenticated: true,

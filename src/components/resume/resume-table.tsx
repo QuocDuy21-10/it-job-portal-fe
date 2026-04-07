@@ -20,7 +20,7 @@ import {
 import { Resume } from "@/features/resume/schemas/resume.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { Access } from "@/components/access";
-import { ALL_PERMISSIONS } from "@/shared/config/permissions";
+import { EAction } from "@/lib/casl/ability";
 
 interface ResumeTableProps {
   resumes: Resume[];
@@ -42,7 +42,7 @@ export function ResumeTable({
   }
 
   return (
-    <Access permission={ALL_PERMISSIONS.RESUMES.GET_PAGINATE}>
+    <Access action={EAction.READ} subject="Resume">
       <TooltipProvider>
         <div className="admin-card">
           <Table>
@@ -218,7 +218,7 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Access permission={ALL_PERMISSIONS.RESUMES.UPDATE} hideChildren>
+          <Access action={EAction.UPDATE} subject="Resume" hideChildren>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

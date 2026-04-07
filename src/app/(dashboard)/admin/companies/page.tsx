@@ -12,7 +12,7 @@ import { CompanyTable } from "@/components/company/company-table";
 import { CompanyDialog } from "@/components/company/company-dialog";
 import { Company } from "@/features/company/schemas/company.schema";
 import { Access } from "@/components/access";
-import { ALL_PERMISSIONS } from "@/shared/config/permissions";
+import { EAction } from "@/lib/casl/ability";
 import provinces from "@/shared/data/provinces.json";
 
 export default function CompaniesPage() {
@@ -100,7 +100,7 @@ export default function CompaniesPage() {
           </div>
         </div>
 
-        <Access permission={ALL_PERMISSIONS.COMPANIES.CREATE} hideChildren>
+        <Access action={EAction.CREATE} subject="Company" hideChildren>
           <Button onClick={() => handleOpenDialog()} className="gap-2">
             <Plus className="h-4 w-4" />
             Add Company
