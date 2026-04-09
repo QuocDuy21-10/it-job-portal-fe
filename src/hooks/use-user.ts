@@ -5,7 +5,11 @@ import {
   useDeleteUserMutation,
   useUpdateUserMutation,
 } from "@/features/user/redux/user.api";
-import { CreateUserFormData, User } from "@/features/user/schemas/user.schema";
+import {
+  CreateUserFormData,
+  UpdateUserFormData,
+  User,
+} from "@/features/user/schemas/user.schema";
 
 export function useUserOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -32,19 +36,21 @@ export function useUserOperations() {
   };
 
   // Handle submit (create or update)
-  const handleSubmit = async (formData: CreateUserFormData) => {
+  const handleSubmit = async (
+    formData: CreateUserFormData | UpdateUserFormData
+  ) => {
     try {
       if (editingUser) {
         // Update user
-        const response = await updateUser({
+        await updateUser({
           id: editingUser._id,
-          data: formData,
+          data: formData as UpdateUserFormData,
         }).unwrap();
 
         toast.success("Cập nhật người dùng thành công!");
       } else {
         // Create user
-        const response = await createUser(formData).unwrap();
+        await createUser(formData as CreateUserFormData).unwrap();
 
         toast.success("Tạo người dùng thành công!");
       }

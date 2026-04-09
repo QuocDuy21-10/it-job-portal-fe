@@ -1,5 +1,5 @@
-import { CompanySchema } from "@/features/company/schemas/company.schema";
 import { z } from "zod";
+import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
 
 export const JobSchema = z.object({
   name: z
@@ -9,7 +9,10 @@ export const JobSchema = z.object({
   skills: z.array(z.string()).min(1, "Phải có ít nhất một kỹ năng"),
   company: z
     .object({
-      _id: z.string().min(1, "Company ID không được để trống"),
+      _id: mongoIdStringSchema({
+        requiredMessage: "Company ID không được để trống",
+        invalidMessage: "Company ID phải là MongoDB ObjectId hợp lệ",
+      }),
       name: z.string().min(1, "Company name không được để trống"),
       logo: z.string().nullable(),
     })

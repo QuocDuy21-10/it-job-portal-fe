@@ -1,24 +1,29 @@
 import { z } from "zod";
+import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
 
-// Schema cho Create User
-export const CreateUserSchema = z.object({
+const UserCompanySchema = z
+  .object({
+    _id: mongoIdStringSchema({
+      requiredMessage: "Company is required",
+      invalidMessage: "Company ID must be a valid MongoDB ObjectId",
+    }).optional(),
+    name: z.string().optional(),
+    logo: z.string().optional(),
+  })
+  .optional();
+
+const createUserSchemaBase = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  company: z
-    .object({
-      _id: z.string().optional(),
-      name: z.string().optional(),
-      logo: z.string().optional(),
-    })
-    .optional(),
-  role: z
-    .string()
-    .refine((role) => role !== "", { message: "Role is required" }),
+  company: UserCompanySchema,
+  role: mongoIdStringSchema({
+    requiredMessage: "Role is required",
+    invalidMessage: "Role must be a valid MongoDB ObjectId",
+  }),
 });
 
-// Schema cho Update User (password là optional)
-export const UpdateUserSchema = z.object({
+const updateUserSchemaBase = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z
@@ -26,17 +31,42 @@ export const UpdateUserSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .optional()
     .or(z.literal("")),
-  company: z
-    .object({
-      _id: z.string().optional(),
-      name: z.string().optional(),
-      logo: z.string().optional(),
-    })
-    .optional(),
-  role: z
-    .string()
-    .refine((role) => role !== "", { message: "Role is required" }),
+  company: UserCompanySchema,
+  role: mongoIdStringSchema({
+    requiredMessage: "Role is required",
+    invalidMessage: "Role must be a valid MongoDB ObjectId",
+  }),
 });
+
+const withHrCompanyRequirement = <
+  TSchema extends typeof createUserSchemaBase | typeof updateUserSchemaBase
+>(
+  schema: TSchema,
+  hrRoleId?: string
+) =>
+  schema.superRefine((data, ctx) => {
+    if (!hrRoleId || data.role !== hrRoleId) {
+      return;
+    }
+
+    if (!data.company?._id) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["company", "_id"],
+        message: "Company is required for HR role",
+      });
+    }
+  });
+
+// Schema cho Create User
+export const CreateUserSchema = createUserSchemaBase;
+export const createUserFormSchema = (hrRoleId?: string) =>
+  withHrCompanyRequirement(createUserSchemaBase, hrRoleId);
+
+// Schema cho Update User (password là optional)
+export const UpdateUserSchema = updateUserSchemaBase;
+export const updateUserFormSchema = (hrRoleId?: string) =>
+  withHrCompanyRequirement(updateUserSchemaBase, hrRoleId);
 
 // Giữ lại UserSchema cũ để backward compatible
 export const UserSchema = CreateUserSchema;

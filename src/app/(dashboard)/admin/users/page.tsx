@@ -96,7 +96,7 @@ export default function UsersPage() {
   }, []);
 
   const handleSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
-    await handleUserSubmit(formData);
+    return handleUserSubmit(formData);
   };
 
   return (
