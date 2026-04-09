@@ -158,6 +158,7 @@ export const en = {
       bioLabel: "Bio",
       bioPlaceholder: "Tell us about yourself...",
       uploadAvatar: "Upload Photo",
+      updateAvatar: "Update avatar",
       avatarFormat: "Format: JPG, PNG (Max 5MB)",
       cancelButton: "Cancel",
       saveButton: "Save Changes",

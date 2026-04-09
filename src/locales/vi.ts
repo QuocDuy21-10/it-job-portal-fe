@@ -164,6 +164,7 @@ export const vi = {
       bioLabel: "Giới thiệu",
       bioPlaceholder: "Giới thiệu về bản thân...",
       uploadAvatar: "Tải ảnh lên",
+      updateAvatar: "Cập nhật ảnh đại diện",
       avatarFormat: "Định dạng: JPG, PNG (Max 5MB)",
       cancelButton: "Hủy",
       saveButton: "Lưu thay đổi",

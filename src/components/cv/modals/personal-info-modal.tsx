@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X, Upload, Trash2, Camera, AlertCircle, Briefcase } from "lucide-react";
+import { X, Upload, Camera, AlertCircle, Briefcase } from "lucide-react";
 import { PersonalInfoSchema, PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 
@@ -93,13 +93,7 @@ export default function PersonalInfoModal({
     }
   };
 
-  const handleRemoveAvatar = () => {
-    setAvatarPreview(null);
-    setAvatarFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  const hasAvatar = Boolean(avatarPreview || initialData?.avatar);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -130,15 +124,7 @@ export default function PersonalInfoModal({
                   </div>
                 )}
               </div>
-              {avatarPreview && (
-                <button
-                  type="button"
-                  onClick={handleRemoveAvatar}
-                  className="absolute -top-2 -right-2 p-2 bg-destructive hover:bg-destructive/90 rounded-full shadow-lg transition-all hover:scale-110"
-                >
-                  <Trash2 className="w-4 h-4 text-destructive-foreground" />
-                </button>
-              )}
+              {/* Removed in-modal remove avatar button per design request */}
             </div>
             
             <input
@@ -156,7 +142,7 @@ export default function PersonalInfoModal({
               className="hover:bg-primary/10 hover:border-primary/30"
             >
               <Upload className="w-4 h-4 mr-2" />
-              {t("cv.personalInfo.uploadAvatar")}
+              {hasAvatar ? t("cv.personalInfo.updateAvatar") : t("cv.personalInfo.uploadAvatar")}
             </Button>
             <p className="text-xs text-muted-foreground text-center">
               {t("cv.personalInfo.avatarFormat")}

@@ -1,5 +1,11 @@
 "use client"
 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  XCircle,
+} from "lucide-react"
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
 
@@ -13,9 +19,15 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       position="top-right"
-      richColors={false} 
+      richColors={false}
       expand={true}
       duration={2000}
+      icons={{
+        success: <CheckCircle className="h-5 w-5" />,
+        error: <XCircle className="h-5 w-5" />,
+        warning: <AlertTriangle className="h-5 w-5" />,
+        info: <Info className="h-5 w-5" />,
+      }}
       toastOptions={{
         classNames: {
           toast:
@@ -25,15 +37,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
             "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
           cancelButton:
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-          
-          success: 
-            "group-[.toaster]:!bg-green-600 group-[.toaster]:!text-white group-[.toaster]:!border-green-600",
-          error: 
-            "group-[.toaster]:!bg-red-600 group-[.toaster]:!text-white group-[.toaster]:!border-red-600",
-          warning: 
-            "group-[.toaster]:!bg-amber-500 group-[.toaster]:!text-white group-[.toaster]:!border-amber-500",
-          info: 
-            "group-[.toaster]:!bg-blue-500 group-[.toaster]:!text-white group-[.toaster]:!border-blue-500",
+
+          success:
+            "group-[.toaster]:!bg-background group-[.toaster]:!text-green-600 group-[.toaster]:!border-l-4 group-[.toaster]:!border-l-green-600",
+          error:
+            "group-[.toaster]:!bg-background group-[.toaster]:!text-red-600 group-[.toaster]:!border-l-4 group-[.toaster]:!border-l-red-600",
+          warning:
+            "group-[.toaster]:!bg-background group-[.toaster]:!text-amber-500 group-[.toaster]:!border-l-4 group-[.toaster]:!border-l-amber-500",
+          info: "group-[.toaster]:!bg-background group-[.toaster]:!text-blue-500 group-[.toaster]:!border-l-4 group-[.toaster]:!border-l-blue-500",
         },
       }}
       {...props}
