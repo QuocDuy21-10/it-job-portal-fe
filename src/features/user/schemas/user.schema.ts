@@ -79,6 +79,15 @@ export const UserEntitySchema = CreateUserSchema.extend({
   savedJobs: z.array(z.string()).optional().default([]),
   jobFavorites: z.array(z.string()).optional().default([]),
   companyFollowing: z.array(z.string()).optional().default([]),
+  isLocked: z.boolean().optional().default(false),
+  lockReason: z.string().optional(),
+  lockedAt: z.string().optional(),
+  lockedBy: z
+    .object({
+      _id: z.string(),
+      email: z.string(),
+    })
+    .optional(),
   createdBy: z
     .object({
       _id: z.string(),

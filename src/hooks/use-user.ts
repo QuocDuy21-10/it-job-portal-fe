@@ -4,6 +4,8 @@ import {
   useCreateUserMutation,
   useDeleteUserMutation,
   useUpdateUserMutation,
+  useLockUserMutation,
+  useUnlockUserMutation,
 } from "@/features/user/redux/user.api";
 import {
   CreateUserFormData,
@@ -14,11 +16,14 @@ import {
 export function useUserOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [lockingUser, setLockingUser] = useState<User | null>(null);
 
   // RTK Query mutations
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
+  const [lockUser, { isLoading: isLocking }] = useLockUserMutation();
+  const [unlockUser, { isLoading: isUnlocking }] = useUnlockUserMutation();
 
   // Open dialog for create or edit
   const handleOpenDialog = (user?: User) => {
@@ -96,15 +101,61 @@ export function useUserOperations() {
     }
   };
 
+  // Open lock confirmation dialog
+  const handleOpenLockDialog = (user: User) => {
+    setLockingUser(user);
+  };
+
+  // Close lock confirmation dialog
+  const handleCloseLockDialog = () => {
+    setLockingUser(null);
+  };
+
+  // Confirm lock with optional reason
+  const handleConfirmLock = async (reason?: string) => {
+    if (!lockingUser) return;
+
+    try {
+      await lockUser({ id: lockingUser._id, reason }).unwrap();
+      toast.success(`Đã khóa tài khoản "${lockingUser.name}" thành công!`);
+      handleCloseLockDialog();
+    } catch (error: any) {
+      console.error("Lock user error:", error);
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Không thể khóa tài khoản. Vui lòng thử lại.";
+      toast.error(errorMessage);
+    }
+  };
+
+  // Unlock user account
+  const handleUnlock = async (id: string) => {
+    try {
+      await unlockUser(id).unwrap();
+      toast.success("Đã mở khóa tài khoản thành công!");
+    } catch (error: any) {
+      console.error("Unlock user error:", error);
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Không thể mở khóa tài khoản. Vui lòng thử lại.";
+      toast.error(errorMessage);
+    }
+  };
+
   return {
     // State
     isDialogOpen,
     editingUser,
+    lockingUser,
 
     // Loading states
     isCreating,
     isUpdating,
     isDeleting,
+    isLocking,
+    isUnlocking,
     isMutating: isCreating || isUpdating || isDeleting,
 
     // Handlers
@@ -112,5 +163,9 @@ export function useUserOperations() {
     handleCloseDialog,
     handleSubmit,
     handleDelete,
+    handleOpenLockDialog,
+    handleCloseLockDialog,
+    handleConfirmLock,
+    handleUnlock,
   };
 }

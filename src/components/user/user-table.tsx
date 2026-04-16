@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Mail, Calendar, Shield } from "lucide-react";
+import { Pencil, Trash2, Calendar, Shield, Lock, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -27,6 +27,8 @@ interface UserTableProps {
   isLoading?: boolean;
   onEdit: (user: User) => void;
   onDelete: (id: string) => void;
+  onLock: (user: User) => void;
+  onUnlock: (id: string) => void;
   currentPage: number;
   pageSize: number;
 }
@@ -36,6 +38,8 @@ export function UserTable({
   isLoading,
   onEdit,
   onDelete,
+  onLock,
+  onUnlock,
   currentPage,
   pageSize,
 }: UserTableProps) {
@@ -63,6 +67,9 @@ export function UserTable({
                   Role
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
+                  Status
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
                   Created
                 </TableHead>
                 <TableHead className="text-right font-semibold text-gray-700 dark:text-gray-300">
@@ -74,7 +81,7 @@ export function UserTable({
               {users.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={7}
                     className="h-40 text-center"
                   >
                     <div className="flex flex-col items-center justify-center gap-3 py-8">
@@ -99,6 +106,8 @@ export function UserTable({
                     user={user}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    onLock={onLock}
+                    onUnlock={onUnlock}
                     orderNumber={(currentPage - 1) * pageSize + index + 1}
                   />
                 ))
@@ -125,6 +134,7 @@ function UserTableSkeleton() {
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -145,10 +155,14 @@ function UserTableSkeleton() {
                   <Skeleton className="h-5 w-20" />
                 </TableCell>
                 <TableCell>
+                  <Skeleton className="h-5 w-16" />
+                </TableCell>
+                <TableCell>
                   <Skeleton className="h-4 w-24" />
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
+                    <Skeleton className="h-8 w-8" />
                     <Skeleton className="h-8 w-8" />
                     <Skeleton className="h-8 w-8" />
                   </div>
@@ -170,6 +184,8 @@ interface UserTableRowProps {
   user: User;
   onEdit: (user: User) => void;
   onDelete: (_id: string) => void;
+  onLock: (user: User) => void;
+  onUnlock: (_id: string) => void;
   orderNumber: number;
 }
 
@@ -177,6 +193,8 @@ function UserTableRow({
   user,
   onEdit,
   onDelete,
+  onLock,
+  onUnlock,
   orderNumber,
 }: UserTableRowProps) {
   const { data: roleData } = useGetRoleQuery(user.role);
@@ -239,6 +257,27 @@ function UserTableRow({
         </Badge>
       </TableCell>
 
+      {/* Lock Status */}
+      <TableCell>
+        {user.isLocked ? (
+          <Badge
+            variant="destructive"
+            className="flex items-center gap-1 w-fit font-medium"
+          >
+            <Lock className="h-3 w-3" />
+            Locked
+          </Badge>
+        ) : (
+          <Badge
+            variant="outline"
+            className="flex items-center gap-1 w-fit font-medium text-green-600 dark:text-green-400 border-green-200 dark:border-green-800"
+          >
+            <Unlock className="h-3 w-3" />
+            Active
+          </Badge>
+        )}
+      </TableCell>
+
       {/* Created Date */}
       <TableCell>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
@@ -265,6 +304,37 @@ function UserTableRow({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Edit user</TooltipContent>
+              </Tooltip>
+            </Access>
+
+            <Access action={EAction.UPDATE} subject="User" hideChildren>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {user.isLocked ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onUnlock(user._id)}
+                      className="h-8 w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/30 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                      aria-label="Unlock user"
+                    >
+                      <Unlock className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onLock(user)}
+                      className="h-8 w-8 p-0 hover:bg-amber-50 dark:hover:bg-amber-950/30 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                      aria-label="Lock user"
+                    >
+                      <Lock className="h-4 w-4" />
+                    </Button>
+                  )}
+                </TooltipTrigger>
+                <TooltipContent>
+                  {user.isLocked ? "Unlock user" : "Lock user"}
+                </TooltipContent>
               </Tooltip>
             </Access>
 

@@ -85,6 +85,25 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: ["User"],
     }),
 
+    // Lock user account
+    lockUser: builder.mutation<ApiResponse<User>, { id: string; reason?: string }>({
+      query: ({ id, reason }) => ({
+        url: `/users/${id}/lock`,
+        method: "PATCH",
+        data: reason ? { reason } : {},
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "User", id }, "User"],
+    }),
+
+    // Unlock user account
+    unlockUser: builder.mutation<ApiResponse<User>, string>({
+      query: (id) => ({
+        url: `/users/${id}/unlock`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "User", id }, "User"],
+    }),
+
     // Save job to favorites
     saveJob: builder.mutation<ApiResponse<string>, string>({
       query: (jobId) => ({
@@ -272,6 +291,8 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useLockUserMutation,
+  useUnlockUserMutation,
   useSaveJobMutation,
   useUnsaveJobMutation,
   useGetSavedJobsQuery,

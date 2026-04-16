@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   MapPin,
@@ -32,6 +32,12 @@ import { TYPOGRAPHY } from "@/shared/constants/design";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage.getItem("access_token"));
+  }, []);
+
   const { t, mounted: i18nMounted } = useI18n();
 
   // Pagination states
@@ -39,9 +45,6 @@ export default function Home() {
   const [companiesPage, setCompaniesPage] = useState(1);
 
   // Only fetch user data if token exists - prevent infinite 401 loop
-  const hasToken =
-    typeof window !== "undefined" && localStorage.getItem("access_token");
-
   useGetMeQuery(undefined, {
     skip: !hasToken, // Skip query if no token
   });

@@ -16,6 +16,7 @@ import { useUserOperations } from "@/hooks/use-user";
 import { SearchBar } from "@/components/ui/search-bar";
 import { UserTable } from "@/components/user/user-table";
 import { UserDialog } from "@/components/user/user-dialog";
+import { LockUserDialog } from "@/components/user/lock-user-dialog";
 import { Pagination } from "@/components/pagination";
 import { CreateUserFormData, UpdateUserFormData, User } from "@/features/user/schemas/user.schema";
 
@@ -57,11 +58,17 @@ export default function UsersPage() {
   const {
     isDialogOpen,
     editingUser,
+    lockingUser,
     isMutating,
+    isLocking,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit: handleUserSubmit,
     handleDelete,
+    handleOpenLockDialog,
+    handleCloseLockDialog,
+    handleConfirmLock,
+    handleUnlock,
   } = useUserOperations();
 
   // Memoized data
@@ -170,6 +177,8 @@ export default function UsersPage() {
           const user: User | undefined = users.find((c: User) => c._id === id);
           if (user) handleDelete(user);
         }}
+        onLock={handleOpenLockDialog}
+        onUnlock={handleUnlock}
         currentPage={currentPage}
         pageSize={pageSize}
       />
@@ -192,6 +201,14 @@ export default function UsersPage() {
         editingUser={editingUser}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      {/* Lock User Dialog */}
+      <LockUserDialog
+        user={lockingUser}
+        isLoading={isLocking}
+        onConfirm={handleConfirmLock}
+        onCancel={handleCloseLockDialog}
       />
     </div>
   );
