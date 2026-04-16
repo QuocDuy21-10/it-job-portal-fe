@@ -6,6 +6,7 @@ import {
   RegisterFormData,
   ForgotPasswordFormData,
   ChangePasswordFormData,
+  SetPasswordFormData,
 } from "../schemas/auth.schema";
 import { ApiResponse } from "@/shared/base/api-response.base";
 
@@ -104,6 +105,18 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["Auth"],
     }),
 
+    setPassword: builder.mutation<
+      ApiResponse<{ message: string }>,
+      SetPasswordFormData
+    >({
+      query: (data) => ({
+        url: "/auth/set-password",
+        method: "POST",
+        data: { newPassword: data.newPassword },
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     forgotPassword: builder.mutation<
       ApiResponse<{ message: string }>,
       ForgotPasswordFormData
@@ -141,4 +154,5 @@ export const {
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useChangePasswordMutation,
+  useSetPasswordMutation,
 } = authApi;

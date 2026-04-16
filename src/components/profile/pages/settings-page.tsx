@@ -4,11 +4,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, Lock, Trash2, User, Mail, Eye, EyeOff } from "lucide-react";
-import { useChangePasswordMutation, useGetMeQuery } from "@/features/auth/redux/auth.api";
-import { ChangePasswordSchema, ChangePasswordFormData } from "@/features/auth/schemas/auth.schema";
+import { AlertCircle, Lock, Trash2, User, Mail, Eye, EyeOff, KeyRound } from "lucide-react";
+import {
+  useChangePasswordMutation,
+  useGetMeQuery,
+  useSetPasswordMutation,
+} from "@/features/auth/redux/auth.api";
+import {
+  ChangePasswordSchema,
+  ChangePasswordFormData,
+  SetPasswordSchema,
+  SetPasswordFormData,
+} from "@/features/auth/schemas/auth.schema";
+import { setLogoutAction } from "@/features/auth/redux/auth.slice";
 import { toast } from "sonner";
 import { Modal } from "../shared/modal";
 import { SectionCard } from "../shared/section-card";
@@ -19,38 +30,77 @@ export default function SettingsPage({
   onNavigateToCCV?: () => void;
 }) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const handleNavigateToCCV = onNavigateToCCV ?? (() => router.push("/profile?tab=create-cv", { scroll: false }));
+
   const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
+  const [setPassword, { isLoading: isSettingPassword }] = useSetPasswordMutation();
+
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showSetPasswordModal, setShowSetPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSetNewPassword, setShowSetNewPassword] = useState(false);
+  const [showSetConfirmPassword, setShowSetConfirmPassword] = useState(false);
+
   const { data: meData } = useGetMeQuery();
   const user = meData?.data?.user;
+
+  // Derive password UI case from API data
+  const hasPassword = user?.hasPassword ?? false;
+  const isGoogleUser = user?.authProvider === "google";
+
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
+    register: registerChange,
+    handleSubmit: handleSubmitChange,
+    formState: { errors: changeErrors },
+    reset: resetChange,
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(ChangePasswordSchema),
-    defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
+    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
   });
+
+  const {
+    register: registerSet,
+    handleSubmit: handleSubmitSet,
+    formState: { errors: setErrors },
+    reset: resetSet,
+  } = useForm<SetPasswordFormData>({
+    resolver: zodResolver(SetPasswordSchema),
+    defaultValues: { newPassword: "", confirmPassword: "" },
+  });
+
+  const handleAfterPasswordChange = () => {
+    dispatch(setLogoutAction());
+    router.push("/login");
+  };
 
   const onSubmitChangePassword = async (data: ChangePasswordFormData) => {
     try {
       await changePassword(data).unwrap();
-      toast.success("Mật khẩu đã được cập nhật thành công");
-      reset();
+      toast.success("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.");
+      resetChange();
       setShowPasswordModal(false);
+      handleAfterPasswordChange();
     } catch (error: any) {
       const msg = error?.data?.message || "Đổi mật khẩu thất bại";
+      toast.error(msg);
+    }
+  };
+
+  const onSubmitSetPassword = async (data: SetPasswordFormData) => {
+    try {
+      await setPassword(data).unwrap();
+      toast.success("Tạo mật khẩu thành công. Vui lòng đăng nhập lại.");
+      resetSet();
+      setShowSetPasswordModal(false);
+      handleAfterPasswordChange();
+    } catch (error: any) {
+      const msg = error?.data?.message || "Tạo mật khẩu thất bại";
       toast.error(msg);
     }
   };
@@ -63,6 +113,55 @@ export default function SettingsPage({
 
     alert("Tài khoản của bạn sẽ bị xóa vĩnh viễn");
     setShowDeleteModal(false);
+  };
+
+  // Determine security section content based on auth state
+  const renderPasswordSection = () => {
+    if (!user) return null;
+
+    // Case A & C: user has a password (local user OR google user who previously set one)
+    if (hasPassword) {
+      return (
+        <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
+          <div>
+            <h3 className="font-medium text-foreground">Mật khẩu</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Cập nhật mật khẩu để bảo vệ tài khoản của bạn
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowPasswordModal(true)}
+            className="bg-primary hover:bg-primary/90"
+          >
+            Đổi mật khẩu
+          </Button>
+        </div>
+      );
+    }
+
+    // Case B: Google user without a password yet
+    if (isGoogleUser && !hasPassword) {
+      return (
+        <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
+          <div>
+            <h3 className="font-medium text-foreground">Mật khẩu</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Tài khoản Google của bạn chưa có mật khẩu. Tạo mật khẩu để có
+              thể đăng nhập bằng email.
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowSetPasswordModal(true)}
+            className="bg-primary hover:bg-primary/90"
+          >
+            <KeyRound className="w-4 h-4 mr-2" />
+            Tạo mật khẩu
+          </Button>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -111,20 +210,7 @@ export default function SettingsPage({
       {/* Security Settings */}
       <SectionCard title="Bảo mật" icon={Lock}>
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
-            <div>
-              <h3 className="font-medium text-foreground">Mật khẩu</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Cập nhật mật khẩu để bảo vệ tài khoản của bạn
-              </p>
-            </div>
-            <Button
-              onClick={() => setShowPasswordModal(true)}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Đổi mật khẩu
-            </Button>
-          </div>
+          {renderPasswordSection()}
         </div>
       </SectionCard>
 
@@ -152,17 +238,17 @@ export default function SettingsPage({
         </div>
       </Card>
 
-      {/* Change Password Modal */}
+      {/* Change Password Modal (Case A & C: user already has a password) */}
       <Modal
         isOpen={showPasswordModal}
         onClose={() => {
           setShowPasswordModal(false);
-          reset();
+          resetChange();
         }}
         title="Đổi mật khẩu"
         maxWidth="md"
       >
-        <form onSubmit={handleSubmit(onSubmitChangePassword)} className="space-y-4">
+        <form onSubmit={handleSubmitChange(onSubmitChangePassword)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               Mật khẩu hiện tại
@@ -170,7 +256,7 @@ export default function SettingsPage({
             <div className="relative">
               <input
                 type={showCurrentPassword ? "text" : "password"}
-                {...register("currentPassword")}
+                {...registerChange("currentPassword")}
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="current-password"
                 disabled={isChangingPassword}
@@ -183,17 +269,13 @@ export default function SettingsPage({
                 aria-pressed={showCurrentPassword}
                 aria-label={showCurrentPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
               >
-                {showCurrentPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+                {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            {errors.currentPassword && (
+            {changeErrors.currentPassword && (
               <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
-                {errors.currentPassword.message}
+                {changeErrors.currentPassword.message}
               </p>
             )}
           </div>
@@ -204,7 +286,7 @@ export default function SettingsPage({
             <div className="relative">
               <input
                 type={showNewPassword ? "text" : "password"}
-                {...register("newPassword")}
+                {...registerChange("newPassword")}
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="new-password"
                 disabled={isChangingPassword}
@@ -217,17 +299,13 @@ export default function SettingsPage({
                 aria-pressed={showNewPassword}
                 aria-label={showNewPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
               >
-                {showNewPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+                {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            {errors.newPassword && (
+            {changeErrors.newPassword && (
               <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
-                {errors.newPassword.message}
+                {changeErrors.newPassword.message}
               </p>
             )}
           </div>
@@ -238,7 +316,7 @@ export default function SettingsPage({
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                {...register("confirmPassword")}
+                {...registerChange("confirmPassword")}
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="new-password"
                 disabled={isChangingPassword}
@@ -251,27 +329,20 @@ export default function SettingsPage({
                 aria-pressed={showConfirmPassword}
                 aria-label={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
               >
-                {showConfirmPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            {errors.confirmPassword && (
+            {changeErrors.confirmPassword && (
               <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
-                {errors.confirmPassword.message}
+                {changeErrors.confirmPassword.message}
               </p>
             )}
           </div>
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
-              onClick={() => {
-                setShowPasswordModal(false);
-                reset();
-              }}
+              onClick={() => { setShowPasswordModal(false); resetChange(); }}
               variant="outline"
               className="flex-1"
               disabled={isChangingPassword}
@@ -284,6 +355,104 @@ export default function SettingsPage({
               disabled={isChangingPassword}
             >
               {isChangingPassword ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Set Password Modal (Case B: Google user without a password) */}
+      <Modal
+        isOpen={showSetPasswordModal}
+        onClose={() => {
+          setShowSetPasswordModal(false);
+          resetSet();
+        }}
+        title="Tạo mật khẩu"
+        maxWidth="md"
+      >
+        <form onSubmit={handleSubmitSet(onSubmitSetPassword)} className="space-y-4">
+          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+            <p className="text-sm text-muted-foreground">
+              Sau khi tạo mật khẩu, bạn có thể đăng nhập bằng email và mật khẩu
+              ngoài Google.
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Mật khẩu mới
+            </label>
+            <div className="relative">
+              <input
+                type={showSetNewPassword ? "text" : "password"}
+                {...registerSet("newPassword")}
+                className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                autoComplete="new-password"
+                disabled={isSettingPassword}
+                placeholder="Nhập mật khẩu mới"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSetNewPassword((s) => !s)}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                aria-pressed={showSetNewPassword}
+                aria-label={showSetNewPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              >
+                {showSetNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {setErrors.newPassword && (
+              <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5" />
+                {setErrors.newPassword.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Xác nhận mật khẩu
+            </label>
+            <div className="relative">
+              <input
+                type={showSetConfirmPassword ? "text" : "password"}
+                {...registerSet("confirmPassword")}
+                className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                autoComplete="new-password"
+                disabled={isSettingPassword}
+                placeholder="Nhập lại mật khẩu mới"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSetConfirmPassword((s) => !s)}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                aria-pressed={showSetConfirmPassword}
+                aria-label={showSetConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              >
+                {showSetConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {setErrors.confirmPassword && (
+              <p className="text-sm text-destructive mt-1.5 flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5" />
+                {setErrors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+          <div className="flex gap-3 pt-4">
+            <Button
+              type="button"
+              onClick={() => { setShowSetPasswordModal(false); resetSet(); }}
+              variant="outline"
+              className="flex-1"
+              disabled={isSettingPassword}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1 bg-primary hover:bg-primary/90"
+              disabled={isSettingPassword}
+            >
+              {isSettingPassword ? "Đang tạo..." : "Tạo mật khẩu"}
             </Button>
           </div>
         </form>

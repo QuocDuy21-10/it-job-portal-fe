@@ -56,6 +56,8 @@ export const LoginResponseSchema = z.object({
     email: z.string(),
     name: z.string(),
     avatar: z.string().optional(),
+    authProvider: z.string().optional(),
+    hasPassword: z.boolean().optional(),
     role: z.object({
       _id: z.string(),
       name: z.string(),
@@ -284,6 +286,40 @@ export const ChangePasswordSchema = z
   
 export type ChangePasswordFormData = z.infer<typeof ChangePasswordSchema>;
 
+// SET PASSWORD SCHEMA (for OAuth users without a password)
+export const SetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(1, "Vui lòng nhập mật khẩu mới")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .max(128, "Mật khẩu không được quá 128 ký tự")
+      .regex(
+        PASSWORD_UPPERCASE,
+        "Mật khẩu phải chứa ít nhất một chữ cái viết hoa"
+      )
+      .regex(
+        PASSWORD_LOWERCASE,
+        "Mật khẩu phải chứa ít nhất một chữ cái viết thường"
+      )
+      .regex(PASSWORD_DIGIT, "Mật khẩu phải chứa ít nhất một số")
+      .regex(
+        PASSWORD_SPECIAL,
+        "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (!@#$%^&*...)"
+      )
+      .refine((password) => !/\s/.test(password), {
+        message: "Mật khẩu không được chứa khoảng trắng",
+      }),
+
+    confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  });
+
+export type SetPasswordFormData = z.infer<typeof SetPasswordSchema>;
+
 export type AccountResponse = Omit<
   z.infer<typeof LoginResponseSchema>,
   "access_token"
@@ -296,6 +332,8 @@ export const AuthStateSchema = z.object({
       email: z.string(),
       avatar: z.string().nullable(),
       name: z.string(),
+      authProvider: z.string().optional(),
+      hasPassword: z.boolean().optional(),
       role: z.object({
         _id: z.string(),
         name: z.string(),
