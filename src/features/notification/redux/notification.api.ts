@@ -20,7 +20,14 @@ export const notificationApi = baseApi.injectEndpoints({
         url: `/notifications?page=${page}&limit=${limit}`,
         method: "GET",
       }),
-      providesTags: ["Notification"],
+      providesTags: (result, _error, { page = 1, limit = 10 }) => [
+        { type: "Notification", id: "LIST" },
+        { type: "Notification", id: `LIST-${page}-${limit}` },
+        ...(result?.data?.result.map((notification: Notification) => ({
+          type: "Notification" as const,
+          id: notification._id,
+        })) ?? []),
+      ],
     }),
 
     getUnreadCount: builder.query<ApiResponse<{ count: number }>, void>({
@@ -36,7 +43,11 @@ export const notificationApi = baseApi.injectEndpoints({
         url: `/notifications/${id}/read`,
         method: "PATCH",
       }),
-      invalidatesTags: ["Notification"],
+      invalidatesTags: (_result, _error, id) => [
+        { type: "Notification", id },
+        { type: "Notification", id: "LIST" },
+        { type: "Notification", id: "UNREAD_COUNT" },
+      ],
     }),
 
     markAllAsRead: builder.mutation<ApiResponse<void>, void>({
@@ -44,7 +55,10 @@ export const notificationApi = baseApi.injectEndpoints({
         url: "/notifications/read-all",
         method: "PATCH",
       }),
-      invalidatesTags: ["Notification"],
+      invalidatesTags: [
+        { type: "Notification", id: "LIST" },
+        { type: "Notification", id: "UNREAD_COUNT" },
+      ],
     }),
 
     deleteNotification: builder.mutation<ApiResponse<void>, string>({
@@ -52,7 +66,11 @@ export const notificationApi = baseApi.injectEndpoints({
         url: `/notifications/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Notification"],
+      invalidatesTags: (_result, _error, id) => [
+        { type: "Notification", id },
+        { type: "Notification", id: "LIST" },
+        { type: "Notification", id: "UNREAD_COUNT" },
+      ],
     }),
   }),
 });

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -101,6 +100,7 @@ export function MultiSelect({
               >
                 <span>{label}</span>
                 <button
+                  type="button"
                   onClick={(e) => {
                     if (!disabled) {
                       e.stopPropagation();
@@ -150,6 +150,7 @@ export function MultiSelect({
                 filteredOptions.map((option) => (
                   <li key={option.value}>
                     <button
+                      type="button"
                       onClick={() => toggleOption(option.value)}
                       className={`w-full text-left px-4 py-2.5 flex items-center gap-3 transition ${
                         value.includes(option.value)

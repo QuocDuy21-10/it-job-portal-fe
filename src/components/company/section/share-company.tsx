@@ -46,9 +46,9 @@ export default function ShareCompany({ company }: ShareCompanyProps) {
               <Tooltip.Trigger asChild>
                 <button 
                   onClick={handleCopyLink} 
-                  className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                  className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-600 dark:text-slate-400" />}
+                  {copied ? <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-5 h-5 text-slate-600 dark:text-slate-400" />}
                 </button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
@@ -66,7 +66,7 @@ export default function ShareCompany({ company }: ShareCompanyProps) {
             <Share2 className="w-4 h-4 mr-2" />
             Sao chép đường dẫn
           </Button>
-          <div className="flex gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
             <Tooltip.Root delayDuration={200}>
               <Tooltip.Trigger asChild>
                 <Button variant="outline" className="flex-1 text-blue-600 hover:bg-blue-50 border-blue-200 bg-transparent dark:bg-transparent dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-950 transition-all">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
@@ -41,10 +41,13 @@ export function useNotification() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const unreadCount = useAppSelector(selectUnreadCount);
+  const markingReadIdsRef = useRef(new Set<string>());
+  const isMarkingAllRef = useRef(false);
 
   const { data: unreadData } = useGetUnreadCountQuery(undefined, {
     skip: !isAuthenticated,
   });
+  const unreadCountFromServer = unreadData?.data?.count;
 
   const [markAsReadMutation] = useMarkAsReadMutation();
   const [markAllAsReadMutation] = useMarkAllAsReadMutation();
@@ -52,16 +55,21 @@ export function useNotification() {
 
   // Sync server unread count to Redux
   useEffect(() => {
-    if (unreadData?.data?.count !== undefined) {
-      dispatch(setUnreadCount(unreadData.data.count));
+    if (unreadCountFromServer !== undefined) {
+      dispatch(setUnreadCount(unreadCountFromServer));
     }
-  }, [unreadData, dispatch]);
+  }, [unreadCountFromServer, dispatch]);
 
   // Listen for real-time notifications
   const handleNewNotification = useCallback(
     (notification: Notification) => {
       dispatch(incrementUnreadCount());
-      dispatch(baseApi.util.invalidateTags(["Notification"]));
+      dispatch(
+        baseApi.util.invalidateTags([
+          { type: "Notification", id: "LIST" },
+          { type: "Notification", id: "UNREAD_COUNT" },
+        ])
+      );
 
       toast.info(notification.title, {
         description: notification.message,
@@ -78,23 +86,45 @@ export function useNotification() {
 
   const markAsRead = useCallback(
     async (id: string) => {
-      dispatch(decrementUnreadCount());
+      if (markingReadIdsRef.current.has(id)) {
+        return;
+      }
+
+      markingReadIdsRef.current.add(id);
+      const shouldDecrement = unreadCount > 0;
+
+      if (shouldDecrement) {
+        dispatch(decrementUnreadCount());
+      }
+
       try {
         await markAsReadMutation(id).unwrap();
       } catch {
-        dispatch(incrementUnreadCount());
+        if (shouldDecrement) {
+          dispatch(incrementUnreadCount());
+        }
+      } finally {
+        markingReadIdsRef.current.delete(id);
       }
     },
-    [dispatch, markAsReadMutation]
+    [dispatch, markAsReadMutation, unreadCount]
   );
 
   const markAllAsRead = useCallback(async () => {
+    if (isMarkingAllRef.current || unreadCount === 0) {
+      return;
+    }
+
+    isMarkingAllRef.current = true;
     const previousCount = unreadCount;
     dispatch(resetUnreadCount());
+
     try {
       await markAllAsReadMutation().unwrap();
     } catch {
       dispatch(setUnreadCount(previousCount));
+    } finally {
+      isMarkingAllRef.current = false;
     }
   }, [dispatch, markAllAsReadMutation, unreadCount]);
 

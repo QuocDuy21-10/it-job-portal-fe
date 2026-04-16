@@ -34,8 +34,9 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard as JobCardComponent } from "@/components/job/job-card";
+import { Suspense } from "react";
 
-export default function JobsPage() {
+function JobsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t, mounted: i18nMounted } = useI18n();
@@ -679,5 +680,13 @@ function JobCard({ job }: { job: Job }) {
         </Link>
       </CardContent>
     </Card>
+  );
+}
+
+export default function JobsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <JobsPageContent />
+    </Suspense>
   );
 }

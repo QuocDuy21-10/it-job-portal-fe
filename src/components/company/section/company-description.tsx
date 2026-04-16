@@ -22,7 +22,7 @@ export default function CompanyDescription({ company }: CompanyDescriptionProps)
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Thông tin về công ty</h2>
       </div>
       <Card className="p-8 space-y-4 hover:shadow-lg transition-shadow duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <div className="text-slate-700 dark:text-slate-300 leading-relaxed prose prose-slate dark:prose-invert max-w-none">
+        <div className="text-slate-700 dark:text-slate-300 leading-relaxed prose prose-slate dark:prose-invert">
           {parse(isExpanded ? fullDescription : shortDescription)}
         </div>
         {fullDescription.length > 500 && (

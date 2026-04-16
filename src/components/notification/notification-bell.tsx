@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Bell, Briefcase, FileText, Check } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Bell, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,107 +17,27 @@ import { useNotification, getNotificationLink } from "@/hooks/use-notification";
 import { useGetNotificationsQuery } from "@/features/notification/redux/notification.api";
 import { Notification } from "@/features/notification/schemas/notification.schema";
 import { useAuth } from "@/hooks/use-auth";
-
-function getTypeIcon(type: string) {
-  switch (type) {
-    case "APPLICATION_STATUS_CHANGE":
-      return <Briefcase className="h-4 w-4" />;
-    case "NEW_APPLICATION":
-      return <FileText className="h-4 w-4" />;
-    default:
-      return <Bell className="h-4 w-4" />;
-  }
-}
-
-function getTypeLabel(type: string) {
-  switch (type) {
-    case "APPLICATION_STATUS_CHANGE":
-      return "Trạng thái ứng tuyển";
-    case "NEW_APPLICATION":
-      return "Đơn ứng tuyển mới";
-    default:
-      return "Thông báo";
-  }
-}
-
-function formatRelativeTime(dateString: string): string {
-  const now = new Date();
-  const date = new Date(dateString);
-  const diffMs = now.getTime() - date.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMinutes < 1) return "Vừa xong";
-  if (diffMinutes < 60) return `${diffMinutes} phút trước`;
-  if (diffHours < 24) return `${diffHours} giờ trước`;
-  if (diffDays < 7) return `${diffDays} ngày trước`;
-  return date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" });
-}
-
-function NotificationItem({
-  notification,
-  onRead,
-  onClose,
-}: {
-  notification: Notification;
-  onRead: (id: string) => void;
-  onClose: () => void;
-}) {
-  const router = useRouter();
-
-  const handleClick = () => {
-    if (!notification.isRead) {
-      onRead(notification._id);
-    }
-    onClose();
-    router.push(getNotificationLink(notification));
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      className={`w-full flex items-start gap-3 p-3 text-left transition-colors hover:bg-accent/50 ${
-        !notification.isRead ? "bg-primary/5" : ""
-      }`}
-    >
-      <div
-        className={`p-2 rounded-lg flex-shrink-0 ${
-          !notification.isRead
-            ? "bg-primary/10 text-primary"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {getTypeIcon(notification.type)}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-sm font-medium line-clamp-1">{notification.title}</p>
-          {!notification.isRead && (
-            <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5 animate-pulse" />
-          )}
-        </div>
-        <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-          {notification.message}
-        </p>
-        <p className="text-xs text-muted-foreground/70 mt-1">
-          {formatRelativeTime(notification.createdAt)}
-        </p>
-      </div>
-    </button>
-  );
-}
+import { NotificationItem } from "@/components/notification/notification-item";
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { unreadCount, markAsRead, markAllAsRead } = useNotification();
-  const { data, isLoading } = useGetNotificationsQuery(
+  const { data, isLoading, isError, refetch } = useGetNotificationsQuery(
     { page: 1, limit: 5 },
     { skip: !isAuthenticated }
   );
 
   const notifications = data?.data?.result ?? [];
+
+  const handleNotificationClick = useCallback(
+    (notification: Notification) => {
+      setOpen(false);
+      router.push(getNotificationLink(notification));
+    },
+    [router]
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -134,7 +54,7 @@ export function NotificationBell() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 p-0">
+      <PopoverContent align="end" className="w-[calc(100vw-1rem)] max-w-sm p-0 sm:w-80">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h4 className="font-semibold text-sm">Thông báo</h4>
@@ -166,14 +86,24 @@ export function NotificationBell() {
                 </div>
               ))}
             </div>
+          ) : isError ? (
+            <div className="p-4 text-center space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Không thể tải thông báo
+              </p>
+              <Button size="sm" variant="outline" onClick={() => refetch()}>
+                Thử lại
+              </Button>
+            </div>
           ) : notifications.length > 0 ? (
             <div className="divide-y">
               {notifications.map((notification: Notification) => (
                 <NotificationItem
                   key={notification._id}
                   notification={notification}
+                  mode="compact"
                   onRead={markAsRead}
-                  onClose={() => setOpen(false)}
+                  onClick={handleNotificationClick}
                 />
               ))}
             </div>
