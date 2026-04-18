@@ -6,6 +6,7 @@ export enum EAction {
   READ = "read",
   UPDATE = "update",
   DELETE = "delete",
+  APPROVE = "approve",
 }
 
 export type ESubject =

@@ -4,17 +4,25 @@ import {
   useCreateJobMutation,
   useDeleteJobMutation,
   useUpdateJobMutation,
+  useApproveJobMutation,
 } from "@/features/job/redux/job.api";
-import { CreateJobFormData, Job } from "@/features/job/schemas/job.schema";
+import {
+  ApproveJobFormData,
+  CreateJobFormData,
+  Job,
+} from "@/features/job/schemas/job.schema";
 
 export function useJobOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
+  const [approvingJob, setApprovingJob] = useState<Job | null>(null);
 
   // RTK Query mutations
   const [createJob, { isLoading: isCreating }] = useCreateJobMutation();
   const [updateJob, { isLoading: isUpdating }] = useUpdateJobMutation();
   const [deleteJob, { isLoading: isDeleting }] = useDeleteJobMutation();
+  const [approveJob, { isLoading: isApproving }] = useApproveJobMutation();
 
   // Open dialog for create or edit
   const handleOpenDialog = (job?: Job) => {
@@ -90,15 +98,57 @@ export function useJobOperations() {
     }
   };
 
+  // Open approval dialog
+  const handleOpenApprovalDialog = (job: Job) => {
+    setApprovingJob(job);
+    setIsApprovalDialogOpen(true);
+  };
+
+  // Close approval dialog
+  const handleCloseApprovalDialog = () => {
+    setIsApprovalDialogOpen(false);
+    setTimeout(() => {
+      setApprovingJob(null);
+    }, 200);
+  };
+
+  // Handle approve or reject job
+  const handleApprove = async (data: ApproveJobFormData) => {
+    if (!approvingJob) return false;
+
+    try {
+      await approveJob({ id: approvingJob._id, data }).unwrap();
+
+      const statusLabel = data.status === "APPROVED" ? "Đã duyệt" : "Đã từ chối";
+      toast.success(`${statusLabel} việc làm "${approvingJob.name}" thành công!`);
+
+      handleCloseApprovalDialog();
+      return true;
+    } catch (error: any) {
+      console.error("Approve job error:", error);
+
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Không thể cập nhật trạng thái. Vui lòng thử lại.";
+
+      toast.error(errorMessage);
+      return false;
+    }
+  };
+
   return {
     // State
     isDialogOpen,
     editingJob,
+    isApprovalDialogOpen,
+    approvingJob,
 
     // Loading states
     isCreating,
     isUpdating,
     isDeleting,
+    isApproving,
     isMutating: isCreating || isUpdating || isDeleting,
 
     // Handlers
@@ -106,5 +156,8 @@ export function useJobOperations() {
     handleCloseDialog,
     handleSubmit,
     handleDelete,
+    handleOpenApprovalDialog,
+    handleCloseApprovalDialog,
+    handleApprove,
   };
 }

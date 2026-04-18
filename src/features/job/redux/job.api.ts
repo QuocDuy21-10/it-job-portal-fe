@@ -4,6 +4,7 @@ import {
   Job,
   CreateJobFormData,
   UpdateJobFormData,
+  ApproveJobFormData,
 } from "../schemas/job.schema";
 
 export const jobApi = baseApi.injectEndpoints({
@@ -80,6 +81,21 @@ export const jobApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Job"],
     }),
+
+    approveJob: builder.mutation<
+      ApiResponse<Job>,
+      { id: string; data: ApproveJobFormData }
+    >({
+      query: ({ id, data }) => ({
+        url: `/jobs/${id}/approve`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Job", id },
+        "Job",
+      ],
+    }),
   }),
 });
 
@@ -89,4 +105,5 @@ export const {
   useCreateJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,
+  useApproveJobMutation,
 } = jobApi;

@@ -16,6 +16,7 @@ import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
 import { JobTable } from "@/components/job/job-table";
 import { JobDialog } from "@/components/job/job-dialog";
+import { JobApprovalDialog } from "@/components/job/job-approval-dialog";
 import { Job } from "@/features/job/schemas/job.schema";
 import { useJobOperations } from "@/hooks/use-job";
 import provinces from "@/shared/data/provinces.json";
@@ -25,6 +26,7 @@ export default function JobsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedSalary, setSelectedSalary] = useState<string>("all");
+  const [selectedApprovalStatus, setSelectedApprovalStatus] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -58,9 +60,13 @@ export default function JobsPage() {
       filters.push(`salary>=${min}`);
       filters.push(`salary<=${max}`);
     }
+
+    if (selectedApprovalStatus !== "all") {
+      filters.push(`approvalStatus=${selectedApprovalStatus}`);
+    }
     
     return filters.join("&");
-  }, [searchQuery, selectedStatus, selectedLocation, selectedSalary]);
+  }, [searchQuery, selectedStatus, selectedLocation, selectedSalary, selectedApprovalStatus]);
 
   // Fetch jobs với RTK Query
   const { data: jobsData, isLoading } = useGetJobsQuery({
@@ -74,10 +80,16 @@ export default function JobsPage() {
     isDialogOpen,
     editingJob,
     isMutating,
+    isApprovalDialogOpen,
+    approvingJob,
+    isApproving,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
     handleDelete,
+    handleOpenApprovalDialog,
+    handleCloseApprovalDialog,
+    handleApprove,
   } = useJobOperations();
 
   const jobs = useMemo(() => {
@@ -114,6 +126,11 @@ export default function JobsPage() {
   
   const handleSalaryChange = useCallback((value: string) => {
     setSelectedSalary(value);
+    setCurrentPage(1);
+  }, []);
+
+  const handleApprovalStatusChange = useCallback((value: string) => {
+    setSelectedApprovalStatus(value);
     setCurrentPage(1);
   }, []);
 
@@ -211,6 +228,29 @@ export default function JobsPage() {
               </Select>
             </div>
           </div>
+
+          {/* Row 3: Approval Status filter */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Select
+                value={selectedApprovalStatus}
+                onValueChange={handleApprovalStatusChange}
+              >
+                <SelectTrigger className="h-10">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-gray-500" />
+                    <SelectValue placeholder="Approval status" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Approval Status</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="APPROVED">Approved</SelectItem>
+                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -219,6 +259,7 @@ export default function JobsPage() {
         jobs={jobs}
         isLoading={isLoading}
         onEdit={handleOpenDialog}
+        onApprove={handleOpenApprovalDialog}
         onDelete={(id) => {
           const job: Job | undefined = jobs.find((c: Job) => c._id === id);
           if (job) handleDelete(job);
@@ -238,13 +279,22 @@ export default function JobsPage() {
         />
       )}
 
-      {/* Dialog */}
+      {/* Edit/Create Dialog */}
       <JobDialog
         open={isDialogOpen}
         onOpenChange={handleCloseDialog}
         editingJob={editingJob}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      {/* Approval Dialog */}
+      <JobApprovalDialog
+        open={isApprovalDialogOpen}
+        onOpenChange={handleCloseApprovalDialog}
+        job={approvingJob}
+        onSubmit={handleApprove}
+        isLoading={isApproving}
       />
     </div>
   );

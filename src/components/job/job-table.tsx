@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Briefcase, MapPin, DollarSign, Calendar, TrendingUp, CheckCircle, XCircle } from "lucide-react";
+import { Pencil, Trash2, Briefcase, MapPin, DollarSign, Calendar, TrendingUp, CheckCircle, XCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,11 +20,13 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 
+
 interface JobTableProps {
   jobs: Job[];
   isLoading?: boolean;
   onEdit: (job: Job) => void;
   onDelete: (id: string) => void;
+  onApprove: (job: Job) => void;
   currentPage: number;
   pageSize: number;
 }
@@ -34,6 +36,7 @@ export function JobTable({
   isLoading,
   onEdit,
   onDelete,
+  onApprove,
   currentPage,
   pageSize,
 }: JobTableProps) {
@@ -54,6 +57,7 @@ export function JobTable({
                 <TableHead>Salary</TableHead>
                 <TableHead>Level</TableHead>
                 <TableHead>IsActive</TableHead>
+                <TableHead>Approval</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -61,7 +65,7 @@ export function JobTable({
             <TableBody>
               {jobs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-12">
+                  <TableCell colSpan={9} className="py-12">
                     <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
                       <Briefcase className="h-12 w-12 text-gray-300" />
                       <div className="text-center">
@@ -82,6 +86,7 @@ export function JobTable({
                   job={job}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  onApprove={onApprove}
                   orderNumber={(currentPage - 1) * pageSize + index + 1}
                 />
               ))
@@ -99,10 +104,11 @@ interface JobTableRowProps {
   job: Job;
   onEdit: (job: Job) => void;
   onDelete: (_id: string) => void;
+  onApprove: (job: Job) => void;
   orderNumber: number;
 }
 
-function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
+function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber }: JobTableRowProps) {
   // Get level badge color
   const getLevelColor = () => {
     const level = job.level?.toLowerCase() || "";
@@ -115,6 +121,28 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
     return "bg-gray-100 text-gray-700";
   };
   
+  // Get approval status badge
+  const getApprovalBadge = () => {
+    const status = job.approvalStatus?.toUpperCase() || "PENDING";
+    if (status === "APPROVED")
+      return (
+        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
+          Approved
+        </Badge>
+      );
+    if (status === "REJECTED")
+      return (
+        <Badge className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
+          Rejected
+        </Badge>
+      );
+    return (
+      <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800">
+        Pending
+      </Badge>
+    );
+  };
+
   // Format salary
   const formatSalary = (salary: number) => {
     if (salary >= 1000000) {
@@ -173,6 +201,20 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
         )}
       </TableCell>
       <TableCell>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-2">
+              {getApprovalBadge()}
+            </div>
+          </TooltipTrigger>
+          {job.approvalNote && (
+            <TooltipContent className="max-w-xs">
+              <p className="text-xs">{job.approvalNote}</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TableCell>
+      <TableCell>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
@@ -182,6 +224,23 @@ function JobTableRow({ job, onEdit, onDelete, orderNumber }: JobTableRowProps) {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Access action={EAction.APPROVE} subject="Job" hideChildren>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onApprove(job)}
+                  className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Approve / Reject</p>
+              </TooltipContent>
+            </Tooltip>
+          </Access>
           <Access action={EAction.UPDATE} subject="Job" hideChildren>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -235,6 +294,7 @@ function JobTableSkeleton() {
             <TableHead>Salary</TableHead>
             <TableHead>Level</TableHead>
             <TableHead>IsActive</TableHead>
+            <TableHead>Approval</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -264,10 +324,14 @@ function JobTableSkeleton() {
                 <Skeleton className="h-6 w-20" />
               </TableCell>
               <TableCell>
+                <Skeleton className="h-6 w-20" />
+              </TableCell>
+              <TableCell>
                 <Skeleton className="h-4 w-24" />
               </TableCell>
               <TableCell>
                 <div className="flex justify-end gap-1">
+                  <Skeleton className="h-8 w-8" />
                   <Skeleton className="h-8 w-8" />
                   <Skeleton className="h-8 w-8" />
                 </div>

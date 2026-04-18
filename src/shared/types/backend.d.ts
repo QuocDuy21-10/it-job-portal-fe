@@ -74,7 +74,10 @@ export interface IJob {
   startDate: Date;
   endDate: Date;
   isActive: boolean;
-
+  approvalStatus?: "PENDING" | "APPROVED" | "REJECTED";
+  approvalNote?: string;
+  approvedBy?: { _id: string; email: string };
+  approvedAt?: Date;
   createdBy?: string;
   isDeleted?: boolean;
   deletedAt?: boolean | null;

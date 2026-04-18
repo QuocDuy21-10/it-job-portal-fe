@@ -1,6 +1,20 @@
 import { z } from "zod";
 import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
 
+export enum EJobApprovalStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
+
+export const ApproveJobSchema = z.object({
+  status: z.enum(["APPROVED", "REJECTED"]),
+  approvalNote: z
+    .string()
+    .max(500, "Ghi chú không được quá 500 ký tự")
+    .optional(),
+});
+
 export const JobSchema = z.object({
   name: z
     .string("Tên công việc phải là chuỗi")
@@ -46,6 +60,18 @@ export const JobSchema = z.object({
 
 export const JobEntitySchema = JobSchema.extend({
   _id: z.string(),
+  approvalStatus: z
+    .enum(["PENDING", "APPROVED", "REJECTED"])
+    .default("PENDING")
+    .optional(),
+  approvalNote: z.string().optional(),
+  approvedBy: z
+    .object({
+      _id: z.string(),
+      email: z.string(),
+    })
+    .optional(),
+  approvedAt: z.string().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   createdBy: z
@@ -66,3 +92,4 @@ export const JobEntitySchema = JobSchema.extend({
 export type Job = z.infer<typeof JobEntitySchema>;
 export type CreateJobFormData = z.infer<typeof JobSchema>;
 export type UpdateJobFormData = Partial<CreateJobFormData>;
+export type ApproveJobFormData = z.infer<typeof ApproveJobSchema>;
