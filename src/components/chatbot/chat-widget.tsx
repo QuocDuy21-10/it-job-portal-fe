@@ -22,6 +22,16 @@ const CHAT_HEIGHT = 600;
 const EDGE_MARGIN = 20;
 const DRAG_THRESHOLD = 5;
 
+const ChatSkeletonBubble = () => (
+  <div className="flex justify-start">
+    <div className="max-w-[85%] p-3 rounded-lg rounded-tl-none bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm space-y-2">
+      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-3/4" />
+      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-full" />
+      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-1/2" />
+    </div>
+  </div>
+);
+
 const ChatWidget = () => {
   const {
     messages,
@@ -350,35 +360,8 @@ const ChatWidget = () => {
                   </div>
                 ))}
 
-                {/* Stop Generating Button */}
-                {isStreaming && (
-                  <div className="flex justify-center">
-                    <button
-                      onClick={abortStream}
-                      className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                    >
-                      <StopIcon className="w-3.5 h-3.5" />
-                      Dừng tạo phản hồi
-                    </button>
-                  </div>
-                )}
-
-                {/* Typing Indicator — only when NOT streaming (brief POST wait) */}
-                {isTyping && !isStreaming && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex gap-1">
-                      <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></span>
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></span>
-                    </div>
-                  </div>
-                )}
+                {/* Skeleton — POST wait (before streaming starts) */}
+                {isTyping && !isStreaming && <ChatSkeletonBubble />}
 
                 <div ref={messagesEndRef} />
               </>
@@ -415,14 +398,50 @@ const ChatWidget = () => {
                     className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                     disabled={isTyping || isStreaming}
                   />
-                  <button
-                    onClick={handleSend}
-                    disabled={!inputValue.trim() || isTyping || isStreaming}
-                    className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
-                    title="Gửi tin nhắn"
-                  >
-                    <PaperAirplaneIcon className="w-5 h-5" />
-                  </button>
+                  {isStreaming ? (
+                    <button
+                      onClick={abortStream}
+                      className="bg-red-500 text-white p-2.5 rounded-full hover:bg-red-600 transition-colors flex-shrink-0"
+                      title="Dừng tạo phản hồi"
+                    >
+                      <StopIcon className="w-5 h-5" />
+                    </button>
+                  ) : isTyping ? (
+                    <button
+                      disabled
+                      className="bg-gray-300 dark:bg-gray-700 text-white p-2.5 rounded-full flex-shrink-0 cursor-not-allowed"
+                      title="Đang xử lý..."
+                    >
+                      <svg
+                        className="w-5 h-5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSend}
+                      disabled={!inputValue.trim()}
+                      className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+                      title="Gửi tin nhắn"
+                    >
+                      <PaperAirplaneIcon className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
                 <div className="text-xs text-gray-400 mt-2 text-right">
                   {inputValue.length}/1000
@@ -448,7 +467,8 @@ const ChatWidget = () => {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onClick={handleToggleClick}
-        className="fixed z-50 w-14 h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center group select-none touch-none"
+        aria-hidden={isOpen}
+        className={`fixed z-50 w-14 h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center group select-none touch-none transition-all duration-200 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{ left: position.x, top: position.y }}
         title={isOpen ? "Đóng chat" : "Mở chat"}
       >
