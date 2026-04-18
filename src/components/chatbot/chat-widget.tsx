@@ -10,6 +10,7 @@ import {
   XMarkIcon,
   ChatBubbleLeftIcon,
   TrashIcon,
+  StopIcon,
 } from "@heroicons/react/24/solid";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { formatChatTimestamp } from "@/lib/utils/date.utils";
@@ -20,6 +21,16 @@ const CHAT_WIDTH = 400;
 const CHAT_HEIGHT = 600;
 const EDGE_MARGIN = 20;
 const DRAG_THRESHOLD = 5;
+
+const ChatSkeletonBubble = () => (
+  <div className="flex justify-start">
+    <div className="max-w-[85%] p-3 rounded-lg rounded-tl-none bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm space-y-2">
+      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-3/4" />
+      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-full" />
+      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-1/2" />
+    </div>
+  </div>
+);
 
 const ChatWidget = () => {
   const {
@@ -32,6 +43,10 @@ const ChatWidget = () => {
     loadHistory,
     clearChat,
     isAuthenticated,
+    isStreaming,
+    streamingContent,
+    streamingMessageId,
+    abortStream,
   } = useChat();
   const { openModal } = useAuthModal();
 
@@ -167,7 +182,7 @@ const ChatWidget = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping]);
+  }, [messages, isTyping, streamingContent]);
 
   // Load history when opening chat (authenticated only)
   useEffect(() => {
@@ -309,8 +324,13 @@ const ChatWidget = () => {
                               ),
                             }}
                           >
-                            {msg.content}
+                            {msg.id === streamingMessageId
+                              ? streamingContent || "..."
+                              : msg.content}
                           </ReactMarkdown>
+                          {msg.id === streamingMessageId && (
+                            <span className="inline-block w-1.5 h-4 bg-gray-400 dark:bg-gray-300 animate-pulse ml-0.5 align-text-bottom" />
+                          )}
                         </div>
                       ) : (
                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
@@ -332,36 +352,24 @@ const ChatWidget = () => {
                     )}
 
                     {/* Timestamp */}
-                    <span className="text-xs text-gray-400 px-1">
-                      {formatChatTimestamp(msg.timestamp)}
-                    </span>
+                    {msg.id !== streamingMessageId && (
+                      <span className="text-xs text-gray-400 px-1">
+                        {formatChatTimestamp(msg.timestamp)}
+                      </span>
+                    )}
                   </div>
                 ))}
 
-                {/* Typing Indicator */}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex gap-1">
-                      <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></span>
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></span>
-                    </div>
-                  </div>
-                )}
+                {/* Skeleton — POST wait (before streaming starts) */}
+                {isTyping && !isStreaming && <ChatSkeletonBubble />}
 
                 <div ref={messagesEndRef} />
               </>
             )}
           </div>
 
-          {/* Suggested Actions (Chips) - only for authenticated */}
-          {isAuthenticated && suggestedActions.length > 0 && !isTyping && (
+          {/* Suggested Actions (Chips) - only for authenticated, hide during streaming */}
+          {isAuthenticated && suggestedActions.length > 0 && !isTyping && !isStreaming && (
             <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300">
               {suggestedActions.map((action, idx) => (
                 <button
@@ -388,16 +396,52 @@ const ChatWidget = () => {
                     placeholder="Hỏi về việc làm, CV..."
                     maxLength={1000}
                     className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                    disabled={isTyping}
+                    disabled={isTyping || isStreaming}
                   />
-                  <button
-                    onClick={handleSend}
-                    disabled={!inputValue.trim() || isTyping}
-                    className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
-                    title="Gửi tin nhắn"
-                  >
-                    <PaperAirplaneIcon className="w-5 h-5" />
-                  </button>
+                  {isStreaming ? (
+                    <button
+                      onClick={abortStream}
+                      className="bg-red-500 text-white p-2.5 rounded-full hover:bg-red-600 transition-colors flex-shrink-0"
+                      title="Dừng tạo phản hồi"
+                    >
+                      <StopIcon className="w-5 h-5" />
+                    </button>
+                  ) : isTyping ? (
+                    <button
+                      disabled
+                      className="bg-gray-300 dark:bg-gray-700 text-white p-2.5 rounded-full flex-shrink-0 cursor-not-allowed"
+                      title="Đang xử lý..."
+                    >
+                      <svg
+                        className="w-5 h-5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSend}
+                      disabled={!inputValue.trim()}
+                      className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+                      title="Gửi tin nhắn"
+                    >
+                      <PaperAirplaneIcon className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
                 <div className="text-xs text-gray-400 mt-2 text-right">
                   {inputValue.length}/1000
@@ -423,7 +467,8 @@ const ChatWidget = () => {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onClick={handleToggleClick}
-        className="fixed z-50 w-14 h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center group select-none touch-none"
+        aria-hidden={isOpen}
+        className={`fixed z-50 w-14 h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center group select-none touch-none transition-all duration-200 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{ left: position.x, top: position.y }}
         title={isOpen ? "Đóng chat" : "Mở chat"}
       >

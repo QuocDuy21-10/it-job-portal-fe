@@ -30,8 +30,20 @@ export interface IChatHistoryResponse {
     recommendedJobs?: IJob[];
   }>;
   total: number;
+  title?: string;
 }
 
 export interface IClearChatResponse {
   message: string;
+}
+
+// SSE Streaming types
+export interface IStreamInitResponse {
+  streamId: string;
+}
+
+export interface IStreamDoneEvent {
+  conversationId: string;
+  recommendedJobs?: IJob[];
+  suggestedActions?: string[];
 }

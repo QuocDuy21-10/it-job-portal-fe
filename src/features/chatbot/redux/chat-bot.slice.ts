@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IJob } from "@/shared/types/backend";
 import { IMessage } from "@/shared/types/chat";
 
 interface ChatBotState {
@@ -6,6 +7,8 @@ interface ChatBotState {
   isTyping: boolean;
   suggestedActions: string[];
   isOpen: boolean;
+  streamingMessageId: string | null;
+  streamingContent: string;
 }
 
 const initialState: ChatBotState = {
@@ -13,6 +16,8 @@ const initialState: ChatBotState = {
   isTyping: false,
   suggestedActions: [],
   isOpen: false,
+  streamingMessageId: null,
+  streamingContent: "",
 };
 
 const chatBotSlice = createSlice({
@@ -54,6 +59,54 @@ const chatBotSlice = createSlice({
     toggleChatbox: (state) => {
       state.isOpen = !state.isOpen;
     },
+
+    // Start streaming — set the message ID being streamed
+    startStreaming: (state, action: PayloadAction<string>) => {
+      state.streamingMessageId = action.payload;
+      state.streamingContent = "";
+    },
+
+    // Append a token chunk during streaming
+    appendStreamToken: (state, action: PayloadAction<string>) => {
+      state.streamingContent += action.payload;
+    },
+
+    // Finalize streaming — update the placeholder message with full content and optional metadata
+    finalizeStream: (
+      state,
+      action: PayloadAction<{ recommendedJobs?: IJob[] } | undefined>
+    ) => {
+      if (state.streamingMessageId) {
+        const msg = state.messages.find(
+          (m) => m.id === state.streamingMessageId
+        );
+        if (msg) {
+          msg.content = state.streamingContent;
+          if (action.payload?.recommendedJobs) {
+            msg.recommendedJobs = action.payload.recommendedJobs;
+          }
+        }
+      }
+      state.streamingMessageId = null;
+      state.streamingContent = "";
+      state.isTyping = false;
+    },
+
+    // Abort streaming — keep partial content, clear streaming state
+    abortStream: (state) => {
+      if (state.streamingMessageId) {
+        const msg = state.messages.find(
+          (m) => m.id === state.streamingMessageId
+        );
+        if (msg) {
+          msg.content =
+            state.streamingContent || "Đã dừng tạo phản hồi.";
+        }
+      }
+      state.streamingMessageId = null;
+      state.streamingContent = "";
+      state.isTyping = false;
+    },
   },
 });
 
@@ -65,6 +118,10 @@ export const {
   setSuggestedActions,
   setIsOpen,
   toggleChatbox,
+  startStreaming,
+  appendStreamToken,
+  finalizeStream,
+  abortStream,
 } = chatBotSlice.actions;
 
 export default chatBotSlice.reducer;
