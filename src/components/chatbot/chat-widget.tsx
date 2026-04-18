@@ -10,6 +10,7 @@ import {
   XMarkIcon,
   ChatBubbleLeftIcon,
   TrashIcon,
+  StopIcon,
 } from "@heroicons/react/24/solid";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { formatChatTimestamp } from "@/lib/utils/date.utils";
@@ -32,6 +33,10 @@ const ChatWidget = () => {
     loadHistory,
     clearChat,
     isAuthenticated,
+    isStreaming,
+    streamingContent,
+    streamingMessageId,
+    abortStream,
   } = useChat();
   const { openModal } = useAuthModal();
 
@@ -167,7 +172,7 @@ const ChatWidget = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping]);
+  }, [messages, isTyping, streamingContent]);
 
   // Load history when opening chat (authenticated only)
   useEffect(() => {
@@ -309,8 +314,13 @@ const ChatWidget = () => {
                               ),
                             }}
                           >
-                            {msg.content}
+                            {msg.id === streamingMessageId
+                              ? streamingContent || "..."
+                              : msg.content}
                           </ReactMarkdown>
+                          {msg.id === streamingMessageId && (
+                            <span className="inline-block w-1.5 h-4 bg-gray-400 dark:bg-gray-300 animate-pulse ml-0.5 align-text-bottom" />
+                          )}
                         </div>
                       ) : (
                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
@@ -332,14 +342,29 @@ const ChatWidget = () => {
                     )}
 
                     {/* Timestamp */}
-                    <span className="text-xs text-gray-400 px-1">
-                      {formatChatTimestamp(msg.timestamp)}
-                    </span>
+                    {msg.id !== streamingMessageId && (
+                      <span className="text-xs text-gray-400 px-1">
+                        {formatChatTimestamp(msg.timestamp)}
+                      </span>
+                    )}
                   </div>
                 ))}
 
-                {/* Typing Indicator */}
-                {isTyping && (
+                {/* Stop Generating Button */}
+                {isStreaming && (
+                  <div className="flex justify-center">
+                    <button
+                      onClick={abortStream}
+                      className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      <StopIcon className="w-3.5 h-3.5" />
+                      Dừng tạo phản hồi
+                    </button>
+                  </div>
+                )}
+
+                {/* Typing Indicator — only when NOT streaming (brief POST wait) */}
+                {isTyping && !isStreaming && (
                   <div className="flex justify-start">
                     <div className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex gap-1">
                       <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
@@ -360,8 +385,8 @@ const ChatWidget = () => {
             )}
           </div>
 
-          {/* Suggested Actions (Chips) - only for authenticated */}
-          {isAuthenticated && suggestedActions.length > 0 && !isTyping && (
+          {/* Suggested Actions (Chips) - only for authenticated, hide during streaming */}
+          {isAuthenticated && suggestedActions.length > 0 && !isTyping && !isStreaming && (
             <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300">
               {suggestedActions.map((action, idx) => (
                 <button
@@ -388,11 +413,11 @@ const ChatWidget = () => {
                     placeholder="Hỏi về việc làm, CV..."
                     maxLength={1000}
                     className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                    disabled={isTyping}
+                    disabled={isTyping || isStreaming}
                   />
                   <button
                     onClick={handleSend}
-                    disabled={!inputValue.trim() || isTyping}
+                    disabled={!inputValue.trim() || isTyping || isStreaming}
                     className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
                     title="Gửi tin nhắn"
                   >

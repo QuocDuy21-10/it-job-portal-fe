@@ -16,20 +16,23 @@ import {
 } from "@/features/chatbot/redux/chat-bot.slice";
 import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
 import { IMessage } from "@/shared/types/chat";
+import { useStreamChat } from "@/hooks/use-stream-chat";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
-  const { messages, isTyping, suggestedActions, isOpen } = useAppSelector(
-    (state) => state.chatBot
-  );
+  const { messages, isTyping, suggestedActions, isOpen, streamingContent, streamingMessageId } =
+    useAppSelector((state) => state.chatBot);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   // RTK Query hooks
   const [sendMessageMutation] = useSendMessageMutation();
   const [getChatHistoryTrigger] = useLazyGetChatHistoryQuery();
   const [clearChatHistoryMutation] = useClearChatHistoryMutation();
+
+  // Streaming hook
+  const { sendStreamMessage, abortStream, isStreaming } = useStreamChat();
 
   // Load chat history from server
   const loadHistory = useCallback(async () => {
@@ -74,30 +77,37 @@ export const useChat = () => {
         return;
       }
 
-      const tempId = uuidv4();
+      const trimmedContent = content.trim();
 
+      // Add user message to chat
       const userMessage: IMessage = {
-        id: tempId,
+        id: uuidv4(),
         role: "user",
-        content: content.trim(),
-        timestamp: new Date().toISOString(), 
+        content: trimmedContent,
+        timestamp: new Date().toISOString(),
       };
 
       dispatch(addMessage(userMessage));
+      dispatch(setSuggestedActions([]));
+
+      // Try streaming first, fall back to REST
+      const streamStarted = await sendStreamMessage(trimmedContent);
+      if (streamStarted) return;
+
+      // Fallback: standard REST mutation
       dispatch(setIsTyping(true));
-      dispatch(setSuggestedActions([])); // Clear suggested actions
 
       try {
         const response = await sendMessageMutation({
-          message: content.trim(),
+          message: trimmedContent,
         }).unwrap();
 
         const botMessage: IMessage = {
           id: uuidv4(),
           role: "assistant",
           content: response.response,
-          timestamp: response.timestamp, 
-          recommendedJobs: response.recommendedJobs, 
+          timestamp: response.timestamp,
+          recommendedJobs: response.recommendedJobs,
         };
 
         dispatch(addMessage(botMessage));
@@ -114,7 +124,7 @@ export const useChat = () => {
           content:
             error?.data?.message ||
             "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.",
-          timestamp: new Date().toISOString(), 
+          timestamp: new Date().toISOString(),
         };
 
         dispatch(addMessage(errorMessage));
@@ -128,7 +138,7 @@ export const useChat = () => {
         dispatch(setIsTyping(false));
       }
     },
-    [dispatch, sendMessageMutation, isAuthenticated]
+    [dispatch, sendMessageMutation, sendStreamMessage, isAuthenticated]
   );
 
   const clearChat = useCallback(async () => {
@@ -166,11 +176,15 @@ export const useChat = () => {
     suggestedActions,
     isOpen,
     isAuthenticated,
+    isStreaming,
+    streamingContent,
+    streamingMessageId,
 
     // Actions
     sendMessage,
     loadHistory,
     clearChat,
+    abortStream,
     toggleChatbox: handleToggleChatbox,
     openChatbox,
     closeChatbox,
