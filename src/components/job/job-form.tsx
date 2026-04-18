@@ -341,23 +341,6 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
           )}
         />
 
-        {/* Display selected company info */}
-        {form.watch("company._id") && (
-          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <img
-              src={form.watch("company.logo") || "/placeholder.png"}
-              alt={form.watch("company.name")}
-              className="w-12 h-12 object-contain"
-            />
-            <div>
-              <p className="font-medium">{form.watch("company.name")}</p>
-              <p className="text-sm text-gray-500">
-                ID: {form.watch("company._id")}
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* Active Status */}
         <div className="flex items-center gap-2">
           <FormField
