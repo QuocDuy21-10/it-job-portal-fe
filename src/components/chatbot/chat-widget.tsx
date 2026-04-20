@@ -15,12 +15,30 @@ import {
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { formatChatTimestamp } from "@/lib/utils/date.utils";
 import JobCard from "@/components/chatbot/job-card";
+import ChatTooltip from "@/components/chatbot/chat-tooltip";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { selectUser } from "@/features/auth/redux/auth.slice";
 
 const BUTTON_SIZE = 56; // w-14 = 56px
 const CHAT_WIDTH = 400;
 const CHAT_HEIGHT = 600;
 const EDGE_MARGIN = 20;
 const DRAG_THRESHOLD = 5;
+
+// Phase 3: Initial quick-action chips (shown before first message)
+const PLATFORM_CHIPS = [
+  "Có bao nhiêu việc Node.js đang mở?",
+  "Kỹ năng hot nhất năm 2026?",
+  "Top 5 công ty tuyển dụng nhiều nhất?",
+];
+
+const USER_CHIPS = [
+  "CV của tôi còn thiếu kỹ năng gì?",
+  "Gợi ý việc làm phù hợp cho tôi",
+  "So sánh lương Backend vs Frontend",
+];
+
+const INITIAL_CHIPS = [...PLATFORM_CHIPS, ...USER_CHIPS];
 
 const ChatSkeletonBubble = () => (
   <div className="flex justify-start">
@@ -49,6 +67,7 @@ const ChatWidget = () => {
     abortStream,
   } = useChat();
   const { openModal } = useAuthModal();
+  const user = useAppSelector(selectUser);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState("");
@@ -274,12 +293,40 @@ const ChatWidget = () => {
               <>
                 {/* Authenticated: Normal chat */}
                 {messages.length === 0 && !isTyping && (
-                  <div className="text-center text-gray-400 mt-10 text-sm px-4">
-                    <div className="text-4xl mb-3">👋</div>
-                    <p className="font-medium">Chào bạn!</p>
-                    <p className="text-xs mt-2">
-                      Tôi có thể giúp gì cho CV và sự nghiệp của bạn hôm nay?
-                    </p>
+                  <div className="space-y-4">
+                    {/* Phase 2A: Static greeting bubble */}
+                    <div className="flex items-start gap-2">
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mt-1">
+                        <span className="text-white text-xs font-bold">AI</span>
+                      </div>
+                      <div className="max-w-[85%] p-3 rounded-lg rounded-tl-none bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm text-sm text-gray-800 dark:text-gray-100">
+                        <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {`Xin chào${user?.name ? ` **${user.name}**` : ""}! Tôi là **AI Career Advisor** — trợ lý nghề nghiệp thông minh của bạn. Tôi có thể giúp bạn tìm việc phù hợp, đánh giá CV và cung cấp thống kê thị trường lao động. Bạn muốn bắt đầu từ đâu?`}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Phase 2B: Feature cards */}
+                    <div className="grid grid-cols-1 gap-2 px-1">
+                      {[
+                        { emoji: "🔍", title: "Tìm việc theo kỹ năng", desc: "Node.js, React, NestJS..." },
+                        { emoji: "📄", title: "Đánh giá & tối ưu CV", desc: "Phân tích điểm mạnh và thiếu sót" },
+                        { emoji: "📊", title: "Thống kê thị trường", desc: "Mức lương, kỹ năng hot, công ty top" },
+                      ].map((feature) => (
+                        <div
+                          key={feature.title}
+                          className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700/50 px-3 py-2.5"
+                        >
+                          <span className="text-lg leading-none">{feature.emoji}</span>
+                          <div>
+                            <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{feature.title}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">{feature.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -368,8 +415,23 @@ const ChatWidget = () => {
             )}
           </div>
 
-          {/* Suggested Actions (Chips) - only for authenticated, hide during streaming */}
-          {isAuthenticated && suggestedActions.length > 0 && !isTyping && !isStreaming && (
+          {/* Phase 3: Initial chips — shown before first message */}
+          {isAuthenticated && messages.length === 0 && !isTyping && !isStreaming && (
+            <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 border-t border-gray-100 dark:border-gray-700">
+              {INITIAL_CHIPS.map((chip, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSuggestedAction(chip)}
+                  className="whitespace-nowrap text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex-shrink-0"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Suggested Actions (Chips) - post-response, only for authenticated, hide during streaming */}
+          {isAuthenticated && messages.length > 0 && suggestedActions.length > 0 && !isTyping && !isStreaming && (
             <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300">
               {suggestedActions.map((action, idx) => (
                 <button
@@ -459,6 +521,17 @@ const ChatWidget = () => {
             )}
           </div>
         </div>
+      )}
+
+      {/* Phase 1: Greeting tooltip */}
+      {position && (
+        <ChatTooltip
+          position={position}
+          isChatOpen={isOpen}
+          isAuthenticated={isAuthenticated}
+          userName={user?.name}
+          onOpenChat={() => setIsOpen(true)}
+        />
       )}
 
       {/* Draggable Toggle Button */}
