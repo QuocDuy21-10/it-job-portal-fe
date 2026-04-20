@@ -7,6 +7,7 @@ import {
   ForgotPasswordFormData,
   ChangePasswordFormData,
   SetPasswordFormData,
+  RequestAccountDeletionFormData,
 } from "../schemas/auth.schema";
 import { ApiResponse } from "@/shared/base/api-response.base";
 
@@ -138,6 +139,40 @@ export const authApi = baseApi.injectEndpoints({
         data,
       }),
     }),
+
+    requestAccountDeletion: builder.mutation<
+      ApiResponse<{ message: string; scheduledDeletionAt: string }>,
+      RequestAccountDeletionFormData
+    >({
+      query: (data) => ({
+        url: "/auth/account",
+        method: "DELETE",
+        data,
+      }),
+      invalidatesTags: ["Auth", "User"],
+    }),
+
+    cancelAccountDeletion: builder.mutation<
+      ApiResponse<{ message: string }>,
+      void
+    >({
+      query: () => ({
+        url: "/auth/account/cancel-deletion",
+        method: "POST",
+      }),
+      invalidatesTags: ["Auth", "User"],
+    }),
+
+    cancelAccountDeletionByToken: builder.mutation<
+      ApiResponse<{ message: string }>,
+      { token: string }
+    >({
+      query: (data) => ({
+        url: "/auth/account/cancel-deletion-by-token",
+        method: "POST",
+        data,
+      }),
+    }),
   }),
 });
 
@@ -155,4 +190,7 @@ export const {
   useResetPasswordMutation,
   useChangePasswordMutation,
   useSetPasswordMutation,
+  useRequestAccountDeletionMutation,
+  useCancelAccountDeletionMutation,
+  useCancelAccountDeletionByTokenMutation,
 } = authApi;

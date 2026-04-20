@@ -355,4 +355,34 @@ export const vi = {
     saveSuccess: "Lưu CV thành công!",
     saveError: "Lỗi khi lưu CV",
   },
+  settings: {
+    deleteAccount: {
+      title: "Xóa tài khoản",
+      gracePeriodNote:
+        "Tài khoản sẽ bị xóa vĩnh viễn sau 30 ngày. Bạn có thể hủy bất cứ lúc nào trong thời gian đó.",
+      confirmPassword: "Nhập mật khẩu để xác nhận",
+      confirmText: 'Gõ DELETE để xác nhận',
+      pendingBanner: "Tài khoản sẽ bị xóa vào ngày {date}",
+      pendingBannerNote:
+        "Dăng nhập lại và nhấn \"Hủy xóa tài khoản\" để giữ lại tài khoản của bạn.",
+      cancelDeletion: "Hủy xóa tài khoản",
+      requestSuccess:
+        "Tài khoản đã được lên lịch xóa vào ngày {date}. Bạn có thể hủy trong vòng 30 ngày.",
+      cancelSuccess:
+        "Đã hủy yêu cầu xóa tài khoản. Tài khoản của bạn vẫn hoạt động bình thường.",
+      cancelByToken: {
+        pageTitle: "Hủy xóa tài khoản",
+        description:
+          "Tài khoản của bạn đã được lên lịch xóa vĩnh viễn. Nhấn nút bên dưới để hủy yêu cầu này và giữ lại tài khoản.",
+        keepAccount: "Giữ lại tài khoản",
+        successTitle: "Tài khoản đã được khôi phục!",
+        successMessage:
+          "Yêu cầu xóa tài khoản đã được hủy. Tài khoản của bạn hiện đang hoạt động bình thường.",
+        goToLogin: "Đến trang đăng nhập",
+        invalidToken: "Liên kết hủy không hợp lệ hoặc đã hết hạn.",
+        missingToken: "Không tìm thấy mã hủy trong liên kết.",
+        redirecting: "Chuyển hướng đến trang đăng nhập sau {count} giây...",
+      },
+    },
+  },
 };

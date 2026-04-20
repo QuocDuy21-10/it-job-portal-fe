@@ -346,4 +346,34 @@ export const en = {
     saveSuccess: "CV saved successfully!",
     saveError: "Error saving CV",
   },
+  settings: {
+    deleteAccount: {
+      title: "Delete Account",
+      gracePeriodNote:
+        "Your account will be permanently deleted after 30 days. You can cancel any time during that period.",
+      confirmPassword: "Enter your password to confirm",
+      confirmText: 'Type DELETE to confirm',
+      pendingBanner: "Your account is scheduled for deletion on {date}",
+      pendingBannerNote:
+        "Log back in and click \"Cancel Deletion\" to keep your account.",
+      cancelDeletion: "Cancel Deletion",
+      requestSuccess:
+        "Your account has been scheduled for deletion on {date}. You can cancel within 30 days.",
+      cancelSuccess:
+        "Account deletion cancelled. Your account is now fully active.",
+      cancelByToken: {
+        pageTitle: "Cancel Account Deletion",
+        description:
+          "Your account is scheduled for permanent deletion. Click the button below to cancel this request and keep your account.",
+        keepAccount: "Keep My Account",
+        successTitle: "Account Restored!",
+        successMessage:
+          "Your account deletion has been cancelled. Your account is now fully active.",
+        goToLogin: "Go to Login",
+        invalidToken: "This cancellation link is invalid or has already expired.",
+        missingToken: "No cancellation token was found in the link.",
+        redirecting: "Redirecting to login in {count} second(s)...",
+      },
+    },
+  },
 };
