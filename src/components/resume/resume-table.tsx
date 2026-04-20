@@ -1,7 +1,8 @@
-import { FileText, Mail, ExternalLink, Building2, Trophy, Target, Calendar, Edit } from "lucide-react";
+import { FileText, Mail, ExternalLink, Building2, Trophy, Target, Calendar, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -26,16 +27,28 @@ interface ResumeTableProps {
   resumes: Resume[];
   isLoading?: boolean;
   onEdit: (resume: Resume) => void;
+  onDelete: (id: string) => void;
   currentPage: number;
   pageSize: number;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onToggleAll: () => void;
+  isAllSelected: boolean;
+  isIndeterminate: boolean;
 }
 
 export function ResumeTable({
   resumes,
   isLoading,
   onEdit,
+  onDelete,
   currentPage,
   pageSize,
+  selectedIds,
+  onToggleSelect,
+  onToggleAll,
+  isAllSelected,
+  isIndeterminate,
 }: ResumeTableProps) {
   if (isLoading) {
     return <ResumeTableSkeleton />;
@@ -48,6 +61,13 @@ export function ResumeTable({
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={isIndeterminate ? "indeterminate" : isAllSelected}
+                    onCheckedChange={onToggleAll}
+                    aria-label="Select all"
+                  />
+                </TableHead>
                 <TableHead className="w-[80px]">STT</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Link</TableHead>
@@ -63,7 +83,7 @@ export function ResumeTable({
             <TableBody>
               {resumes.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="py-12">
+                  <TableCell colSpan={11} className="py-12">
                     <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
                       <FileText className="h-12 w-12 text-gray-300" />
                       <div className="text-center">
@@ -83,7 +103,10 @@ export function ResumeTable({
                   key={resume._id}
                   resume={resume}
                   onEdit={onEdit}
+                  onDelete={onDelete}
                   orderNumber={(currentPage - 1) * pageSize + index + 1}
+                  isSelected={selectedIds.has(resume._id as string)}
+                  onToggleSelect={onToggleSelect}
                 />
               ))
             )}
@@ -99,10 +122,13 @@ export function ResumeTable({
 interface ResumeTableRowProps {
   resume: Resume;
   onEdit: (resume: Resume) => void;
+  onDelete: (id: string) => void;
   orderNumber: number;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
 }
 
-function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
+function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onToggleSelect }: ResumeTableRowProps) {
   // Get priority badge color
   const getPriorityColor = () => {
     const priority = resume.priority?.toUpperCase() || "";
@@ -132,7 +158,14 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
   };
   
   return (
-    <TableRow className="admin-table-row group">
+    <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
+      <TableCell>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect(resume._id as string)}
+          aria-label={`Select resume from ${resume.email}`}
+        />
+      </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
         {orderNumber}
       </TableCell>
@@ -235,6 +268,23 @@ function ResumeTableRow({ resume, onEdit, orderNumber }: ResumeTableRowProps) {
               </TooltipContent>
             </Tooltip>
           </Access>
+          <Access action={EAction.DELETE} subject="Resume" hideChildren>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(resume._id as string)}
+                  className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete resume</p>
+              </TooltipContent>
+            </Tooltip>
+          </Access>
         </div>
       </TableCell>
     </TableRow>
@@ -248,6 +298,7 @@ function ResumeTableSkeleton() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px]" />
             <TableHead className="w-[80px]">STT</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Link</TableHead>
@@ -263,6 +314,9 @@ function ResumeTableSkeleton() {
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
+              <TableCell>
+                <Skeleton className="h-4 w-4" />
+              </TableCell>
               <TableCell>
                 <Skeleton className="h-4 w-8 mx-auto" />
               </TableCell>

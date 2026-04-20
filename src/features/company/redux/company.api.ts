@@ -1,5 +1,6 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Company,
   CreateCompanyFormData,
@@ -86,6 +87,19 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Company"],
     }),
+
+    // Bulk delete companies
+    bulkDeleteCompanies: builder.mutation<
+      ApiResponse<IBulkDeleteResult>,
+      string[]
+    >({
+      query: (ids) => ({
+        url: "/companies/bulk",
+        method: "DELETE",
+        data: { ids },
+      }),
+      invalidatesTags: ["Company"],
+    }),
   }),
 });
 
@@ -95,4 +109,5 @@ export const {
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
+  useBulkDeleteCompaniesMutation,
 } = companyApi;

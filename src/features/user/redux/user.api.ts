@@ -1,5 +1,6 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   CreateUserFormData,
   User,
@@ -282,6 +283,18 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+
+    // Bulk delete users
+    bulkDeleteUsers: builder.mutation<ApiResponse<IBulkDeleteResult>, string[]>(
+      {
+        query: (ids) => ({
+          url: "/users/bulk",
+          method: "DELETE",
+          data: { ids },
+        }),
+        invalidatesTags: ["User"],
+      }
+    ),
   }),
 });
 
@@ -299,4 +312,5 @@ export const {
   useFollowCompanyMutation,
   useUnfollowCompanyMutation,
   useGetFollowingCompaniesQuery,
+  useBulkDeleteUsersMutation,
 } = userApi;

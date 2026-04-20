@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Plus, Filter, Users as UsersIcon } from "lucide-react";
+import { Plus, Filter, Users as UsersIcon, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -10,14 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetUsersQuery } from "@/features/user/redux/user.api";
+import { useGetUsersQuery, useBulkDeleteUsersMutation } from "@/features/user/redux/user.api";
 import { useGetRolesQuery } from "@/features/role/redux/role.api";
 import { useUserOperations } from "@/hooks/use-user";
+import { useTableSelection } from "@/hooks/use-table-selection";
 import { SearchBar } from "@/components/ui/search-bar";
 import { UserTable } from "@/components/user/user-table";
 import { UserDialog } from "@/components/user/user-dialog";
 import { LockUserDialog } from "@/components/user/lock-user-dialog";
+import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { Pagination } from "@/components/pagination";
+import { Access } from "@/components/access";
+import { EAction } from "@/lib/casl/ability";
+import { toast } from "sonner";
 import { CreateUserFormData, UpdateUserFormData, User } from "@/features/user/schemas/user.schema";
 
 export default function UsersPage() {
@@ -26,6 +31,7 @@ export default function UsersPage() {
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
 
   // Construct filter query dynamically
   const filter = useMemo(() => {
@@ -71,10 +77,16 @@ export default function UsersPage() {
     handleUnlock,
   } = useUserOperations();
 
+  const [bulkDeleteUsers, { isLoading: isBulkDeleting }] =
+    useBulkDeleteUsersMutation();
+
   // Memoized data
   const users = useMemo(() => {
     return usersData?.data?.result || [];
   }, [usersData]);
+
+  const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
+    useTableSelection(users);
 
   const roles = useMemo(() => {
     return rolesData?.data?.result || [];
@@ -86,21 +98,42 @@ export default function UsersPage() {
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
     setCurrentPage(1);
-  }, []);
+    clear();
+  }, [clear]);
 
   const handleRoleChange = useCallback((value: string) => {
     setSelectedRole(value);
     setCurrentPage(1);
-  }, []);
+    clear();
+  }, [clear]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-  }, []);
+    clear();
+  }, [clear]);
 
   const handlePageSizeChange = useCallback((size: number) => {
     setPageSize(size);
     setCurrentPage(1);
-  }, []);
+    clear();
+  }, [clear]);
+
+  const handleBulkDelete = useCallback(async () => {
+    try {
+      const result = await bulkDeleteUsers(Array.from(selectedIds)).unwrap();
+      const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
+      if (deletedCount < requestedCount) {
+        toast.warning(`Deleted ${deletedCount} of ${requestedCount} users. Some records may have already been removed.`);
+      } else {
+        toast.success(`Successfully deleted ${deletedCount} user${deletedCount !== 1 ? "s" : ""}.`);
+      }
+      clear();
+      setShowBulkDeleteDialog(false);
+    } catch (error: any) {
+      const errorMessage = error?.data?.message || error?.message || "Failed to delete users. Please try again.";
+      toast.error(errorMessage);
+    }
+  }, [bulkDeleteUsers, selectedIds, clear]);
 
   const handleSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
     return handleUserSubmit(formData);
@@ -169,6 +202,31 @@ export default function UsersPage() {
       </div>
 
       {/* Users Table */}
+      {selectedCount > 0 && (
+        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
+          <span className="text-sm font-medium text-foreground">
+            {selectedCount} user{selectedCount !== 1 ? "s" : ""} selected
+          </span>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
+              <X className="h-4 w-4" />
+              Clear
+            </Button>
+            <Access action={EAction.DELETE} subject="User" hideChildren>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowBulkDeleteDialog(true)}
+                className="gap-1.5"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Selected
+              </Button>
+            </Access>
+          </div>
+        </div>
+      )}
+
       <UserTable
         users={users}
         isLoading={isLoading}
@@ -181,6 +239,11 @@ export default function UsersPage() {
         onUnlock={handleUnlock}
         currentPage={currentPage}
         pageSize={pageSize}
+        selectedIds={selectedIds}
+        onToggleSelect={toggle}
+        onToggleAll={toggleAll}
+        isAllSelected={isAllSelected}
+        isIndeterminate={isIndeterminate}
       />
 
       {/* Pagination - Reusable Component */}
@@ -209,6 +272,16 @@ export default function UsersPage() {
         isLoading={isLocking}
         onConfirm={handleConfirmLock}
         onCancel={handleCloseLockDialog}
+      />
+
+      {/* Bulk Delete Confirm Dialog */}
+      <BulkDeleteConfirmDialog
+        open={showBulkDeleteDialog}
+        onOpenChange={setShowBulkDeleteDialog}
+        count={selectedCount}
+        resourceName={selectedCount === 1 ? "user" : "users"}
+        onConfirm={handleBulkDelete}
+        isLoading={isBulkDeleting}
       />
     </div>
   );

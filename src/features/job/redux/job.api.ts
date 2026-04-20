@@ -1,5 +1,6 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Job,
   CreateJobFormData,
@@ -96,6 +97,16 @@ export const jobApi = baseApi.injectEndpoints({
         "Job",
       ],
     }),
+
+    // Bulk delete jobs
+    bulkDeleteJobs: builder.mutation<ApiResponse<IBulkDeleteResult>, string[]>({
+      query: (ids) => ({
+        url: "/jobs/bulk",
+        method: "DELETE",
+        data: { ids },
+      }),
+      invalidatesTags: ["Job"],
+    }),
   }),
 });
 
@@ -106,4 +117,5 @@ export const {
   useUpdateJobMutation,
   useDeleteJobMutation,
   useApproveJobMutation,
+  useBulkDeleteJobsMutation,
 } = jobApi;

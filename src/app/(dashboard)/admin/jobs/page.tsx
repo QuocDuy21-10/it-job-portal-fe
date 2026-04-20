@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Plus, Briefcase, Filter } from "lucide-react";
+import { Plus, Briefcase, Filter, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -10,15 +10,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetJobsQuery } from "@/features/job/redux/job.api";
+import { useGetJobsQuery, useBulkDeleteJobsMutation } from "@/features/job/redux/job.api";
 import { SearchBar } from "@/components/ui/search-bar";
 import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
 import { JobTable } from "@/components/job/job-table";
 import { JobDialog } from "@/components/job/job-dialog";
 import { JobApprovalDialog } from "@/components/job/job-approval-dialog";
+import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { Job } from "@/features/job/schemas/job.schema";
 import { useJobOperations } from "@/hooks/use-job";
+import { useTableSelection } from "@/hooks/use-table-selection";
+import { Access } from "@/components/access";
+import { EAction } from "@/lib/casl/ability";
+import { toast } from "sonner";
 import provinces from "@/shared/data/provinces.json";
 
 export default function JobsPage() {
@@ -29,6 +34,7 @@ export default function JobsPage() {
   const [selectedApprovalStatus, setSelectedApprovalStatus] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
 
   // Salary ranges (in VND)
   const salaryRanges = [
@@ -92,9 +98,15 @@ export default function JobsPage() {
     handleApprove,
   } = useJobOperations();
 
+  const [bulkDeleteJobs, { isLoading: isBulkDeleting }] =
+    useBulkDeleteJobsMutation();
+
   const jobs = useMemo(() => {
     return jobsData?.data?.result || [];
   }, [jobsData]);
+
+  const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
+    useTableSelection(jobs);
 
   const pagination = jobsData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
@@ -102,7 +114,8 @@ export default function JobsPage() {
   // Handlers với useCallback để tránh re-render không cần thiết
   const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
-  }, []);
+    clear();
+  }, [clear]);
   
   const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPageSize(newPageSize);
@@ -112,12 +125,31 @@ export default function JobsPage() {
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
     setCurrentPage(1);
-  }, []);
+    clear();
+  }, [clear]);
   
+  const handleBulkDelete = useCallback(async () => {
+    try {
+      const result = await bulkDeleteJobs(Array.from(selectedIds)).unwrap();
+      const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
+      if (deletedCount < requestedCount) {
+        toast.warning(`Deleted ${deletedCount} of ${requestedCount} jobs. Some records may have already been removed.`);
+      } else {
+        toast.success(`Successfully deleted ${deletedCount} job${deletedCount !== 1 ? "s" : ""}.`);
+      }
+      clear();
+      setShowBulkDeleteDialog(false);
+    } catch (error: any) {
+      const errorMessage = error?.data?.message || error?.message || "Failed to delete jobs. Please try again.";
+      toast.error(errorMessage);
+    }
+  }, [bulkDeleteJobs, selectedIds, clear]);
+
   const handleStatusChange = useCallback((value: string) => {
     setSelectedStatus(value);
     setCurrentPage(1);
-  }, []);
+    clear();
+  }, [clear]);
   
   const handleLocationChange = useCallback((value: string) => {
     setSelectedLocation(value);
@@ -255,6 +287,31 @@ export default function JobsPage() {
       </div>
 
       {/* Jobs Table */}
+      {selectedCount > 0 && (
+        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
+          <span className="text-sm font-medium text-foreground">
+            {selectedCount} job{selectedCount !== 1 ? "s" : ""} selected
+          </span>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
+              <X className="h-4 w-4" />
+              Clear
+            </Button>
+            <Access action={EAction.DELETE} subject="Job" hideChildren>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowBulkDeleteDialog(true)}
+                className="gap-1.5"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Selected
+              </Button>
+            </Access>
+          </div>
+        </div>
+      )}
+
       <JobTable
         jobs={jobs}
         isLoading={isLoading}
@@ -266,6 +323,11 @@ export default function JobsPage() {
         }}
         currentPage={currentPage}
         pageSize={pageSize}
+        selectedIds={selectedIds}
+        onToggleSelect={toggle}
+        onToggleAll={toggleAll}
+        isAllSelected={isAllSelected}
+        isIndeterminate={isIndeterminate}
       />
 
       {/* Pagination */}
@@ -295,6 +357,16 @@ export default function JobsPage() {
         job={approvingJob}
         onSubmit={handleApprove}
         isLoading={isApproving}
+      />
+
+      {/* Bulk Delete Confirm Dialog */}
+      <BulkDeleteConfirmDialog
+        open={showBulkDeleteDialog}
+        onOpenChange={setShowBulkDeleteDialog}
+        count={selectedCount}
+        resourceName={selectedCount === 1 ? "job" : "jobs"}
+        onConfirm={handleBulkDelete}
+        isLoading={isBulkDeleting}
       />
     </div>
   );

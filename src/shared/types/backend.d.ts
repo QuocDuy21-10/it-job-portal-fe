@@ -155,3 +155,8 @@ export interface ISubscribers {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface IBulkDeleteResult {
+  deletedCount: number;
+  requestedCount: number;
+}

@@ -1,6 +1,7 @@
 import { Pencil, Trash2, Briefcase, MapPin, DollarSign, Calendar, TrendingUp, CheckCircle, XCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -29,6 +30,11 @@ interface JobTableProps {
   onApprove: (job: Job) => void;
   currentPage: number;
   pageSize: number;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onToggleAll: () => void;
+  isAllSelected: boolean;
+  isIndeterminate: boolean;
 }
 
 export function JobTable({
@@ -39,6 +45,11 @@ export function JobTable({
   onApprove,
   currentPage,
   pageSize,
+  selectedIds,
+  onToggleSelect,
+  onToggleAll,
+  isAllSelected,
+  isIndeterminate,
 }: JobTableProps) {
   if (isLoading) {
     return <JobTableSkeleton />;
@@ -51,6 +62,13 @@ export function JobTable({
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={isIndeterminate ? "indeterminate" : isAllSelected}
+                    onCheckedChange={onToggleAll}
+                    aria-label="Select all"
+                  />
+                </TableHead>
                 <TableHead className="w-[80px]">STT</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Location</TableHead>
@@ -65,7 +83,7 @@ export function JobTable({
             <TableBody>
               {jobs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="py-12">
+                  <TableCell colSpan={10} className="py-12">
                     <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
                       <Briefcase className="h-12 w-12 text-gray-300" />
                       <div className="text-center">
@@ -88,6 +106,8 @@ export function JobTable({
                   onDelete={onDelete}
                   onApprove={onApprove}
                   orderNumber={(currentPage - 1) * pageSize + index + 1}
+                  isSelected={selectedIds.has(job._id)}
+                  onToggleSelect={onToggleSelect}
                 />
               ))
             )}
@@ -106,9 +126,11 @@ interface JobTableRowProps {
   onDelete: (_id: string) => void;
   onApprove: (job: Job) => void;
   orderNumber: number;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
 }
 
-function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber }: JobTableRowProps) {
+function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected, onToggleSelect }: JobTableRowProps) {
   // Get level badge color
   const getLevelColor = () => {
     const level = job.level?.toLowerCase() || "";
@@ -152,7 +174,14 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber }: JobTable
   };
   
   return (
-    <TableRow className="admin-table-row group">
+    <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
+      <TableCell>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect(job._id)}
+          aria-label={`Select ${job.name}`}
+        />
+      </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
         {orderNumber}
       </TableCell>
@@ -288,6 +317,7 @@ function JobTableSkeleton() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px]" />
             <TableHead className="w-[80px]">STT</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Location</TableHead>
@@ -302,8 +332,9 @@ function JobTableSkeleton() {
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
-              <TableCell>
-                <Skeleton className="h-4 w-8 mx-auto" />
+              <TableCell>                <Skeleton className="h-4 w-4" />
+              </TableCell>
+              <TableCell>                <Skeleton className="h-4 w-8 mx-auto" />
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-3">

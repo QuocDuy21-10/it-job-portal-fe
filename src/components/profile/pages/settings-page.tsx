@@ -23,6 +23,8 @@ import { setLogoutAction } from "@/features/auth/redux/auth.slice";
 import { toast } from "sonner";
 import { Modal } from "../shared/modal";
 import { SectionCard } from "../shared/section-card";
+import { AccountDeletionDialog } from "../account-deletion-dialog";
+import { PendingDeletionBanner } from "../pending-deletion-banner";
 
 export default function SettingsPage({
   onNavigateToCCV,
@@ -39,7 +41,6 @@ export default function SettingsPage({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showSetPasswordModal, setShowSetPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -103,16 +104,6 @@ export default function SettingsPage({
       const msg = error?.data?.message || "Tạo mật khẩu thất bại";
       toast.error(msg);
     }
-  };
-
-  const handleDeleteAccount = () => {
-    if (!verificationCode) {
-      alert("Vui lòng nhập mã xác thực");
-      return;
-    }
-
-    alert("Tài khoản của bạn sẽ bị xóa vĩnh viễn");
-    setShowDeleteModal(false);
   };
 
   // Determine security section content based on auth state
@@ -218,22 +209,27 @@ export default function SettingsPage({
       <Card className="p-6 bg-destructive/5 border border-destructive/30 hover:border-destructive/50 transition-colors">
         <div className="flex items-start gap-4">
           <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Xóa tài khoản
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Hành động này không thể hoàn tác. Tất cả dữ liệu của bạn sẽ bị xóa
-              vĩnh viễn.
-            </p>
-            <Button
-              onClick={() => setShowDeleteModal(true)}
-              variant="destructive"
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Xóa tài khoản
-            </Button>
+          <div className="flex-1 space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground mb-2">
+                Xóa tài khoản
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Tài khoản sẽ được xóa sau 30 ngày kể từ khi yêu cầu. Bạn có thể hủy bất cứ lúc nào trong thời gian đó.
+              </p>
+            </div>
+            {user?.scheduledDeletionAt ? (
+              <PendingDeletionBanner scheduledDeletionAt={user.scheduledDeletionAt} />
+            ) : (
+              <Button
+                onClick={() => setShowDeleteModal(true)}
+                variant="destructive"
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Xóa tài khoản
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -458,47 +454,11 @@ export default function SettingsPage({
         </form>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        title="Xác nhận xóa tài khoản"
-        maxWidth="md"
-      >
-        <div className="space-y-4">
-          <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
-            <p className="text-sm text-foreground">
-              <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác!
-            </p>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Chúng tôi đã gửi mã xác thực đến email của bạn. Vui lòng nhập mã
-            xác thực để tiếp tục.
-          </p>
-          <input
-            type="text"
-            placeholder="Nhập mã xác thực"
-            value={verificationCode}
-            onChange={(e) => setVerificationCode(e.target.value)}
-            className="w-full px-3 py-2.5 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-destructive/50 focus:border-destructive transition-all"
-          />
-          <div className="flex gap-3 pt-4">
-            <Button
-              onClick={() => setShowDeleteModal(false)}
-              variant="outline"
-              className="flex-1"
-            >
-              Hủy
-            </Button>
-            <Button
-              onClick={handleDeleteAccount}
-              className="flex-1 bg-destructive hover:bg-destructive/90"
-            >
-              Xóa vĩnh viễn
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      <AccountDeletionDialog
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        isGoogleUser={isGoogleUser}
+      />
     </div>
   );
 }

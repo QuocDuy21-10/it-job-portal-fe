@@ -1,5 +1,6 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Resume,
   CreateResumeFormData,
@@ -115,6 +116,19 @@ export const resumeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Resume"],
     }),
+
+    // Bulk delete resumes
+    bulkDeleteResumes: builder.mutation<
+      ApiResponse<IBulkDeleteResult>,
+      string[]
+    >({
+      query: (ids) => ({
+        url: "/resumes/bulk",
+        method: "DELETE",
+        data: { ids },
+      }),
+      invalidatesTags: ["Resume"],
+    }),
   }),
 });
 
@@ -126,4 +140,5 @@ export const {
   useUpdateResumeMutation,
   useDeleteResumeMutation,
   useTakeOutAppliedJobMutation,
+  useBulkDeleteResumesMutation,
 } = resumeApi;

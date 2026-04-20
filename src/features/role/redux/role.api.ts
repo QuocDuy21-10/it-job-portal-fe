@@ -1,5 +1,6 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Role,
   CreateRoleFormData,
@@ -83,6 +84,16 @@ export const roleApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Role"],
     }),
+
+    // Bulk delete roles
+    bulkDeleteRoles: builder.mutation<ApiResponse<IBulkDeleteResult>, string[]>({
+      query: (ids) => ({
+        url: "/roles/bulk",
+        method: "DELETE",
+        data: { ids },
+      }),
+      invalidatesTags: ["Role"],
+    }),
   }),
 });
 
@@ -92,4 +103,5 @@ export const {
   useCreateRoleMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
+  useBulkDeleteRolesMutation,
 } = roleApi;

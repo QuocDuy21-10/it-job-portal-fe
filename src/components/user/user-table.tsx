@@ -1,6 +1,7 @@
 import { Pencil, Trash2, Calendar, Shield, Lock, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -31,6 +32,11 @@ interface UserTableProps {
   onUnlock: (id: string) => void;
   currentPage: number;
   pageSize: number;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onToggleAll: () => void;
+  isAllSelected: boolean;
+  isIndeterminate: boolean;
 }
 
 export function UserTable({
@@ -42,6 +48,11 @@ export function UserTable({
   onUnlock,
   currentPage,
   pageSize,
+  selectedIds,
+  onToggleSelect,
+  onToggleAll,
+  isAllSelected,
+  isIndeterminate,
 }: UserTableProps) {
   if (isLoading) {
     return <UserTableSkeleton />;
@@ -54,6 +65,13 @@ export function UserTable({
           <Table>
             <TableHeader>
               <TableRow className="border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={isIndeterminate ? "indeterminate" : isAllSelected}
+                    onCheckedChange={onToggleAll}
+                    aria-label="Select all"
+                  />
+                </TableHead>
                 <TableHead className="w-[60px] text-center font-semibold text-gray-700 dark:text-gray-300">
                   STT
                 </TableHead>
@@ -81,7 +99,7 @@ export function UserTable({
               {users.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="h-40 text-center"
                   >
                     <div className="flex flex-col items-center justify-center gap-3 py-8">
@@ -109,6 +127,8 @@ export function UserTable({
                     onLock={onLock}
                     onUnlock={onUnlock}
                     orderNumber={(currentPage - 1) * pageSize + index + 1}
+                    isSelected={selectedIds.has(user._id)}
+                    onToggleSelect={onToggleSelect}
                   />
                 ))
               )}
@@ -130,6 +150,7 @@ function UserTableSkeleton() {
         <Table>
           <TableHeader>
             <TableRow className="border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-900/50">
+              <TableHead className="w-[50px]" />
               <TableHead className="w-[60px]">#</TableHead>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
@@ -142,6 +163,9 @@ function UserTableSkeleton() {
           <TableBody>
             {[...Array(5)].map((_, i) => (
               <TableRow key={i}>
+                <TableCell>
+                  <Skeleton className="h-4 w-4" />
+                </TableCell>
                 <TableCell>
                   <Skeleton className="h-4 w-8 mx-auto" />
                 </TableCell>
@@ -187,6 +211,8 @@ interface UserTableRowProps {
   onLock: (user: User) => void;
   onUnlock: (_id: string) => void;
   orderNumber: number;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
 }
 
 function UserTableRow({
@@ -196,6 +222,8 @@ function UserTableRow({
   onLock,
   onUnlock,
   orderNumber,
+  isSelected,
+  onToggleSelect,
 }: UserTableRowProps) {
   const { data: roleData } = useGetRoleQuery(user.role);
   const roleName = roleData?.data?.name || "Unknown Role";
@@ -225,7 +253,16 @@ function UserTableRow({
         "hover:bg-gray-50 dark:hover:bg-gray-900/30",
         "transition-colors duration-200"
       )}
+      data-state={isSelected ? "selected" : undefined}
     >
+      {/* Checkbox */}
+      <TableCell>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect(user._id)}
+          aria-label={`Select ${user.name}`}
+        />
+      </TableCell>
       {/* Order Number */}
       <TableCell className="text-center font-medium text-gray-600 dark:text-gray-400">
         {orderNumber}

@@ -64,6 +64,7 @@ export const LoginResponseSchema = z.object({
     }),
     savedJobs: z.array(z.string()),
     companyFollowed: z.array(z.string()),
+    scheduledDeletionAt: z.string().nullable().optional(),
   }),
 });
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
@@ -324,6 +325,15 @@ export type AccountResponse = Omit<
   z.infer<typeof LoginResponseSchema>,
   "access_token"
 >;
+
+// REQUEST ACCOUNT DELETION SCHEMA
+export const RequestAccountDeletionSchema = z.object({
+  password: z.string().optional(),
+});
+
+export type RequestAccountDeletionFormData = z.infer<
+  typeof RequestAccountDeletionSchema
+>;
 // AUTH STATE SCHEMA
 export const AuthStateSchema = z.object({
   user: z
@@ -334,6 +344,7 @@ export const AuthStateSchema = z.object({
       name: z.string(),
       authProvider: z.string().optional(),
       hasPassword: z.boolean().optional(),
+      scheduledDeletionAt: z.string().nullable().optional(),
       role: z.object({
         _id: z.string(),
         name: z.string(),

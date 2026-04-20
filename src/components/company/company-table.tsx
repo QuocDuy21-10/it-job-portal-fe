@@ -1,6 +1,7 @@
 import { Pencil, Trash2, Building2, MapPin, Globe, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -27,6 +28,11 @@ interface CompanyTableProps {
   onDelete: (id: string) => void;
   currentPage: number;
   pageSize: number;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onToggleAll: () => void;
+  isAllSelected: boolean;
+  isIndeterminate: boolean;
 }
 
 export function CompanyTable({
@@ -36,6 +42,11 @@ export function CompanyTable({
   onDelete,
   currentPage,
   pageSize,
+  selectedIds,
+  onToggleSelect,
+  onToggleAll,
+  isAllSelected,
+  isIndeterminate,
 }: CompanyTableProps) {
   if (isLoading) {
     return <CompanyTableSkeleton />;
@@ -48,6 +59,13 @@ export function CompanyTable({
           <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={isIndeterminate ? "indeterminate" : isAllSelected}
+                  onCheckedChange={onToggleAll}
+                  aria-label="Select all"
+                />
+              </TableHead>
               <TableHead className="w-[80px]">STT</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Address</TableHead>
@@ -60,7 +78,7 @@ export function CompanyTable({
           <TableBody>
             {companies.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-12">
+                <TableCell colSpan={8} className="py-12">
                   <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
                     <Building2 className="h-12 w-12 text-gray-300" />
                     <div className="text-center">
@@ -82,6 +100,8 @@ export function CompanyTable({
                   onEdit={onEdit}
                   onDelete={onDelete}
                   orderNumber={(currentPage - 1) * pageSize + index + 1}
+                  isSelected={selectedIds.has(company._id as string)}
+                  onToggleSelect={onToggleSelect}
                 />
               ))
             )}
@@ -98,7 +118,9 @@ interface CompanyTableRowProps {
   company: Company;
   onEdit: (company: Company) => void;
   onDelete: (_id: string) => void;
-  orderNumber: number; // Add this prop
+  orderNumber: number;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
 }
 
 function CompanyTableRow({
@@ -106,11 +128,20 @@ function CompanyTableRow({
   onEdit,
   onDelete,
   orderNumber,
+  isSelected,
+  onToggleSelect,
 }: CompanyTableRowProps) {
   // Get first letter for avatar
   
   return (
-    <TableRow className="admin-table-row group">
+    <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
+      <TableCell>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect(company._id as string)}
+          aria-label={`Select ${company.name}`}
+        />
+      </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
         {orderNumber}
       </TableCell>
@@ -214,6 +245,7 @@ function CompanyTableSkeleton() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px]" />
             <TableHead className="w-[80px]">STT</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Address</TableHead>
@@ -226,6 +258,9 @@ function CompanyTableSkeleton() {
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
+              <TableCell>
+                <Skeleton className="h-4 w-4" />
+              </TableCell>
               <TableCell>
                 <Skeleton className="h-4 w-8 mx-auto" />
               </TableCell>
