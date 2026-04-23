@@ -1,5 +1,9 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import {
+  PaginatedQueryParams,
+  PaginatedResult,
+} from "@/shared/types/pagination";
 import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Role,
@@ -9,25 +13,7 @@ import {
 
 export const roleApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getRoles: builder.query<
-      ApiResponse<{
-        result: Role[];
-        meta: {
-          pagination: {
-            current_page: number;
-            per_page: number;
-            total_pages: number;
-            total: number;
-          };
-        };
-      }>,
-      {
-        page?: number;
-        limit?: number;
-        filter?: string;
-        sort?: string;
-      }
-    >({
+    getRoles: builder.query<ApiResponse<PaginatedResult<Role>>, PaginatedQueryParams>({
       query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;

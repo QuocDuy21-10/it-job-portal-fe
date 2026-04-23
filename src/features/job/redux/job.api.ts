@@ -1,5 +1,9 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import {
+  PaginatedQueryParams,
+  PaginatedResult,
+} from "@/shared/types/pagination";
 import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Job,
@@ -10,25 +14,7 @@ import {
 
 export const jobApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getJobs: builder.query<
-      ApiResponse<{
-        result: Job[];
-        meta: {
-          pagination: {
-            current_page: number;
-            per_page: number;
-            total_pages: number;
-            total: number;
-          };
-        };
-      }>,
-      {
-        page?: number;
-        limit?: number;
-        filter?: string;
-        sort?: string;
-      }
-    >({
+    getJobs: builder.query<ApiResponse<PaginatedResult<Job>>, PaginatedQueryParams>({
       query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;

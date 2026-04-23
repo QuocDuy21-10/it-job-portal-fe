@@ -12,7 +12,7 @@ export const ApiResponseSchema = <T extends z.ZodTypeAny>(data: T) =>
 export type ApiResponse<T> = {
   statusCode: number | string;
   message: string | null;
-  data?: any;
+  data?: T;
   timestamp?: string | null;
   error?: string | string[];
 };

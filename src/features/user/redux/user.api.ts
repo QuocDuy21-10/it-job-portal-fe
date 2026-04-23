@@ -1,5 +1,9 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
+import {
+  PaginatedQueryParams,
+  PaginatedResult,
+} from "@/shared/types/pagination";
 import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   CreateUserFormData,
@@ -8,27 +12,14 @@ import {
 } from "../schemas/user.schema";
 import { authApi } from "@/features/auth/redux/auth.api";
 
+type AuthMeCacheUser = {
+  jobFavorites?: string[];
+  companyFollowed?: string[];
+};
+
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<
-      ApiResponse<{
-        result: User[];
-         meta: {
-          pagination: {
-            current_page: number;
-            per_page: number;
-            total_pages: number;
-            total: number;
-          };
-        };
-      }>,
-      {
-        page?: number;
-        limit?: number;
-        filter?: string;
-        sort?: string;
-      }
-    >({
+    getUsers: builder.query<ApiResponse<PaginatedResult<User>>, PaginatedQueryParams>({
       query: ({ page = 1, limit = 10, filter = "", sort = "createdAt" }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;
@@ -118,10 +109,11 @@ export const userApi = baseApi.injectEndpoints({
         // Optimistically update getMe cache
         const patchResult = dispatch(
           authApi.util.updateQueryData("getMe", undefined, (draft) => {
-            if (draft.data?.user) {
-              const currentFavorites = draft.data.user.jobFavorites || [];
+            const user = draft.data?.user as AuthMeCacheUser | undefined;
+            if (user) {
+              const currentFavorites = user.jobFavorites || [];
               if (!currentFavorites.includes(jobId)) {
-                draft.data.user.jobFavorites = [...currentFavorites, jobId];
+                user.jobFavorites = [...currentFavorites, jobId];
               }
             }
           })
@@ -147,9 +139,10 @@ export const userApi = baseApi.injectEndpoints({
         // Optimistically update getMe cache
         const patchResult = dispatch(
           authApi.util.updateQueryData("getMe", undefined, (draft) => {
-            if (draft.data?.user) {
-              const currentFavorites = draft.data.user.jobFavorites || [];
-              draft.data.user.jobFavorites = currentFavorites.filter(
+            const user = draft.data?.user as AuthMeCacheUser | undefined;
+            if (user) {
+              const currentFavorites = user.jobFavorites || [];
+              user.jobFavorites = currentFavorites.filter(
                 (id: string) => id !== jobId
               );
             }
@@ -212,9 +205,9 @@ export const userApi = baseApi.injectEndpoints({
         const patchResult = dispatch(
           authApi.util.updateQueryData("getMe", undefined, (draft) => {
             if (draft.data?.user) {
-              const currentFollowing = draft.data.user.companyFollowing || [];
+              const currentFollowing = draft.data.user.companyFollowed || [];
               if (!currentFollowing.includes(companyId)) {
-                draft.data.user.companyFollowing = [...currentFollowing, companyId];
+                draft.data.user.companyFollowed = [...currentFollowing, companyId];
               }
             }
           })
@@ -241,8 +234,8 @@ export const userApi = baseApi.injectEndpoints({
         const patchResult = dispatch(
           authApi.util.updateQueryData("getMe", undefined, (draft) => {
             if (draft.data?.user) {
-              const currentFollowing = draft.data.user.companyFollowing || [];
-              draft.data.user.companyFollowing = currentFollowing.filter(
+              const currentFollowing = draft.data.user.companyFollowed || [];
+              draft.data.user.companyFollowed = currentFollowing.filter(
                 (id: string) => id !== companyId
               );
             }
