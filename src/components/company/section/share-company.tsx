@@ -2,18 +2,18 @@
 
 import { useState } from "react"
 import { toast } from "sonner";
-import { Copy, Share2, Check, Facebook, Twitter, Linkedin } from "lucide-react"
+import { Check, Copy, Share2 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import * as Tooltip from "@radix-ui/react-tooltip";
 
 interface ShareCompanyProps {
-  company: any;
+  companyUrl: string;
 }
 
-export default function ShareCompany({ company }: ShareCompanyProps) {
+export default function ShareCompany({ companyUrl }: ShareCompanyProps) {
   const [copied, setCopied] = useState(false);
-  const companyLink = typeof window !== "undefined" && window.location ? window.location.href : "";
+  const companyLink = companyUrl;
 
   const handleCopyLink = async () => {
     try {

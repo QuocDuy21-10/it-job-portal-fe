@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Building2, MapPin, Heart, Clock, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -161,6 +162,11 @@ const CompanyLogo = ({
     md: "h-12 w-12 rounded-xl",
     lg: "h-14 w-14 rounded-xl",
   };
+  const imageSize = {
+    sm: 40,
+    md: 48,
+    lg: 56,
+  };
   const iconSize = {
     sm: "h-5 w-5",
     md: "h-6 w-6",
@@ -175,9 +181,11 @@ const CompanyLogo = ({
       )}
     >
       {logo ? (
-        <img
+        <Image
           src={`${API_BASE_URL_IMAGE}/images/company/${logo}`}
           alt={`${name ?? t("jobsPage.jobCard.companyFallback")} logo`}
+          width={imageSize[size]}
+          height={imageSize[size]}
           className="h-full w-full object-contain rounded-lg"
         />
       ) : (
@@ -224,7 +232,9 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
   const { t, language } = useI18n();
   const { isSaved, toggleSaveJob, isLoading } = useJobFavorite(job._id);
   const status = getJobStatus(job);
-  const statusLabel = status ? t(JOB_STATUS_LABEL_KEYS[status.variant]) : null;
+  const statusLabel = status?.variant
+    ? t(JOB_STATUS_LABEL_KEYS[status.variant])
+    : null;
   const salaryLabel = formatVndCurrency(job.salary ?? 0, language);
   const jobTypeLabel = getTranslatedLabel(job.formOfWork, JOB_TYPE_LABEL_KEYS, t);
   const jobLevelLabel = job.level
