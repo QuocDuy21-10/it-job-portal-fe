@@ -9,9 +9,11 @@ import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 import { StatCard } from "../shared/stat-card";
 import { SectionCard } from "../shared/section-card";
-import Link from "next/link";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
 
 export default function OverviewPage() {
+  const { t } = useI18n();
   const [takeOutAppliedJob, { isLoading }] = useTakeOutAppliedJobMutation();
   const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
   const { data: meData } = useGetMeQuery();
@@ -43,10 +45,10 @@ export default function OverviewPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Tổng quan
+          {t("profileOverview.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Chào mừng trở lại! Đây là tổng quan về hoạt động của bạn
+          {t("profileOverview.description")}
         </p>
       </div>
 
@@ -62,18 +64,18 @@ export default function OverviewPage() {
             />
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-foreground">{user?.name || "Chưa có tên"}</h2>
-            <p className="text-muted-foreground mt-1">{user?.email || "Chưa có email"}</p>
+            <h2 className="text-2xl font-bold text-foreground">{user?.name || t("profileOverview.userFallbackName")}</h2>
+            <p className="text-muted-foreground mt-1">{user?.email || t("profileOverview.userFallbackEmail")}</p>
             <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
-                Tài khoản đã xác thực
+                {t("profileOverview.verifiedAccount")}
               </span>
             </div>
           </div>
           <Link href="/profile?tab=create-cv">
             <Button className="bg-primary hover:bg-primary/90 shadow-md">
               <User className="w-4 h-4 mr-2" />
-              Cập nhật hồ sơ
+              {t("profileOverview.updateProfile")}
             </Button>
           </Link>
         </div>
@@ -82,21 +84,21 @@ export default function OverviewPage() {
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
-          title="Việc đã ứng tuyển"
+          title={t("profileOverview.appliedJobs")}
           value={appliedJobs.length}
           icon={Briefcase}
           iconColor="text-primary/30"
           valueColor="text-primary"
         />
         <StatCard
-          title="Việc đã lưu"
+          title={t("profileOverview.savedJobs")}
           value={jobFavoritesCount}
           icon={Heart}
           iconColor="text-red-500/30"
           valueColor="text-red-500"
         />
         <StatCard
-          title="Công ty đã theo dõi"
+          title={t("profileOverview.followedCompanies")}
           value={companyFollowingCount}
           icon={Building2}
           iconColor="text-amber-500/30"
@@ -105,13 +107,13 @@ export default function OverviewPage() {
       </div>
 
       {/* CV Section */}
-      <SectionCard title="CV đính kèm" icon={FileText}>
+      <SectionCard title={t("profileOverview.attachedCvTitle")} icon={FileText}>
         <div className="bg-secondary/30 border border-dashed border-border rounded-lg p-8 text-center hover:bg-secondary/50 transition-colors">
           <FileText className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-          <p className="text-muted-foreground mb-3">Chưa có CV đính kèm</p>
-          <Link href="/profile/my-cv">
+          <p className="text-muted-foreground mb-3">{t("profileOverview.noAttachedCv")}</p>
+          <Link href="/profile?tab=my-cv">
             <button className="text-primary font-medium hover:underline transition-colors">
-              Quản lý hồ sơ đính kèm →
+              {t("profileOverview.manageAttachedCv")} →
             </button>
           </Link>
         </div>
@@ -121,33 +123,33 @@ export default function OverviewPage() {
       <Card className="p-6 bg-card border border-border">
         <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary" />
-          Hành động nhanh
+          {t("profileOverview.quickActions")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Link href="/profile?tab=create-cv">
             <button className="w-full p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/40 rounded-lg text-left transition-all group">
               <FileText className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-medium text-foreground">Tạo CV mới</h3>
+              <h3 className="font-medium text-foreground">{t("profileOverview.createCvTitle")}</h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Xây dựng CV chuyên nghiệp
+                {t("profileOverview.createCvDescription")}
               </p>
             </button>
           </Link>
           <Link href="/jobs">
             <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
               <Briefcase className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-medium text-foreground">Tìm việc làm</h3>
+              <h3 className="font-medium text-foreground">{t("profileOverview.browseJobsTitle")}</h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Khám phá cơ hội mới
+                {t("profileOverview.browseJobsDescription")}
               </p>
             </button>
           </Link>
           <Link href="/profile?tab=my-jobs">
             <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
               <Heart className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-medium text-foreground">Việc đã lưu</h3>
+              <h3 className="font-medium text-foreground">{t("profileOverview.savedJobsTitle")}</h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Xem công việc yêu thích
+                {t("profileOverview.savedJobsDescription")}
               </p>
             </button>
           </Link>

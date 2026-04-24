@@ -4,13 +4,15 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Briefcase, Heart, MapPin, DollarSign, Calendar, ExternalLink, Loader2 } from "lucide-react";
+import { Briefcase, Heart, MapPin, Calendar, ExternalLink } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 import { useGetSavedJobsQuery } from "@/features/user/redux/user.api";
 import { SavedJob } from "@/features/user/schemas/user.schema";
 import { toast } from "sonner";
-import Link from "next/link";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
+import { formatLocaleDate, formatVndCurrency } from "@/lib/utils/locale-formatters";
 import { LoadingState } from "../shared/loading-state";
 import { EmptyState } from "../shared/empty-state";
 
@@ -26,6 +28,7 @@ interface Job {
 }
 
 export default function MyJobsPage() {
+  const { t, language } = useI18n();
   const [activeTab, setActiveTab] = useState<TabType>("applied");
   const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,7 +60,7 @@ export default function MyJobsPage() {
         const errorMessage =
           error?.data?.message ||
           error?.message ||
-          "Không thể tải danh sách công việc đã ứng tuyển";
+          t("myJobsPage.errors.loadAppliedJobs");
 
         toast.error(errorMessage);
         console.error("Error fetching applied jobs:", error);
@@ -65,7 +68,7 @@ export default function MyJobsPage() {
     };
 
     fetchAppliedJobs();
-  }, [takeOutAppliedJob]);
+  }, [t, takeOutAppliedJob]);
 
   // Extract saved jobs from API response
   const savedJobs: SavedJob[] = savedJobsData?.data?.result || [];
@@ -96,13 +99,13 @@ export default function MyJobsPage() {
   }> = [
     {
       id: "applied",
-      label: "Đã ứng tuyển",
+      label: t("myJobsPage.tabs.applied"),
       icon: <Briefcase className="w-4 h-4" />,
       count: appliedJobs.length,
     },
     {
       id: "saved",
-      label: "Đã lưu",
+      label: t("myJobsPage.tabs.saved"),
       icon: <Heart className="w-4 h-4" />,
       count: savedJobsData?.data?.meta?.total || 0,
     },
@@ -112,10 +115,10 @@ export default function MyJobsPage() {
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Việc làm của tôi
+          {t("myJobsPage.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Quản lý các công việc đã ứng tuyển và đã lưu
+          {t("myJobsPage.description")}
         </p>
       </div>
 
@@ -197,15 +200,13 @@ export default function MyJobsPage() {
                           <span>{jobData.location}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-primary font-medium">
-                          <span>{jobData.salary.toLocaleString()} VND</span>
+                          <span>{formatVndCurrency(jobData.salary, language)}</span>
                         </div>
                         {jobData.createdAt && (
                           <div className="flex items-center gap-1.5 text-muted-foreground">
                             <Calendar className="w-4 h-4 flex-shrink-0" />
                             <span className="text-xs">
-                              {new Date(jobData.createdAt).toLocaleDateString(
-                                "vi-VN"
-                              )}
+                              {formatLocaleDate(jobData.createdAt, language)}
                             </span>
                           </div>
                         )}
@@ -214,7 +215,7 @@ export default function MyJobsPage() {
                       {jobData.status && (
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-muted-foreground">
-                            Trạng thái:
+                            {t("myJobsPage.statusLabel")}
                           </span>
                           <span
                             className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -227,7 +228,13 @@ export default function MyJobsPage() {
                                 : "bg-red-500/10 text-red-600 dark:text-red-400"
                             }`}
                           >
-                            {jobData.status}
+                            {jobData.status === "PENDING"
+                              ? t("myJobsPage.statuses.pending")
+                              : jobData.status === "REVIEWING"
+                              ? t("myJobsPage.statuses.reviewing")
+                              : jobData.status === "APPROVED"
+                              ? t("myJobsPage.statuses.approved")
+                              : t("myJobsPage.statuses.rejected")}
                           </span>
                         </div>
                       )}
@@ -239,7 +246,7 @@ export default function MyJobsPage() {
                         href={`/jobs/${jobData.id}`}
                         className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-sm whitespace-nowrap"
                       >
-                        Xem chi tiết
+                        {t("myJobsPage.viewDetails")}
                         <ExternalLink className="w-4 h-4" />
                       </Link>
                     </div>
@@ -253,13 +260,13 @@ export default function MyJobsPage() {
             icon={activeTab === "applied" ? Briefcase : Heart}
             title={
               activeTab === "applied"
-                ? "Chưa có công việc nào"
-                : "Chưa lưu công việc nào"
+                ? t("myJobsPage.empty.appliedTitle")
+                : t("myJobsPage.empty.savedTitle")
             }
             description={
               activeTab === "applied"
-                ? "Bạn chưa ứng tuyển công việc nào. Hãy khám phá các cơ hội việc làm phù hợp với bạn!"
-                : "Bạn chưa lưu công việc nào. Lưu các công việc yêu thích để xem lại sau!"
+                ? t("myJobsPage.empty.appliedDescription")
+                : t("myJobsPage.empty.savedDescription")
             }
           />
         )}

@@ -10,6 +10,44 @@ import { timeAgo } from "@/lib/utils/time-ago";
 import { getJobStatus, type JobStatusVariant } from "@/lib/utils/job-status";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Link } from "@/i18n/navigation";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatVndCurrency } from "@/lib/utils/locale-formatters";
+
+type Translate = ReturnType<typeof useI18n>["t"];
+
+const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
+  Internship: "jobsPage.jobTypeOptions.internship",
+  "Part-time": "jobsPage.jobTypeOptions.partTime",
+  "Full-time": "jobsPage.jobTypeOptions.fullTime",
+  Freelance: "jobsPage.jobTypeOptions.freelance",
+  Remote: "jobsPage.jobTypeOptions.remote",
+  Hybrid: "jobsPage.jobTypeOptions.hybrid",
+  Other: "jobsPage.jobTypeOptions.other",
+};
+
+const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
+  Internship: "jobsPage.jobLevelOptions.internship",
+  Junior: "jobsPage.jobLevelOptions.junior",
+  Mid: "jobsPage.jobLevelOptions.mid",
+  Senior: "jobsPage.jobLevelOptions.senior",
+  Lead: "jobsPage.jobLevelOptions.lead",
+  Manager: "jobsPage.jobLevelOptions.manager",
+};
+
+const JOB_STATUS_LABEL_KEYS: Record<Exclude<JobStatusVariant, null>, string> = {
+  new: "jobsPage.jobCard.statusNew",
+  closing: "jobsPage.jobCard.statusClosing",
+};
+
+function getTranslatedLabel(
+  value: string,
+  keyMap: Record<string, string>,
+  t: Translate
+) {
+  const key = keyMap[value];
+
+  return key ? t(key) : value;
+}
 
 interface JobCardProps {
   job: Job;
@@ -28,43 +66,50 @@ const FavoriteButton = ({
   onClick: (e: React.MouseEvent) => void;
   disabled: boolean;
   className?: string;
-}) => (
-  <Tooltip.Provider delayDuration={300}>
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "h-9 w-9 rounded-full transition-all duration-200 hover:bg-primary/5 active:scale-90",
-            className
-          )}
-          onClick={onClick}
-          disabled={disabled}
-          aria-label={isSaved ? "Bỏ lưu" : "Lưu việc làm"}
-        >
-          <Heart
+}) => {
+  const { t } = useI18n();
+  const label = isSaved
+    ? t("jobsPage.jobCard.removeSavedJob")
+    : t("jobsPage.jobCard.saveJob");
+
+  return (
+    <Tooltip.Provider delayDuration={300}>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
             className={cn(
-              "h-[18px] w-[18px] transition-all duration-200",
-              isSaved
-                ? "fill-primary text-primary scale-110"
-                : "fill-transparent text-muted-foreground/60 hover:text-primary/70"
+              "h-9 w-9 rounded-full transition-all duration-200 hover:bg-primary/5 active:scale-90",
+              className
             )}
-          />
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          sideOffset={6}
-          className="z-50 rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md"
-        >
-          {isSaved ? "Bỏ lưu" : "Lưu việc làm"}
-          <Tooltip.Arrow className="fill-foreground" />
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
-  </Tooltip.Provider>
-);
+            onClick={onClick}
+            disabled={disabled}
+            aria-label={label}
+          >
+            <Heart
+              className={cn(
+                "h-[18px] w-[18px] transition-all duration-200",
+                isSaved
+                  ? "fill-primary text-primary scale-110"
+                  : "fill-transparent text-muted-foreground/60 hover:text-primary/70"
+              )}
+            />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            sideOffset={6}
+            className="z-50 rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md"
+          >
+            {label}
+            <Tooltip.Arrow className="fill-foreground" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+};
 
 const StatusIndicator = ({
   variant,
@@ -110,6 +155,7 @@ const CompanyLogo = ({
   name: string | undefined;
   size?: "sm" | "md" | "lg";
 }) => {
+  const { t } = useI18n();
   const sizeMap = {
     sm: "h-10 w-10 rounded-lg",
     md: "h-12 w-12 rounded-xl",
@@ -131,7 +177,7 @@ const CompanyLogo = ({
       {logo ? (
         <img
           src={`${API_BASE_URL_IMAGE}/images/company/${logo}`}
-          alt={`${name ?? "Company"} logo`}
+          alt={`${name ?? t("jobsPage.jobCard.companyFallback")} logo`}
           className="h-full w-full object-contain rounded-lg"
         />
       ) : (
@@ -175,8 +221,15 @@ const SkillTags = ({
 
 // Main component                                                     
 export function JobCard({ job, variant = "default", className }: JobCardProps) {
+  const { t, language } = useI18n();
   const { isSaved, toggleSaveJob, isLoading } = useJobFavorite(job._id);
   const status = getJobStatus(job);
+  const statusLabel = status ? t(JOB_STATUS_LABEL_KEYS[status.variant]) : null;
+  const salaryLabel = formatVndCurrency(job.salary ?? 0, language);
+  const jobTypeLabel = getTranslatedLabel(job.formOfWork, JOB_TYPE_LABEL_KEYS, t);
+  const jobLevelLabel = job.level
+    ? getTranslatedLabel(job.level, JOB_LEVEL_LABEL_KEYS, t)
+    : null;
 
   // Compact
   if (variant === "compact") {
@@ -204,7 +257,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                   {status && (
                     <StatusIndicator
                       variant={status.variant}
-                      label={status.label}
+                      label={statusLabel ?? ""}
                       size="sm"
                     />
                   )}
@@ -219,7 +272,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                   </span>
                   <span className="text-[11px] text-muted-foreground/30">•</span>
                   <span className="text-xs font-semibold text-primary">
-                    {job.salary?.toLocaleString()}đ
+                    {salaryLabel}
                   </span>
                 </div>
               </div>
@@ -266,7 +319,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                   {status && (
                     <StatusIndicator
                       variant={status.variant}
-                      label={status.label}
+                      label={statusLabel ?? ""}
                     />
                   )}
                 </div>
@@ -287,14 +340,14 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                     variant="secondary"
                     className="text-[11px] font-normal capitalize bg-secondary/50"
                   >
-                    {job.formOfWork}
+                    {jobTypeLabel}
                   </Badge>
-                  {job.level && (
+                  {jobLevelLabel && (
                     <Badge
                       variant="secondary"
                       className="text-[11px] font-normal capitalize bg-secondary/50"
                     >
-                      {job.level}
+                      {jobLevelLabel}
                     </Badge>
                   )}
                 </div>
@@ -308,13 +361,13 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
             <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-between gap-2 sm:min-w-[100px] sm:pl-4 sm:border-l sm:border-border/40">
               {job.createdAt && (
                 <span className="text-[11px] text-muted-foreground/50">
-                  {timeAgo(job.createdAt)}
+                  {timeAgo(job.createdAt, language)}
                 </span>
               )}
 
               <div className="flex items-center gap-1.5 mt-auto">
                 <span className="text-sm font-semibold text-primary">
-                  {job.salary?.toLocaleString()}đ
+                  {salaryLabel}
                 </span>
                 <FavoriteButton
                   isSaved={isSaved}
@@ -372,7 +425,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
             {status && (
               <StatusIndicator
                 variant={status.variant}
-                label={status.label}
+                label={statusLabel ?? ""}
               />
             )}
 
@@ -389,17 +442,17 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
             </span>
             <span className="text-[11px] text-muted-foreground/30">•</span>
             <span className="text-[11px] text-muted-foreground/60 capitalize">
-              {job.formOfWork}
+              {jobTypeLabel}
             </span>
           </div>
 
           {/* Footer: salary + time */}
           <div className="flex items-center justify-between pt-3 border-t border-border/40">
             <span className="text-sm font-semibold text-primary">
-              {job.salary?.toLocaleString()}đ
+              {salaryLabel}
             </span>
             <span className="text-[11px] text-muted-foreground/50">
-              {job.createdAt && timeAgo(job.createdAt)}
+              {job.createdAt && timeAgo(job.createdAt, language)}
             </span>
           </div>
         </Link>

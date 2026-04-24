@@ -4,6 +4,8 @@ import { AlertTriangle, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCancelAccountDeletionMutation } from "@/features/auth/redux/auth.api";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface PendingDeletionBannerProps {
   scheduledDeletionAt: string;
@@ -12,21 +14,21 @@ interface PendingDeletionBannerProps {
 export function PendingDeletionBanner({
   scheduledDeletionAt,
 }: PendingDeletionBannerProps) {
+  const { t, language } = useI18n();
   const [cancelAccountDeletion, { isLoading }] = useCancelAccountDeletionMutation();
 
-  const formattedDate = new Date(scheduledDeletionAt).toLocaleDateString(
-    "vi-VN",
-    { year: "numeric", month: "long", day: "numeric" }
-  );
+  const formattedDate = formatLocaleDate(scheduledDeletionAt, language, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   const handleCancel = async () => {
     try {
       await cancelAccountDeletion().unwrap();
-      toast.success(
-        "Đã hủy yêu cầu xóa tài khoản. Tài khoản của bạn vẫn hoạt động bình thường."
-      );
+      toast.success(t("settings.deleteAccount.cancelSuccess"));
     } catch (error: any) {
-      const msg = error?.data?.message || "Không thể hủy yêu cầu xóa tài khoản";
+      const msg = error?.data?.message || t("settings.deleteAccount.cancelError");
       toast.error(msg);
     }
   };
@@ -36,10 +38,10 @@ export function PendingDeletionBanner({
       <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground">
-          Tài khoản sẽ bị xóa vào ngày {formattedDate}
+          {t("settings.deleteAccount.pendingBanner", { date: formattedDate })}
         </p>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Đăng nhập lại và nhấn &ldquo;Hủy xóa tài khoản&rdquo; để giữ lại tài khoản của bạn.
+          {t("settings.deleteAccount.pendingBannerNote")}
         </p>
       </div>
       <Button
@@ -54,7 +56,7 @@ export function PendingDeletionBanner({
         ) : (
           <X className="h-3.5 w-3.5 mr-1.5" />
         )}
-        Hủy xóa tài khoản
+        {t("settings.deleteAccount.cancelDeletion")}
       </Button>
     </div>
   );

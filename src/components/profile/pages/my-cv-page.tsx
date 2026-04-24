@@ -8,8 +8,11 @@ import { Card } from "@/components/ui/card";
 import { Upload, File, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { SectionCard } from "../shared/section-card";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
+import { resolveIntlLocale } from "@/lib/utils/locale-formatters";
 
 export default function MyCVPage() {
+  const { t, language } = useI18n();
   const [uploadedCV, setUploadedCV] = useState<{
     name: string;
     size: number;
@@ -34,12 +37,12 @@ export default function MyCVPage() {
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (!validTypes.includes(file.type)) {
-      toast.error("Chỉ hỗ trợ các định dạng: .pdf, .doc, .docx");
+      toast.error(t("myCvPage.errors.invalidType"));
       return;
     }
 
     if (file.size > maxSize) {
-      toast.error("Kích thước tệp không vượt quá 5MB");
+      toast.error(t("myCvPage.errors.maxSize"));
       return;
     }
 
@@ -47,7 +50,7 @@ export default function MyCVPage() {
       name: file.name,
       size: file.size,
     });
-    toast.success("Tải lên CV thành công!");
+    toast.success(t("myCvPage.toasts.uploadSuccess"));
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -77,21 +80,26 @@ export default function MyCVPage() {
   };
 
   const formatFileSize = (bytes: number) => {
+    const numberFormatter = new Intl.NumberFormat(resolveIntlLocale(language), {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+    });
+
     if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    if (bytes < 1024 * 1024) return `${numberFormatter.format(bytes / 1024)} KB`;
+    return `${numberFormatter.format(bytes / (1024 * 1024))} MB`;
   };
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground">My CV</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">{t("myCvPage.title")}</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Quản lý CV của bạn để ứng tuyển vào các vị trí
+          {t("myCvPage.description")}
         </p>
       </div>
 
-      <SectionCard title="Tải lên CV" icon={FileText}>
+      <SectionCard title={t("myCvPage.uploadSectionTitle")} icon={FileText}>
         <div
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${
             isDragging
@@ -107,10 +115,10 @@ export default function MyCVPage() {
             isDragging ? "text-primary" : "text-muted-foreground"
           }`} />
           <p className="text-foreground font-medium mb-2">
-            {isDragging ? "Thả tệp vào đây" : "Kéo thả hoặc nhấp để tải lên CV"}
+            {isDragging ? t("myCvPage.dropHere") : t("myCvPage.dragDropPrompt")}
           </p>
           <p className="text-sm text-muted-foreground mb-4">
-            Hỗ trợ: .pdf, .doc, .docx (Tối đa 5MB)
+            {t("myCvPage.supportText")}
           </p>
           <Button 
             onClick={(e) => {
@@ -120,7 +128,7 @@ export default function MyCVPage() {
             className="bg-primary hover:bg-primary/90 shadow-md"
           >
             <Upload className="w-4 h-4 mr-2" />
-            Chọn tệp
+            {t("myCvPage.chooseFile")}
           </Button>
         </div>
 
@@ -138,13 +146,13 @@ export default function MyCVPage() {
             <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="text-sm font-medium text-foreground mb-2">
-                Lưu ý khi tải CV
+                {t("myCvPage.guidelinesTitle")}
               </h3>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• CV nên được cập nhật thông tin mới nhất</li>
-                <li>• Sử dụng định dạng PDF để đảm bảo hiển thị tốt nhất</li>
-                <li>• Đặt tên file rõ ràng (VD: CV_HoTen_ViTri.pdf)</li>
-                <li>• Kiểm tra kỹ thông tin trước khi tải lên</li>
+                <li>{t("myCvPage.guideline1")}</li>
+                <li>{t("myCvPage.guideline2")}</li>
+                <li>{t("myCvPage.guideline3")}</li>
+                <li>{t("myCvPage.guideline4")}</li>
               </ul>
             </div>
           </div>
@@ -154,11 +162,11 @@ export default function MyCVPage() {
       {/* Uploaded CV List */}
       {uploadedCV && (
         <SectionCard 
-          title="CV đã tải lên" 
+          title={t("myCvPage.uploadedSectionTitle")} 
           icon={CheckCircle2}
           headerAction={
             <span className="text-sm text-muted-foreground">
-              1 tệp
+              {t("myCvPage.uploadedCount", { count: 1 })}
             </span>
           }
         >
@@ -177,7 +185,7 @@ export default function MyCVPage() {
                       {formatFileSize(uploadedCV.size)}
                     </p>
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
-                      Đã tải lên
+                      {t("myCvPage.uploadedBadge")}
                     </span>
                   </div>
                 </div>
@@ -188,13 +196,14 @@ export default function MyCVPage() {
                   size="sm"
                   className="hover:bg-secondary"
                 >
-                  Xem
+                  {t("common.view")}
                 </Button>
                 <button
                   onClick={() => {
                     setUploadedCV(null);
-                    toast.success("Đã xóa CV");
+                    toast.success(t("myCvPage.toasts.deleteSuccess"));
                   }}
+                  aria-label={t("myCvPage.deleteUpload")}
                   className="p-2 hover:bg-destructive/10 rounded-md transition-colors"
                 >
                   <Trash2 className="w-5 h-5 text-destructive" />

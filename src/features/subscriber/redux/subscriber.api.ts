@@ -2,6 +2,7 @@ import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
   CreateSubscriberFormData,
+  GetMySubscribersResponse,
   UpdateSubscriberFormData,
   Subscriber,
   SubscriberSkills,
@@ -80,18 +81,15 @@ export const subscriberApi = baseApi.injectEndpoints({
     }),
 
 
-    getSubscribersByUser: builder.query<
-      ApiResponse<GetSubscribersResponse>,
-      void
-    >({
+    getSubscribersByUser: builder.query<ApiResponse<GetMySubscribersResponse>, void>({
       query: () => ({
         url: `/subscribers/by-user`,
         method: "GET",
       }),
       providesTags: (result) =>
-        result && result.data && Array.isArray(result.data.result)
+        result && result.data && Array.isArray(result.data.subscriptions)
           ? [
-              ...result.data.result.map(({ _id }: { _id: string }) => ({
+              ...result.data.subscriptions.map(({ _id }: { _id: string }) => ({
                 type: "Subscriber" as const,
                 id: _id,
               })),

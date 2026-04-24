@@ -2,7 +2,9 @@
 
 import { memo, useCallback } from "react";
 import { Notification } from "@/features/notification/schemas/notification.schema";
+import { useI18n } from "@/hooks/use-i18n";
 import { cn } from "@/lib/utils";
+import { resolveIntlLocale } from "@/lib/utils/locale-formatters";
 import { formatRelativeTime } from "@/lib/utils/date.utils";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -20,14 +22,14 @@ interface NotificationItemProps {
   className?: string;
 }
 
-function formatAbsoluteTime(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("vi-VN", {
+function formatAbsoluteTime(dateString: string, locale: string): string {
+  return new Intl.DateTimeFormat(resolveIntlLocale(locale), {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  });
+  }).format(new Date(dateString));
 }
 
 function NotificationItemComponent({
@@ -39,6 +41,7 @@ function NotificationItemComponent({
   showUnreadIndicator = true,
   className,
 }: NotificationItemProps) {
+  const { t, language } = useI18n();
   const typeMeta = getNotificationTypeMeta(notification.type);
   const TypeIcon = typeMeta.icon;
 
@@ -60,7 +63,9 @@ function NotificationItemComponent({
           !notification.isRead && "bg-primary/5",
           className
         )}
-        aria-label={`Mở thông báo: ${notification.title}`}
+        aria-label={t("notificationsPage.openNotificationAria", {
+          title: notification.title,
+        })}
       >
         <div
           className={cn(
@@ -85,7 +90,7 @@ function NotificationItemComponent({
             {notification.message}
           </p>
           <p className="mt-1 text-xs text-muted-foreground/80">
-            {formatRelativeTime(notification.createdAt)}
+            {formatRelativeTime(notification.createdAt, language)}
           </p>
         </div>
       </button>
@@ -105,7 +110,9 @@ function NotificationItemComponent({
         type="button"
         onClick={handleClick}
         className="flex w-full min-h-[44px] items-start gap-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-        aria-label={`Mở thông báo: ${notification.title}`}
+        aria-label={t("notificationsPage.openNotificationAria", {
+          title: notification.title,
+        })}
       >
         <div className={cn("rounded-lg p-3 flex-shrink-0", typeMeta.accentClassName)}>
           <TypeIcon className="h-5 w-5" />
@@ -124,15 +131,15 @@ function NotificationItemComponent({
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-2 md:gap-3">
-            <p className="text-xs text-muted-foreground" title={formatAbsoluteTime(notification.createdAt)}>
-              {formatRelativeTime(notification.createdAt)}
+            <p className="text-xs text-muted-foreground" title={formatAbsoluteTime(notification.createdAt, language)}>
+              {formatRelativeTime(notification.createdAt, language)}
             </p>
             {showTypeBadge && (
               <Badge
                 variant="secondary"
                 className={cn("border text-xs font-medium", typeMeta.badgeClassName)}
               >
-                {typeMeta.label}
+                {t(typeMeta.labelKey)}
               </Badge>
             )}
           </div>

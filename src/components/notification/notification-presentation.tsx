@@ -2,7 +2,7 @@ import { Bell, Briefcase, FileText } from "lucide-react";
 import { NotificationType } from "@/features/notification/schemas/notification.schema";
 
 export interface NotificationTypeMeta {
-  label: string;
+  labelKey: string;
   icon: typeof Bell;
   accentClassName: string;
   badgeClassName: string;
@@ -10,13 +10,13 @@ export interface NotificationTypeMeta {
 
 const NOTIFICATION_TYPE_META: Record<NotificationType, NotificationTypeMeta> = {
   APPLICATION_STATUS_CHANGE: {
-    label: "Trạng thái ứng tuyển",
+    labelKey: "notificationsPage.types.applicationStatusChange",
     icon: Briefcase,
     accentClassName: "bg-primary/10 text-primary",
     badgeClassName: "bg-primary/10 text-primary border-primary/20",
   },
   NEW_APPLICATION: {
-    label: "Đơn ứng tuyển mới",
+    labelKey: "notificationsPage.types.newApplication",
     icon: FileText,
     accentClassName: "bg-accent/30 text-accent-foreground",
     badgeClassName: "bg-accent/30 text-accent-foreground border-border",
@@ -24,7 +24,7 @@ const NOTIFICATION_TYPE_META: Record<NotificationType, NotificationTypeMeta> = {
 };
 
 const DEFAULT_NOTIFICATION_META: NotificationTypeMeta = {
-  label: "Thông báo",
+  labelKey: "notificationsPage.types.default",
   icon: Bell,
   accentClassName: "bg-secondary text-foreground",
   badgeClassName: "bg-secondary text-foreground border-border",

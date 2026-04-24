@@ -8,15 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetNotificationsQuery } from "@/features/notification/redux/notification.api";
 import { useNotification, getNotificationLink } from "@/hooks/use-notification";
+import { useI18n } from "@/hooks/use-i18n";
 import { Notification } from "@/features/notification/schemas/notification.schema";
-import { useRouter } from "next/navigation";
 import { NotificationItem } from "@/components/notification/notification-item";
 import { EmptyState } from "../shared/empty-state";
+import { useRouter } from "@/i18n/navigation";
 
 export default function NotificationsPage() {
   const [page, setPage] = useState(1);
   const limit = 10;
   const router = useRouter();
+  const { t } = useI18n();
   const { unreadCount, markAsRead, markAllAsRead } = useNotification();
 
   const { data, isLoading, isFetching, isError, refetch } = useGetNotificationsQuery({
@@ -52,28 +54,28 @@ export default function NotificationsPage() {
   const statCards = useMemo(
     () => [
       {
-        title: "Tổng thông báo",
+        title: t("notificationsPage.totalNotifications"),
         value: totalCount,
         icon: Bell,
         iconColor: "text-primary/30",
         valueColor: "text-foreground",
       },
       {
-        title: "Chưa đọc",
+        title: t("notificationsPage.unread"),
         value: unreadCount,
         icon: Circle,
         iconColor: "text-primary/30",
         valueColor: "text-primary",
       },
       {
-        title: "Đã đọc",
+        title: t("notificationsPage.read"),
         value: readCount,
         icon: CheckCheck,
         iconColor: "text-muted-foreground/40",
         valueColor: "text-foreground",
       },
     ],
-    [readCount, totalCount, unreadCount]
+    [readCount, t, totalCount, unreadCount]
   );
 
   return (
@@ -81,17 +83,17 @@ export default function NotificationsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-            Thông báo
+            {t("notificationsPage.title")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Theo dõi các cập nhật và thông báo mới nhất
+            {t("notificationsPage.description")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {isFetching && !isLoading && (
             <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Đang cập nhật
+              {t("notificationsPage.refreshing")}
             </span>
           )}
           {unreadCount > 0 && (
@@ -101,7 +103,7 @@ export default function NotificationsPage() {
               className="hover:bg-primary/10 hover:text-primary hover:border-primary/30"
             >
               <CheckCheck className="w-4 h-4 mr-2" />
-              Đánh dấu tất cả là đã đọc
+              {t("notificationsPage.markAllAsRead")}
             </Button>
           )}
         </div>
@@ -139,10 +141,10 @@ export default function NotificationsPage() {
         ) : isError ? (
           <Card className="p-8 border border-dashed border-border text-center space-y-3">
             <p className="text-sm text-muted-foreground">
-              Không thể tải danh sách thông báo.
+              {t("notificationsPage.loadError")}
             </p>
             <Button variant="outline" onClick={() => refetch()}>
-              Thử lại
+              {t("notificationsPage.retry")}
             </Button>
           </Card>
         ) : notifications.length > 0 ? (
@@ -158,8 +160,8 @@ export default function NotificationsPage() {
         ) : (
           <EmptyState
             icon={Bell}
-            title="Không có thông báo"
-            description="Bạn sẽ nhận được thông báo về các hoạt động quan trọng tại đây"
+            title={t("notificationsPage.emptyTitle")}
+            description={t("notificationsPage.emptyDescription")}
           />
         )}
       </div>
@@ -173,10 +175,10 @@ export default function NotificationsPage() {
             disabled={page <= 1}
             onClick={() => handlePageChange(page - 1)}
           >
-            Trước
+            {t("notificationsPage.previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            Trang {page} / {totalPages}
+            {t("notificationsPage.pageOf", { page, totalPages })}
           </span>
           <Button
             variant="outline"
@@ -184,7 +186,7 @@ export default function NotificationsPage() {
             disabled={page >= totalPages}
             onClick={() => handlePageChange(page + 1)}
           >
-            Sau
+            {t("notificationsPage.next")}
           </Button>
         </div>
       )}

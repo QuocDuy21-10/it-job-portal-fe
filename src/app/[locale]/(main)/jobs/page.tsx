@@ -4,13 +4,13 @@ import React, { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useJobList } from "@/hooks/use-job-list";
 import { Pagination } from "@/components/pagination";
-import Link from "next/link";
-import { Search, MapPin, Building2, Briefcase, DollarSign, X, Filter, ChevronRight, SlidersHorizontal, ArrowUpDown, Wallet } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { Search, MapPin, Building2, Briefcase, X, Filter, ChevronRight, SlidersHorizontal, ArrowUpDown, Wallet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SingleSelect } from "@/components/single-select";
 import provinces from "@/shared/data/provinces.json";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
@@ -30,16 +30,62 @@ import {
 import * as Tooltip from "@radix-ui/react-tooltip";
 import jobTypes from "@/shared/data/job-type.json";
 import jobLevels from "@/shared/data/job-level.json";
-import { Job } from "@/features/job/schemas/job.schema";
-import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard as JobCardComponent } from "@/components/job/job-card";
 import { Suspense } from "react";
 
+type Translate = ReturnType<typeof useI18n>["t"];
+
+const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
+  all: "jobsPage.jobTypeOptions.all",
+  Internship: "jobsPage.jobTypeOptions.internship",
+  "Part-time": "jobsPage.jobTypeOptions.partTime",
+  "Full-time": "jobsPage.jobTypeOptions.fullTime",
+  Freelance: "jobsPage.jobTypeOptions.freelance",
+  Remote: "jobsPage.jobTypeOptions.remote",
+  Hybrid: "jobsPage.jobTypeOptions.hybrid",
+  Other: "jobsPage.jobTypeOptions.other",
+};
+
+const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
+  all: "jobsPage.jobLevelOptions.all",
+  Internship: "jobsPage.jobLevelOptions.internship",
+  Junior: "jobsPage.jobLevelOptions.junior",
+  Mid: "jobsPage.jobLevelOptions.mid",
+  Senior: "jobsPage.jobLevelOptions.senior",
+  Lead: "jobsPage.jobLevelOptions.lead",
+  Manager: "jobsPage.jobLevelOptions.manager",
+};
+
+const SALARY_RANGE_LABEL_KEYS: Record<string, string> = {
+  all: "jobsPage.salaryRanges.all",
+  "0-10000000": "jobsPage.salaryRanges.under10m",
+  "10000000-20000000": "jobsPage.salaryRanges.tenTo20m",
+  "20000000-50000000": "jobsPage.salaryRanges.twentyTo50m",
+  "50000000-999999999": "jobsPage.salaryRanges.above50m",
+};
+
+const SORT_OPTIONS = [
+  { value: "-createdAt", labelKey: "jobsPage.sortOptions.newest" },
+  { value: "createdAt", labelKey: "jobsPage.sortOptions.oldest" },
+  { value: "-salary", labelKey: "jobsPage.sortOptions.salaryHighToLow" },
+  { value: "salary", labelKey: "jobsPage.sortOptions.salaryLowToHigh" },
+] as const;
+
+function getTranslatedLabel(
+  value: string,
+  keyMap: Record<string, string>,
+  t: Translate
+) {
+  const key = keyMap[value];
+
+  return key ? t(key) : value;
+}
+
 function JobsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t, mounted: i18nMounted } = useI18n();
+  const { t } = useI18n();
 
   // UI state
   const [showFilters, setShowFilters] = React.useState(true);
@@ -119,7 +165,14 @@ function JobsPageContent() {
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchQuery || locationQuery || jobType !== "all" || experience !== "all" || salaryRange !== "all" || sortBy !== "-createdAt";
+  const hasActiveFilters = Boolean(
+    searchQuery ||
+      locationQuery ||
+      jobType !== "all" ||
+      experience !== "all" ||
+      salaryRange !== "all" ||
+      sortBy !== "-createdAt"
+  );
 
   // Count active filters
   const activeFilterCount = [
@@ -139,11 +192,11 @@ function JobsPageContent() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink 
-                    href="/"
+                  <BreadcrumbLink
+                    asChild
                     className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
                   >
-                    Trang chủ
+                    <Link href="/">{t("breadcrumb.home")}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
@@ -151,7 +204,7 @@ function JobsPageContent() {
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-slate-900 dark:text-slate-100 font-medium">
-                    Tìm việc làm
+                    {t("jobsPage.breadcrumb")}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -166,10 +219,10 @@ function JobsPageContent() {
           
           <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">
-              Khám phá cơ hội nghề nghiệp
+              {t("jobsPage.heroTitle")}
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Tìm kiếm công việc phù hợp với kỹ năng và đam mê của bạn
+              {t("jobsPage.heroDescription")}
             </p>
 
             {/* Search Bar */}
@@ -177,7 +230,7 @@ function JobsPageContent() {
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-200" />
                 <Input
-                  placeholder="Tìm kiếm theo tên công việc, kỹ năng..."
+                  placeholder={t("jobsPage.searchPlaceholder")}
                   className="pl-14 h-14 text-lg bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 caret-blue-600 border-0 shadow-xl hover:shadow-2xl transition-shadow focus:ring-2 focus:ring-white/50"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
@@ -202,7 +255,7 @@ function JobsPageContent() {
                       className="hidden lg:flex items-center gap-2 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0"
                     >
                       <SlidersHorizontal className="w-4 h-4" />
-                      Bộ lọc
+                      {t("jobsPage.filters")}
                       {activeFilterCount > 0 && (
                         <Badge className="ml-1 bg-blue-600 text-white">{activeFilterCount}</Badge>
                       )}
@@ -210,7 +263,7 @@ function JobsPageContent() {
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+                      {showFilters ? t("jobsPage.hideFilters") : t("jobsPage.showFilters")}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -224,7 +277,7 @@ function JobsPageContent() {
                   className="lg:hidden flex items-center gap-2 flex-shrink-0"
                 >
                   <Filter className="w-4 h-4" />
-                  Lọc
+                  {t("jobsPage.filterShort")}
                   {activeFilterCount > 0 && (
                     <Badge className="ml-1 bg-blue-600 text-white">{activeFilterCount}</Badge>
                   )}
@@ -234,7 +287,8 @@ function JobsPageContent() {
                 <div className="hidden sm:flex items-center gap-2 flex-wrap">
                   {searchQuery && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
-                      Tìm: {searchQuery.substring(0, 15)}{searchQuery.length > 15 && '...'}
+                      {t("jobsPage.searchTag")} {searchQuery.substring(0, 15)}
+                      {searchQuery.length > 15 && "..."}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSearchInput("")} />
                     </Badge>
                   )}
@@ -247,23 +301,20 @@ function JobsPageContent() {
                   )}
                   {jobType !== "all" && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
-                      {jobTypes.find(t => t.value === jobType)?.label}
+                      {getTranslatedLabel(jobType, JOB_TYPE_LABEL_KEYS, t)}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setJobType("all")} />
                     </Badge>
                   )}
                   {experience !== "all" && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
-                      {jobLevels.find(l => l.value === experience)?.label}
+                      {getTranslatedLabel(experience, JOB_LEVEL_LABEL_KEYS, t)}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setExperience("all")} />
                     </Badge>
                   )}
                   {salaryRange !== "all" && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       <Wallet className="w-3 h-3" />
-                      {salaryRange === "0-10000000" && "Dưới 10tr"}
-                      {salaryRange === "10000000-20000000" && "10-20tr"}
-                      {salaryRange === "20000000-50000000" && "20-50tr"}
-                      {salaryRange === "50000000-999999999" && "Trên 50tr"}
+                      {getTranslatedLabel(salaryRange, SALARY_RANGE_LABEL_KEYS, t)}
                       <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSalaryRange("all")} />
                     </Badge>
                   )}
@@ -273,7 +324,7 @@ function JobsPageContent() {
                 {activeFilterCount > 0 && (
                   <div className="sm:hidden flex items-center gap-2">
                     <Badge variant="secondary" className="text-xs">
-                      {activeFilterCount} bộ lọc đang áp dụng
+                      {t("jobsPage.activeFilterCount", { count: activeFilterCount })}
                     </Badge>
                   </div>
                 )}
@@ -290,12 +341,12 @@ function JobsPageContent() {
                       className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-colors whitespace-nowrap flex-shrink-0"
                     >
                       <X className="w-4 h-4 lg:mr-1" />
-                      <span className="hidden lg:inline">Xóa bộ lọc</span>
+                      <span className="hidden lg:inline">{t("jobsPage.clearFilters")}</span>
                     </Button>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      Xóa tất cả bộ lọc
+                      {t("jobsPage.clearAllFilters")}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -311,14 +362,14 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-blue-600" />
-                      Địa điểm
+                      {t("jobsPage.locationLabel")}
                     </label>
                     <SingleSelect
                       options={provinces}
                       value={locationInput}
                       onChange={setLocationInput}
-                      placeholder="Chọn tỉnh/thành phố..."
-                      searchPlaceholder="Tìm kiếm..."
+                      placeholder={t("jobsPage.locationPlaceholder")}
+                      searchPlaceholder={t("jobsPage.locationSearchPlaceholder")}
                       disabled={isLoading}
                     />
                   </div>
@@ -327,16 +378,16 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Briefcase className="w-4 h-4 text-purple-600" />
-                      Hình thức
+                      {t("jobsPage.jobTypeLabel")}
                     </label>
                     <Select value={jobType} onValueChange={setJobType}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
-                        <SelectValue placeholder="Chọn hình thức" />
+                        <SelectValue placeholder={t("jobsPage.jobTypePlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
                         {jobTypes.map((type) => (
                           <SelectItem key={type.value} value={type.value}>
-                            {type.label}
+                            {getTranslatedLabel(type.value, JOB_TYPE_LABEL_KEYS, t)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -347,16 +398,16 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-emerald-600" />
-                      Cấp bậc
+                      {t("jobsPage.levelLabel")}
                     </label>
                     <Select value={experience} onValueChange={setExperience}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
-                        <SelectValue placeholder="Chọn cấp bậc" />
+                        <SelectValue placeholder={t("jobsPage.levelPlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
                         {jobLevels.map((level) => (
                           <SelectItem key={level.value} value={level.value}>
-                            {level.label}
+                            {getTranslatedLabel(level.value, JOB_LEVEL_LABEL_KEYS, t)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -367,18 +418,18 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Wallet className="w-4 h-4 text-green-600" />
-                      Mức lương
+                      {t("jobsPage.salaryLabel")}
                     </label>
                     <Select value={salaryRange} onValueChange={setSalaryRange}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
-                        <SelectValue placeholder="Chọn mức lương" />
+                        <SelectValue placeholder={t("jobsPage.salaryPlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Tất cả mức lương</SelectItem>
-                        <SelectItem value="0-10000000">Dưới 10 triệu</SelectItem>
-                        <SelectItem value="10000000-20000000">10 - 20 triệu</SelectItem>
-                        <SelectItem value="20000000-50000000">20 - 50 triệu</SelectItem>
-                        <SelectItem value="50000000-999999999">Trên 50 triệu</SelectItem>
+                        <SelectItem value="all">{t("jobsPage.salaryRanges.all")}</SelectItem>
+                        <SelectItem value="0-10000000">{t("jobsPage.salaryRanges.under10m")}</SelectItem>
+                        <SelectItem value="10000000-20000000">{t("jobsPage.salaryRanges.tenTo20m")}</SelectItem>
+                        <SelectItem value="20000000-50000000">{t("jobsPage.salaryRanges.twentyTo50m")}</SelectItem>
+                        <SelectItem value="50000000-999999999">{t("jobsPage.salaryRanges.above50m")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -394,14 +445,14 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-blue-600" />
-                      Địa điểm
+                      {t("jobsPage.locationLabel")}
                     </label>
                     <SingleSelect
                       options={provinces}
                       value={locationInput}
                       onChange={setLocationInput}
-                      placeholder="Chọn tỉnh/thành phố..."
-                      searchPlaceholder="Tìm kiếm..."
+                      placeholder={t("jobsPage.locationPlaceholder")}
+                      searchPlaceholder={t("jobsPage.locationSearchPlaceholder")}
                       disabled={isLoading}
                     />
                   </div>
@@ -410,16 +461,16 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Briefcase className="w-4 h-4 text-purple-600" />
-                      Hình thức
+                      {t("jobsPage.jobTypeLabel")}
                     </label>
                     <Select value={jobType} onValueChange={setJobType}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
-                        <SelectValue placeholder="Chọn hình thức" />
+                        <SelectValue placeholder={t("jobsPage.jobTypePlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
                         {jobTypes.map((type) => (
                           <SelectItem key={type.value} value={type.value}>
-                            {type.label}
+                            {getTranslatedLabel(type.value, JOB_TYPE_LABEL_KEYS, t)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -430,16 +481,16 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-emerald-600" />
-                      Cấp bậc
+                      {t("jobsPage.levelLabel")}
                     </label>
                     <Select value={experience} onValueChange={setExperience}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
-                        <SelectValue placeholder="Chọn cấp bậc" />
+                        <SelectValue placeholder={t("jobsPage.levelPlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
                         {jobLevels.map((level) => (
                           <SelectItem key={level.value} value={level.value}>
-                            {level.label}
+                            {getTranslatedLabel(level.value, JOB_LEVEL_LABEL_KEYS, t)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -450,18 +501,18 @@ function JobsPageContent() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Wallet className="w-4 h-4 text-green-600" />
-                      Mức lương
+                      {t("jobsPage.salaryLabel")}
                     </label>
                     <Select value={salaryRange} onValueChange={setSalaryRange}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
-                        <SelectValue placeholder="Chọn mức lương" />
+                        <SelectValue placeholder={t("jobsPage.salaryPlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Tất cả mức lương</SelectItem>
-                        <SelectItem value="0-10000000">Dưới 10 triệu</SelectItem>
-                        <SelectItem value="10000000-20000000">10 - 20 triệu</SelectItem>
-                        <SelectItem value="20000000-50000000">20 - 50 triệu</SelectItem>
-                        <SelectItem value="50000000-999999999">Trên 50 triệu</SelectItem>
+                        <SelectItem value="all">{t("jobsPage.salaryRanges.all")}</SelectItem>
+                        <SelectItem value="0-10000000">{t("jobsPage.salaryRanges.under10m")}</SelectItem>
+                        <SelectItem value="10000000-20000000">{t("jobsPage.salaryRanges.tenTo20m")}</SelectItem>
+                        <SelectItem value="20000000-50000000">{t("jobsPage.salaryRanges.twentyTo50m")}</SelectItem>
+                        <SelectItem value="50000000-999999999">{t("jobsPage.salaryRanges.above50m")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -472,7 +523,7 @@ function JobsPageContent() {
                       onClick={() => setShowMobileFilters(false)}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                      Áp dụng
+                      {t("jobsPage.applyFilters")}
                     </Button>
                     {hasActiveFilters && (
                       <Button
@@ -483,7 +534,7 @@ function JobsPageContent() {
                         }}
                         className="flex-1 text-red-600 border-red-300 hover:bg-red-50"
                       >
-                        Xóa bộ lọc
+                        {t("jobsPage.clearFilters")}
                       </Button>
                     )}
                   </div>
@@ -500,15 +551,13 @@ function JobsPageContent() {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">
                 {isLoading ? (
-                  "Đang tải..."
+                  t("jobsPage.loadingShort")
                 ) : (
-                  <>
-                    {totalItems} việc làm
-                  </>
+                  t("jobsPage.resultsCount", { count: totalItems })
                 )}
               </h2>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Cập nhật liên tục mỗi ngày
+                {t("jobsPage.dailyUpdate")}
               </p>
             </div>
 
@@ -516,17 +565,18 @@ function JobsPageContent() {
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 whitespace-nowrap">
                 <ArrowUpDown className="w-4 h-4" />
-                Sắp xếp:
+                {t("jobsPage.sortLabel")}
               </label>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-[200px] bg-white dark:bg-slate-900">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="-createdAt">Mới nhất</SelectItem>
-                  <SelectItem value="createdAt">Cũ nhất</SelectItem>
-                  <SelectItem value="-salary">Lương cao - thấp</SelectItem>
-                  <SelectItem value="salary">Lương thấp - cao</SelectItem>
+                  {SORT_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {t(option.labelKey)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -535,7 +585,7 @@ function JobsPageContent() {
           {isLoading ? (
             <div className="text-center py-20">
               <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400" />
-              <p className="text-slate-600 dark:text-slate-400 mt-6 text-lg">Đang tìm kiếm công việc phù hợp...</p>
+              <p className="text-slate-600 dark:text-slate-400 mt-6 text-lg">{t("jobsPage.searchingJobs")}</p>
             </div>
           ) : jobs.length === 0 ? (
             <Card className="p-16 text-center border-slate-200 dark:border-slate-800">
@@ -544,17 +594,17 @@ function JobsPageContent() {
                   <Briefcase className="h-10 w-10 text-blue-600 dark:text-blue-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">
-                  Không tìm thấy công việc
+                  {t("jobsPage.emptyTitle")}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-6">
-                  Thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác
+                  {t("jobsPage.emptyDescription")}
                 </p>
                 {hasActiveFilters && (
                   <Button
                     onClick={clearAllFilters}
                     className="bg-primary text-primary-foreground hover:bg-primary/90"
                   >
-                    Xóa tất cả bộ lọc
+                    {t("jobsPage.clearAllFilters")}
                   </Button>
                 )}
               </div>
@@ -589,103 +639,15 @@ function JobsPageContent() {
   );
 }
 
-// Separate JobCard component for better organization
-function JobCard({ job }: { job: Job }) {
-  return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <Link href={`/jobs/${job._id}`} className="block"> 
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Company Logo */}
-            <div className="h-16 w-16 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-              {job.company?.logo ? (
-                <img
-                  src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
-                  alt={`${job.company.name} logo`}
-                  className="h-full w-full object-cover object-center border border-gray-200 border-solid rounded-lg"
-                />
-              ) : (
-                <Building2 className="h-8 w-8 text-gray-400" />
-              )}
-            </div>
+function JobsPageFallback() {
+  const { t } = useI18n();
 
-            {/* Job Info */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-xl mb-1 hover:text-blue-600 transition-colors">
-                {job.name}
-              </h3>
-              <p className="text-gray-600 mb-3">{job.company?.name}</p>
-
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                <Badge variant="secondary" className="text-xs">
-                  <MapPin className="h-3 w-3 mr-1" aria-hidden="true" />
-                  {job.location}
-                </Badge>
-                <Badge variant="outline" className="text-xs capitalize">
-                  {job.formOfWork}
-                </Badge>
-                <Badge variant="outline" className="text-xs capitalize">
-                  {job.level}
-                </Badge>
-                {job.salary > 0 && (
-                  <Badge variant="outline" className="text-xs">
-                    <DollarSign className="h-3 w-3 mr-1" aria-hidden="true" />
-                    {job.salary.toLocaleString()}
-                  </Badge>
-                )}
-              </div>
-              {/* Skills */}
-              {job.skills && job.skills.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {job.skills
-                    .slice(0, 5)
-                    .map((skill: string, index: number) => (
-                      <span
-                        key={`${skill}-${index}`}
-                        className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  {job.skills.length > 5 && (
-                    <span className="px-2 py-1 text-gray-500 text-xs">
-                      +{job.skills.length - 5} more
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Date & Apply Button */}
-            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
-              {job.createdAt && (
-                <span className="text-xs text-gray-500">
-                  {new Date(job.createdAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </span>
-              )}
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
-                size="sm"
-                variant="default"
-              >
-                Apply Now
-              </Button>
-            </div>
-          </div>
-        </Link>
-      </CardContent>
-    </Card>
-  );
+  return <div>{t("jobsPage.suspenseLoading")}</div>;
 }
 
 export default function JobsPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<JobsPageFallback />}>
       <JobsPageContent />
     </Suspense>
   );

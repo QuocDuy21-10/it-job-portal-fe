@@ -7,8 +7,9 @@ import { Trash2, Loader2, MapPin, Code } from "lucide-react";
 import SKILLS_LIST from "@/shared/data/skill-list.json";
 import PROVINCES_LIST from "@/shared/data/provinces.json";
 import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
-import { toast } from "sonner";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface SubscriptionListProps {
   subscriptions: Subscriber[];
@@ -23,6 +24,7 @@ export function SubscriptionList({
   onDelete,
   isDeleting,
 }: SubscriptionListProps) {
+  const { t, language } = useI18n();
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -58,7 +60,7 @@ export function SubscriptionList({
       <Card className="p-8 glass-effect">
         <div className="flex items-center justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <span className="ml-3 text-muted-foreground">Đang tải...</span>
+          <span className="ml-3 text-muted-foreground">{t("emailSubscription.list.loading")}</span>
         </div>
       </Card>
     );
@@ -72,11 +74,10 @@ export function SubscriptionList({
             <MapPin className="w-8 h-8 text-primary" />
           </div>
           <h3 className="text-lg font-semibold text-foreground">
-            Chưa có đăng ký nào
+            {t("emailSubscription.list.emptyTitle")}
           </h3>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Hãy chọn kỹ năng và địa điểm, sau đó nhấn Đăng ký để nhận thông báo
-            công việc phù hợp.
+            {t("emailSubscription.list.emptyDescription")}
           </p>
         </div>
       </Card>
@@ -101,7 +102,7 @@ export function SubscriptionList({
                     #{index + 1}
                   </span>
                   <h3 className="text-sm font-semibold text-foreground">
-                    Đăng ký nhận việc
+                    {t("emailSubscription.list.cardTitle")}
                   </h3>
                 </div>
                 <Tooltip.Provider>
@@ -110,7 +111,7 @@ export function SubscriptionList({
                       <button
                         type="button"
                         className="p-2 hover:bg-destructive/10 rounded-full transition-colors group/delete"
-                        aria-label="Xoá đăng ký"
+                        aria-label={t("emailSubscription.list.deleteAria")}
                         onClick={() => handleDeleteClick(subscription._id)}
                         disabled={isDeleting}
                       >
@@ -122,7 +123,7 @@ export function SubscriptionList({
                         className="bg-popover text-popover-foreground px-3 py-1.5 rounded-md text-xs shadow-lg border border-border"
                         sideOffset={5}
                       >
-                        Xóa đăng ký
+                        {t("emailSubscription.list.deleteTooltip")}
                         <Tooltip.Arrow className="fill-popover" />
                       </Tooltip.Content>
                     </Tooltip.Portal>
@@ -135,7 +136,7 @@ export function SubscriptionList({
                 <div className="flex items-center gap-2 mb-2">
                   <Code className="w-3.5 h-3.5 text-primary" />
                   <p className="text-xs font-medium text-muted-foreground">
-                    Kỹ năng:
+                    {t("emailSubscription.list.skillsCaption")}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -155,7 +156,7 @@ export function SubscriptionList({
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
                   <p className="text-xs font-medium text-muted-foreground">
-                    Địa điểm:
+                    {t("emailSubscription.list.locationCaption")}
                   </p>
                 </div>
                 <span className="inline-flex items-center px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs rounded-full font-medium border border-green-500/20">
@@ -166,18 +167,15 @@ export function SubscriptionList({
               {/* Date */}
               <div className="pt-3 border-t border-border/50">
                 <p className="text-xs text-muted-foreground">
-                  Đăng ký:{" "}
+                  {t("emailSubscription.list.subscribedOn")} {" "}
                   <span className="font-medium text-foreground">
                     {subscription.createdAt
-                      ? new Date(subscription.createdAt).toLocaleDateString(
-                          "vi-VN",
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          }
-                        )
-                      : "Không rõ ngày"}
+                      ? formatLocaleDate(subscription.createdAt, language, {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : t("emailSubscription.list.unknownDate")}
                   </span>
                 </p>
               </div>
@@ -196,11 +194,10 @@ export function SubscriptionList({
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold mb-1 text-foreground">
-                  Xác nhận huỷ đăng ký
+                  {t("emailSubscription.list.confirmDeleteTitle")}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Bạn có chắc chắn muốn huỷ đăng ký nhận thông báo công việc này
-                  không? Hành động này không thể hoàn tác.
+                  {t("emailSubscription.list.confirmDeleteDescription")}
                 </p>
               </div>
             </div>
@@ -214,7 +211,7 @@ export function SubscriptionList({
                 disabled={isDeleting}
                 className="hover:bg-secondary"
               >
-                Huỷ bỏ
+                {t("emailSubscription.list.cancelDelete")}
               </Button>
               <Button
                 variant="destructive"
@@ -223,7 +220,7 @@ export function SubscriptionList({
                 className="btn-gradient-primary bg-gradient-to-r from-destructive to-destructive/80"
               >
                 {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Xóa đăng ký
+                {t("emailSubscription.list.confirmDelete")}
               </Button>
             </div>
           </div>

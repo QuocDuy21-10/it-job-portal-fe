@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
@@ -21,24 +20,18 @@ import {
   useRequestAccountDeletionMutation,
 } from "@/features/auth/redux/auth.api";
 import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { useI18n } from "@/hooks/use-i18n";
+import { useRouter } from "@/i18n/navigation";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
-// Schema for local account deletion (requires password)
-const LocalDeletionSchema = z.object({
-  password: z.string().min(1, "Vui lòng nhập mật khẩu để xác nhận"),
-});
+type LocalDeletionFormData = {
+  password: string;
+};
 
-// Schema for Google OAuth deletion (requires typing "DELETE")
-const OAuthDeletionSchema = z.object({
-  confirmText: z
-    .string()
-    .refine((val) => val === "DELETE", {
-      message: 'Vui lòng nhập chính xác "DELETE" để xác nhận',
-    }),
-});
-
-type LocalDeletionFormData = z.infer<typeof LocalDeletionSchema>;
-type OAuthDeletionFormData = z.infer<typeof OAuthDeletionSchema>;
+type OAuthDeletionFormData = {
+  confirmText: string;
+};
 
 interface AccountDeletionDialogProps {
   open: boolean;
@@ -53,16 +46,27 @@ export function AccountDeletionDialog({
 }: AccountDeletionDialogProps) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { t, language } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
   const [requestAccountDeletion, { isLoading }] = useRequestAccountDeletionMutation();
 
+  const localDeletionSchema = z.object({
+    password: z.string().min(1, t("settings.deleteAccount.confirmPassword")),
+  });
+
+  const oAuthDeletionSchema = z.object({
+    confirmText: z.string().refine((val) => val === "DELETE", {
+      message: t("settings.deleteAccount.confirmText"),
+    }),
+  });
+
   const localForm = useForm<LocalDeletionFormData>({
-    resolver: zodResolver(LocalDeletionSchema),
+    resolver: zodResolver(localDeletionSchema),
     defaultValues: { password: "" },
   });
 
   const oauthForm = useForm<OAuthDeletionFormData>({
-    resolver: zodResolver(OAuthDeletionSchema),
+    resolver: zodResolver(oAuthDeletionSchema),
     defaultValues: { confirmText: "" },
   });
 
@@ -77,16 +81,14 @@ export function AccountDeletionDialog({
     try {
       const result = await requestAccountDeletion({ password: data.password }).unwrap();
       const scheduledDate = result.data?.scheduledDeletionAt
-        ? new Date(result.data.scheduledDeletionAt).toLocaleDateString("vi-VN")
+        ? formatLocaleDate(result.data.scheduledDeletionAt, language)
         : "";
-      toast.success(
-        `Tài khoản của bạn sẽ bị xóa vào ngày ${scheduledDate}. Bạn có thể hủy trong vòng 30 ngày.`
-      );
+      toast.success(t("settings.deleteAccount.requestSuccess", { date: scheduledDate }));
       setLoggingOutFlag(true);
       dispatch(setLogoutAction());
       router.push("/login");
     } catch (error: any) {
-      const msg = error?.data?.message || "Yêu cầu xóa tài khoản thất bại";
+      const msg = error?.data?.message || t("settings.deleteAccount.requestError");
       toast.error(msg);
     }
   };
@@ -95,16 +97,14 @@ export function AccountDeletionDialog({
     try {
       const result = await requestAccountDeletion({}).unwrap();
       const scheduledDate = result.data?.scheduledDeletionAt
-        ? new Date(result.data.scheduledDeletionAt).toLocaleDateString("vi-VN")
+        ? formatLocaleDate(result.data.scheduledDeletionAt, language)
         : "";
-      toast.success(
-        `Tài khoản của bạn sẽ bị xóa vào ngày ${scheduledDate}. Bạn có thể hủy trong vòng 30 ngày.`
-      );
+      toast.success(t("settings.deleteAccount.requestSuccess", { date: scheduledDate }));
       setLoggingOutFlag(true);
       dispatch(setLogoutAction());
       router.push("/login");
     } catch (error: any) {
-      const msg = error?.data?.message || "Yêu cầu xóa tài khoản thất bại";
+      const msg = error?.data?.message || t("settings.deleteAccount.requestError");
       toast.error(msg);
     }
   };
@@ -118,22 +118,21 @@ export function AccountDeletionDialog({
               <AlertTriangle className="w-5 h-5 text-destructive" />
             </div>
             <AlertDialogTitle className="text-lg font-semibold">
-              Xóa tài khoản
+              {t("settings.deleteAccount.title")}
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription asChild>
             <div className="space-y-3 text-sm text-muted-foreground">
               <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
                 <p className="text-foreground font-medium">
-                  Cảnh báo: Hành động này sẽ lên lịch xóa tài khoản của bạn!
+                  {t("settings.deleteAccount.warningTitle")}
                 </p>
               </div>
               <p>
-                Tài khoản sẽ bị xóa vĩnh viễn sau <strong>30 ngày</strong>.
-                Tất cả dữ liệu (CV, tin nhắn, đơn ứng tuyển) sẽ bị xóa không thể khôi phục.
+                {t("settings.deleteAccount.warningDescriptionLine1")}
               </p>
               <p>
-                Bạn sẽ được đăng xuất ngay lập tức. Trong 30 ngày, bạn có thể đăng nhập lại và hủy yêu cầu này.
+                {t("settings.deleteAccount.warningDescriptionLine2")}
               </p>
             </div>
           </AlertDialogDescription>
@@ -146,11 +145,11 @@ export function AccountDeletionDialog({
           >
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Nhập{" "}
+                {t("settings.deleteAccount.confirmTextPrefix")} {" "}
                 <code className="px-1.5 py-0.5 bg-muted rounded text-destructive font-mono text-xs">
                   DELETE
                 </code>{" "}
-                để xác nhận
+                {t("settings.deleteAccount.confirmTextSuffix")}
               </label>
               <input
                 type="text"
@@ -175,7 +174,7 @@ export function AccountDeletionDialog({
                 onClick={handleClose}
                 disabled={isLoading}
               >
-                Hủy
+                {t("common.cancel")}
               </Button>
               <Button
                 type="submit"
@@ -184,7 +183,7 @@ export function AccountDeletionDialog({
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Xóa tài khoản
+                {t("settings.deleteAccount.title")}
               </Button>
             </AlertDialogFooter>
           </form>
@@ -195,14 +194,14 @@ export function AccountDeletionDialog({
           >
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Nhập mật khẩu để xác nhận
+                {t("settings.deleteAccount.confirmPassword")}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   {...localForm.register("password")}
                   className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-destructive/50 focus:border-destructive transition-all"
-                  placeholder="Nhập mật khẩu của bạn"
+                  placeholder={t("settings.deleteAccount.passwordPlaceholder")}
                   disabled={isLoading}
                   autoComplete="current-password"
                 />
@@ -211,7 +210,7 @@ export function AccountDeletionDialog({
                   onClick={() => setShowPassword((s) => !s)}
                   className="absolute inset-y-0 right-2 flex items-center px-2 text-muted-foreground hover:text-foreground"
                   aria-pressed={showPassword}
-                  aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                  aria-label={showPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -235,7 +234,7 @@ export function AccountDeletionDialog({
                 onClick={handleClose}
                 disabled={isLoading}
               >
-                Hủy
+                {t("common.cancel")}
               </Button>
               <Button
                 type="submit"
@@ -244,7 +243,7 @@ export function AccountDeletionDialog({
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Xóa tài khoản
+                {t("settings.deleteAccount.title")}
               </Button>
             </AlertDialogFooter>
           </form>

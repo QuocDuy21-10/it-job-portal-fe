@@ -311,7 +311,7 @@ export default function CreateCVPage() {
 
   useEffect(() => {
     if (error) {
-      toast.error("Có lỗi xảy ra", {
+      toast.error(t("cvPage.genericError"), {
         description: error,
       });
       clearError();
@@ -330,10 +330,10 @@ export default function CreateCVPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                Tạo CV Chuyên Nghiệp
+                {t("cvPage.title")}
               </h1>
               <p className="text-muted-foreground mt-1">
-                Hoàn thiện thông tin để tạo CV ấn tượng
+                {t("cvPage.description")}
               </p>
             </div>
           </div>
@@ -345,7 +345,7 @@ export default function CreateCVPage() {
         {isInitialLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-            <p className="text-lg text-muted-foreground">Đang tải CV của bạn...</p>
+            <p className="text-lg text-muted-foreground">{t("cvPage.loading")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

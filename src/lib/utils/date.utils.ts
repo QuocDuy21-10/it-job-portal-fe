@@ -1,14 +1,21 @@
 import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
-import { vi } from "date-fns/locale";
+import { enUS, vi } from "date-fns/locale";
+
+function resolveDateFnsLocale(locale?: string) {
+  return locale === "vi" ? vi : enUS;
+}
 
 /**
  * Format timestamp thành dạng "3 phút trước", "5 giờ trước"
  * @param timestamp ISO string hoặc Date
  */
-export function formatRelativeTime(timestamp: string | Date): string {
+export function formatRelativeTime(timestamp: string | Date, locale?: string): string {
   try {
     const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
-    return formatDistanceToNow(date, { addSuffix: true, locale: vi });
+    return formatDistanceToNow(date, {
+      addSuffix: true,
+      locale: resolveDateFnsLocale(locale),
+    });
   } catch {
     return "";
   }

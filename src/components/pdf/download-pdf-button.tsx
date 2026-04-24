@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import CVPdfDocument from "@/components/pdf/cv-pdf-document";
 import { ICVProfile } from "@/shared/types/cv";
 import { generateCVDataKey } from "@/lib/pdf/helpers";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface DownloadPDFButtonProps {
   cvData: ICVProfile;
@@ -39,6 +40,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
   size = "default",
   className = "",
 }) => {
+  const { t } = useI18n();
   const [isClient, setIsClient] = useState(false);
 
   // PDFDownloadLink chỉ hoạt động trên client
@@ -57,7 +59,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
     return (
       <Button variant={variant} size={size} className={className} disabled>
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-        Đang chuẩn bị...
+        {t("downloadPdfButton.preparing")}
       </Button>
     );
   }
@@ -79,7 +81,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
         if (error) {
           return (
             <Button variant="destructive" size={size} className={className} disabled>
-              Lỗi tạo PDF
+              {t("downloadPdfButton.error")}
             </Button>
           );
         }
@@ -94,12 +96,12 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Đang tạo PDF...
+                {t("downloadPdfButton.generating")}
               </>
             ) : (
               <>
                 <Download className="w-4 h-4 mr-2" />
-                Download PDF
+                {t("downloadPdfButton.download")}
               </>
             )}
           </Button>

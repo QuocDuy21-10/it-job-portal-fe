@@ -1,18 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Download, Loader2, FileText, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Loader2, FileText, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ICVProfile } from "@/shared/types/cv";
 import { useCV } from "@/hooks/use-cv";
+import { useI18n } from "@/hooks/use-i18n";
+import { useRouter } from "@/i18n/navigation";
 import DownloadPDFButton from "@/components/pdf/download-pdf-button";
 import PDFPreview from "@/components/pdf/pdf-preview";
 import { ClassicTemplate, ModernTemplate, MinimalTemplate } from "@/components/cv/templates";
 
 export default function CVPreviewPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [cvData, setCVData] = useState<ICVProfile | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [showPDFPreview, setShowPDFPreview] = useState(false);
@@ -105,7 +107,7 @@ export default function CVPreviewPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-12 h-12 animate-spin text-primary" />
-          <p className="text-muted-foreground">Đang tải CV...</p>
+          <p className="text-muted-foreground">{t("cvPreviewPage.loading")}</p>
         </div>
       </div>
     );
@@ -116,9 +118,9 @@ export default function CVPreviewPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <FileText className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Không tìm thấy CV</h2>
-          <p className="text-muted-foreground mb-4">Vui lòng tạo CV trước khi xem.</p>
-          <Button onClick={() => router.push("/profile?tab=create-cv")}>Tạo CV mới</Button>
+          <h2 className="text-xl font-semibold mb-2">{t("cvPreviewPage.emptyTitle")}</h2>
+          <p className="text-muted-foreground mb-4">{t("cvPreviewPage.emptyDescription")}</p>
+          <Button onClick={() => router.push("/profile?tab=create-cv")}>{t("cvPreviewPage.createButton")}</Button>
         </div>
       </div>
     );
@@ -137,7 +139,7 @@ export default function CVPreviewPage() {
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Quay lại chỉnh sửa
+              {t("cvPreviewPage.backToEdit")}
             </Button>
 
             <div className="flex items-center gap-3">
@@ -150,12 +152,12 @@ export default function CVPreviewPage() {
                 {showPDFPreview ? (
                   <>
                     <EyeOff className="w-4 h-4" />
-                    Ẩn PDF
+                    {t("cvPreviewPage.hidePdf")}
                   </>
                 ) : (
                   <>
                     <Eye className="w-4 h-4" />
-                    Xem PDF
+                    {t("cvPreviewPage.showPdf")}
                   </>
                 )}
               </Button>
@@ -174,28 +176,28 @@ export default function CVPreviewPage() {
       <div className="bg-secondary/50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
           <div className="flex flex-wrap items-center gap-4">
-            <span className="text-sm font-medium">Chọn mẫu CV:</span>
+            <span className="text-sm font-medium">{t("cvPreviewPage.templateLabel")}</span>
             <div className="flex gap-2">
               <Button
                 variant={selectedTemplate === "classic" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedTemplate("classic")}
               >
-                Classic
+                {t("cvPreviewPage.templateClassic")}
               </Button>
               <Button
                 variant={selectedTemplate === "modern" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedTemplate("modern")}
               >
-                Modern
+                {t("cvPreviewPage.templateModern")}
               </Button>
               <Button
                 variant={selectedTemplate === "minimal" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedTemplate("minimal")}
               >
-                Minimal
+                {t("cvPreviewPage.templateMinimal")}
               </Button>
             </div>
           </div>

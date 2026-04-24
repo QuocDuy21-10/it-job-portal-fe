@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   BarChart3,
@@ -19,6 +19,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useI18n } from "@/hooks/use-i18n";
+import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 export type PageType =
@@ -57,6 +59,7 @@ export default function ProfileSidebar({
 }: ProfileSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
 
   const currentPage: PageType = useMemo(() => {
     const tab = searchParams.get("tab") as PageType;
@@ -105,49 +108,49 @@ export default function ProfileSidebar({
     () => [
       {
         id: "overview",
-        label: "Tổng quan",
+        label: t("profileSidebar.overviewLabel"),
         icon: BarChart3,
-        description: "Xem tổng quan hoạt động",
+        description: t("profileSidebar.overviewDescription"),
       },
       {
         id: "my-cv",
-        label: "My CV",
+        label: t("profileSidebar.myCvLabel"),
         icon: FileText,
-        description: "Quản lý CV đã tạo",
+        description: t("profileSidebar.myCvDescription"),
       },
       {
         id: "create-cv",
-        label: "Tạo CV",
+        label: t("profileSidebar.createCvLabel"),
         icon: Edit3,
-        description: "Tạo CV mới",
+        description: t("profileSidebar.createCvDescription"),
       },
       {
         id: "my-jobs",
-        label: "Việc làm của tôi",
+        label: t("profileSidebar.myJobsLabel"),
         icon: Briefcase,
-        description: "Công việc đã ứng tuyển & lưu",
+        description: t("profileSidebar.myJobsDescription"),
       },
       {
         id: "email-subscription",
-        label: "Đăng ký nhận email",
+        label: t("profileSidebar.emailSubscriptionLabel"),
         icon: Mail,
-        description: "Quản lý đăng ký email",
+        description: t("profileSidebar.emailSubscriptionDescription"),
       },
       {
         id: "notifications",
-        label: "Thông báo",
+        label: t("profileSidebar.notificationsLabel"),
         icon: Bell,
         badge: 0, // Có thể thêm logic đếm thông báo
-        description: "Xem thông báo",
+        description: t("profileSidebar.notificationsDescription"),
       },
       {
         id: "settings",
-        label: "Cài đặt",
+        label: t("profileSidebar.settingsLabel"),
         icon: Settings,
-        description: "Cài đặt tài khoản",
+        description: t("profileSidebar.settingsDescription"),
       },
     ],
-    []
+    [t]
   );
 
   return (
@@ -173,7 +176,7 @@ export default function ProfileSidebar({
                 <span className="text-white font-bold text-sm">P</span>
               </div>
               <span className="font-semibold text-gray-900 dark:text-gray-100 text-base">
-                My Profile
+                {t("profileSidebar.title")}
               </span>
             </div>
           )}
@@ -187,7 +190,11 @@ export default function ProfileSidebar({
                     "rounded-md transition-colors",
                     !isExpanded && "mx-auto"
                   )}
-                  aria-label={isExpanded ? "Thu gọn sidebar" : "Mở rộng sidebar"}
+                  aria-label={
+                    isExpanded
+                      ? t("profileSidebar.collapseAria")
+                      : t("profileSidebar.expandAria")
+                  }
                   type="button"
                 >
                   <ArrowLeft
@@ -200,7 +207,9 @@ export default function ProfileSidebar({
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
-                {isExpanded ? "Thu gọn" : "Mở rộng"}
+                {isExpanded
+                  ? t("profileSidebar.collapseLabel")
+                  : t("profileSidebar.expandLabel")}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

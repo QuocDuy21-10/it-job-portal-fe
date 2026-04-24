@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Mail, ChevronRight, Home, Sparkles } from "lucide-react";
+import { Loader2, Mail, Sparkles } from "lucide-react";
 import SKILLS_LIST from "@/shared/data/skill-list.json";
 import PROVINCES_LIST from "@/shared/data/provinces.json";
 import { MultiSelect } from "@/components/multi-select";
 import { SingleSelect } from "@/components/single-select";
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useGetSubscribersByUserQuery,
   useCreateSubscriberMutation,
@@ -17,12 +18,10 @@ import {
 import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
 import { toast } from "sonner";
 import { SubscriptionList } from "@/components/profile/subscription-list";
-import Link from "next/link";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
-const MAX_SUBSCRIPTIONS = 3;
-
 export default function EmailSubscriptionPage() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
@@ -52,22 +51,26 @@ export default function EmailSubscriptionPage() {
   const handleRegister = async () => {
     // Validation
     if (!user) {
-      toast.error("Vui lòng đăng nhập để sử dụng tính năng này");
+      toast.error(t("emailSubscription.errors.loginRequired"));
       return;
     }
 
     if (selectedSkills.length === 0) {
-      toast.error("Vui lòng chọn ít nhất một kỹ năng");
+      toast.error(t("emailSubscription.errors.skillsRequired"));
       return;
     }
 
     if (!selectedLocation) {
-      toast.error("Vui lòng chọn địa điểm");
+      toast.error(t("emailSubscription.errors.locationRequired"));
       return;
     }
 
     if (totalSubscriptions >= maxAllowed) {
-      toast.error(`Bạn chỉ có thể đăng ký tối đa ${maxAllowed} lần`);
+      toast.error(
+        t("emailSubscription.errors.maxSubscriptions", {
+          count: maxAllowed,
+        })
+      );
       return;
     }
 
@@ -79,7 +82,7 @@ export default function EmailSubscriptionPage() {
         location: selectedLocation,
       }).unwrap();
 
-      toast.success("Đăng ký nhận công việc thành công!");
+      toast.success(t("emailSubscription.toasts.registerSuccess"));
 
       // Reset form
       setSelectedSkills([]);
@@ -89,7 +92,7 @@ export default function EmailSubscriptionPage() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.";
+        t("emailSubscription.errors.registerFailed");
 
       toast.error(errorMessage);
 
@@ -100,13 +103,13 @@ export default function EmailSubscriptionPage() {
   const handleDeleteSubscription = async (id: string) => {
     try {
       await deleteSubscriber(id).unwrap();
-      toast.success("Huỷ đăng ký thành công!");
+      toast.success(t("emailSubscription.toasts.deleteSuccess"));
       refetch();
     } catch (error: any) {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Có lỗi xảy ra khi huỷ đăng ký. Vui lòng thử lại.";
+        t("emailSubscription.errors.deleteFailed");
       toast.error(errorMessage);
     }
   };
@@ -123,10 +126,10 @@ export default function EmailSubscriptionPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-primary">
-                  Đăng ký nhận công việc
+                  {t("emailSubscription.title")}
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                  Nhận thông báo việc làm phù hợp qua email
+                  {t("emailSubscription.description")}
                 </p>
               </div>
             </div>
@@ -138,7 +141,7 @@ export default function EmailSubscriptionPage() {
           <div className="flex items-center gap-2 mb-6">
             <Sparkles className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-semibold text-foreground">
-              Tạo đăng ký mới
+              {t("emailSubscription.createTitle")}
             </h2>
           </div>
 
@@ -150,7 +153,7 @@ export default function EmailSubscriptionPage() {
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <label className="block text-sm font-medium text-foreground mb-2 cursor-help">
-                      Kỹ năng <span className="text-destructive">*</span>
+                      {t("emailSubscription.skillsLabel")} <span className="text-destructive">*</span>
                     </label>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
@@ -158,7 +161,7 @@ export default function EmailSubscriptionPage() {
                       className="bg-popover text-popover-foreground px-3 py-2 rounded-md text-xs shadow-lg border border-border max-w-xs"
                       sideOffset={5}
                     >
-                      Chọn các kỹ năng bạn quan tâm để nhận thông báo công việc phù hợp
+                      {t("emailSubscription.skillsTooltip")}
                       <Tooltip.Arrow className="fill-popover" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -167,8 +170,8 @@ export default function EmailSubscriptionPage() {
                   options={SKILLS_LIST}
                   value={selectedSkills}
                   onChange={setSelectedSkills}
-                  placeholder="Chọn kỹ năng..."
-                  searchPlaceholder="Tìm kiếm kỹ năng..."
+                  placeholder={t("emailSubscription.skillsPlaceholder")}
+                  searchPlaceholder={t("emailSubscription.skillsSearchPlaceholder")}
                 />
               </div>
 
@@ -177,7 +180,7 @@ export default function EmailSubscriptionPage() {
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <label className="block text-sm font-medium text-foreground mb-2 cursor-help">
-                      Địa điểm <span className="text-destructive">*</span>
+                      {t("emailSubscription.locationLabel")} <span className="text-destructive">*</span>
                     </label>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
@@ -185,7 +188,7 @@ export default function EmailSubscriptionPage() {
                       className="bg-popover text-popover-foreground px-3 py-2 rounded-md text-xs shadow-lg border border-border max-w-xs"
                       sideOffset={5}
                     >
-                      Chọn tỉnh/thành phố bạn muốn tìm việc
+                      {t("emailSubscription.locationTooltip")}
                       <Tooltip.Arrow className="fill-popover" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -194,8 +197,8 @@ export default function EmailSubscriptionPage() {
                   options={PROVINCES_LIST}
                   value={selectedLocation}
                   onChange={setSelectedLocation}
-                  placeholder="Chọn địa điểm..."
-                  searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
+                  placeholder={t("emailSubscription.locationPlaceholder")}
+                  searchPlaceholder={t("emailSubscription.locationSearchPlaceholder")}
                 />
               </div>
             </div>
@@ -208,17 +211,22 @@ export default function EmailSubscriptionPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    Số lượng đăng ký: {totalSubscriptions}/{maxAllowed}
+                    {t("emailSubscription.subscriptionCount", {
+                      current: totalSubscriptions,
+                      max: maxAllowed,
+                    })}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {maxAllowed - totalSubscriptions > 0
-                      ? `Còn ${maxAllowed - totalSubscriptions} lượt đăng ký`
-                      : "Đã hết lượt đăng ký"}
+                      ? t("emailSubscription.remainingCount", {
+                          count: maxAllowed - totalSubscriptions,
+                        })
+                      : t("emailSubscription.noRemainingCount")}
                   </p>
                 </div>
               </div>
               {totalSubscriptions >= maxAllowed && (
-                <span className="badge-error">Đã đạt giới hạn</span>
+                <span className="badge-error">{t("emailSubscription.limitReached")}</span>
               )}
             </div>
 
@@ -235,12 +243,12 @@ export default function EmailSubscriptionPage() {
               {isCreating ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Đang xử lý...
+                  {t("emailSubscription.submitting")}
                 </>
               ) : (
                 <>
                   <Mail className="mr-2 h-5 w-5" />
-                  Đăng ký nhận thông báo
+                  {t("emailSubscription.submit")}
                 </>
               )}
             </Button>
@@ -251,10 +259,12 @@ export default function EmailSubscriptionPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-foreground">
-              Danh sách đăng ký của bạn
+              {t("emailSubscription.yourSubscriptions")}
             </h2>
             <span className="text-sm text-muted-foreground">
-              {totalSubscriptions} đăng ký
+              {t("emailSubscription.totalSubscriptions", {
+                count: totalSubscriptions,
+              })}
             </span>
           </div>
           <SubscriptionList
