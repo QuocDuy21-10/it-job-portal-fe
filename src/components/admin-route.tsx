@@ -3,15 +3,19 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { useLocale } from "next-intl";
 import { useAppSelector } from "@/lib/redux/hooks";
 import {
   selectIsAuthenticated,
   selectIsLoading,
   selectIsAdmin,
 } from "@/features/auth/redux/auth.slice";
+import { getPathname } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const locale = useLocale() as AppLocale;
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isLoading = useAppSelector(selectIsLoading);
   const isAdmin = useAppSelector(selectIsAdmin);
@@ -25,12 +29,12 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
     if (!isMounted) return;
     if (!isLoading) {
       if (!isAuthenticated) {
-        router.push("/login");
+        router.push(getPathname({ locale, href: "/login" }));
       } else if (isAuthenticated && !isAdmin) {
-        router.push("/");
+        router.push(getPathname({ locale, href: "/" }));
       }
     }
-  }, [isMounted, isAuthenticated, isLoading, isAdmin, router]);
+  }, [isMounted, isAuthenticated, isLoading, isAdmin, locale, router]);
 
 
   if (!isMounted) {

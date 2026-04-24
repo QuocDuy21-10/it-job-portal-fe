@@ -35,7 +35,7 @@ interface CompanyTableProps {
   isIndeterminate: boolean;
 }
 
-export function CompanyTable({
+export function   CompanyTable({
   companies,
   isLoading,
   onEdit,

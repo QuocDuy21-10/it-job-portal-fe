@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useLocale } from "next-intl";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface DatePickerProps {
   value?: Date | string;
@@ -23,6 +25,7 @@ export function DatePicker({
   disabled,
   placeholder = "Pick a date",
 }: DatePickerProps) {
+  const locale = useLocale();
   const [date, setDate] = React.useState<Date | undefined>(() => {
     if (!value) return undefined;
     if (value instanceof Date) return value;
@@ -36,7 +39,7 @@ export function DatePicker({
 
   const formatDate = (d: Date | undefined) => {
     if (!d) return placeholder;
-    return d.toLocaleDateString("vi-VN", {
+    return formatLocaleDate(d, locale, {
       year: "numeric",
       month: "long",
       day: "numeric",

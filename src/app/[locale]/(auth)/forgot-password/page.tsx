@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Mail, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,21 +14,19 @@ import {
   ForgotPasswordSchema,
 } from "@/features/auth/schemas/auth.schema";
 import { authApi } from "@/features/auth/redux/auth.api";
-import {
-  AuthLayout,
-  AuthHeader,
-  AuthCard,
-} from "@/components/auth";
+import { AuthLayout } from "@/components/auth/auth-layout";
+import { AuthHeader } from "@/components/auth/auth-header";
+import { AuthCard } from "@/components/auth/auth-card";
 
 export default function ForgotPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
+  const [submittedEmail, setSubmittedEmail] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
@@ -38,7 +36,23 @@ export default function ForgotPasswordPage() {
 
   const [forgotPassword, { isLoading }] = authApi.useForgotPasswordMutation();
 
+  useEffect(() => {
+    if (cooldownTime <= 0) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setCooldownTime((prev) => prev - 1);
+    }, 1000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [cooldownTime]);
+
   const onSubmit = async (data: ForgotPasswordFormData) => {
+    setSubmittedEmail(data.email);
+
     try {
       const response = await forgotPassword(data).unwrap();
 
@@ -50,15 +64,6 @@ export default function ForgotPasswordPage() {
 
         // Cooldown 60 giây để tránh spam
         setCooldownTime(60);
-        const interval = setInterval(() => {
-          setCooldownTime((prev) => {
-            if (prev <= 1) {
-              clearInterval(interval);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
       }
     } catch (error: any) {
       console.error("Forgot password error:", error);
@@ -76,8 +81,7 @@ export default function ForgotPasswordPage() {
       title="Reset Your Password"
       description="Don't worry! It happens. Enter your email and we'll send you instructions to reset your password."
     >
-      <AuthHeader
-      />
+      <AuthHeader />
       <AuthCard
         title="Reset Password"
         description="We'll send a reset link to your email"
@@ -95,7 +99,7 @@ export default function ForgotPasswordPage() {
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 We've sent password reset instructions to{" "}
                 <span className="font-medium text-blue-600 dark:text-blue-400">
-                  {getValues("email")}
+                  {submittedEmail}
                 </span>
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500">

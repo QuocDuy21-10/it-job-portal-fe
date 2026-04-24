@@ -1,3 +1,5 @@
+import { getRuntimeLocale, resolveIntlLocale } from "@/lib/utils/locale-formatters";
+
 const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
   { amount: 60, name: "seconds" },
   { amount: 60, name: "minutes" },
@@ -8,11 +10,13 @@ const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
   { amount: Number.POSITIVE_INFINITY, name: "years" },
 ];
 
-const formatter = new Intl.RelativeTimeFormat("vi", { numeric: "auto" });
-
-export function timeAgo(date: string | Date): string {
+export function timeAgo(date: string | Date, locale?: string): string {
   const then = typeof date === "string" ? new Date(date) : date;
   let duration = (then.getTime() - Date.now()) / 1000;
+  const formatter = new Intl.RelativeTimeFormat(
+    resolveIntlLocale(getRuntimeLocale(locale)),
+    { numeric: "auto" }
+  );
 
   for (const division of DIVISIONS) {
     if (Math.abs(duration) < division.amount) {

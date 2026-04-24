@@ -45,7 +45,7 @@ export default function LanguagesSection({
 
   const handleRemove = (id: string, name: string) => {
     toast.success(t("cv.languages.deleteSuccess"), {
-      description: t("cv.languages.deleteSuccessDesc").replace("{name}", name),
+      description: t("cv.languages.deleteSuccessDesc", { name }),
       duration: 2000,
     });
     onRemove(id);

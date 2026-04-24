@@ -45,7 +45,7 @@ export default function SkillsSection({
 
   const handleRemove = (id: string, name: string) => {
     toast.success(t("cv.skills.deleteSuccess"), {
-      description: t("cv.skills.deleteSuccessDesc").replace("{name}", name),
+      description: t("cv.skills.deleteSuccessDesc", { name }),
       duration: 2000,
     });
     onRemove(id);

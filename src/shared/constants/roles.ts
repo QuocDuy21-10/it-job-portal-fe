@@ -3,6 +3,9 @@
  * Định nghĩa các role trong hệ thống để tránh hard-code
  */
 
+import { getPathname } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
+
 export const ROLES = {
   SUPER_ADMIN: "SUPER ADMIN",
   HR: "HR",
@@ -28,6 +31,13 @@ export const DEFAULT_ROUTES_BY_ROLE: Record<string, string> = {
 export function getDefaultRoute(role?: string): string {
   if (!role) return "/";
   return DEFAULT_ROUTES_BY_ROLE[role] || "/";
+}
+
+export function getLocalizedDefaultRoute(
+  role: string | undefined,
+  locale: AppLocale
+): string {
+  return getPathname({ locale, href: getDefaultRoute(role) });
 }
 
 /**

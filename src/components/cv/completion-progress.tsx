@@ -161,7 +161,7 @@ export default function CompletionProgress({
               <div className="mb-3 flex items-start gap-2 text-xs bg-yellow-50 dark:bg-yellow-950/20 text-yellow-800 dark:text-yellow-200 p-3 rounded-lg border border-yellow-200 dark:border-yellow-900">
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <p>
-                  {t("cv.progress.notEnough").replace("{percent}", "15")}
+                  {t("cv.progress.notEnough", { percent: 15 })}
                 </p>
               </div>
             )}

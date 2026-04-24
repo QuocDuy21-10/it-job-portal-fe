@@ -10,6 +10,7 @@ import { useWorkExperienceModal } from "@/hooks/use-work-experience-modal";
 import { type ExperienceRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface Experience extends ExperienceRequest {
   id: string;
@@ -28,7 +29,7 @@ export default function WorkExperienceSection({
   onUpdate,
   onRemove,
 }: WorkExperienceSectionProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const {
     isOpen,
@@ -49,9 +50,12 @@ export default function WorkExperienceSection({
   };
 
   const formatDate = (date: Date | string | undefined) => {
-    if (!date) return "Present";
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    return dateObj.toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" });
+    if (!date) return language === "vi" ? "Hiện tại" : "Present";
+
+    return formatLocaleDate(date, language, {
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   return (

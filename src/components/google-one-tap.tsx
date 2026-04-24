@@ -40,7 +40,12 @@ export function GoogleOneTap({ disabled = false }: GoogleOneTapProps) {
           }
           // Dispatch action để update Redux state
           if (response.data?.user) {
-            dispatch(setUserLoginInfo(response.data.user));
+            dispatch(
+              setUserLoginInfo({
+                ...response.data.user,
+                avatar: response.data.user.avatar ?? null,
+              })
+            );
           }
           toast.success("Đăng nhập với Google thành công!");
           router.push("/");

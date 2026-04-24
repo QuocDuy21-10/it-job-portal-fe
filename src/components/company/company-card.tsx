@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Building2, Briefcase, UserPlus, UserCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Company } from "@/features/company/schemas/company.schema";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
 
 interface CompanyCardProps {
   company: Company;

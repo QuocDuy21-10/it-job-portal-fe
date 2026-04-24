@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectIsAuthenticated, selectUserRole } from "@/features/auth/redux/auth.slice";
-import { getDefaultRoute } from "@/shared/constants/roles";
+import { usePathname } from "@/i18n/navigation";
+import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
+import type { AppLocale } from "@/i18n/routing";
 
 /**
  * Guest Guard Component
@@ -27,6 +30,7 @@ export function GuestGuard({
 }: GuestGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale() as AppLocale;
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const userRole = useAppSelector(selectUserRole);
 
@@ -35,10 +39,10 @@ export function GuestGuard({
     // 1. User đã authenticated
     // 2. Đang ở trang guest-only
     if (isAuthenticated && guestOnlyPaths.includes(pathname)) {
-      const defaultRoute = getDefaultRoute(userRole);
+      const defaultRoute = getLocalizedDefaultRoute(userRole, locale);
       router.replace(defaultRoute);
     }
-  }, [isAuthenticated, pathname, userRole, router, guestOnlyPaths]);
+  }, [guestOnlyPaths, isAuthenticated, locale, pathname, router, userRole]);
 
   return <>{children}</>;
 }

@@ -1,32 +1,17 @@
 import "./globals.css";
-import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { I18nProvider } from "@/contexts/i18n-provider";
-import { AuthModalProvider } from "@/contexts/auth-modal-context";
-import { ClientLayout } from "@/components/client-layout";
-import { AuthModal } from "@/components/modals/auth-modal";
-import { AuthInitializer } from "@/components/auth-initializer";
 import ReduxProvider from "@/lib/redux/provider";
 import { CaslProvider } from "@/lib/casl/casl-provider";
 import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
-import { SocketProvider } from "@/lib/socket/socket-provider";
 
 const roboto = Roboto({
-  subsets: ["latin", "vietnamese"], 
-  weight: ["100", "300", "400", "500", "700", "900"], 
-  variable: "--font-roboto", 
-  display: "swap", 
+  subsets: ["latin", "vietnamese"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
+  display: "swap",
 });
-
-// Static metadata - fallback cho SEO
-export const metadata: Metadata = {
-  title: "JobPortal - Find Your Dream Job",
-  description:
-    "Connecting talented professionals with amazing opportunities worldwide. Browse thousands of jobs from top companies.",
-  keywords: "jobs, careers, employment, recruitment, job search, hiring",
-};
 
 export default function RootLayout({
   children,
@@ -35,25 +20,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-     <body className={`${roboto.variable} font-sans flex min-h-screen flex-col`}>
+      <body className={`${roboto.variable} font-sans flex min-h-screen flex-col`}>
         <ReduxProvider>
           <CaslProvider>
-          <GoogleOAuthProvider>
-            <ThemeProvider>
-              <I18nProvider>
-                <AuthModalProvider>
-                <SocketProvider>
-                  {/* Fetch user data on app initialization */}
-                  <AuthInitializer />
-                  <ClientLayout />
-                  <div className="flex-1">{children}</div>
-                  <AuthModal />
-                  <Toaster />
-                </SocketProvider>
-                </AuthModalProvider>
-              </I18nProvider>
-            </ThemeProvider>
-          </GoogleOAuthProvider>
+            <GoogleOAuthProvider>
+              <ThemeProvider>
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </GoogleOAuthProvider>
           </CaslProvider>
         </ReduxProvider>
       </body>

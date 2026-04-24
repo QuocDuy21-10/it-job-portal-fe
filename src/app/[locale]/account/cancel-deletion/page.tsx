@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { Loader2, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,12 +14,15 @@ import {
 } from "@/components/ui/card";
 import { useCancelAccountDeletionByTokenMutation } from "@/features/auth/redux/auth.api";
 import { useI18n } from "@/hooks/use-i18n";
+import { getPathname, Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 
 type PageState = "idle" | "loading" | "success" | "error";
 
 function CancelDeletionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale() as AppLocale;
   const { t } = useI18n();
 
   const token = searchParams.get("token");
@@ -44,8 +47,8 @@ function CancelDeletionContent() {
       return () => clearTimeout(timer);
     }
 
-    router.push("/login");
-  }, [pageState, countdown, router]);
+    router.push(getPathname({ locale, href: "/login" }));
+  }, [countdown, locale, pageState, router]);
 
   const handleKeepAccount = async () => {
     if (!token) return;
@@ -112,10 +115,9 @@ function CancelDeletionContent() {
           {pageState === "success" && (
             <>
               <p className="text-sm text-muted-foreground">
-                {t("settings.deleteAccount.cancelByToken.redirecting").replace(
-                  "{count}",
-                  String(countdown)
-                )}
+                {t("settings.deleteAccount.cancelByToken.redirecting", {
+                  count: countdown,
+                })}
               </p>
               <Button asChild variant="outline" className="w-full">
                 <Link href="/login">

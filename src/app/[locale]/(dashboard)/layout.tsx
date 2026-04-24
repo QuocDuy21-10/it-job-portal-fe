@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { AdminRoute } from "@/components/admin-route";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
@@ -11,29 +12,16 @@ import { useAppDispatch } from "@/lib/redux/hooks";
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { setLogoutAction } from "@/features/auth/redux/auth.slice";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
+import { getPathname } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 
-/**
- * Admin Dashboard Layout
- * Layout riêng biệt cho Admin Dashboard, tách biệt hoàn toàn khỏi MainLayout
- * 
- * Architecture:
- * - Sidebar: Desktop navigation với toggle expand/collapse
- * - Header: Top bar với user profile, notifications, search
- * - Mobile Nav: Drawer navigation cho mobile
- * - Main Content: Responsive container cho admin pages
- * 
- * Features:
- * - Permission-based navigation filtering
- * - Responsive design (desktop + mobile)
- * - Smooth transitions
- * - Clean component separation
- */
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const locale = useLocale() as AppLocale;
   const dispatch = useAppDispatch();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
   
@@ -41,10 +29,6 @@ export default function AdminLayout({
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  /**
-   * Handle user logout
-   * Clear auth state and redirect to login
-   */
   const handleLogout = async () => {
     try {
       setLoggingOutFlag(true);
@@ -53,7 +37,7 @@ export default function AdminLayout({
       console.error("Logout error:", err);
     } finally {
       dispatch(setLogoutAction());
-      router.push("/login");
+      router.push(getPathname({ locale, href: "/login" }));
     }
   };
 

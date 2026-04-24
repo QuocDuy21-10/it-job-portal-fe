@@ -2,23 +2,20 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { IJob } from "@/shared/types/backend";
 import { BriefcaseIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 
 interface JobCardProps {
   job: IJob;
 }
 const JobCard = ({ job }: JobCardProps) => {
   const router = useRouter();
+  const locale = useLocale();
 
-  const formatSalary = (salary: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-      maximumFractionDigits: 0,
-    }).format(salary);
-  };
+  const formatSalary = (salary: number) => formatVndCurrency(salary, locale);
 
   const handleClick = () => {
     router.push(`/jobs/${job._id}`);

@@ -10,6 +10,7 @@ import { useCertificateModal } from "@/hooks/use-certificate-modal";
 import { type CertificateRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface Certificate extends CertificateRequest {
   id: string;
@@ -28,7 +29,7 @@ export default function CertificatesSection({
   onUpdate,
   onRemove,
 }: CertificatesSectionProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const {
     isOpen,
@@ -49,8 +50,10 @@ export default function CertificatesSection({
   };
 
   const formatDate = (date: Date | string) => {
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    return dateObj.toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" });
+    return formatLocaleDate(date, language, {
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   return (

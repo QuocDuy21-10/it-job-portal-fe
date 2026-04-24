@@ -1,15 +1,15 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   experimental: {
     authInterrupts: true,
+    optimizePackageImports: ["lucide-react"],
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-  // Thêm đoạn này
   async headers() {
     return [
       {
@@ -17,11 +17,11 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin-allow-popups', // Đổi từ 'same-origin' thành giá trị này
+            value: 'same-origin-allow-popups', 
           },
           {
             key: 'Referrer-Policy',
-            value: 'no-referrer-when-downgrade', // Cho môi trường dev với http/localhost
+            value: 'no-referrer-when-downgrade', 
           },
         ],
       },
@@ -29,4 +29,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+
+export default withNextIntl(nextConfig);

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,7 @@ import { PasswordInput } from "@/components/auth";
 import { SocialAuthButtons } from "@/components/auth";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
-import { getDefaultRoute } from "@/shared/constants/roles";
+import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
@@ -22,6 +23,7 @@ import {
   useLoginMutation,
   useGoogleLoginMutation,
 } from "@/features/auth/redux/auth.api";
+import type { AppLocale } from "@/i18n/routing";
 
 interface LoginFormProps {
   onSuccess?: (redirectUrl?: string) => void;
@@ -40,6 +42,7 @@ interface LoginFormProps {
 export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
   const [socialLoading, setSocialLoading] = useState<"google" | null>(null);
   const dispatch = useAppDispatch();
+  const locale = useLocale() as AppLocale;
 
   const {
     register,
@@ -67,13 +70,18 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
         }
 
         if (response.data?.user) {
-          dispatch(setUserLoginInfo(response.data.user));
+          dispatch(
+            setUserLoginInfo({
+              ...response.data.user,
+              avatar: response.data.user.avatar ?? null,
+            })
+          );
         }
 
         toast.success("Đăng nhập thành công!");
 
         const userRole = response.data?.user?.role?.name;
-        const redirectUrl = getDefaultRoute(userRole);
+        const redirectUrl = getLocalizedDefaultRoute(userRole, locale);
         onSuccess?.(redirectUrl);
       }
     } catch (error: any) {
@@ -105,13 +113,18 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
         }
 
         if (response.data?.user) {
-          dispatch(setUserLoginInfo(response.data.user));
+          dispatch(
+            setUserLoginInfo({
+              ...response.data.user,
+              avatar: response.data.user.avatar ?? null,
+            })
+          );
         }
 
         toast.success("Đăng nhập Google thành công!");
 
         const userRole = response.data?.user?.role?.name;
-        const redirectUrl = getDefaultRoute(userRole);
+        const redirectUrl = getLocalizedDefaultRoute(userRole, locale);
         onSuccess?.(redirectUrl);
       }
     } catch (error: any) {

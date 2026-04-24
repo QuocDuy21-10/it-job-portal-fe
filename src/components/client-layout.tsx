@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
   selectIsRefreshToken,
@@ -9,10 +10,13 @@ import {
   setRefreshTokenAction,
 } from "@/features/auth/redux/auth.slice";
 import { toast } from "sonner";
+import { getPathname } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 
 export function ClientLayout() {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale() as AppLocale;
   const dispatch = useAppDispatch();
   
   const isRefreshToken = useAppSelector(selectIsRefreshToken);
@@ -45,11 +49,19 @@ export function ClientLayout() {
       // Chuyển hướng về trang login (nếu chưa ở trang login)
       if (!pathname?.includes("/login")) {
         // Thêm returnUrl để redirect về trang cũ sau khi login
-        const returnUrl = encodeURIComponent(pathname || "/");
-        router.push(`/login?returnUrl=${returnUrl}`);
+        const returnUrl = pathname || "/";
+        router.push(
+          getPathname({
+            locale,
+            href: {
+              pathname: "/login",
+              query: { returnUrl },
+            },
+          })
+        );
       }
     }
-  }, [isRefreshToken, errorRefreshToken, router, pathname, dispatch]);
+  }, [dispatch, errorRefreshToken, isRefreshToken, locale, pathname, router]);
 
   // Component này không render gì (chỉ xử lý side effect)
   return null;

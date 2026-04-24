@@ -7,6 +7,7 @@ import CVFormSection from "@/components/sections/cv-form-section";
 import PersonalInfoModal from "../modals/personal-info-modal";
 import { PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface PersonalInfoSectionProps {
   personalInfo: {
@@ -30,7 +31,7 @@ export default function PersonalInfoSection({
   onUpdate,
   onAvatarChange,
 }: PersonalInfoSectionProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = (data: PersonalInfo, avatarFile?: File) => {
@@ -54,7 +55,7 @@ export default function PersonalInfoSection({
 
   const formatDate = (date?: Date) => {
     if (!date) return null;
-    return new Date(date).toLocaleDateString("vi-VN");
+    return formatLocaleDate(date, language);
   };
 
   const getGenderLabel = (gender?: string) => {

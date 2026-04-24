@@ -128,14 +128,6 @@ export function AdminHeader({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {/* <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Hồ sơ cá nhân</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Cài đặt</span>
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={onLogout}

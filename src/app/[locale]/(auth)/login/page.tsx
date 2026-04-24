@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
-import Link from "next/link";
+import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
-import { getDefaultRoute } from "@/shared/constants/roles";
+import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
@@ -31,6 +31,8 @@ import {
   AuthFooter,
   VerificationAlert,
 } from "@/components/auth";
+import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 
 function LoginContent() {
   const [socialLoading, setSocialLoading] = useState<"google" | "facebook" | null>(null);
@@ -40,6 +42,7 @@ function LoginContent() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale() as AppLocale;
 
   // Check if user just verified their email (chỉ hiện toast 1 lần)
   useEffect(() => {
@@ -59,7 +62,7 @@ function LoginContent() {
     if (returnUrl) {
       return returnUrl;
     }
-    return getDefaultRoute(userRole);
+    return getLocalizedDefaultRoute(userRole, locale);
   };
 
   const {
@@ -88,7 +91,12 @@ function LoginContent() {
         }
 
         if (response.data?.user) {
-          dispatch(setUserLoginInfo(response.data.user));
+          dispatch(
+            setUserLoginInfo({
+              ...response.data.user,
+              avatar: response.data.user.avatar ?? null,
+            })
+          );
         }
 
         toast.success("Welcome back! Login successful.");
@@ -132,7 +140,12 @@ function LoginContent() {
         }
 
         if (response.data?.user) {
-          dispatch(setUserLoginInfo(response.data.user));
+          dispatch(
+            setUserLoginInfo({
+              ...response.data.user,
+              avatar: response.data.user.avatar ?? null,
+            })
+          );
         }
 
         toast.success("Google login successful!");

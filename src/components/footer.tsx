@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Briefcase,
   Facebook,
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { TYPOGRAPHY, TRANSITIONS } from "@/shared/constants/design";
+import { Link } from "@/i18n/navigation";
 
 export function Footer() {
   const { t, mounted: i18nMounted } = useI18n();
@@ -197,7 +197,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
             {i18nMounted
-              ? t("footer.copyright")
+              ? t("footer.copyright", { year: new Date().getFullYear() })
               : `© ${new Date().getFullYear()} JobPortal. All rights reserved.`}
           </p>
         </div>

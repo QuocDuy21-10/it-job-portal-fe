@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   Search,
@@ -28,11 +27,13 @@ import { SimplePagination } from "@/components/simple-pagination";
 import { SectionHeader } from "@/components/sections/section-header";
 import { SectionContainer } from "@/components/sections/section-container";
 import { TYPOGRAPHY } from "@/shared/constants/design";
+import { Link, useRouter } from "@/i18n/navigation";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProvince, setSelectedProvince] = useState<string>("");
   const [hasToken, setHasToken] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setHasToken(!!localStorage.getItem("access_token"));
@@ -81,7 +82,8 @@ export default function Home() {
     const params = new URLSearchParams();
     if (searchQuery) params.set("q", searchQuery);
     if (selectedProvince) params.set("location", selectedProvince);
-    window.location.href = `/jobs?${params.toString()}`;
+    const nextPath = params.size ? `/jobs?${params.toString()}` : "/jobs";
+    router.push(nextPath);
   };
 
   return (

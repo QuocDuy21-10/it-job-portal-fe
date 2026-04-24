@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useSelector } from "react-redux";
 import { MapPin, Briefcase, Calendar, Heart, DollarSign, Clock, Users, ChevronRight } from "lucide-react";
 import { selectAuth } from "@/features/auth/redux/auth.slice";
@@ -26,19 +27,16 @@ import { Loader2 } from "lucide-react";
 import parse from "html-react-parser";
 import { useJobFavorite } from "@/hooks/use-job-favorite";
 import { cn } from "@/lib/utils";
+import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 
 // Helper to format salary
-const formatSalary = (salary: number) => {
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(salary);
-};
+const formatSalary = (salary: number, locale: string) =>
+  formatVndCurrency(salary, locale);
 
 export default function JobDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const locale = useLocale();
   const jobId = params.id as string;
 
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
@@ -48,6 +46,15 @@ export default function JobDetailPage() {
   // Fetch job details
   const { data: response, isLoading, error } = useGetJobQuery(jobId);
   const job = response?.data;
+  const companyDetails = job?.company as
+    | {
+        _id?: string;
+        name?: string;
+        logo?: string | null;
+        numberOfEmployees?: string | number;
+        address?: string;
+      }
+    | undefined;
 
   // Job favorite hook
   const { isSaved, toggleSaveJob, isLoading: isSavingJob } = useJobFavorite(jobId);
@@ -185,7 +192,7 @@ export default function JobDetailPage() {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Mức lương</p>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{formatSalary(job.salary)}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{formatSalary(job.salary, locale)}</p>
                   </div>
                 </div>
               </div>
@@ -328,11 +335,13 @@ export default function JobDetailPage() {
           <div>
             <CompanyInfo
               company={{
-                id: job.company?._id || "",
-                name: job.company?.name || "",
-                logo: job.company?.logo || "",
-                employees: job.company?.numberOfEmployees || "N/A",
-                address: job.company?.address || job.location,
+                id: companyDetails?._id || "",
+                name: companyDetails?.name || "",
+                logo: companyDetails?.logo || "",
+                employees: companyDetails?.numberOfEmployees
+                  ? String(companyDetails.numberOfEmployees)
+                  : "N/A",
+                address: companyDetails?.address || job.location,
               }}
             />
           </div>

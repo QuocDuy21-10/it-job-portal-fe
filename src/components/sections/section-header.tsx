@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TYPOGRAPHY } from "@/shared/constants/design";
+import { Link } from "@/i18n/navigation";
 
 interface SectionHeaderProps {
   title: string;

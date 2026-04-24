@@ -127,7 +127,7 @@ export const vi = {
     contact: "Liên hệ",
     privacyPolicy: "Chính sách bảo mật",
     termsOfService: "Điều khoản dịch vụ",
-    copyright: `© ${new Date().getFullYear()} JobPortal. Bảo lưu mọi quyền.`,
+    copyright: "© {year} JobPortal. Bảo lưu mọi quyền.",
   },
   cv: {
     personalInfo: {
@@ -177,7 +177,7 @@ export const vi = {
       experience: "Kinh nghiệm làm việc",
       skills: "Kỹ năng",
       languages: "Ngôn ngữ",
-      notEnough: "Cần hoàn thành ít nhất 15% hồ sơ để xem trước và tải xuống CV",
+      notEnough: "Cần hoàn thành ít nhất {percent}% hồ sơ để xem trước và tải xuống CV",
       previewDownload: "Xem trước & Tải xuống",
     },
     education: {

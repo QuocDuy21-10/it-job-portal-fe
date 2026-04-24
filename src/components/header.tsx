@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Briefcase, Menu, X, User, LogOut, Settings, FileText, PlusCircle, Mail, Bell } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,7 +15,6 @@ import { useI18n } from "@/hooks/use-i18n";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/hooks/use-auth";
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
-import { useRouter } from "next/navigation";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUserRole } from "@/features/auth/redux/auth.slice";
@@ -24,14 +22,18 @@ import { isAdminRole } from "@/shared/constants/roles";
 import { TooltipIcon } from "@/components/sections/tooltip-icon";
 import { NotificationBell } from "@/components/notification/notification-bell";
 import { TRANSITIONS } from "@/shared/constants/design";
+import { Link, useRouter } from "@/i18n/navigation";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const { user, isAuthenticated } = useAuth();
-  console.log("user", user);
-  console.log("isAuthenticated", isAuthenticated);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const userRole = useAppSelector(selectUserRole);
   const [logout] = useLogoutMutation();
@@ -80,7 +82,7 @@ export function Header() {
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
           </Link>
 
-          {i18nMounted && isAuthenticated && user ? (
+          {isMounted && isAuthenticated && user ? (
             <>
               <NotificationBell />
               <DropdownMenu>
@@ -166,12 +168,12 @@ export function Header() {
           ) : (
             <>
               <Button asChild variant="outline" size="sm">
-                <Link href="login">
+                <Link href="/login">
                   {i18nMounted ? t("nav.signIn") : "Sign In"}
                 </Link>
               </Button>
               <Button asChild size="sm">
-                <Link href="register">
+                <Link href="/register">
                   {i18nMounted ? t("nav.signUp") : "Sign Up"}
                 </Link>
               </Button>
@@ -241,7 +243,7 @@ export function Header() {
         <div className="md:hidden border-t bg-background/95 backdrop-blur-md animate-in slide-in-from-top-2 duration-300 max-h-[calc(100vh-4rem)] overflow-y-auto">
           <div className="container mx-auto px-4 py-4 space-y-4">
             {/* User Profile Section - Only show if authenticated */}
-            {i18nMounted && isAuthenticated && user && (
+            {isMounted && isAuthenticated && user && (
               <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
                 <div className="flex-shrink-0">
                   <img
@@ -284,7 +286,7 @@ export function Header() {
             </div>
 
             {/* User Menu Items - Only show if authenticated */}
-            {isAuthenticated && user && (
+            {isMounted && isAuthenticated && user && (
               <>
                 <div className="border-t border-border pt-3">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2">
@@ -402,7 +404,7 @@ export function Header() {
 
             {/* Auth Buttons or Sign Out */}
             <div className="border-t border-border pt-3">
-              {isAuthenticated && user ? (
+              {isMounted && isAuthenticated && user ? (
                 <Button
                   variant="outline"
                   className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30 hover:border-destructive transition-all"

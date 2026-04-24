@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Building2, MapPin, Heart, Clock, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/utils/time-ago";
 import { getJobStatus, type JobStatusVariant } from "@/lib/utils/job-status";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { Link } from "@/i18n/navigation";
 
 interface JobCardProps {
   job: Job;

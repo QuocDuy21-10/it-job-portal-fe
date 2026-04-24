@@ -123,7 +123,7 @@ export const en = {
     contact: "Contact",
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
-    copyright: `© ${new Date().getFullYear()} JobPortal. All rights reserved.`,
+    copyright: "© {year} JobPortal. All rights reserved.",
   },
   cv: {
     personalInfo: {
@@ -171,7 +171,7 @@ export const en = {
       experience: "Work Experience",
       skills: "Skills",
       languages: "Languages",
-      notEnough: "Complete at least 15% of your profile to preview and download CV",
+      notEnough: "Complete at least {percent}% of your profile to preview and download CV",
       previewDownload: "Preview & Download",
     },
     education: {
