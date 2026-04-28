@@ -1,5 +1,7 @@
 import "./globals.css";
+import type { ReactNode } from "react";
 import { Roboto } from "next/font/google";
+import { getLocale } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import ReduxProvider from "@/lib/redux/provider";
@@ -13,13 +15,15 @@ const roboto = Roboto({
   display: "swap",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
+  const locale = await getLocale();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${roboto.variable} font-sans flex min-h-screen flex-col`}>
         <ReduxProvider>
           <CaslProvider>

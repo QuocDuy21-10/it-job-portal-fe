@@ -10,6 +10,7 @@ import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
 import { routing } from "@/i18n/routing";
 import { SocketProvider } from "@/lib/socket/socket-provider";
+import { SITE_NAME, getOpenGraphLocale, getSiteUrl } from "@/shared/constants/seo";
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -30,9 +31,27 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
 
   return {
+    metadataBase: getSiteUrl(),
+    applicationName: SITE_NAME,
     title: t("title"),
     description: t("description"),
     keywords: t("keywords"),
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: t("title"),
+      description: t("description"),
+      locale: getOpenGraphLocale(locale),
+    },
+    twitter: {
+      card: "summary",
+      title: t("title"),
+      description: t("description"),
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 

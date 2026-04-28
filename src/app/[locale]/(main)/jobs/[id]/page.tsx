@@ -1,14 +1,21 @@
-"use client";
-
-import { useState } from "react";
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
-import { useSelector } from "react-redux";
-import { MapPin, Briefcase, Calendar, Heart, DollarSign, Clock, Users, ChevronRight } from "lucide-react";
-import { selectAuth } from "@/features/auth/redux/auth.slice";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import parse from "html-react-parser";
+import { hasLocale } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
+import {
+  Briefcase,
+  Building2,
+  Calendar,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  MapPin,
+  Users,
+} from "lucide-react";
+import JobDetailPageClient from "./job-detail-page-client";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,345 +24,412 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-// import RelatedJobsGrid from "@/components/sections/related-jobs-grid";
-import CompanyInfo from "@/components/sections/company-info";
-import ApplyModal from "@/components/modals/apply-modal";
-
-import { useParams } from "next/navigation";
-import { useGetJobQuery } from "@/features/job/redux/job.api";
-import { Loader2 } from "lucide-react";
-import parse from "html-react-parser";
-import { useJobFavorite } from "@/hooks/use-job-favorite";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { routing, type AppLocale } from "@/i18n/routing";
 import { formatVndCurrency } from "@/lib/utils/locale-formatters";
+import { fetchPublicJobById } from "@/lib/utils/public-content";
+import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import {
+  buildLocalizedPageMetadata,
+  getLocalizedPath,
+  getLocalizedUrl,
+  serializeJsonLd,
+  toMetadataDescription,
+} from "@/shared/constants/seo";
+import type { Job } from "@/features/job/schemas/job.schema";
 
-// Helper to format salary
-const formatSalary = (salary: number, locale: string) =>
-  formatVndCurrency(salary, locale);
+type JobDetailPageProps = {
+  params: Promise<{ locale: string; id: string }>;
+};
 
-export default function JobDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const locale = useLocale();
-  const jobId = params.id as string;
+const buildJobTitle = (jobName?: string, companyName?: string) => {
+  return [jobName, companyName].filter(Boolean).join(" | ");
+};
 
-  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+const buildJobSummary = (companyName?: string, location?: string) => {
+  return [companyName, location].filter(Boolean).join(" · ");
+};
 
-  const { isAuthenticated } = useSelector(selectAuth);
+const JOB_EMPLOYMENT_TYPES: Record<Job["formOfWork"], string> = {
+  "Full-time": "FULL_TIME",
+  "Part-time": "PART_TIME",
+  Internship: "INTERN",
+  Freelance: "CONTRACTOR",
+  Remote: "FULL_TIME",
+  Hybrid: "FULL_TIME",
+  Other: "OTHER",
+};
 
-  // Fetch job details
-  const { data: response, isLoading, error } = useGetJobQuery(jobId);
-  const job = response?.data;
-  const companyDetails = job?.company as
-    | {
-        _id?: string;
-        name?: string;
-        logo?: string | null;
-        numberOfEmployees?: string | number;
-        address?: string;
-      }
-    | undefined;
+const resolveJobDetailParams = async (
+  paramsPromise: JobDetailPageProps["params"]
+) => {
+  const { locale, id } = await paramsPromise;
 
-  // Job favorite hook
-  const { isSaved, toggleSaveJob, isLoading: isSavingJob } = useJobFavorite(jobId);
-
-  const daysRemaining = job?.endDate
-    ? Math.ceil(
-        (new Date(job.endDate).getTime() - new Date().getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
-    : null;
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-muted-foreground">Loading job details...</p>
-        </div>
-      </div>
-    );
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
   }
 
-  if (error || !job) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Job Not Found</h1>
-          <p className="text-muted-foreground mb-4">
-            The job you're looking for doesn't exist or has been removed.
-          </p>
-          <Button asChild>
-            <Link href="/jobs">Browse All Jobs</Link>
-          </Button>
-        </div>
-      </div>
-    );
+  return {
+    id,
+    locale: locale as AppLocale,
+  };
+};
+
+const getCompanyLogoUrl = (logo?: string | null) => {
+  if (!logo) {
+    return null;
   }
+
+  return `${API_BASE_URL_IMAGE}/images/company/${logo}`;
+};
+
+const buildJobStructuredData = (job: Job, locale: AppLocale) => {
+  const jobPath = `/jobs/${job._id}`;
+  const companyPath = `/companies/${job.company._id}`;
+  const companyLogoUrl = getCompanyLogoUrl(job.company.logo);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.name,
+    description:
+      toMetadataDescription(job.description, 5_000) ||
+      buildJobSummary(job.company.name, job.location),
+    identifier: {
+      "@type": "PropertyValue",
+      name: job.company.name,
+      value: job._id,
+    },
+    datePosted: job.createdAt ?? job.startDate,
+    validThrough: job.endDate,
+    employmentType: JOB_EMPLOYMENT_TYPES[job.formOfWork],
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.company.name,
+      url: getLocalizedUrl(companyPath, locale),
+      ...(companyLogoUrl ? { logo: companyLogoUrl } : {}),
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "VN",
+        addressLocality: job.location,
+      },
+    },
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "VND",
+      value: {
+        "@type": "QuantitativeValue",
+        unitText: "MONTH",
+        value: job.salary,
+      },
+    },
+    url: getLocalizedUrl(jobPath, locale),
+  };
+};
+
+export async function generateMetadata({
+  params,
+}: JobDetailPageProps): Promise<Metadata> {
+  const { locale, id } = await resolveJobDetailParams(params);
+  const [job, meta] = await Promise.all([
+    fetchPublicJobById(id),
+    getTranslations({ locale, namespace: "meta" }),
+  ]);
+
+  if (!job) {
+    notFound();
+  }
+
+  const title = buildJobTitle(job.name, job.company.name);
+  const description =
+    toMetadataDescription(job.description) || buildJobSummary(job.company.name, job.location);
+
+  return buildLocalizedPageMetadata({
+    locale,
+    pathname: `/jobs/${id}`,
+    title,
+    description,
+    keywords: meta("keywords"),
+  });
+}
+
+export default async function JobDetailPage({ params }: JobDetailPageProps) {
+  const { locale, id } = await resolveJobDetailParams(params);
+  const job = await fetchPublicJobById(id);
+
+  if (!job) {
+    notFound();
+  }
+
+  const homePath = getLocalizedPath("/", locale);
+  const jobsPath = getLocalizedPath("/jobs", locale);
+  const jobPath = getLocalizedPath(`/jobs/${job._id}`, locale);
+  const companyPath = getLocalizedPath(`/companies/${job.company._id}`, locale);
+  const companyLogoUrl = getCompanyLogoUrl(job.company.logo);
+  const loginHref = `${getLocalizedPath("/login", locale)}?returnUrl=${encodeURIComponent(jobPath)}`;
+  const daysRemaining = Math.ceil(
+    (new Date(job.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
 
   return (
-    <div className="bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 min-h-screen">
-      {/* Breadcrumb Section */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink 
-                  href="/"
-                  className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
-                >
-                  Trang chủ
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>
-                <ChevronRight className="h-4 w-4" />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbLink 
-                  href="/jobs"
-                  className="text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
-                >
-                  Việc làm
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>
-                <ChevronRight className="h-4 w-4" />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-slate-900 dark:text-slate-100 font-medium line-clamp-1">
-                  {job.name}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-      </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildJobStructuredData(job, locale)),
+        }}
+      />
 
-      {/* Header Section */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white overflow-hidden">
-        {/* Decorative background */}
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 py-12">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-balance leading-tight drop-shadow-lg">
-              {job.name}
-            </h1>
-            <div className="flex items-center gap-3 text-blue-100">
-              <Briefcase className="w-5 h-5" />
-              <p className="text-xl font-medium">{job.company?.name}</p>
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+        <div className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+          <div className="mx-auto max-w-7xl px-4 py-4">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    href={homePath}
+                    className="text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
+                  >
+                    Trang chủ
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator>
+                  <ChevronRight className="h-4 w-4" />
+                </BreadcrumbSeparator>
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    href={jobsPath}
+                    className="text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
+                  >
+                    Việc làm
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator>
+                  <ChevronRight className="h-4 w-4" />
+                </BreadcrumbSeparator>
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="line-clamp-1 font-medium text-slate-900 dark:text-slate-100">
+                    {job.name}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </div>
+
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white">
+          <div className="absolute inset-0 bg-[size:20px_20px] bg-grid-white/[0.05]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+
+          <div className="relative mx-auto max-w-7xl px-4 py-12">
+            <div className="space-y-4">
+              <h1 className="text-balance text-4xl font-bold leading-tight drop-shadow-lg md:text-5xl">
+                {job.name}
+              </h1>
+              <div className="flex items-center gap-3 text-blue-100">
+                <Briefcase className="h-5 w-5" />
+                <Link href={companyPath} className="text-xl font-medium transition-colors hover:text-white">
+                  {job.company.name}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Job Details and Description */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Quick Info Tags */}
-            <Card className="p-6 hover:shadow-lg transition-shadow duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="flex items-start gap-3 group">
-                  <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900 transition-colors">
-                    <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div className="space-y-6 lg:col-span-2">
+              <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+                <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+                  <div className="group flex items-start gap-3">
+                    <div className="rounded-lg bg-blue-50 p-2 transition-colors group-hover:bg-blue-100 dark:bg-blue-950 dark:group-hover:bg-blue-900">
+                      <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Địa điểm</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">{job.location}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Địa điểm</p>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{job.location}</p>
+                  <div className="group flex items-start gap-3">
+                    <div className="rounded-lg bg-purple-50 p-2 transition-colors group-hover:bg-purple-100 dark:bg-purple-950 dark:group-hover:bg-purple-900">
+                      <Briefcase className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Cấp bậc</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">{job.level}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-3 group">
-                  <div className="p-2 bg-purple-50 dark:bg-purple-950 rounded-lg group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition-colors">
-                    <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <div className="group flex items-start gap-3">
+                    <div className="rounded-lg bg-emerald-50 p-2 transition-colors group-hover:bg-emerald-100 dark:bg-emerald-950 dark:group-hover:bg-emerald-900">
+                      <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Loại hình</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">{job.formOfWork}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Cấp bậc</p>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{job.level}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 group">
-                  <div className="p-2 bg-emerald-50 dark:bg-emerald-950 rounded-lg group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900 transition-colors">
-                    <Calendar className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Loại hình</p>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{job.formOfWork}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 group">
-                  <div className="p-2 bg-amber-50 dark:bg-amber-950 rounded-lg group-hover:bg-amber-100 dark:group-hover:bg-amber-900 transition-colors">
-                    <DollarSign className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Mức lương</p>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{formatSalary(job.salary, locale)}</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 flex-col sm:flex-row">
-              <Button
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    router.push(`/login?returnUrl=/jobs/${jobId}`);
-                    return;
-                  }
-                  setIsApplyModalOpen(true);
-                }}
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold h-12 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                <Briefcase className="w-5 h-5 mr-2" />
-                Ứng tuyển ngay
-              </Button>
-              <Button
-                onClick={toggleSaveJob}
-                disabled={isSavingJob}
-                variant="outline"
-               className={cn(
-                        "p-2 rounded-full transition-all duration-300 flex-shrink-0",
-                        isSaved
-                          ? "bg-rose-100 dark:bg-rose-950 hover:bg-rose-200 dark:hover:bg-rose-900"
-                          : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
-                )}
-              >
-                <Heart
-                  className={cn(
-                          "w-5 h-5 transition-all",
-                          isSaved
-                            ? "fill-rose-500 text-rose-500 dark:fill-rose-400 dark:text-rose-400"
-                            : "text-slate-400 dark:text-slate-500"
-                  )}
-                />
-                {isSaved ? "Đã lưu" : "Lưu tin"}
-              </Button>
-            </div>
-
-            {/* Deadline Alert */}
-            {daysRemaining !== null && daysRemaining > 0 && (
-              <Card className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950 dark:to-orange-950 border-amber-200 dark:border-amber-800 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white dark:bg-slate-900 rounded-full">
-                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                      <span className="font-semibold">Hạn nộp hồ sơ:</span>{" "}
-                      Còn {daysRemaining} ngày
-                    </p>
+                  <div className="group flex items-start gap-3">
+                    <div className="rounded-lg bg-amber-50 p-2 transition-colors group-hover:bg-amber-100 dark:bg-amber-950 dark:group-hover:bg-amber-900">
+                      <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Mức lương</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
+                        {formatVndCurrency(job.salary, locale)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Card>
-            )}
 
-            {/* Job Description */}
-            <Card className="p-8 hover:shadow-lg transition-shadow duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-              <div className="prose max-w-none dark:prose-invert">
-                {/* Skills Section */}
-                {job.skills?.length > 0 && (
-                  <div className="mb-8 pb-8 border-b border-slate-200 dark:border-slate-800">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                        <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <JobDetailPageClient
+                companyId={job.company._id}
+                jobId={job._id}
+                jobTitle={job.name}
+                loginHref={loginHref}
+              />
+
+              {daysRemaining > 0 && (
+                <Card className="border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 transition-shadow hover:shadow-md dark:border-amber-800 dark:from-amber-950 dark:to-orange-950">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-white p-2 dark:bg-slate-900">
+                      <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                        <span className="font-semibold">Hạn nộp hồ sơ:</span> Còn {daysRemaining} ngày
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              <Card className="border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+                <div className="prose max-w-none dark:prose-invert">
+                  {job.skills.length > 0 && (
+                    <div className="mb-8 border-b border-slate-200 pb-8 dark:border-slate-800">
+                      <div className="mb-4 flex items-center gap-2">
+                        <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-950">
+                          <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <h2 className="m-0 text-xl font-bold text-slate-900 dark:text-slate-100">
+                          Kỹ năng yêu cầu
+                        </h2>
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 m-0">
-                        Kỹ năng yêu cầu
-                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {job.skills.map((skill) => (
+                          <span
+                            key={skill}
+                            className="rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 text-sm font-medium text-blue-700 transition-all duration-200 dark:border-blue-800 dark:from-blue-950 dark:to-indigo-950 dark:text-blue-300"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {job.skills.map((skill: string) => (
-                        <span
-                          key={skill}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium border border-blue-200 dark:border-blue-800 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-default"
-                        >
-                          {skill}
+                  )}
+
+                  <div className="mb-8 space-y-6">
+                    <div>
+                      <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+                        <div className="h-6 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
+                        Mô tả công việc
+                      </h2>
+                      <div className="space-y-2 leading-relaxed text-slate-700 dark:text-slate-300">
+                        {parse(job.description || "")}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 p-6 dark:border-slate-800 dark:from-slate-900 dark:to-blue-950">
+                    <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+                      <div className="h-6 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
+                      Yêu cầu công việc
+                    </h2>
+                    <ul className="space-y-3 text-slate-700 dark:text-slate-300">
+                      <li className="flex items-start gap-3">
+                        <span className="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                          ✓
                         </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Job Description */}
-                <div className="space-y-6 mb-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
-                      Mô tả công việc
-                    </h3>
-                    <div className="space-y-2 text-slate-700 dark:text-slate-300 leading-relaxed">
-                      {parse(job.description || "")}
-                    </div>
+                        <span>
+                          <strong>Cấp bậc:</strong> {job.level}
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                          ✓
+                        </span>
+                        <span>
+                          <strong>Hình thức làm việc:</strong> {job.formOfWork}
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                          ✓
+                        </span>
+                        <span>
+                          <strong>Địa điểm:</strong> {job.location}
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                          ✓
+                        </span>
+                        <span>
+                          <strong>Số lượng tuyển:</strong> {job.quantity} vị trí
+                        </span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
+              </Card>
+            </div>
 
-                {/* Requirements */}
-                <div className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
-                    Yêu cầu công việc
-                  </h3>
-                  <ul className="space-y-3 text-slate-700 dark:text-slate-300">
-                    <li className="flex items-start gap-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                      <span><strong>Cấp bậc:</strong> {job.level}</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                      <span><strong>Hình thức làm việc:</strong> {job.formOfWork}</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                      <span><strong>Địa điểm:</strong> {job.location}</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                      <span><strong>Số lượng tuyển:</strong> {job.quantity} vị trí</span>
-                    </li>
-                  </ul>
-                </div>
+            <div>
+              <div className="sticky top-20 space-y-4">
+                <Card className="overflow-hidden border-border/60 shadow-sm transition-shadow duration-300 hover:shadow-md">
+                  <div className="relative flex min-h-44 items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
+                    {companyLogoUrl ? (
+                      <Image
+                        src={companyLogoUrl}
+                        alt={`${job.company.name} logo`}
+                        fill
+                        className="object-contain p-6"
+                      />
+                    ) : (
+                      <Building2 className="h-12 w-12 text-muted-foreground/50" />
+                    )}
+                  </div>
+                  <div className="space-y-4 p-6">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Công ty tuyển dụng
+                      </p>
+                      <h2 className="mt-1 text-xl font-bold text-foreground">{job.company.name}</h2>
+                    </div>
+                    <div className="flex items-start gap-3 rounded-lg bg-primary/5 p-4">
+                      <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Khu vực tuyển dụng
+                        </p>
+                        <p className="text-sm font-semibold text-foreground">{job.location}</p>
+                      </div>
+                    </div>
+                    <Button asChild className="w-full" size="lg">
+                      <Link href={companyPath}>Xem hồ sơ công ty</Link>
+                    </Button>
+                  </div>
+                </Card>
               </div>
-            </Card>
-
-            {/* Related Jobs Section */}
-            {/* <div className="pt-4">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Việc làm liên quan</h2>
-              </div>
-              <RelatedJobsGrid />
-            </div> */}
-          </div>
-
-          {/* Right Column - Company Info */}
-          <div>
-            <CompanyInfo
-              company={{
-                id: companyDetails?._id || "",
-                name: companyDetails?.name || "",
-                logo: companyDetails?.logo || "",
-                employees: companyDetails?.numberOfEmployees
-                  ? String(companyDetails.numberOfEmployees)
-                  : "N/A",
-                address: companyDetails?.address || job.location,
-              }}
-            />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Apply Modal */}
-      <ApplyModal
-        isOpen={isApplyModalOpen}
-        onClose={() => setIsApplyModalOpen(false)}
-        jobTitle={job.name}
-        jobId={job._id}
-        companyId={job.company?._id || ""}
-      />
-    </div>
+    </>
   );
 }

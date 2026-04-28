@@ -12,11 +12,19 @@ interface JobListingProps {
   company?: any;
   searchQuery: string;
   selectedLocation: string;
+  jobPathPrefix?: string;
 }
 
 // Job Card Component with Heart Icon
-function JobCard({ job }: { job: any }) {
+function JobCard({
+  job,
+  jobPathPrefix = "/jobs",
+}: {
+  job: any;
+  jobPathPrefix?: string;
+}) {
   const { isSaved, toggleSaveJob } = useJobFavorite(job._id);
+  const jobHref = `${jobPathPrefix}/${job._id}`;
   
   // Calculate days remaining
   const daysRemaining = job?.endDate
@@ -28,7 +36,7 @@ function JobCard({ job }: { job: any }) {
 
   return (
     <Tooltip.Provider>
-      <Link href={`/jobs/${job._id}`} className="block group">
+      <Link href={jobHref} className="block group">
         <Card className="p-6 hover:shadow-xl transition-all duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer transform hover:scale-[1.01]">
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <div className="flex-1 space-y-3">
@@ -142,7 +150,7 @@ function JobCard({ job }: { job: any }) {
                   className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap h-fit shadow-md hover:shadow-lg transition-all duration-300"
                   onClick={(e) => {
                     e.preventDefault();
-                    window.location.href = `/jobs/${job._id}`;
+                    window.location.href = jobHref;
                   }}
                 >
                   Ứng tuyển
@@ -162,7 +170,12 @@ function JobCard({ job }: { job: any }) {
   );
 }
 
-export default function JobListing({ companyId, searchQuery, selectedLocation }: JobListingProps) {
+export default function JobListing({
+  companyId,
+  searchQuery,
+  selectedLocation,
+  jobPathPrefix,
+}: JobListingProps) {
   // Xây dựng filter string cho API
   let filter = "isActive=true";
   if (companyId) {
@@ -202,7 +215,7 @@ export default function JobListing({ companyId, searchQuery, selectedLocation }:
     <div className="space-y-4">
       {jobs.length > 0 ? (
         jobs.map((job: any) => (
-          <JobCard key={job._id} job={job} />
+          <JobCard key={job._id} job={job} jobPathPrefix={jobPathPrefix} />
         ))
       ) : (
         <Card className="p-12 text-center border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">

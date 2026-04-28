@@ -1,7 +1,15 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
+import type { Job } from "@/features/job/schemas/job.schema";
+import {
+  areJobListSearchStatesEqual,
+  buildJobListQueryArgs,
+  type JobListSearchState,
+} from "@/lib/utils/public-listing";
+import type { PaginatedResult } from "@/shared/types/pagination";
 
 interface UseJobListProps {
+  initialData?: PaginatedResult<Job> | null;
   initialPage?: number;
   initialLimit?: number;
   initialSearch?: string;
@@ -13,6 +21,7 @@ interface UseJobListProps {
 }
 
 export function useJobList({
+  initialData,
   initialPage = 1,
   initialLimit = 10,
   initialSearch = "",
@@ -24,6 +33,9 @@ export function useJobList({
 }: UseJobListProps = {}) {
   const [page, setPage] = useState(initialPage);
   const [limit, setLimit] = useState(initialLimit);
+  const hasMountedSearchInput = useRef(false);
+  const hasMountedLocationInput = useRef(false);
+  const hasMountedFilters = useRef(false);
 
   // Input states for immediate UI updates
   const [searchInput, setSearchInput] = useState(initialSearch);
@@ -40,6 +52,11 @@ export function useJobList({
 
   // Debounce search and location inputs
   useEffect(() => {
+    if (!hasMountedSearchInput.current) {
+      hasMountedSearchInput.current = true;
+      return;
+    }
+
     const timer = setTimeout(() => {
       setSearchQuery(searchInput);
       setPage(1); // Reset to first page on search
@@ -49,6 +66,11 @@ export function useJobList({
   }, [searchInput]);
 
   useEffect(() => {
+    if (!hasMountedLocationInput.current) {
+      hasMountedLocationInput.current = true;
+      return;
+    }
+
     const timer = setTimeout(() => {
       setLocationQuery(locationInput);
       setPage(1); // Reset to first page on location change
@@ -59,63 +81,58 @@ export function useJobList({
 
   // Reset to first page when filters change
   useEffect(() => {
+    if (!hasMountedFilters.current) {
+      hasMountedFilters.current = true;
+      return;
+    }
+
     setPage(1);
   }, [jobType, experience, salaryRange, sortBy]);
 
-  // Construct filter string
-  const getFilterString = () => {
-    const filters = [`isActive=true`];
-
-    if (searchQuery) {
-      filters.push(`name=/${searchQuery}/i`);
-    }
-
-    if (locationQuery) {
-      filters.push(`location=/${locationQuery}/i`);
-    }
-
-    if (jobType !== "all") {
-      filters.push(`formOfWork=${jobType}`);
-    }
-
-    if (experience !== "all") {
-      filters.push(`level=${experience}`);
-    }
-
-    // Salary range filter (format giống admin page)
-    if (salaryRange !== "all") {
-      const [min, max] = salaryRange.split("-");
-      if (min) filters.push(`salary>=${min}`);
-      if (max) filters.push(`salary<=${max}`);
-    }
-
-    return filters.join("&");
+  const initialSearchState: JobListSearchState = {
+    experience: initialExperience,
+    limit: initialLimit,
+    location: initialLocation,
+    page: initialPage,
+    q: initialSearch,
+    salary: initialSalaryRange,
+    sort: initialSort,
+    type: initialJobType,
   };
 
-  // Construct sort string
-  const getSortString = () => {
-    return `sort=${sortBy}`;
+  const currentSearchState: JobListSearchState = {
+    experience,
+    limit,
+    location: locationQuery,
+    page,
+    q: searchQuery,
+    salary: salaryRange,
+    sort: sortBy,
+    type: jobType,
   };
+
+  const shouldUseInitialData =
+    Boolean(initialData) &&
+    areJobListSearchStatesEqual(currentSearchState, initialSearchState);
 
   // Get jobs with RTK Query
   const {
     data: jobsData,
     isLoading,
     isFetching,
-  } = useGetJobsQuery({
-    page,
-    limit,
-    filter: getFilterString(),
-    sort: getSortString(),
+  } = useGetJobsQuery(buildJobListQueryArgs(currentSearchState), {
+    skip: shouldUseInitialData,
   });
 
+  const paginatedData = shouldUseInitialData ? initialData : jobsData?.data;
+
   return {
-    jobs: jobsData?.data?.result || [],
-    totalItems: jobsData?.data?.meta?.pagination?.total || 0,
-    totalPages: jobsData?.data?.meta?.pagination?.total_pages || 0,
+    jobs: paginatedData?.result || [],
+    totalItems: paginatedData?.meta?.pagination?.total || 0,
+    totalPages: paginatedData?.meta?.pagination?.total_pages || 0,
     currentPage: page,
     pageSize: limit,
-    isLoading: isLoading || isFetching,
+    isLoading: shouldUseInitialData ? false : isLoading || isFetching,
 
     // Search & Location with immediate UI update
     searchInput,
