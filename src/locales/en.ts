@@ -3,6 +3,11 @@ export const en = {
     cancel: "Cancel",
     view: "View",
   },
+  search: {
+    suggest: {
+      noResult: "No matching skill — press Enter to search freely",
+    },
+  },
   followButton: {
     follow: "Follow",
     following: "Following",

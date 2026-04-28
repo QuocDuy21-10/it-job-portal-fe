@@ -15,10 +15,11 @@ import {
 export const jobApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getJobs: builder.query<ApiResponse<PaginatedResult<Job>>, PaginatedQueryParams>({
-      query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
+      query: ({ page = 1, limit = 10, filter = "", sort = "", keyword }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;
         if (sort) query += `&${sort}`;
+        if (keyword) query += `&keyword=${encodeURIComponent(keyword)}`;
 
         return {
           url: `/jobs?${query}`,

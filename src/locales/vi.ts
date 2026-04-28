@@ -3,6 +3,11 @@ export const vi = {
     cancel: "Huỷ",
     view: "Xem",
   },
+  search: {
+    suggest: {
+      noResult: "Không tìm thấy kỹ năng phù hợp — nhấn Enter để tìm kiếm tự do",
+    },
+  },
   followButton: {
     follow: "Theo dõi",
     following: "Đang theo dõi",

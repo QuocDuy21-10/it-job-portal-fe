@@ -17,4 +17,5 @@ export type PaginatedQueryParams = {
   limit?: number;
   filter?: string;
   sort?: string;
+  keyword?: string;
 };
