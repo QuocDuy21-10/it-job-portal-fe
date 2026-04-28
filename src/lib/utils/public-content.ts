@@ -27,6 +27,7 @@ async function fetchPublicEntity<T>(pathname: string): Promise<T | null> {
 
 const buildPublicListQuery = ({
   filter = "",
+  keyword,
   limit = 10,
   page = 1,
   sort = "",
@@ -39,6 +40,10 @@ const buildPublicListQuery = ({
 
   if (sort) {
     query += `&${sort}`;
+  }
+
+  if (keyword) {
+    query += `&keyword=${encodeURIComponent(keyword)}`;
   }
 
   return query;

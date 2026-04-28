@@ -6,7 +6,7 @@ import { useJobList } from "@/hooks/use-job-list";
 import { Pagination } from "@/components/pagination";
 import { Link } from "@/i18n/navigation";
 import { Search, MapPin, Building2, Briefcase, X, Filter, ChevronRight, SlidersHorizontal, ArrowUpDown, Wallet } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { SearchSuggestInput } from "@/components/ui/search-suggest-input";
 import { SingleSelect } from "@/components/single-select";
 import provinces from "@/shared/data/provinces.json";
 import { Button } from "@/components/ui/button";
@@ -240,17 +240,15 @@ function JobsPageContent({
               {t("jobsPage.heroDescription")}
             </p>
 
-            {/* Search Bar */}
+             {/* Search Bar */}
             <div className="max-w-3xl">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-200" />
-                <Input
-                  placeholder={t("jobsPage.searchPlaceholder")}
-                  className="pl-14 h-14 text-lg bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 caret-blue-600 border-0 shadow-xl hover:shadow-2xl transition-shadow focus:ring-2 focus:ring-white/50"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
-              </div>
+             <SearchSuggestInput
+                value={searchInput}
+                onChange={setSearchInput}
+                placeholder={t("jobsPage.searchPlaceholder")}
+                size="lg"
+                inputClassName="bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 caret-blue-600 border-0 shadow-xl hover:shadow-2xl transition-shadow focus:ring-2 focus:ring-white/50"
+              />
             </div>
           </div>
         </div>

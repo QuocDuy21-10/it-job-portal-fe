@@ -11,7 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchSuggestInput } from "@/components/ui/search-suggest-input";
 import { SingleSelect } from "@/components/single-select";
 import provinces from "@/shared/data/provinces.json";
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,32 +116,25 @@ export default function Home() {
             {/* Search Box */}
             <div className="bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 max-w-3xl mx-auto border border-border/50 animate-in fade-in slide-in-from-bottom-6 duration-1000">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Job Title Search */}
+                {/* Job Title Search with Suggestions */}
                 <div className="sm:col-span-1 lg:col-span-1">
                   <label htmlFor="job-search" className="sr-only">
                     {i18nMounted
                       ? t("home.jobTitleOrKeyword")
                       : "Job title or keyword"}
                   </label>
-                 
-                    <div className="relative">
-                      <Search
-                        className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"
-                        aria-hidden="true"
-                      />
-                      <Input
-                        id="job-search"
-                        placeholder={
-                          i18nMounted
-                            ? t("home.jobTitleOrKeyword")
-                            : "Job title or keyword"
-                        }
-                        className="pl-10 h-12 bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-blue-500 dark:focus:border-blue-600 transition-all"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                      />
-                    </div>
+                  <SearchSuggestInput
+                    id="job-search"
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    onSubmit={handleSearch}
+                    placeholder={
+                      i18nMounted
+                        ? t("home.jobTitleOrKeyword")
+                        : "Job title or keyword"
+                    }
+                    inputClassName="bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-blue-500 dark:focus:border-blue-600 transition-all"
+                  />
                 </div>
                 {/* Location Select */}
                 <div className="sm:col-span-1 lg:col-span-1 relative z-[60]">

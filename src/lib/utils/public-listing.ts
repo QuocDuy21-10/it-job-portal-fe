@@ -150,10 +150,6 @@ export const parseCompanyListSearchParams = (
 export const buildJobListFilter = (searchState: JobListSearchState) => {
   const filters = ["isActive=true"];
 
-  if (searchState.q) {
-    filters.push(`name=/${encodeURIComponent(searchState.q)}/i`);
-  }
-
   if (searchState.location) {
     filters.push(`location=/${encodeURIComponent(searchState.location)}/i`);
   }
@@ -186,6 +182,7 @@ export const buildJobListQueryArgs = (
 ): PaginatedQueryParams => {
   return {
     filter: buildJobListFilter(searchState),
+    keyword: searchState.q || undefined,
     limit: searchState.limit,
     page: searchState.page,
     sort: `sort=${searchState.sort}`,
