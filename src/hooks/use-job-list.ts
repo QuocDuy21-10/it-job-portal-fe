@@ -1,121 +1,229 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import type { Job } from "@/features/job/schemas/job.schema";
 import {
+  DEFAULT_JOB_LIST_SORT,
   areJobListSearchStatesEqual,
   buildJobListQueryArgs,
   type JobListSearchState,
 } from "@/lib/utils/public-listing";
 import type { PaginatedResult } from "@/shared/types/pagination";
 
-interface UseJobListProps {
+type UseJobListProps = {
   initialData?: PaginatedResult<Job> | null;
-  initialPage?: number;
-  initialLimit?: number;
-  initialSearch?: string;
-  initialLocation?: string;
-  initialJobType?: string;
-  initialExperience?: string;
-  initialSalaryRange?: string;
-  initialSort?: string;
-}
+  initialSearchState: JobListSearchState;
+};
+
+type JobListDraftState = Pick<
+  JobListSearchState,
+  "experience" | "location" | "q" | "salary" | "type"
+>;
+
+const EMPTY_DRAFT_STATE: JobListDraftState = {
+  experience: "all",
+  location: "",
+  q: "",
+  salary: "all",
+  type: "all",
+};
+
+const createDraftState = (
+  searchState: JobListSearchState
+): JobListDraftState => ({
+  experience: searchState.experience,
+  location: searchState.location,
+  q: searchState.q,
+  salary: searchState.salary,
+  type: searchState.type,
+});
+
+const areDraftStatesEqual = (
+  left: JobListDraftState,
+  right: JobListDraftState
+) => {
+  return (
+    left.experience === right.experience &&
+    left.location === right.location &&
+    left.q === right.q &&
+    left.salary === right.salary &&
+    left.type === right.type
+  );
+};
 
 export function useJobList({
   initialData,
-  initialPage = 1,
-  initialLimit = 10,
-  initialSearch = "",
-  initialLocation = "",
-  initialJobType = "all",
-  initialExperience = "all",
-  initialSalaryRange = "all",
-  initialSort = "-createdAt",
-}: UseJobListProps = {}) {
-  const [page, setPage] = useState(initialPage);
-  const [limit, setLimit] = useState(initialLimit);
-  const hasMountedSearchInput = useRef(false);
-  const hasMountedLocationInput = useRef(false);
-  const hasMountedFilters = useRef(false);
+  initialSearchState,
+}: UseJobListProps) {
+  const [draftState, setDraftState] = useState<JobListDraftState>(() => {
+    return createDraftState(initialSearchState);
+  });
+  const [currentSearchState, setCurrentSearchState] =
+    useState<JobListSearchState>(initialSearchState);
+  const appliedDraftState = useMemo(() => {
+    return createDraftState(currentSearchState);
+  }, [currentSearchState]);
 
-  // Input states for immediate UI updates
-  const [searchInput, setSearchInput] = useState(initialSearch);
-  const [locationInput, setLocationInput] = useState(initialLocation);
+  const isDraftDirty = !areDraftStatesEqual(draftState, appliedDraftState);
 
-  // Debounced states for API calls
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [locationQuery, setLocationQuery] = useState(initialLocation);
+  const setSearchInput = useCallback((value: string) => {
+    setDraftState((currentDraftState) => {
+      if (currentDraftState.q === value) {
+        return currentDraftState;
+      }
 
-  const [jobType, setJobType] = useState(initialJobType);
-  const [experience, setExperience] = useState(initialExperience);
-  const [salaryRange, setSalaryRange] = useState(initialSalaryRange);
-  const [sortBy, setSortBy] = useState(initialSort);
+      return {
+        ...currentDraftState,
+        q: value,
+      };
+    });
+  }, []);
 
-  // Debounce search and location inputs
-  useEffect(() => {
-    if (!hasMountedSearchInput.current) {
-      hasMountedSearchInput.current = true;
-      return;
-    }
+  const setLocationInput = useCallback((value: string) => {
+    setDraftState((currentDraftState) => {
+      if (currentDraftState.location === value) {
+        return currentDraftState;
+      }
 
-    const timer = setTimeout(() => {
-      setSearchQuery(searchInput);
-      setPage(1); // Reset to first page on search
-    }, 500);
+      return {
+        ...currentDraftState,
+        location: value,
+      };
+    });
+  }, []);
 
-    return () => clearTimeout(timer);
-  }, [searchInput]);
+  const setDraftJobType = useCallback((value: string) => {
+    setDraftState((currentDraftState) => {
+      if (currentDraftState.type === value) {
+        return currentDraftState;
+      }
 
-  useEffect(() => {
-    if (!hasMountedLocationInput.current) {
-      hasMountedLocationInput.current = true;
-      return;
-    }
+      return {
+        ...currentDraftState,
+        type: value,
+      };
+    });
+  }, []);
 
-    const timer = setTimeout(() => {
-      setLocationQuery(locationInput);
-      setPage(1); // Reset to first page on location change
-    }, 500);
+  const setDraftExperience = useCallback((value: string) => {
+    setDraftState((currentDraftState) => {
+      if (currentDraftState.experience === value) {
+        return currentDraftState;
+      }
 
-    return () => clearTimeout(timer);
-  }, [locationInput]);
+      return {
+        ...currentDraftState,
+        experience: value,
+      };
+    });
+  }, []);
 
-  // Reset to first page when filters change
-  useEffect(() => {
-    if (!hasMountedFilters.current) {
-      hasMountedFilters.current = true;
-      return;
-    }
+  const setDraftSalaryRange = useCallback((value: string) => {
+    setDraftState((currentDraftState) => {
+      if (currentDraftState.salary === value) {
+        return currentDraftState;
+      }
 
-    setPage(1);
-  }, [jobType, experience, salaryRange, sortBy]);
+      return {
+        ...currentDraftState,
+        salary: value,
+      };
+    });
+  }, []);
 
-  const initialSearchState: JobListSearchState = {
-    experience: initialExperience,
-    limit: initialLimit,
-    location: initialLocation,
-    page: initialPage,
-    q: initialSearch,
-    salary: initialSalaryRange,
-    sort: initialSort,
-    type: initialJobType,
-  };
+  const applyFilters = useCallback(
+    (overrides?: Partial<JobListDraftState>) => {
+      const nextDraftState = {
+        ...draftState,
+        ...overrides,
+      };
 
-  const currentSearchState: JobListSearchState = {
-    experience,
-    limit,
-    location: locationQuery,
-    page,
-    q: searchQuery,
-    salary: salaryRange,
-    sort: sortBy,
-    type: jobType,
-  };
+      if (!areDraftStatesEqual(nextDraftState, draftState)) {
+        setDraftState(nextDraftState);
+      }
+
+      setCurrentSearchState((currentState) => {
+        const nextSearchState: JobListSearchState = {
+          ...currentState,
+          experience: nextDraftState.experience,
+          location: nextDraftState.location,
+          page: 1,
+          q: nextDraftState.q,
+          salary: nextDraftState.salary,
+          type: nextDraftState.type,
+        };
+
+        return areJobListSearchStatesEqual(nextSearchState, currentState)
+          ? currentState
+          : nextSearchState;
+      });
+    },
+    [draftState]
+  );
+
+  const resetAllFilters = useCallback(() => {
+    setDraftState(EMPTY_DRAFT_STATE);
+    setCurrentSearchState((currentState) => {
+      const nextSearchState: JobListSearchState = {
+        ...currentState,
+        experience: EMPTY_DRAFT_STATE.experience,
+        location: EMPTY_DRAFT_STATE.location,
+        page: 1,
+        q: EMPTY_DRAFT_STATE.q,
+        salary: EMPTY_DRAFT_STATE.salary,
+        sort: DEFAULT_JOB_LIST_SORT,
+        type: EMPTY_DRAFT_STATE.type,
+      };
+
+      return areJobListSearchStatesEqual(nextSearchState, currentState)
+        ? currentState
+        : nextSearchState;
+    });
+  }, []);
+
+  const setPage = useCallback((page: number) => {
+    setCurrentSearchState((currentState) => {
+      if (currentState.page === page) {
+        return currentState;
+      }
+
+      return {
+        ...currentState,
+        page,
+      };
+    });
+  }, []);
+
+  const setLimit = useCallback((limit: number) => {
+    setCurrentSearchState((currentState) => {
+      if (currentState.limit === limit) {
+        return currentState;
+      }
+
+      return {
+        ...currentState,
+        limit,
+      };
+    });
+  }, []);
+
+  const setSortBy = useCallback((sortBy: string) => {
+    setCurrentSearchState((currentState) => {
+      if (currentState.sort === sortBy && currentState.page === 1) {
+        return currentState;
+      }
+
+      return {
+        ...currentState,
+        page: 1,
+        sort: sortBy,
+      };
+    });
+  }, []);
 
   const shouldUseInitialData =
     Boolean(initialData) &&
     areJobListSearchStatesEqual(currentSearchState, initialSearchState);
 
-  // Get jobs with RTK Query
   const {
     data: jobsData,
     isLoading,
@@ -130,32 +238,36 @@ export function useJobList({
     jobs: paginatedData?.result || [],
     totalItems: paginatedData?.meta?.pagination?.total || 0,
     totalPages: paginatedData?.meta?.pagination?.total_pages || 0,
-    currentPage: page,
-    pageSize: limit,
+    currentSearchState,
+    currentPage: currentSearchState.page,
+    pageSize: currentSearchState.limit,
     isLoading: shouldUseInitialData ? false : isLoading || isFetching,
 
-    // Search & Location with immediate UI update
-    searchInput,
+    searchInput: draftState.q,
     setSearchInput,
-    locationInput,
+    locationInput: draftState.location,
     setLocationInput,
 
-    // Actual query values (debounced)
-    searchQuery,
-    locationQuery,
+    searchQuery: currentSearchState.q,
+    locationQuery: currentSearchState.location,
 
-    // Filters
-    jobType,
-    setJobType,
-    experience,
-    setExperience,
-    salaryRange,
-    setSalaryRange,
-    sortBy,
+    draftJobType: draftState.type,
+    setDraftJobType,
+    draftExperience: draftState.experience,
+    setDraftExperience,
+    draftSalaryRange: draftState.salary,
+    setDraftSalaryRange,
+
+    jobType: currentSearchState.type,
+    experience: currentSearchState.experience,
+    salaryRange: currentSearchState.salary,
+    sortBy: currentSearchState.sort,
     setSortBy,
 
-    // Pagination
     setPage,
     setLimit,
+    applyFilters,
+    resetAllFilters,
+    isDraftDirty,
   };
 }

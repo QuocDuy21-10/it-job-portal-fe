@@ -5,6 +5,7 @@ export const vi = {
   },
   search: {
     suggest: {
+      clear: "Xóa từ khóa tìm kiếm",
       noResult: "Không tìm thấy kỹ năng phù hợp — nhấn Enter để tìm kiếm tự do",
     },
   },
@@ -22,6 +23,7 @@ export const vi = {
   },
   companyList: {
     searchPlaceholder: "Tìm công ty theo tên hoặc mô tả...",
+    searchButton: "Tìm kiếm",
     breadcrumb: "Công ty",
     topEmployers: "Khám phá các nhà tuyển dụng hàng đầu",
     findYourNext: "Tìm kiếm ",

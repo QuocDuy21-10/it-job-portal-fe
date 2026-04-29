@@ -2,13 +2,12 @@
 
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import { useDebounce } from "@/hooks/use-debounce";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, X, Building2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import parse from "html-react-parser";
 import { PageBreadcrumb } from "@/components/sections/page-breadcrumb";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
@@ -30,24 +29,45 @@ type CompaniesPageClientProps = {
   initialSearchState: CompanyListSearchState;
 };
 
+const truncateDescription = (text: string, lines = 2) => {
+  const lineArray = text.split("\n");
+
+  if (lineArray.length > lines) {
+    return `${lineArray.slice(0, lines).join("\n")}...`;
+  }
+
+  const maxLength = lines * 100;
+
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
 export default function CompanyListPage({
   initialData,
   initialSearchState,
 }: CompaniesPageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
-  const hasMountedSearch = useRef(false);
+  const [searchInput, setSearchInput] = useState(initialSearchState.q);
+  const [currentSearchState, setCurrentSearchState] =
+    useState<CompanyListSearchState>(initialSearchState);
+  const isDraftDirty = searchInput !== currentSearchState.q;
 
-  const [searchQuery, setSearchQuery] = useState(initialSearchState.q);
-  const [page, setPage] = useState(initialSearchState.page);
-  const [pageSize, setPageSize] = useState(initialSearchState.limit);
-  const debouncedSearch = useDebounce(searchQuery, 400);
-  const currentSearchState: CompanyListSearchState = {
-    limit: pageSize,
-    page,
-    q: debouncedSearch,
-  };
+  const currentUrl = useMemo(() => {
+    return buildPathWithSearchParams(
+      pathname,
+      new URLSearchParams(searchParams.toString())
+    );
+  }, [pathname, searchParams]);
+
+  const targetUrl = useMemo(() => {
+    return buildPathWithSearchParams(
+      pathname,
+      buildCompanyListUrlSearchParams(currentSearchState)
+    );
+  }, [currentSearchState, pathname]);
+
   const shouldUseInitialData =
     Boolean(initialData) &&
     areCompanyListSearchStatesEqual(currentSearchState, initialSearchState);
@@ -66,31 +86,76 @@ export default function CompanyListPage({
   const total = paginatedData?.meta?.pagination?.total || 0;
 
   useEffect(() => {
-    if (!hasMountedSearch.current) {
-      hasMountedSearch.current = true;
+    if (currentUrl === targetUrl) {
       return;
     }
 
-    setPage(1); // Reset page when search changes
-  }, [debouncedSearch]);
+    router.replace(targetUrl, { scroll: false });
+  }, [currentUrl, router, targetUrl]);
 
-  useEffect(() => {
-    const url = buildPathWithSearchParams(
-      pathname,
-      buildCompanyListUrlSearchParams(currentSearchState)
-    );
+  const applySearch = useCallback(
+    (value?: string) => {
+      const nextSearchValue = (value ?? searchInput).trim();
 
-    router.replace(url, { scroll: false });
-  }, [currentSearchState, pathname, router]);
+      if (nextSearchValue !== searchInput) {
+        setSearchInput(nextSearchValue);
+      }
 
-  const truncateDescription = (text: string, lines = 2) => {
-    const lineArray = text.split("\n");
-    if (lineArray.length > lines) {
-      return lineArray.slice(0, lines).join("\n") + "...";
-    }
-    const maxLength = lines * 100; // Approximate character limit
-    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-  };
+      setCurrentSearchState((state) => {
+        if (state.q === nextSearchValue && state.page === 1) {
+          return state;
+        }
+
+        return {
+          ...state,
+          page: 1,
+          q: nextSearchValue,
+        };
+      });
+    },
+    [searchInput]
+  );
+
+  const clearSearch = useCallback(() => {
+    setSearchInput("");
+    setCurrentSearchState((state) => {
+      if (state.q === "" && state.page === 1) {
+        return state;
+      }
+
+      return {
+        ...state,
+        page: 1,
+        q: "",
+      };
+    });
+  }, []);
+
+  const setPage = useCallback((page: number) => {
+    setCurrentSearchState((state) => {
+      if (state.page === page) {
+        return state;
+      }
+
+      return {
+        ...state,
+        page,
+      };
+    });
+  }, []);
+
+  const setPageSize = useCallback((pageSize: number) => {
+    setCurrentSearchState((state) => {
+      if (state.limit === pageSize) {
+        return state;
+      }
+
+      return {
+        ...state,
+        limit: pageSize,
+      };
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/20 via-background to-secondary/10 py-8 px-4">
@@ -120,25 +185,44 @@ export default function CompanyListPage({
 
         {/* Search Bar */}
         <div className="mb-10">
-            <div className="relative max-w-2xl mx-auto">
+            <div className="mx-auto flex max-w-3xl flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
               <input
                 type="text"
                 placeholder={t("companyList.searchPlaceholder")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter") {
+                    return;
+                  }
+
+                  event.preventDefault();
+                  applySearch();
+                }}
                 className="w-full pl-12 pr-12 py-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-foreground placeholder:text-muted-foreground transition-all duration-200 shadow-sm hover:shadow-md"
               />
-              {searchQuery && (
+              {searchInput && (
                 <button
-                  onClick={() => setSearchQuery("")}
+                  onClick={clearSearch}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-secondary rounded-md"
-                  aria-label="Clear search"
+                  aria-label={t("companyList.clearSearch")}
                 >
                   <X className="w-5 h-5" />
                 </button>
               )}
             </div>
+            <Button
+              type="button"
+              onClick={() => applySearch()}
+              disabled={!isDraftDirty || isLoading}
+              className="h-14 px-6"
+            >
+              <Search className="mr-2 h-5 w-5" />
+              {t("companyList.searchButton")}
+            </Button>
+          </div>
           {total > 0 && (
             <p className="mt-3 text-center text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">{total}</span> {t("companyList.companiesFound")}
@@ -222,7 +306,7 @@ export default function CompanyListPage({
             <Button 
               variant="outline" 
               className="bg-card hover:bg-secondary" 
-              onClick={() => setSearchQuery("")}> 
+              onClick={clearSearch}> 
               {t("companyList.clearSearch")}
             </Button>
           </div>
@@ -232,8 +316,8 @@ export default function CompanyListPage({
         {total > 0 && (
           <div className="mt-12 flex justify-center">
             <Pagination
-              currentPage={page}
-              pageSize={pageSize}
+              currentPage={currentSearchState.page}
+              pageSize={currentSearchState.limit}
               totalItems={total}
               onPageChange={setPage}
               onPageSizeChange={setPageSize}

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useMemo } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useJobList } from "@/hooks/use-job-list";
 import { Pagination } from "@/components/pagination";
 import { Link } from "@/i18n/navigation";
@@ -99,6 +99,7 @@ function JobsPageContent({
 }: JobsPageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
 
   // UI state
@@ -108,6 +109,7 @@ function JobsPageContent({
   const {
     jobs,
     totalItems,
+    currentSearchState,
     currentPage,
     pageSize,
     isLoading,
@@ -115,68 +117,86 @@ function JobsPageContent({
     setSearchInput,
     locationInput,
     setLocationInput,
-    jobType,
-    setJobType,
-    experience,
-    setExperience,
-    salaryRange,
-    setSalaryRange,
-    sortBy,
+    draftJobType,
+    setDraftJobType,
+    draftExperience,
+    setDraftExperience,
+    draftSalaryRange,
+    setDraftSalaryRange,
     setSortBy,
     setPage,
     setLimit,
-    searchQuery,
-    locationQuery,
+    applyFilters,
+    resetAllFilters,
+    isDraftDirty,
   } = useJobList({
     initialData,
-    initialExperience: initialSearchState.experience,
-    initialJobType: initialSearchState.type,
-    initialLimit: initialSearchState.limit,
-    initialLocation: initialSearchState.location,
-    initialPage: initialSearchState.page,
-    initialSalaryRange: initialSearchState.salary,
-    initialSearch: initialSearchState.q,
-    initialSort: initialSearchState.sort,
+    initialSearchState,
   });
 
-  useEffect(() => {
-    const url = buildPathWithSearchParams(
+  const targetUrl = useMemo(() => {
+    return buildPathWithSearchParams(
       pathname,
-      buildJobListUrlSearchParams({
-        experience,
-        limit: pageSize,
-        location: locationQuery,
-        page: currentPage,
-        q: searchQuery,
-        salary: salaryRange,
-        sort: sortBy,
-        type: jobType,
-      })
+      buildJobListUrlSearchParams(currentSearchState)
     );
+  }, [currentSearchState, pathname]);
 
-    router.replace(url, { scroll: false });
-  }, [
-    searchQuery,
-    locationQuery,
-    jobType,
+  const currentUrl = useMemo(() => {
+    return buildPathWithSearchParams(
+      pathname,
+      new URLSearchParams(searchParams.toString())
+    );
+  }, [pathname, searchParams]);
+
+  const {
     experience,
-    salaryRange,
-    sortBy,
-    currentPage,
-    pageSize,
-    pathname,
-    router,
-  ]);
+    location: locationQuery,
+    q: searchQuery,
+    salary: salaryRange,
+    sort: sortBy,
+    type: jobType,
+  } = currentSearchState;
+
+  const handleDesktopLocationChange = React.useCallback(
+    (value: string) => {
+      applyFilters({ location: value });
+    },
+    [applyFilters]
+  );
+
+  const handleDesktopJobTypeChange = React.useCallback(
+    (value: string) => {
+      applyFilters({ type: value });
+    },
+    [applyFilters]
+  );
+
+  const handleDesktopExperienceChange = React.useCallback(
+    (value: string) => {
+      applyFilters({ experience: value });
+    },
+    [applyFilters]
+  );
+
+  const handleDesktopSalaryRangeChange = React.useCallback(
+    (value: string) => {
+      applyFilters({ salary: value });
+    },
+    [applyFilters]
+  );
+
+  useEffect(() => {
+    if (currentUrl === targetUrl) {
+      return;
+    }
+
+    router.replace(targetUrl, { scroll: false });
+  }, [currentUrl, router, targetUrl]);
 
   // Clear all filters
   const clearAllFilters = () => {
-    setSearchInput("");
-    setLocationInput("");
-    setJobType("all");
-    setExperience("all");
-    setSalaryRange("all");
-    setSortBy("-createdAt");
-    setPage(1);
+    resetAllFilters();
+    setShowMobileFilters(false);
   };
 
   // Check if any filters are active
@@ -228,9 +248,11 @@ function JobsPageContent({
         </div>
 
         {/* Header with gradient */}
-        <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+        <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          </div>
           
           <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">
@@ -241,14 +263,28 @@ function JobsPageContent({
             </p>
 
              {/* Search Bar */}
-            <div className="max-w-3xl">
-             <SearchSuggestInput
-                value={searchInput}
-                onChange={setSearchInput}
-                placeholder={t("jobsPage.searchPlaceholder")}
-                size="lg"
-                inputClassName="bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 caret-blue-600 border-0 shadow-xl hover:shadow-2xl transition-shadow focus:ring-2 focus:ring-white/50"
-              />
+            <div className="max-w-4xl">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <SearchSuggestInput
+                  className="flex-1"
+                  value={searchInput}
+                  onChange={setSearchInput}
+                  onSubmit={(value) => applyFilters({ q: value })}
+                  placeholder={t("jobsPage.searchPlaceholder")}
+                  size="lg"
+                  inputClassName="bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 caret-blue-600 border-0 shadow-xl hover:shadow-2xl transition-shadow focus:ring-2 focus:ring-white/50"
+                />
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={() => applyFilters()}
+                  disabled={!isDraftDirty || isLoading}
+                  className="h-14 px-6 bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-800/70"
+                >
+                  <Search className="mr-2 h-5 w-5" />
+                  {t("home.searchButton")}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -302,33 +338,33 @@ function JobsPageContent({
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       {t("jobsPage.searchTag")} {searchQuery.substring(0, 15)}
                       {searchQuery.length > 15 && "..."}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSearchInput("")} />
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ q: "" })} />
                     </Badge>
                   )}
                   {locationQuery && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       <MapPin className="w-3 h-3" />
                       {provinces.find(p => p.value === locationQuery)?.label || locationQuery}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setLocationInput("")} />
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ location: "" })} />
                     </Badge>
                   )}
                   {jobType !== "all" && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       {getTranslatedLabel(jobType, JOB_TYPE_LABEL_KEYS, t)}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setJobType("all")} />
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ type: "all" })} />
                     </Badge>
                   )}
                   {experience !== "all" && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       {getTranslatedLabel(experience, JOB_LEVEL_LABEL_KEYS, t)}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setExperience("all")} />
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ experience: "all" })} />
                     </Badge>
                   )}
                   {salaryRange !== "all" && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       <Wallet className="w-3 h-3" />
                       {getTranslatedLabel(salaryRange, SALARY_RANGE_LABEL_KEYS, t)}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => setSalaryRange("all")} />
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ salary: "all" })} />
                     </Badge>
                   )}
                 </div>
@@ -343,28 +379,38 @@ function JobsPageContent({
                 )}
               </div>
 
-              {/* Clear All Filters */}
-              {hasActiveFilters && (
-                <Tooltip.Root delayDuration={200}>
-                  <Tooltip.Trigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearAllFilters}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-colors whitespace-nowrap flex-shrink-0"
-                    >
-                      <X className="w-4 h-4 lg:mr-1" />
-                      <span className="hidden lg:inline">{t("jobsPage.clearFilters")}</span>
-                    </Button>
-                  </Tooltip.Trigger>
-                  <Tooltip.Portal>
-                    <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      {t("jobsPage.clearAllFilters")}
-                      <Tooltip.Arrow className="fill-slate-900" />
-                    </Tooltip.Content>
-                  </Tooltip.Portal>
-                </Tooltip.Root>
-              )}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button
+                  size="sm"
+                  onClick={() => applyFilters()}
+                  disabled={!isDraftDirty || isLoading}
+                  className="whitespace-nowrap bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-600/60 lg:hidden"
+                >
+                  {t("jobsPage.applyFilters")}
+                </Button>
+
+                {(hasActiveFilters || isDraftDirty) && (
+                  <Tooltip.Root delayDuration={200}>
+                    <Tooltip.Trigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearAllFilters}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-colors whitespace-nowrap flex-shrink-0"
+                      >
+                        <X className="w-4 h-4 lg:mr-1" />
+                        <span className="hidden lg:inline">{t("jobsPage.clearFilters")}</span>
+                      </Button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+                        {t("jobsPage.clearAllFilters")}
+                        <Tooltip.Arrow className="fill-slate-900" />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
+                )}
+              </div>
             </div>
 
             {/* Desktop Advanced Filters Panel */}
@@ -380,7 +426,7 @@ function JobsPageContent({
                     <SingleSelect
                       options={provinces}
                       value={locationInput}
-                      onChange={setLocationInput}
+                      onChange={handleDesktopLocationChange}
                       placeholder={t("jobsPage.locationPlaceholder")}
                       searchPlaceholder={t("jobsPage.locationSearchPlaceholder")}
                       disabled={isLoading}
@@ -393,7 +439,7 @@ function JobsPageContent({
                       <Briefcase className="w-4 h-4 text-purple-600" />
                       {t("jobsPage.jobTypeLabel")}
                     </label>
-                    <Select value={jobType} onValueChange={setJobType}>
+                    <Select value={draftJobType} onValueChange={handleDesktopJobTypeChange}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
                         <SelectValue placeholder={t("jobsPage.jobTypePlaceholder")} />
                       </SelectTrigger>
@@ -413,7 +459,7 @@ function JobsPageContent({
                       <Building2 className="w-4 h-4 text-emerald-600" />
                       {t("jobsPage.levelLabel")}
                     </label>
-                    <Select value={experience} onValueChange={setExperience}>
+                    <Select value={draftExperience} onValueChange={handleDesktopExperienceChange}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
                         <SelectValue placeholder={t("jobsPage.levelPlaceholder")} />
                       </SelectTrigger>
@@ -433,7 +479,7 @@ function JobsPageContent({
                       <Wallet className="w-4 h-4 text-green-600" />
                       {t("jobsPage.salaryLabel")}
                     </label>
-                    <Select value={salaryRange} onValueChange={setSalaryRange}>
+                    <Select value={draftSalaryRange} onValueChange={handleDesktopSalaryRangeChange}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
                         <SelectValue placeholder={t("jobsPage.salaryPlaceholder")} />
                       </SelectTrigger>
@@ -476,7 +522,7 @@ function JobsPageContent({
                       <Briefcase className="w-4 h-4 text-purple-600" />
                       {t("jobsPage.jobTypeLabel")}
                     </label>
-                    <Select value={jobType} onValueChange={setJobType}>
+                    <Select value={draftJobType} onValueChange={setDraftJobType}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
                         <SelectValue placeholder={t("jobsPage.jobTypePlaceholder")} />
                       </SelectTrigger>
@@ -496,7 +542,7 @@ function JobsPageContent({
                       <Building2 className="w-4 h-4 text-emerald-600" />
                       {t("jobsPage.levelLabel")}
                     </label>
-                    <Select value={experience} onValueChange={setExperience}>
+                    <Select value={draftExperience} onValueChange={setDraftExperience}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
                         <SelectValue placeholder={t("jobsPage.levelPlaceholder")} />
                       </SelectTrigger>
@@ -516,7 +562,7 @@ function JobsPageContent({
                       <Wallet className="w-4 h-4 text-green-600" />
                       {t("jobsPage.salaryLabel")}
                     </label>
-                    <Select value={salaryRange} onValueChange={setSalaryRange}>
+                    <Select value={draftSalaryRange} onValueChange={setDraftSalaryRange}>
                       <SelectTrigger className="w-full bg-white dark:bg-slate-900">
                         <SelectValue placeholder={t("jobsPage.salaryPlaceholder")} />
                       </SelectTrigger>
@@ -533,12 +579,16 @@ function JobsPageContent({
                   {/* Apply/Close Button for Mobile */}
                   <div className="flex gap-2 pt-2">
                     <Button
-                      onClick={() => setShowMobileFilters(false)}
+                      onClick={() => {
+                        applyFilters();
+                        setShowMobileFilters(false);
+                      }}
+                      disabled={!isDraftDirty || isLoading}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       {t("jobsPage.applyFilters")}
                     </Button>
-                    {hasActiveFilters && (
+                    {(hasActiveFilters || isDraftDirty) && (
                       <Button
                         variant="outline"
                         onClick={() => {

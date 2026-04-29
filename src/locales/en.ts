@@ -5,6 +5,7 @@ export const en = {
   },
   search: {
     suggest: {
+      clear: "Clear search keyword",
       noResult: "No matching skill — press Enter to search freely",
     },
   },
@@ -22,6 +23,7 @@ export const en = {
   },
   companyList: {
     searchPlaceholder: "Search companies by name or description...",
+    searchButton: "Search",
     breadcrumb: "Companies",
     topEmployers: "Discover Top Employers",
     findYourNext: "Find Your Next ",
