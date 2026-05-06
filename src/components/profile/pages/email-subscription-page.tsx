@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, Mail, Sparkles } from "lucide-react";
 import SKILLS_LIST from "@/shared/data/skill-list.json";
-import PROVINCES_LIST from "@/shared/data/provinces.json";
 import { MultiSelect } from "@/components/multi-select";
 import { SingleSelect } from "@/components/single-select";
 import { useAuth } from "@/hooks/use-auth";
@@ -19,12 +18,13 @@ import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
 import { toast } from "sonner";
 import { SubscriptionList } from "@/components/profile/subscription-list";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 export default function EmailSubscriptionPage() {
   const { t } = useI18n();
   const { user } = useAuth();
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const [selectedLocationCode, setSelectedLocationCode] = useState<string>("");
 
   // Fetch user's subscriptions
   const {
@@ -60,7 +60,7 @@ export default function EmailSubscriptionPage() {
       return;
     }
 
-    if (!selectedLocation) {
+    if (!selectedLocationCode) {
       toast.error(t("emailSubscription.errors.locationRequired"));
       return;
     }
@@ -79,14 +79,14 @@ export default function EmailSubscriptionPage() {
         email: user.email,
         name: user.name,
         skills: selectedSkills,
-        location: selectedLocation,
+        locationCode: selectedLocationCode,
       }).unwrap();
 
       toast.success(t("emailSubscription.toasts.registerSuccess"));
 
       // Reset form
       setSelectedSkills([]);
-      setSelectedLocation("");
+      setSelectedLocationCode("");
       refetch();
     } catch (error: any) {
       const errorMessage =
@@ -194,9 +194,9 @@ export default function EmailSubscriptionPage() {
                   </Tooltip.Portal>
                 </Tooltip.Root>
                 <SingleSelect
-                  options={PROVINCES_LIST}
-                  value={selectedLocation}
-                  onChange={setSelectedLocation}
+                  options={LOCATION_OPTIONS}
+                  value={selectedLocationCode}
+                  onChange={setSelectedLocationCode}
                   placeholder={t("emailSubscription.locationPlaceholder")}
                   searchPlaceholder={t("emailSubscription.locationSearchPlaceholder")}
                 />
@@ -235,7 +235,7 @@ export default function EmailSubscriptionPage() {
               disabled={
                 isCreating ||
                 selectedSkills.length === 0 ||
-                !selectedLocation ||
+                !selectedLocationCode ||
                 totalSubscriptions >= maxAllowed
               }
               className="w-full btn-gradient-primary h-12 text-base font-semibold shadow-lg"

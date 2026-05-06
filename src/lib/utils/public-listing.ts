@@ -1,4 +1,5 @@
 import type { PaginatedQueryParams } from "@/shared/types/pagination";
+import { resolveLocationCode } from "@/shared/data/location-catalog";
 
 export const DEFAULT_JOB_LIST_PAGE_SIZE = 10;
 export const DEFAULT_COMPANY_LIST_PAGE_SIZE = 9;
@@ -47,7 +48,7 @@ type SearchParamsSource =
 export type JobListSearchState = {
   experience: string;
   limit: number;
-  location: string;
+  locationCode: string;
   page: number;
   q: string;
   salary: string;
@@ -92,6 +93,18 @@ const normalizeStringParam = (value: string | undefined) => {
   return value?.trim() ?? "";
 };
 
+const normalizeLocationParam = (searchParams: SearchParamsSource) => {
+  const locationCode = resolveLocationCode(
+    getSingleSearchParam(searchParams, "locationCode")
+  );
+
+  if (locationCode) {
+    return locationCode;
+  }
+
+  return resolveLocationCode(getSingleSearchParam(searchParams, "location"));
+};
+
 const normalizeEnumParam = (
   value: string | undefined,
   allowedValues: readonly string[],
@@ -113,7 +126,7 @@ export const parseJobListSearchParams = (
       getSingleSearchParam(searchParams, "limit"),
       DEFAULT_JOB_LIST_PAGE_SIZE
     ),
-    location: normalizeStringParam(getSingleSearchParam(searchParams, "location")),
+    locationCode: normalizeLocationParam(searchParams),
     page: parsePositiveInt(getSingleSearchParam(searchParams, "page"), 1),
     q: normalizeStringParam(getSingleSearchParam(searchParams, "q")),
     salary: normalizeEnumParam(
@@ -150,8 +163,8 @@ export const parseCompanyListSearchParams = (
 export const buildJobListFilter = (searchState: JobListSearchState) => {
   const filters = ["isActive=true"];
 
-  if (searchState.location) {
-    filters.push(`location=/${encodeURIComponent(searchState.location)}/i`);
+  if (searchState.locationCode) {
+    filters.push(`locationCode=${encodeURIComponent(searchState.locationCode)}`);
   }
 
   if (searchState.type !== "all") {
@@ -208,8 +221,8 @@ export const buildJobListUrlSearchParams = (searchState: JobListSearchState) => 
     params.set("q", searchState.q);
   }
 
-  if (searchState.location) {
-    params.set("location", searchState.location);
+  if (searchState.locationCode) {
+    params.set("locationCode", searchState.locationCode);
   }
 
   if (searchState.type !== "all") {
@@ -271,7 +284,7 @@ export const buildPathWithSearchParams = (
 export const getJobListCanonicalPath = (searchState: JobListSearchState) => {
   const isIndexableVariant =
     !searchState.q &&
-    !searchState.location &&
+    !searchState.locationCode &&
     searchState.type === "all" &&
     searchState.experience === "all" &&
     searchState.salary === "all" &&
@@ -317,7 +330,7 @@ export const areJobListSearchStatesEqual = (
   return (
     left.experience === right.experience &&
     left.limit === right.limit &&
-    left.location === right.location &&
+    left.locationCode === right.locationCode &&
     left.page === right.page &&
     left.q === right.q &&
     left.salary === right.salary &&

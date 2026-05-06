@@ -16,12 +16,12 @@ type UseJobListProps = {
 
 type JobListDraftState = Pick<
   JobListSearchState,
-  "experience" | "location" | "q" | "salary" | "type"
+  "experience" | "locationCode" | "q" | "salary" | "type"
 >;
 
 const EMPTY_DRAFT_STATE: JobListDraftState = {
   experience: "all",
-  location: "",
+  locationCode: "",
   q: "",
   salary: "all",
   type: "all",
@@ -31,7 +31,7 @@ const createDraftState = (
   searchState: JobListSearchState
 ): JobListDraftState => ({
   experience: searchState.experience,
-  location: searchState.location,
+  locationCode: searchState.locationCode,
   q: searchState.q,
   salary: searchState.salary,
   type: searchState.type,
@@ -43,7 +43,7 @@ const areDraftStatesEqual = (
 ) => {
   return (
     left.experience === right.experience &&
-    left.location === right.location &&
+    left.locationCode === right.locationCode &&
     left.q === right.q &&
     left.salary === right.salary &&
     left.type === right.type
@@ -80,13 +80,13 @@ export function useJobList({
 
   const setLocationInput = useCallback((value: string) => {
     setDraftState((currentDraftState) => {
-      if (currentDraftState.location === value) {
+      if (currentDraftState.locationCode === value) {
         return currentDraftState;
       }
 
       return {
         ...currentDraftState,
-        location: value,
+        locationCode: value,
       };
     });
   }, []);
@@ -145,7 +145,7 @@ export function useJobList({
         const nextSearchState: JobListSearchState = {
           ...currentState,
           experience: nextDraftState.experience,
-          location: nextDraftState.location,
+          locationCode: nextDraftState.locationCode,
           page: 1,
           q: nextDraftState.q,
           salary: nextDraftState.salary,
@@ -166,7 +166,7 @@ export function useJobList({
       const nextSearchState: JobListSearchState = {
         ...currentState,
         experience: EMPTY_DRAFT_STATE.experience,
-        location: EMPTY_DRAFT_STATE.location,
+        locationCode: EMPTY_DRAFT_STATE.locationCode,
         page: 1,
         q: EMPTY_DRAFT_STATE.q,
         salary: EMPTY_DRAFT_STATE.salary,
@@ -245,11 +245,11 @@ export function useJobList({
 
     searchInput: draftState.q,
     setSearchInput,
-    locationInput: draftState.location,
+    locationInput: draftState.locationCode,
     setLocationInput,
 
     searchQuery: currentSearchState.q,
-    locationQuery: currentSearchState.location,
+    locationQuery: currentSearchState.locationCode,
 
     draftJobType: draftState.type,
     setDraftJobType,

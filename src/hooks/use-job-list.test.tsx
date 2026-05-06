@@ -28,7 +28,7 @@ const createInitialSearchState = (
 ): JobListSearchState => ({
   experience: "all",
   limit: 10,
-  location: "",
+  locationCode: "",
   page: 2,
   q: "",
   salary: "all",
@@ -90,7 +90,7 @@ describe("useJobList", () => {
 
     act(() => {
       result.current.setSearchInput("react");
-      result.current.setLocationInput("Ha Noi");
+      result.current.setLocationInput("ha-noi");
       result.current.setDraftJobType("Full-time");
     });
 
@@ -99,13 +99,13 @@ describe("useJobList", () => {
     });
 
     expect(result.current.searchQuery).toBe("react");
-    expect(result.current.locationQuery).toBe("Ha Noi");
+    expect(result.current.locationQuery).toBe("ha-noi");
     expect(result.current.jobType).toBe("Full-time");
     expect(result.current.currentPage).toBe(1);
     expect(result.current.isDraftDirty).toBe(false);
     expect(mockUseGetJobsQuery).toHaveBeenLastCalledWith(
       {
-        filter: "isActive=true&location=/Ha%20Noi/i&formOfWork=Full-time",
+        filter: "isActive=true&locationCode=ha-noi&formOfWork=Full-time",
         keyword: "react",
         limit: 10,
         page: 1,
@@ -121,7 +121,7 @@ describe("useJobList", () => {
         initialData: createInitialData(),
         initialSearchState: createInitialSearchState({
           experience: "Senior",
-          location: "Da Nang",
+          locationCode: "da-nang",
           q: "golang",
           salary: "10000000-20000000",
           sort: "salary",

@@ -33,8 +33,8 @@ export const JobSchema = z.object({
     .refine((company) => company._id !== "", {
       message: "Trường 'company' không được để trống",
     }),
-  location: z
-    .string("Địa điểm phải là chuỗi")
+  locationCode: z
+    .string("Mã địa điểm phải là chuỗi")
     .min(1, "Địa điểm không được để trống"),
   salary: z.number("Lương phải là số").min(0),
   quantity: z.number("Số lượng phải là số").min(1),
@@ -60,6 +60,7 @@ export const JobSchema = z.object({
 
 export const JobEntitySchema = JobSchema.extend({
   _id: z.string(),
+  location: z.string().min(1, "Địa điểm không được để trống"),
   approvalStatus: z
     .enum(["PENDING", "APPROVED", "REJECTED"])
     .default("PENDING")

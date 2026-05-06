@@ -33,6 +33,8 @@ import { RichTextEditor } from "../rich-text-editor";
 import { MultiSelect } from "../multi-select";
 import jobLevels from "@/shared/data/job-level.json";
 import SKILLS_LIST from "@/shared/data/skill-list.json";
+import { SingleSelect } from "../single-select";
+import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 interface JobFormProps {
   initialData?: Partial<CreateJobFormData>;
@@ -64,7 +66,7 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
       name: initialData?.name || "",
       skills: initialData?.skills || [],
       company: initialData?.company || { _id: "", name: "", logo: null },
-      location: initialData?.location || "",
+      locationCode: initialData?.locationCode || "",
       salary: initialData?.salary || 0,
       quantity: initialData?.quantity || 1,
       level: initialData?.level || "Internship",
@@ -85,7 +87,7 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
       form.setValue("company", {
         _id: selectedCompany._id,
         name: selectedCompany.name,
-        logo: selectedCompany.logo,
+        logo: selectedCompany.logo ?? null,
       });
     }
   };
@@ -171,14 +173,17 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
-            name="location"
+            name="locationCode"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Địa điểm *</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="VD: Hà Nội"
+                  <SingleSelect
+                    options={LOCATION_OPTIONS}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Chọn tỉnh/thành phố..."
+                    searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
                     disabled={isLoading}
                   />
                 </FormControl>

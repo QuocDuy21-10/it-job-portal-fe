@@ -67,6 +67,7 @@ export interface IJob {
     logo?: string;
   };
   location: string;
+  locationCode: string;
   salary: number;
   quantity: number;
   level: string;

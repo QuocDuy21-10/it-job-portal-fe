@@ -8,6 +8,15 @@ interface Option {
   value: string;
 }
 
+const normalizeSearchText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/đ/g, "d")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
 type SingleSelectProps = {
   options: Option[];
   value: string;
@@ -36,8 +45,9 @@ export function SingleSelect({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const normalizedSearchTerm = normalizeSearchText(searchTerm);
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    normalizeSearchText(option.label).includes(normalizedSearchTerm)
   );
 
   useEffect(() => {

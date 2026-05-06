@@ -5,11 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2, Loader2, MapPin, Code } from "lucide-react";
 import SKILLS_LIST from "@/shared/data/skill-list.json";
-import PROVINCES_LIST from "@/shared/data/provinces.json";
 import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useI18n } from "@/hooks/use-i18n";
 import { formatLocaleDate } from "@/lib/utils/locale-formatters";
+import { getLocationLabel } from "@/shared/data/location-catalog";
 
 interface SubscriptionListProps {
   subscriptions: Subscriber[];
@@ -32,14 +32,6 @@ export function SubscriptionList({
     return values
       .map((v) => SKILLS_LIST.find((s) => s.value === v)?.label)
       .filter(Boolean) as string[];
-  };
-
-  const getLocationLabel = (location: string | string[]): string => {
-    const locationValue = Array.isArray(location) ? location[0] : location;
-    return (
-      PROVINCES_LIST.find((p) => p.value === locationValue)?.label ||
-      locationValue
-    );
   };
 
   const handleDeleteClick = (id: string) => {
@@ -160,7 +152,7 @@ export function SubscriptionList({
                   </p>
                 </div>
                 <span className="inline-flex items-center px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs rounded-full font-medium border border-green-500/20">
-                  {getLocationLabel(subscription.location)}
+                  {getLocationLabel(subscription.locationCode || subscription.location)}
                 </span>
               </div>
 

@@ -8,7 +8,6 @@ import { Link } from "@/i18n/navigation";
 import { Search, MapPin, Building2, Briefcase, X, Filter, ChevronRight, SlidersHorizontal, ArrowUpDown, Wallet } from "lucide-react";
 import { SearchSuggestInput } from "@/components/ui/search-suggest-input";
 import { SingleSelect } from "@/components/single-select";
-import provinces from "@/shared/data/provinces.json";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +38,10 @@ import {
   type JobListSearchState,
 } from "@/lib/utils/public-listing";
 import type { PaginatedResult } from "@/shared/types/pagination";
+import {
+  getLocationLabel,
+  LOCATION_OPTIONS,
+} from "@/shared/data/location-catalog";
 
 type Translate = ReturnType<typeof useI18n>["t"];
 
@@ -150,7 +153,7 @@ function JobsPageContent({
 
   const {
     experience,
-    location: locationQuery,
+    locationCode: locationQuery,
     q: searchQuery,
     salary: salaryRange,
     sort: sortBy,
@@ -159,7 +162,7 @@ function JobsPageContent({
 
   const handleDesktopLocationChange = React.useCallback(
     (value: string) => {
-      applyFilters({ location: value });
+      applyFilters({ locationCode: value });
     },
     [applyFilters]
   );
@@ -344,8 +347,8 @@ function JobsPageContent({
                   {locationQuery && (
                     <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1.5 text-xs">
                       <MapPin className="w-3 h-3" />
-                      {provinces.find(p => p.value === locationQuery)?.label || locationQuery}
-                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ location: "" })} />
+                      {getLocationLabel(locationQuery)}
+                      <X className="w-3 h-3 cursor-pointer hover:text-red-600" onClick={() => applyFilters({ locationCode: "" })} />
                     </Badge>
                   )}
                   {jobType !== "all" && (
@@ -424,7 +427,7 @@ function JobsPageContent({
                       {t("jobsPage.locationLabel")}
                     </label>
                     <SingleSelect
-                      options={provinces}
+                      options={LOCATION_OPTIONS}
                       value={locationInput}
                       onChange={handleDesktopLocationChange}
                       placeholder={t("jobsPage.locationPlaceholder")}
@@ -507,7 +510,7 @@ function JobsPageContent({
                       {t("jobsPage.locationLabel")}
                     </label>
                     <SingleSelect
-                      options={provinces}
+                      options={LOCATION_OPTIONS}
                       value={locationInput}
                       onChange={setLocationInput}
                       placeholder={t("jobsPage.locationPlaceholder")}

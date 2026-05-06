@@ -11,6 +11,7 @@ export const SubscriberEntitySchema = SubscriberSchema.extend({
   email: z.string().email("Invalid email address"),
   skills: z.array(z.string()).min(1, "At least one skill is required"),
   location: z.string(),
+  locationCode: z.string(),
   createdAt: z.string().optional(),
   createdBy: z.object({
     _id: z.string(),
@@ -33,7 +34,7 @@ export type GetMySubscribersResponse = z.infer<typeof GetMySubscribersResponse>;
 export const CreateSubscriberFormData = z.object({
   name: z.string().min(2, "Subscriber name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  location: z.string(),
+  locationCode: z.string().min(1, "Location is required"),
   skills: z.array(z.string()).min(1, "At least one skill is required"),
 });
 

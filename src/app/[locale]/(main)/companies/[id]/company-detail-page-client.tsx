@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import JobListing from "@/components/company/section/job-listing";
+import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 type CompanyDetailPageClientProps = {
   companyId: string;
@@ -18,7 +19,7 @@ export default function CompanyDetailPageClient({
   companyId,
   jobPathPrefix,
 }: CompanyDetailPageClientProps) {
-  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedLocationCode, setSelectedLocationCode] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 400);
 
@@ -35,14 +36,16 @@ export default function CompanyDetailPageClient({
             />
           </div>
           <select
-            value={selectedLocation}
-            onChange={(event) => setSelectedLocation(event.target.value)}
+            value={selectedLocationCode}
+            onChange={(event) => setSelectedLocationCode(event.target.value)}
             className="h-11 cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 transition-all hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           >
-            <option value="all">Tất cả vị trí</option>
-            <option value="Hà Nội">Hà Nội</option>
-            <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-            <option value="Đà Nẵng">Đà Nẵng</option>
+            <option value="">Tất cả vị trí</option>
+            {LOCATION_OPTIONS.map((location) => (
+              <option key={location.value} value={location.value}>
+                {location.label}
+              </option>
+            ))}
           </select>
           <Button className="h-11 bg-primary text-primary-foreground shadow-md transition-all duration-300 hover:bg-primary/90 hover:shadow-lg">
             <Search className="mr-2 h-4 w-4" />
@@ -54,7 +57,7 @@ export default function CompanyDetailPageClient({
       <JobListing
         companyId={companyId}
         searchQuery={debouncedSearchQuery}
-        selectedLocation={selectedLocation}
+        selectedLocation={selectedLocationCode}
         jobPathPrefix={jobPathPrefix}
       />
     </div>

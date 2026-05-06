@@ -185,9 +185,9 @@ export default function JobListing({
     if (filter) filter += "&";
     filter += `name=/${encodeURIComponent(searchQuery)}/i`;
   }
-  if (selectedLocation && selectedLocation !== "all") {
+  if (selectedLocation) {
     if (filter) filter += "&";
-    filter += `location=/${selectedLocation}/i`;
+    filter += `locationCode=${selectedLocation}`;
   }
 
   const { data, isLoading, error } = useGetJobsQuery({ filter, limit: 20 });

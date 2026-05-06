@@ -24,7 +24,7 @@ import { useTableSelection } from "@/hooks/use-table-selection";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { toast } from "sonner";
-import provinces from "@/shared/data/provinces.json";
+import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,7 +58,7 @@ export default function JobsPage() {
     }
     
     if (selectedLocation) {
-      filters.push(`location=/${selectedLocation}/i`);
+      filters.push(`locationCode=${selectedLocation}`);
     }
     
     if (selectedSalary !== "all") {
@@ -227,10 +227,7 @@ export default function JobsPage() {
               <SingleSelect
                 options={[
                   { label: "All Locations", value: "" },
-                  ...provinces.map((province) => ({
-                    label: province.label,
-                    value: province.value,
-                  })),
+                  ...LOCATION_OPTIONS,
                 ]}
                 value={selectedLocation}
                 onChange={handleLocationChange}
