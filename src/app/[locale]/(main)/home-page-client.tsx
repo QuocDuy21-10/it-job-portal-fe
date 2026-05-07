@@ -3,17 +3,12 @@
 import { useState, useEffect } from "react";
 import {
   Search,
-  MapPin,
   ArrowRight,
   UserPlus,
   MousePointerClick,
   Trophy,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SearchSuggestInput } from "@/components/ui/search-suggest-input";
-import { SingleSelect } from "@/components/single-select";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
@@ -28,7 +23,14 @@ import { SectionHeader } from "@/components/sections/section-header";
 import { SectionContainer } from "@/components/sections/section-container";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 import { Link, useRouter } from "@/i18n/navigation";
-import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
+import { JobSearchBox } from "@/components/search/job-search-box";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +46,6 @@ export default function Home() {
 
   // Pagination states
   const [jobsPage, setJobsPage] = useState(1);
-  const [companiesPage, setCompaniesPage] = useState(1);
 
   // Only fetch user data if token exists - prevent infinite 401 loop
   useGetMeQuery(undefined, {
@@ -69,15 +70,14 @@ export default function Home() {
     isLoading: companiesLoading,
     error: companiesError,
   } = useGetCompaniesQuery({
-    page: companiesPage,
-    limit: ITEMS_PER_PAGE,
+    page: 1,
+    limit: 8,
   });
 
   const featuredJobsToRender = jobsData?.data?.result ?? [];
   const jobsTotalPages = jobsData?.data?.meta?.pagination?.total_pages ?? 1;
 
   const topCompaniesToRender = companiesData?.data?.result ?? [];
-  const companiesTotalPages = companiesData?.data?.meta?.pagination?.total_pages ?? 1;
 
   const handleSearch = (submittedQuery?: string) => {
     const params = new URLSearchParams();
@@ -92,7 +92,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-       <section className="relative z-20 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-16 sm:py-24 lg:py-32 overflow-x-clip">
+      <section className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32">
         {/* Decorative background */}
         <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
 
@@ -100,13 +100,13 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-10">
             {/* Heading */}
             <div className="space-y-4">
-               <h1 className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700`}>
+               <h1 className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}>
                 {i18nMounted ? t("home.findYour") : "Find Your "}
-                <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
                   {i18nMounted ? t("home.dreamJob") : "Dream IT Job"}
                 </span>
               </h1>
-             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-5 duration-900">
+             <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
                 {i18nMounted
                   ? t("home.discoverOpportunities")
                   : "Discover thousands of IT opportunities from leading tech companies worldwide."}
@@ -118,80 +118,34 @@ export default function Home() {
             </div>
 
             {/* Search Box */}
-            <div className="bg-white dark:bg-card rounded-[2rem] sm:rounded-full shadow-2xl shadow-black/30 p-2 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-1000">
-              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
-                {/* Job Title Search with Suggestions */}
-                <div className="flex-1 w-full sm:pl-4">
-                  <label htmlFor="job-search" className="sr-only">
-                    {i18nMounted
-                      ? t("home.jobTitleOrKeyword")
-                      : "Job title or keyword"}
-                  </label>
-                  <SearchSuggestInput
-                    id="job-search"
-                    value={searchQuery}
-                    onChange={setSearchQuery}
-                    onSubmit={handleSearch}
-                    placeholder={
-                      i18nMounted
-                        ? t("home.jobTitleOrKeyword")
-                        : "Job Title/Keywords"
-                    }
-                    inputClassName="bg-transparent border-0 shadow-none focus-visible:ring-0 focus:outline-none focus:border-none focus:ring-0 px-0 sm:px-2 h-12 w-full transition-all"
-                  />
-                </div>
-
-                <div className="hidden sm:block w-px h-8 bg-border/50 mx-2" />
-
-                {/* Location Select */}
-                <div className="flex-1 w-full relative z-[60] sm:pr-2">
-                  <label htmlFor="location-search" className="sr-only">
-                    {i18nMounted ? t("home.location") : "Location"}
-                  </label>
-                  <div className="relative">
-                    <SingleSelect
-                      options={LOCATION_OPTIONS}
-                      value={selectedLocationCode}
-                      onChange={setSelectedLocationCode}
-                      placeholder={i18nMounted ? t("home.location") : "Location"}
-                      searchPlaceholder="Tìm kiếm tỉnh/thành..."
-                      className="w-full h-12 z-[100] border-0 shadow-none bg-transparent hover:bg-transparent focus:ring-0"
-                      leftIcon={<MapPin className="w-5 h-5 text-muted-foreground mr-1" />}
-                    />
-                  </div>
-                </div>
-
-                {/* Search Button */}
-                <Button
-                  className="h-12 w-full sm:w-auto rounded-full px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-shrink-0"
-                  onClick={() => handleSearch()}
-                >
-                  <span className="mr-2">{i18nMounted ? t("home.searchButton") : "Search"}</span>
-                  <Search className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-            {/* End Search Box */}
+            <JobSearchBox
+              searchQuery={searchQuery}
+              onSearchQueryChange={setSearchQuery}
+              locationCode={selectedLocationCode}
+              onLocationCodeChange={setSelectedLocationCode}
+              onSearch={handleSearch}
+              className="animate-in fade-in slide-in-from-bottom-6 duration-1000"
+            />
 
             {/* Stats */}
             <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-white">20k+</div>
-                <div className="text-blue-200/70 text-sm mt-0.5">
+                <div className="text-2xl font-bold text-foreground sm:text-3xl">20k+</div>
+                <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
                   {i18nMounted ? t("home.activeJobs") : "Open Roles"}
                 </div>
               </div>
-              <div className="hidden sm:block w-px h-10 bg-white/20" />
+              <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-white">5k+</div>
-                <div className="text-blue-200/70 text-sm mt-0.5">
+                <div className="text-2xl font-bold text-foreground sm:text-3xl">5k+</div>
+                <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
                   {i18nMounted ? t("home.companies") : "Companies"}
                 </div>
               </div>
-              <div className="hidden sm:block w-px h-10 bg-white/20" />
+              <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-white">100k+</div>
-                <div className="text-blue-200/70 text-sm mt-0.5">
+                <div className="text-2xl font-bold text-foreground sm:text-3xl">100k+</div>
+                <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
                   {i18nMounted ? t("home.jobSeekers") : "Candidates"}
                 </div>
               </div>
@@ -201,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Featured Jobs Section */}
-      <SectionContainer variant="gray">
+      <SectionContainer className="home-section-base">
         <SectionHeader
           title={i18nMounted ? t("home.featuredJobs") : "Featured Jobs for You"}
           description={
@@ -250,7 +204,7 @@ export default function Home() {
               ))
             ) : jobsError ? (
               <div className="col-span-3 text-center py-8">
-                <p className="text-gray-500">
+                <p className="home-muted-text text-muted-foreground">
                   {i18nMounted
                     ? t("home.loadJobsError")
                     : "Failed to load jobs. Please try again later."}
@@ -258,7 +212,7 @@ export default function Home() {
               </div>
             ) : featuredJobsToRender.length === 0 ? (
               <div className="col-span-3 text-center py-8">
-                <p className="text-gray-500">
+                <p className="home-muted-text text-muted-foreground">
                   {i18nMounted
                     ? t("home.noJobs")
                     : "No jobs available at the moment."}
@@ -266,7 +220,11 @@ export default function Home() {
               </div>
             ) : (
               featuredJobsToRender.map((job: Job) => (
-                <JobCard key={job._id} job={job} />
+                <JobCard
+                  key={job._id}
+                  job={job}
+                  className="home-panel-surface home-subtle-border dark:bg-transparent"
+                />
               ))
             )}
           </div>
@@ -283,7 +241,11 @@ export default function Home() {
           )}
 
           <div className="mt-8 text-center sm:hidden">
-            <Button asChild variant="outline" className="w-full sm:w-auto">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+            >
               <Link href="/jobs">
                 {i18nMounted ? t("home.viewAllJobs") : "View All Jobs"}{" "}
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -293,92 +255,122 @@ export default function Home() {
       </SectionContainer>
 
       {/* Top Companies Section */}
-      <SectionContainer variant="gray">
-        <div className="text-center mb-8 relative">
-          <h2 className={TYPOGRAPHY.h2}>
-            {i18nMounted ? t("home.topCompaniesHiringNow") || "Top IT Companies Hiring Now" : "Top IT Companies Hiring Now"}
-          </h2>
+      <SectionContainer className="home-section-muted">
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className={TYPOGRAPHY.h2}>
+              {i18nMounted
+                ? t("home.topCompaniesHiringNow") || "Top IT Companies Hiring Now"
+                : "Top IT Companies Hiring Now"}
+            </h2>
+            <p className="home-muted-text max-w-2xl text-base text-muted-foreground">
+              {i18nMounted
+                ? t("home.topCompaniesDescription")
+                : "Join teams at leading IT organizations"}
+            </p>
+          </div>
+
+          <Button
+            asChild
+            variant="outline"
+            className="hidden sm:inline-flex dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+          >
+            <Link href="/companies">
+              {i18nMounted ? t("home.viewAllCompanies") : "View All Companies"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
 
-        <div className="relative">
-          {/* Carousel Arrows */}
-          <button
-            onClick={() => setCompaniesPage(Math.max(1, companiesPage - 1))}
-            disabled={companiesPage === 1 || companiesLoading}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 z-10 hidden lg:flex h-10 w-10 bg-white items-center justify-center rounded-full shadow-md hover:bg-gray-50 border border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            aria-label="Previous page"
-          >
-            <ChevronLeft className="h-5 w-5 text-gray-600" />
-          </button>
-          <button
-            onClick={() =>
-              setCompaniesPage(Math.min(companiesTotalPages, companiesPage + 1))
-            }
-            disabled={companiesPage === companiesTotalPages || companiesLoading}
-            className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 z-10 hidden lg:flex h-10 w-10 bg-white items-center justify-center rounded-full shadow-md hover:bg-gray-50 border border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            aria-label="Next page"
-          >
-            <ChevronRight className="h-5 w-5 text-gray-600" />
-          </button>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {companiesLoading ? (
-              // Loading placeholders
-              Array.from({ length: 4 }).map((_, index) => (
-                <Card
-                  key={index}
-                  className="hover:shadow-lg transition-shadow duration-300 rounded-xl"
-                >
-                  <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-4">
-                    <div className="h-16 w-16 rounded-full bg-muted" />
-                    <div className="h-6 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-full" />
-                    <div className="h-4 bg-muted rounded w-2/3" />
-                  </CardContent>
-                </Card>
-              ))
-            ) : companiesError ? (
-              <div className="col-span-1 sm:col-span-2 lg:col-span-4 text-center py-8">
-                <p className="text-gray-500">
-                  {i18nMounted
-                    ? t("home.errorLoadingCompanies")
-                    : "Error loading companies"}
-                </p>
-              </div>
-            ) : topCompaniesToRender.length === 0 ? (
-              <div className="col-span-1 sm:col-span-2 lg:col-span-4 text-center py-8">
-                <p className="text-gray-500">
-                  {i18nMounted
-                    ? t("home.noCompanies")
-                    : "No companies available at the moment."}
-                </p>
-              </div>
-            ) : (
-              topCompaniesToRender.slice(0, 4).map((company: Company) => (
-                <CompanyCard key={company._id} company={company} />
-              ))
-            )}
+        {companiesError ? (
+          <div className="py-8 text-center">
+            <p className="home-muted-text text-muted-foreground">
+              {i18nMounted
+                ? t("home.errorLoadingCompanies")
+                : "Error loading companies"}
+            </p>
           </div>
+        ) : topCompaniesToRender.length === 0 && !companiesLoading ? (
+          <div className="py-8 text-center">
+            <p className="home-muted-text text-muted-foreground">
+              {i18nMounted
+                ? t("home.noCompanies")
+                : "No companies available at the moment."}
+            </p>
+          </div>
+        ) : (
+          <div className="relative">
+            <Carousel
+              opts={{
+                align: "start",
+                containScroll: "trimSnaps",
+                dragFree: true,
+              }}
+              className="top-companies-carousel"
+            >
+              <CarouselContent className="-ml-4">
+                {(companiesLoading
+                  ? Array.from({ length: 4 }, (_, index) => index)
+                  : topCompaniesToRender
+                ).map((companyOrIndex) => (
+                  <CarouselItem
+                    key={
+                      typeof companyOrIndex === "number"
+                        ? `company-skeleton-${companyOrIndex}`
+                        : companyOrIndex._id
+                    }
+                    className="pl-4 md:basis-1/2 xl:basis-1/4"
+                  >
+                    {typeof companyOrIndex === "number" ? (
+                      <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm dark:bg-transparent">
+                        <CardContent className="flex h-full min-h-[320px] flex-col items-center justify-between gap-6 p-8 text-center">
+                          <div className="flex flex-col items-center gap-5">
+                            <div className="h-24 w-24 rounded-[24px] bg-muted animate-pulse" />
+                            <div className="space-y-3">
+                              <div className="mx-auto h-8 w-36 rounded-full bg-muted animate-pulse" />
+                              <div className="mx-auto h-4 w-52 rounded-full bg-muted animate-pulse" />
+                              <div className="mx-auto h-4 w-44 rounded-full bg-muted animate-pulse" />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="h-11 w-11 rounded-full bg-muted animate-pulse" />
+                            <div className="h-6 w-40 rounded-full bg-muted animate-pulse" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <CompanyCard company={companyOrIndex as Company} />
+                    )}
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+
+              <CarouselPrevious className="top-companies-carousel__button left-3 hidden md:inline-flex lg:-left-5" />
+              <CarouselNext className="top-companies-carousel__button right-3 hidden md:inline-flex lg:-right-5" />
+            </Carousel>
+          </div>
+        )}
+
+        <div className="mt-8 text-center sm:hidden">
+          <Button
+            asChild
+            variant="outline"
+            className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+          >
+            <Link href="/companies">
+              {i18nMounted ? t("home.viewAllCompanies") : "View All Companies"}
+            </Link>
+          </Button>
         </div>
-
-          <div className="mt-8 text-center sm:hidden">
-            <Button asChild variant="outline" className="w-full sm:w-auto">
-              <Link href="/companies">
-                {i18nMounted
-                  ? t("home.viewAllCompanies")
-                  : "View All Companies"}{" "}
-              </Link>
-            </Button>
-          </div>
       </SectionContainer>
 
       {/* How It Works Section */}
-      <SectionContainer>
+      <SectionContainer className="home-section-base">
         <div className="text-center mb-12">
           <h2 className={TYPOGRAPHY.h2}>
             {i18nMounted ? t("home.howItWorks") : "How It Works"}
           </h2>
-          <p className="text-muted-foreground mt-3 text-lg">
+          <p className="home-muted-text mt-3 text-lg text-muted-foreground">
             {i18nMounted
               ? t("home.howItWorksDescription")
               : "Get hired in three simple steps"}
@@ -387,7 +379,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
             {/* Step 1 */}
-            <div className="group text-center space-y-6 p-8 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+            <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
                 <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg">
@@ -397,7 +389,7 @@ export default function Home() {
               <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
                 {i18nMounted ? t("home.searchJobs") : "Create Profile"}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="home-muted-text leading-relaxed text-muted-foreground">
                 {i18nMounted
                   ? t("home.searchJobsDescription")
                   : "Build your professional profile and showcase your skills to top IT companies"}
@@ -405,7 +397,7 @@ export default function Home() {
             </div>
 
             {/* Step 2 */}
-            <div className="group text-center space-y-6 p-8 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+            <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
                 <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mx-auto shadow-lg">
@@ -418,7 +410,7 @@ export default function Home() {
               <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
                 {i18nMounted ? t("home.applyWithEase") : "Apply with One Click"}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="home-muted-text leading-relaxed text-muted-foreground">
                 {i18nMounted
                   ? t("home.applyWithEaseDescription")
                   : "Submit your application instantly with your saved profile — no lengthy forms"}
@@ -426,7 +418,7 @@ export default function Home() {
             </div>
 
             {/* Step 3 */}
-            <div className="group text-center space-y-6 p-8 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+            <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
                 <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto shadow-lg">
@@ -439,7 +431,7 @@ export default function Home() {
               <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
                 {i18nMounted ? t("home.getHired") : "Get Hired"}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="home-muted-text leading-relaxed text-muted-foreground">
                 {i18nMounted
                   ? t("home.getHiredDescription")
                   : "Connect with top employers and land your dream IT job faster than ever"}
@@ -449,7 +441,7 @@ export default function Home() {
       </SectionContainer>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-blue-600 via-indigo-600 to-cyan-600 text-white relative overflow-hidden">
+      <section className="home-cta-surface relative overflow-hidden py-16 text-white sm:py-20 lg:py-24">
         <div className="absolute inset-0 bg-grid-white/[0.05] pointer-events-none"></div>
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -459,7 +451,7 @@ export default function Home() {
                 ? t("home.readyToGetStarted")
                 : "Ready to Level Up Your Career?"}
             </h2>
-            <p className="text-lg sm:text-xl text-blue-50 leading-relaxed">
+            <p className="text-lg leading-relaxed text-blue-50 dark:text-white/80 sm:text-xl">
               {i18nMounted
                 ? t("home.readyToGetStartedDescription")
                 : "Join thousands of IT professionals who have found their dream careers through JobPortal"}

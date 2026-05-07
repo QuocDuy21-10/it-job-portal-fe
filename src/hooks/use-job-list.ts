@@ -180,6 +180,39 @@ export function useJobList({
     });
   }, []);
 
+  const resetFilterBar = useCallback(() => {
+    setDraftState((currentState) => {
+      if (
+        currentState.type === EMPTY_DRAFT_STATE.type &&
+        currentState.experience === EMPTY_DRAFT_STATE.experience &&
+        currentState.salary === EMPTY_DRAFT_STATE.salary
+      ) {
+        return currentState;
+      }
+
+      return {
+        ...currentState,
+        type: EMPTY_DRAFT_STATE.type,
+        experience: EMPTY_DRAFT_STATE.experience,
+        salary: EMPTY_DRAFT_STATE.salary,
+      };
+    });
+
+    setCurrentSearchState((currentState) => {
+      const nextSearchState: JobListSearchState = {
+        ...currentState,
+        page: 1,
+        type: EMPTY_DRAFT_STATE.type,
+        experience: EMPTY_DRAFT_STATE.experience,
+        salary: EMPTY_DRAFT_STATE.salary,
+      };
+
+      return areJobListSearchStatesEqual(nextSearchState, currentState)
+        ? currentState
+        : nextSearchState;
+    });
+  }, []);
+
   const setPage = useCallback((page: number) => {
     setCurrentSearchState((currentState) => {
       if (currentState.page === page) {
@@ -268,6 +301,7 @@ export function useJobList({
     setLimit,
     applyFilters,
     resetAllFilters,
+    resetFilterBar,
     isDraftDirty,
   };
 }

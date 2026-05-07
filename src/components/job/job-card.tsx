@@ -124,9 +124,9 @@ const StatusIndicator = ({
   if (!variant) return null;
 
   const styles: Record<string, string> = {
-    new: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400",
+    new: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
     closing:
-      "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400",
+      "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
   };
 
   return (
@@ -176,7 +176,7 @@ const CompanyLogo = ({
   return (
     <div
       className={cn(
-        "flex-shrink-0 overflow-hidden border border-border/60 bg-background flex items-center justify-center p-1",
+        "listing-subtle-border flex flex-shrink-0 items-center justify-center overflow-hidden border bg-background p-1 dark:bg-white/[0.04]",
         sizeMap[size]
       )}
     >
@@ -213,7 +213,7 @@ const SkillTags = ({
       {visible.map((skill) => (
         <span
           key={skill}
-          className="inline-block rounded-md bg-secondary/60 px-2 py-0.5 text-[11px] font-medium text-secondary-foreground/70 dark:bg-secondary/40"
+          className="inline-block rounded-md bg-secondary/60 px-2 py-0.5 text-[11px] font-medium text-secondary-foreground/70 dark:bg-white/[0.05] dark:text-white/70"
         >
           {skill}
         </span>
@@ -246,7 +246,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
     return (
       <Card
         className={cn(
-          "group transition-all duration-200 hover:border-primary/15 hover:shadow-sm",
+          "listing-panel-surface listing-subtle-border group transition-all duration-200 hover:border-primary/15 hover:shadow-sm",
           className
         )}
       >
@@ -305,7 +305,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
     return (
       <Card
         className={cn(
-          "group transition-all duration-200 hover:border-primary/15 hover:shadow-sm",
+          "listing-panel-surface listing-subtle-border group transition-all duration-200 hover:border-primary/15 hover:shadow-sm",
           className
         )}
       >
@@ -341,21 +341,21 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Badge
                     variant="secondary"
-                    className="text-[11px] font-normal bg-secondary/50"
+                    className="listing-subtle-border border bg-secondary/50 text-[11px] font-normal dark:bg-white/[0.05] dark:text-white/80"
                   >
                     <MapPin className="h-3 w-3 mr-1" />
                     {job.location}
                   </Badge>
                   <Badge
                     variant="secondary"
-                    className="text-[11px] font-normal capitalize bg-secondary/50"
+                    className="listing-subtle-border border bg-secondary/50 text-[11px] font-normal capitalize dark:bg-white/[0.05] dark:text-white/80"
                   >
                     {jobTypeLabel}
                   </Badge>
                   {jobLevelLabel && (
                     <Badge
                       variant="secondary"
-                      className="text-[11px] font-normal capitalize bg-secondary/50"
+                      className="listing-subtle-border border bg-secondary/50 text-[11px] font-normal capitalize dark:bg-white/[0.05] dark:text-white/80"
                     >
                       {jobLevelLabel}
                     </Badge>
@@ -368,7 +368,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
               </div>
             </Link>
 
-            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-between gap-2 sm:min-w-[100px] sm:pl-4 sm:border-l sm:border-border/40">
+            <div className="listing-subtle-border flex items-center justify-between gap-2 sm:min-w-[100px] sm:flex-col sm:items-end sm:justify-between sm:border-l sm:pl-4">
               {job.createdAt && (
                 <span className="text-[11px] text-muted-foreground/50">
                   {timeAgo(job.createdAt, language)}
@@ -396,7 +396,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
   return (
     <Card
       className={cn(
-        "group relative transition-all duration-300 hover:shadow-md hover:border-primary/15 hover:-translate-y-0.5",
+        "listing-panel-surface listing-subtle-border group relative transition-all duration-300 hover:shadow-md hover:border-primary/15 hover:-translate-y-0.5",
         className
       )}
     >

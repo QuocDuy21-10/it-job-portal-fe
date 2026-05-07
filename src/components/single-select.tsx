@@ -27,6 +27,7 @@ type SingleSelectProps = {
   disabled?: boolean;
   leftIcon?: React.ReactNode;
   allowClear?: boolean;
+  noBorder?: boolean;
 };
 
 export function SingleSelect({
@@ -39,6 +40,7 @@ export function SingleSelect({
   disabled = false,
   leftIcon,
   allowClear = true,
+  noBorder = false,
 }: SingleSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,6 +78,7 @@ export function SingleSelect({
   };
 
   const selectedLabel = options.find((opt) => opt.value === value)?.label;
+  const isSearchSurface = noBorder;
 
   return (
     <div ref={containerRef} className={`relative w-full ${className}`}>
@@ -87,25 +90,29 @@ export function SingleSelect({
               if (!isOpen) inputRef.current?.focus();
             }
           }}
-          className={`flex items-center gap-2 p-3 border rounded-lg bg-white dark:bg-slate-900 transition-all min-h-[44px] ${
-            disabled
-              ? "opacity-50 cursor-not-allowed border-slate-200 dark:border-slate-800"
-              : "cursor-pointer hover:border-blue-400 dark:hover:border-blue-600 border-slate-300 dark:border-slate-700"
-          } ${isOpen ? "ring-2 ring-blue-500 dark:ring-blue-600 border-blue-500 dark:border-blue-600" : ""}`}
+          className={noBorder
+            ? `flex items-center gap-2 p-3 transition-all min-h-[44px] ${
+                disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              } ${isSearchSurface ? "dark:text-white" : ""}`
+            : `flex items-center gap-2 p-3 border rounded-lg bg-white dark:bg-slate-900 transition-all min-h-[44px] ${
+                disabled
+                  ? "opacity-50 cursor-not-allowed border-slate-200 dark:border-slate-800"
+                  : "cursor-pointer hover:border-blue-400 dark:hover:border-blue-600 border-slate-300 dark:border-slate-700"
+              } ${isOpen ? "ring-2 ring-blue-500 dark:ring-blue-600 border-blue-500 dark:border-blue-600" : ""}`}
         >
           {leftIcon && (
-            <span className="flex items-center text-slate-500 dark:text-slate-400">
+            <span className={`flex items-center ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
               {leftIcon}
             </span>
           )}
           
           <div className="flex-1 flex items-center gap-2">
             {selectedLabel ? (
-              <span className="text-slate-900 dark:text-slate-100 text-sm">
+              <span className={`text-sm ${isSearchSurface ? "text-slate-900 dark:text-white" : "text-slate-900 dark:text-slate-100"}`}>
                 {selectedLabel}
               </span>
             ) : (
-              <span className="text-slate-500 dark:text-slate-400 text-sm">
+              <span className={`text-sm ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
                 {placeholder}
               </span>
             )}
@@ -115,14 +122,14 @@ export function SingleSelect({
             {allowClear && value && !disabled && (
               <button
                 onClick={clearValue}
-                className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full p-1 transition"
+                className={`rounded-full p-1 transition ${isSearchSurface ? "hover:bg-slate-200 dark:hover:bg-white/10" : "hover:bg-slate-200 dark:hover:bg-slate-700"}`}
                 aria-label="Clear selection"
               >
-                <X className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                <X className={`h-4 w-4 ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`} />
               </button>
             )}
             <ChevronDown
-              className={`w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform ${
+              className={`h-4 w-4 transition-transform ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"} ${
                 isOpen ? "rotate-180" : ""
               }`}
             />
@@ -130,16 +137,16 @@ export function SingleSelect({
         </div>
 
         {isOpen && !disabled && (
-          <div className="absolute top-full left-0 right-0 mt-2 z-[100] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-w-full">
+          <div className={`absolute left-0 right-0 top-full z-[100] mt-2 max-w-full rounded-lg border bg-white shadow-xl ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528]" : "dark:border-slate-700 dark:bg-slate-900"} border-slate-200`}>
             {/* Search input */}
-            <div className="p-3 border-b border-slate-200 dark:border-slate-800">
+            <div className={`border-b p-3 ${isSearchSurface ? "border-slate-200 dark:border-white/10" : "border-slate-200 dark:border-slate-800"}`}>
               <input
                 ref={inputRef}
                 type="text"
                 placeholder={searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-blue-500 dark:focus:border-blue-600 transition-all"
+                className={`w-full rounded-lg border px-3 py-2 text-slate-900 transition-all placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528] dark:text-white dark:placeholder:text-white/60 dark:focus:border-blue-400 dark:focus:ring-blue-400" : "dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-600 dark:focus:ring-blue-600"} border-slate-300 bg-white`}
               />
             </div>
 
@@ -152,15 +159,21 @@ export function SingleSelect({
                       onClick={() => selectOption(option.value)}
                       className={`w-full text-left px-4 py-2.5 flex items-center gap-3 transition ${
                         value === option.value
-                          ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium"
-                          : "text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          ? isSearchSurface
+                            ? "bg-blue-50 font-medium text-blue-700 dark:bg-white/10 dark:text-white"
+                            : "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium"
+                          : isSearchSurface
+                            ? "text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10"
+                            : "text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
                       }`}
                     >
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
                           value === option.value
-                            ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500"
-                            : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+                            ? "border-blue-600 bg-blue-600 dark:border-blue-500 dark:bg-blue-500"
+                            : isSearchSurface
+                              ? "border-slate-300 bg-white dark:border-white/20 dark:bg-[#101528]"
+                              : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
                         }`}
                       >
                         {value === option.value && (
@@ -172,7 +185,7 @@ export function SingleSelect({
                   </li>
                 ))
               ) : (
-                <li className="px-4 py-6 text-center text-slate-500 dark:text-slate-400 text-sm">
+                <li className={`px-4 py-6 text-center text-sm ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
                   Không tìm thấy kết quả
                 </li>
               )}

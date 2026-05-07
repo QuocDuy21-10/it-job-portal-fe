@@ -109,6 +109,14 @@ jest.mock("@/components/company/company-card", () => ({
   CompanyCard: () => <div data-testid="company-card" />,
 }));
 
+jest.mock("@/components/ui/carousel", () => ({
+  Carousel: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  CarouselContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  CarouselItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  CarouselPrevious: () => <button type="button">Previous slide</button>,
+  CarouselNext: () => <button type="button">Next slide</button>,
+}));
+
 jest.mock("@/components/simple-pagination", () => ({
   SimplePagination: () => <div data-testid="simple-pagination" />,
 }));

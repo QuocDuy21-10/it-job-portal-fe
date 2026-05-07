@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import parse from "html-react-parser";
-import { PageBreadcrumb } from "@/components/sections/page-breadcrumb";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
 import { useI18n } from "@/hooks/use-i18n";
 import { Pagination } from "@/components/pagination";
@@ -158,76 +157,73 @@ export default function CompanyListPage({
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 via-background to-secondary/10 py-8 px-4">
+    <div className="listing-page-surface min-h-screen px-4 py-10">
       <div className="max-w-7xl mx-auto">
-        {/* Breadcrumb */}
-        <PageBreadcrumb
-          items={[{ label: t("companyList.breadcrumb") }]}
-          className="mb-6"
-        />
 
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary mb-4">
-            <Building2 className="h-4 w-4" />
-            <span>{t("companyList.topEmployers")}</span>
+        <div className="listing-hero-surface listing-subtle-border mb-10 overflow-hidden rounded-[32px] border shadow-[0_24px_70px_hsl(214_35%_12%/0.08)] dark:shadow-[0_28px_80px_hsl(222_47%_5%/0.32)]">
+          {/* Header */}
+          <div className="px-6 py-10 text-center sm:px-8">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary dark:border-primary/30 dark:bg-primary/12 dark:text-sky-200">
+              <Building2 className="h-4 w-4" />
+              <span>{t("companyList.topEmployers")}</span>
+            </div>
+            <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
+              {t("companyList.findYourNext")}
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
+                {t("companyList.employer")}
+              </span>
+            </h1>
+            <p className="listing-muted-text mx-auto max-w-2xl text-lg sm:text-xl">
+              {t("companyList.browseTopCompanies")}
+            </p>
           </div>
-          <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
-            {t("companyList.findYourNext")}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              {t("companyList.employer")}
-            </span>
-          </h1>
-          <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
-            {t("companyList.browseTopCompanies")}
-          </p>
-        </div>
 
-        {/* Search Bar */}
-        <div className="mb-10">
+          {/* Search Bar */}
+          <div className="listing-filter-surface listing-strong-border border-t p-6 sm:px-8">
             <div className="mx-auto flex max-w-3xl flex-col gap-3 sm:flex-row">
               <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <input
-                type="text"
-                placeholder={t("companyList.searchPlaceholder")}
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key !== "Enter") {
-                    return;
-                  }
+                <Search className="listing-muted-text absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform" />
+                <input
+                  type="text"
+                  placeholder={t("companyList.searchPlaceholder")}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter") {
+                      return;
+                    }
 
-                  event.preventDefault();
-                  applySearch();
-                }}
-                className="w-full pl-12 pr-12 py-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-foreground placeholder:text-muted-foreground transition-all duration-200 shadow-sm hover:shadow-md"
-              />
-              {searchInput && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-secondary rounded-md"
-                  aria-label={t("companyList.clearSearch")}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
+                    event.preventDefault();
+                    applySearch();
+                  }}
+                  className="listing-input-surface h-14 w-full rounded-xl border px-12 py-4 text-foreground shadow-sm transition-all duration-200 placeholder:text-muted-foreground hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                />
+                {searchInput && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 transform rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground dark:hover:bg-white/10"
+                    aria-label={t("companyList.clearSearch")}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+              <Button
+                type="button"
+                onClick={() => applySearch()}
+                disabled={!isDraftDirty || isLoading}
+                className="h-14 px-6"
+              >
+                <Search className="mr-2 h-5 w-5" />
+                {t("companyList.searchButton")}
+              </Button>
             </div>
-            <Button
-              type="button"
-              onClick={() => applySearch()}
-              disabled={!isDraftDirty || isLoading}
-              className="h-14 px-6"
-            >
-              <Search className="mr-2 h-5 w-5" />
-              {t("companyList.searchButton")}
-            </Button>
+            {total > 0 && (
+              <p className="listing-muted-text mt-3 text-center text-sm">
+                <span className="font-semibold text-foreground">{total}</span> {t("companyList.companiesFound")}
+              </p>
+            )}
           </div>
-          {total > 0 && (
-            <p className="mt-3 text-center text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{total}</span> {t("companyList.companiesFound")}
-            </p>
-          )}
         </div>
 
         {/* Companies Grid */}
@@ -248,10 +244,10 @@ export default function CompanyListPage({
                 className="group block"
               >
                 <Card
-                  className={`p-6 ${EFFECTS.cardHover} bg-card border border-border hover:bg-card/90`}
+                  className={`listing-panel-surface listing-subtle-border p-6 ${EFFECTS.cardHover} border hover:bg-background/80 dark:hover:bg-white/[0.02]`}
                 >
                   <div className="mb-5 flex items-start gap-4">
-                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-border/50 bg-secondary shadow-sm transition-shadow duration-300 group-hover:shadow-md">
+                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-border/50 bg-secondary/80 shadow-sm transition-shadow duration-300 group-hover:shadow-md dark:border-white/10 dark:bg-white/[0.04]">
                       <Image
                         src={
                           company.logo
@@ -276,12 +272,12 @@ export default function CompanyListPage({
                     </div>
                   </div>
 
-                  <div className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                  <div className="listing-muted-text line-clamp-3 text-sm leading-relaxed">
                     {parse(truncateDescription(company.description || ""))}
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-                    <span className="text-xs text-muted-foreground">
+                  <div className="listing-subtle-border mt-4 flex items-center justify-between border-t pt-4">
+                    <span className="listing-muted-text text-xs">
                       {company.totalJobs || 0} {t("companyList.openPositions")}
                     </span>
                     <span className="text-sm font-medium text-primary transition-transform duration-300 group-hover:translate-x-1">
@@ -295,17 +291,17 @@ export default function CompanyListPage({
         ) : (
           <div className="text-center py-20">
             <div className="mb-6">
-              <div className="inline-flex p-6 bg-secondary/50 rounded-full">
+              <div className="inline-flex rounded-full bg-secondary/60 p-6 dark:bg-white/[0.04]">
                 <Search className="w-16 h-16 text-muted-foreground/30" />
               </div>
             </div>
             <h3 className={`${TYPOGRAPHY.h3} text-foreground mb-3`}>{t("companyList.noCompaniesFound")}</h3>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+            <p className="listing-muted-text mx-auto mb-8 max-w-md">
               {t("companyList.tryAdjustingSearch")}
             </p>
             <Button 
               variant="outline" 
-              className="bg-card hover:bg-secondary" 
+              className="listing-panel-surface listing-subtle-border hover:bg-secondary/70 dark:hover:bg-white/[0.04]" 
               onClick={clearSearch}> 
               {t("companyList.clearSearch")}
             </Button>

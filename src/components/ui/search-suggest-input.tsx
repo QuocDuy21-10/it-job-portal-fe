@@ -10,16 +10,15 @@ import SKILLS_LIST from "@/shared/data/skill-list.json";
 export interface SearchSuggestInputProps {
   value: string;
   onChange: (value: string) => void;
-  /** Called when user presses Enter with no active suggestion, or selects a suggestion. */
   onSubmit?: (value: string) => void;
   placeholder?: string;
   className?: string;
   inputClassName?: string;
   disabled?: boolean;
-  /** Maximum number of suggestions shown. Default: 8 */
   maxSuggestions?: number;
   size?: "default" | "lg";
   id?: string;
+  noBorder?: boolean;
 }
 
 function HighlightedLabel({ label, query }: { label: string; query: string }) {
@@ -55,6 +54,7 @@ export function SearchSuggestInput({
   maxSuggestions = 8,
   size = "default",
   id,
+  noBorder = false,
 }: SearchSuggestInputProps) {
   const { t } = useI18n();
   const [activeIndex, setActiveIndex] = React.useState(-1);
@@ -226,6 +226,7 @@ export function SearchSuggestInput({
         className={cn(
           heightClass,
           size === "lg" ? "pl-4 pr-14 text-lg" : "pl-4 pr-14",
+          noBorder && "border-0 shadow-none focus-visible:ring-0 focus-visible:border-transparent outline-none",
           inputClassName
         )}
       />

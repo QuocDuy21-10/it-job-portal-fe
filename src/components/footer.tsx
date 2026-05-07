@@ -15,7 +15,7 @@ export function Footer() {
   const { t, mounted: i18nMounted } = useI18n();
 
   return (
-    <footer className="border-t bg-gradient-to-br from-secondary/30 via-background to-secondary/20 mt-auto">
+    <footer className="mt-auto border-t bg-gradient-to-br from-secondary/30 via-background to-secondary/20 dark:border-white/10 dark:bg-[#101528] dark:bg-none">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-4">
