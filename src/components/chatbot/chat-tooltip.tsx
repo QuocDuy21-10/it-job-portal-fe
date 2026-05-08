@@ -102,7 +102,7 @@ const ChatTooltip = ({
         transform: "translateY(-100%)",
       }}
     >
-      <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 px-4 py-3">
+      <div className="relative rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-xl dark:border-border dark:bg-card">
         {/* Dismiss button */}
         <button
           onClick={(e) => {
@@ -141,7 +141,7 @@ const ChatTooltip = ({
 
         {/* Caret pointing down toward the button */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700 rotate-45"
+          className="absolute left-1/2 bottom-[-6px] h-3 w-3 -translate-x-1/2 rotate-45 border-b border-r border-gray-200 bg-white dark:border-border dark:bg-card"
           aria-hidden="true"
         />
       </div>

@@ -158,9 +158,8 @@ export default function CompanyListPage({
 
   return (
     <div className="listing-page-surface min-h-screen px-4 py-10">
-      <div className="max-w-7xl mx-auto">
-
-        <div className="listing-hero-surface listing-subtle-border mb-10 overflow-hidden rounded-[32px] border shadow-[0_24px_70px_hsl(214_35%_12%/0.08)] dark:shadow-[0_28px_80px_hsl(222_47%_5%/0.32)]">
+      <div className="mx-auto max-w-7xl">
+        <div className="company-list-hero-surface listing-subtle-border mb-10 overflow-hidden rounded-[32px] border shadow-[0_24px_70px_hsl(214_35%_12%/0.08)] dark:shadow-[0_28px_80px_hsl(222_47%_5%/0.32)]">
           {/* Header */}
           <div className="px-6 py-10 text-center sm:px-8">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary dark:border-primary/30 dark:bg-primary/12 dark:text-sky-200">
@@ -179,48 +178,54 @@ export default function CompanyListPage({
           </div>
 
           {/* Search Bar */}
-          <div className="listing-filter-surface listing-strong-border border-t p-6 sm:px-8">
-            <div className="mx-auto flex max-w-3xl flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="listing-muted-text absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform" />
-                <input
-                  type="text"
-                  placeholder={t("companyList.searchPlaceholder")}
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key !== "Enter") {
-                      return;
-                    }
+          <div className="company-list-search-surface listing-filter-surface listing-strong-border border-t p-6 sm:px-8">
+            <div className="company-list-search-shell mx-auto max-w-3xl">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="relative flex-1">
+                  <label htmlFor="company-list-search" className="sr-only">
+                    {t("companyList.searchPlaceholder")}
+                  </label>
+                  <Search className="company-list-search-icon absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" />
+                  <input
+                    id="company-list-search"
+                    type="text"
+                    placeholder={t("companyList.searchPlaceholder")}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") {
+                        return;
+                      }
 
-                    event.preventDefault();
-                    applySearch();
-                  }}
-                  className="listing-input-surface h-14 w-full rounded-xl border px-12 py-4 text-foreground shadow-sm transition-all duration-200 placeholder:text-muted-foreground hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                />
-                {searchInput && (
-                  <button
-                    onClick={clearSearch}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 transform rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground dark:hover:bg-white/10"
-                    aria-label={t("companyList.clearSearch")}
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                )}
+                      event.preventDefault();
+                      applySearch();
+                    }}
+                    className="company-list-search-input h-12 w-full rounded-full border-0 bg-transparent pl-12 pr-12 text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:h-14 sm:pr-16"
+                  />
+                  {searchInput && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 dark:hover:bg-white/10"
+                      aria-label={t("companyList.clearSearch")}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => applySearch()}
+                  disabled={!isDraftDirty || isLoading}
+                  className="company-list-search-button h-12 rounded-full px-8 text-base font-semibold sm:h-14 sm:min-w-[116px]"
+                >
+                  {t("companyList.searchButton")}
+                </Button>
               </div>
-              <Button
-                type="button"
-                onClick={() => applySearch()}
-                disabled={!isDraftDirty || isLoading}
-                className="h-14 px-6"
-              >
-                <Search className="mr-2 h-5 w-5" />
-                {t("companyList.searchButton")}
-              </Button>
             </div>
             {total > 0 && (
-              <p className="listing-muted-text mt-3 text-center text-sm">
-                <span className="font-semibold text-foreground">{total}</span> {t("companyList.companiesFound")}
+              <p className="company-list-result-count mt-4 text-center text-sm">
+                <span className="font-semibold text-foreground">{total}</span>{" "}
+                {t("companyList.companiesFound")}
               </p>
             )}
           </div>

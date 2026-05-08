@@ -148,8 +148,8 @@ export default async function CompanyDetailPage({
         }}
       />
 
-      <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-        <div className="border-b border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
+        <div className="border-b border-slate-200 bg-white shadow-sm dark:border-border dark:bg-card">
           <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <Breadcrumb>
               <BreadcrumbList>
@@ -256,7 +256,7 @@ export default async function CompanyDetailPage({
                   </h2>
                 </div>
 
-                <Card className="border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+                <Card className="border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
                   <div className="prose prose-slate max-w-none leading-relaxed text-slate-700 dark:prose-invert dark:text-slate-300">
                     {parse(company.description)}
                   </div>
@@ -284,7 +284,7 @@ export default async function CompanyDetailPage({
             </div>
 
             <div className="space-y-8">
-              <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+              <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
                 <div className="space-y-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Hồ sơ doanh nghiệp

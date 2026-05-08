@@ -25,7 +25,7 @@ export default function CompanyDetailPageClient({
 
   return (
     <div className="space-y-6">
-      <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+      <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="flex-1">
             <Input
@@ -38,7 +38,7 @@ export default function CompanyDetailPageClient({
           <select
             value={selectedLocationCode}
             onChange={(event) => setSelectedLocationCode(event.target.value)}
-            className="h-11 cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 transition-all hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="h-11 cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 transition-all hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-border dark:bg-card dark:text-slate-100"
           >
             <option value="">Tất cả vị trí</option>
             {LOCATION_OPTIONS.map((location) => (

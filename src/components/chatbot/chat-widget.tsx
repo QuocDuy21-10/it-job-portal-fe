@@ -42,10 +42,10 @@ const INITIAL_CHIPS = [...PLATFORM_CHIPS, ...USER_CHIPS];
 
 const ChatSkeletonBubble = () => (
   <div className="flex justify-start">
-    <div className="max-w-[85%] p-3 rounded-lg rounded-tl-none bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm space-y-2">
-      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-3/4" />
-      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-full" />
-      <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-1/2" />
+    <div className="max-w-[85%] space-y-2 rounded-lg rounded-tl-none border border-gray-200 bg-white p-3 shadow-sm dark:border-border dark:bg-card">
+      <div className="h-3 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-secondary" />
+      <div className="h-3 w-full animate-pulse rounded bg-gray-200 dark:bg-secondary" />
+      <div className="h-3 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-secondary" />
     </div>
   </div>
 );
@@ -240,7 +240,7 @@ const ChatWidget = () => {
       {/* Chat Window */}
       {isOpen && (
         <div
-          className="w-[400px] h-[600px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-in slide-in-from-bottom-5 duration-300"
+          className="z-50 flex h-[600px] w-[400px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl animate-in slide-in-from-bottom-5 duration-300 dark:border-border dark:bg-card"
           style={getChatWindowStyle()}
         >
           {/* Header */}
@@ -269,7 +269,7 @@ const ChatWidget = () => {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-800">
+          <div className="flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4 dark:bg-secondary">
             {/* Guest Mode: Login Prompt */}
             {!isAuthenticated ? (
               <div className="flex flex-col items-center justify-center h-full text-center px-6">
@@ -446,7 +446,7 @@ const ChatWidget = () => {
           )}
 
           {/* Input Area */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <div className="border-t border-gray-200 bg-white p-4 dark:border-border dark:bg-card">
             {isAuthenticated ? (
               <>
                 <div className="flex gap-2">
@@ -457,7 +457,7 @@ const ChatWidget = () => {
                     onKeyDown={handleKeyDown}
                     placeholder="Hỏi về việc làm, CV..."
                     maxLength={1000}
-                    className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-secondary dark:text-white"
                     disabled={isTyping || isStreaming}
                   />
                   {isStreaming ? (

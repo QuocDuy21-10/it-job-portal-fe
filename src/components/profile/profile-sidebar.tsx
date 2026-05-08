@@ -158,8 +158,7 @@ export default function ProfileSidebar({
       <aside
         className={cn(
           "flex flex-col fixed inset-y-0 left-0",
-          "border-r border-gray-200 dark:border-gray-800",
-          "bg-white dark:bg-gray-900",
+          "border-r border-gray-200 bg-white dark:border-border dark:bg-card",
           "pt-16 transition-all duration-300 z-20",
           "shadow-sm",
           // Responsive width
@@ -169,7 +168,7 @@ export default function ProfileSidebar({
         )}
       >
         {/* Sidebar Header - Toggle Button */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-border">
           {isExpanded && (
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
@@ -186,8 +185,7 @@ export default function ProfileSidebar({
                 <button
                   onClick={handleToggle}
                   className={cn(
-                    "p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800",
-                    "rounded-md transition-colors",
+                    "rounded-md p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-secondary",
                     !isExpanded && "mx-auto"
                   )}
                   aria-label={
@@ -237,7 +235,7 @@ export default function ProfileSidebar({
                       isExpanded ? "px-3 gap-3" : "px-2 justify-center",
                       isActive
                         ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 shadow-sm"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-secondary dark:hover:text-gray-100"
                     )}
                   >
                     <Icon

@@ -64,6 +64,20 @@ const createInitialData = (): PaginatedResult<Company> => ({
   },
 });
 
+const createInitialDataWithTotal = (
+  total: number
+): PaginatedResult<Company> => ({
+  result: [],
+  meta: {
+    pagination: {
+      current_page: 1,
+      per_page: 9,
+      total,
+      total_pages: Math.ceil(total / 9),
+    },
+  },
+});
+
 const initialSearchState: CompanyListSearchState = {
   limit: 9,
   page: 1,
@@ -84,6 +98,32 @@ describe("CompaniesPageClient", () => {
   afterEach(() => {
     jest.clearAllMocks();
     mockReplace.mockReset();
+  });
+
+  it("renders the existing hero copy with the redesigned search section", () => {
+    render(
+      <CompaniesPageClient
+        initialData={createInitialDataWithTotal(420)}
+        initialSearchState={initialSearchState}
+      />
+    );
+
+    expect(screen.getByText("companyList.topEmployers")).toBeInTheDocument();
+    expect(screen.getByText("companyList.findYourNext")).toBeInTheDocument();
+    expect(screen.getByText("companyList.employer")).toBeInTheDocument();
+    expect(
+      screen.getByText("companyList.browseTopCompanies")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("companyList.searchPlaceholder")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "companyList.searchButton" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("420")).toBeInTheDocument();
+    expect(
+      screen.getByText("companyList.companiesFound")
+    ).toBeInTheDocument();
   });
 
   it("does not update the URL while the user is still typing", () => {

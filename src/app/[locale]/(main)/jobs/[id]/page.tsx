@@ -184,8 +184,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         }}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-        <div className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
+        <div className="border-b border-slate-200 bg-white dark:border-border dark:bg-card">
           <div className="mx-auto max-w-7xl px-4 py-4">
             <Breadcrumb>
               <BreadcrumbList>
@@ -243,7 +243,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         <div className="mx-auto max-w-7xl px-4 py-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
-              <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+              <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
                 <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                   <div className="group flex items-start gap-3">
                     <div className="rounded-lg bg-blue-50 p-2 transition-colors group-hover:bg-blue-100 dark:bg-blue-950 dark:group-hover:bg-blue-900">
@@ -296,7 +296,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               {daysRemaining > 0 && (
                 <Card className="border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 transition-shadow hover:shadow-md dark:border-amber-800 dark:from-amber-950 dark:to-orange-950">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-full bg-white p-2 dark:bg-slate-900">
+                    <div className="rounded-full bg-white p-2 dark:bg-card">
                       <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                     </div>
                     <div>
@@ -308,10 +308,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                 </Card>
               )}
 
-              <Card className="border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+              <Card className="border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
                 <div className="prose max-w-none dark:prose-invert">
                   {job.skills.length > 0 && (
-                    <div className="mb-8 border-b border-slate-200 pb-8 dark:border-slate-800">
+                    <div className="mb-8 border-b border-slate-200 pb-8 dark:border-border">
                       <div className="mb-4 flex items-center gap-2">
                         <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-950">
                           <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -345,7 +345,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 p-6 dark:border-slate-800 dark:from-slate-900 dark:to-blue-950">
+                  <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 p-6 dark:border-border dark:from-card dark:to-blue-950">
                     <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-100">
                       <div className="h-6 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
                       Yêu cầu công việc

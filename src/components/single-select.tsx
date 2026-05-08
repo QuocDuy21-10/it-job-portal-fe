@@ -94,11 +94,11 @@ export function SingleSelect({
             ? `flex items-center gap-2 p-3 transition-all min-h-[44px] ${
                 disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
               } ${isSearchSurface ? "dark:text-white" : ""}`
-            : `flex items-center gap-2 p-3 border rounded-lg bg-white dark:bg-slate-900 transition-all min-h-[44px] ${
+            : `flex min-h-[44px] items-center gap-2 rounded-lg border bg-white p-3 transition-all dark:bg-card ${
                 disabled
-                  ? "opacity-50 cursor-not-allowed border-slate-200 dark:border-slate-800"
-                  : "cursor-pointer hover:border-blue-400 dark:hover:border-blue-600 border-slate-300 dark:border-slate-700"
-              } ${isOpen ? "ring-2 ring-blue-500 dark:ring-blue-600 border-blue-500 dark:border-blue-600" : ""}`}
+                  ? "cursor-not-allowed border-slate-200 opacity-50 dark:border-border"
+                  : "cursor-pointer border-slate-300 hover:border-blue-400 dark:border-border dark:hover:border-blue-600"
+              } ${isOpen ? "border-blue-500 ring-2 ring-blue-500 dark:border-blue-600 dark:ring-blue-600" : ""}`}
         >
           {leftIcon && (
             <span className={`flex items-center ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
@@ -122,7 +122,7 @@ export function SingleSelect({
             {allowClear && value && !disabled && (
               <button
                 onClick={clearValue}
-                className={`rounded-full p-1 transition ${isSearchSurface ? "hover:bg-slate-200 dark:hover:bg-white/10" : "hover:bg-slate-200 dark:hover:bg-slate-700"}`}
+                className={`rounded-full p-1 transition ${isSearchSurface ? "hover:bg-slate-200 dark:hover:bg-white/10" : "hover:bg-slate-200 dark:hover:bg-secondary"}`}
                 aria-label="Clear selection"
               >
                 <X className={`h-4 w-4 ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`} />
@@ -137,16 +137,16 @@ export function SingleSelect({
         </div>
 
         {isOpen && !disabled && (
-          <div className={`absolute left-0 right-0 top-full z-[100] mt-2 max-w-full rounded-lg border bg-white shadow-xl ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528]" : "dark:border-slate-700 dark:bg-slate-900"} border-slate-200`}>
+          <div className={`absolute left-0 right-0 top-full z-[100] mt-2 max-w-full rounded-lg border bg-white shadow-xl ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528]" : "dark:border-border dark:bg-card"} border-slate-200`}>
             {/* Search input */}
-            <div className={`border-b p-3 ${isSearchSurface ? "border-slate-200 dark:border-white/10" : "border-slate-200 dark:border-slate-800"}`}>
+            <div className={`border-b p-3 ${isSearchSurface ? "border-slate-200 dark:border-white/10" : "border-slate-200 dark:border-border"}`}>
               <input
                 ref={inputRef}
                 type="text"
                 placeholder={searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full rounded-lg border px-3 py-2 text-slate-900 transition-all placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528] dark:text-white dark:placeholder:text-white/60 dark:focus:border-blue-400 dark:focus:ring-blue-400" : "dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-600 dark:focus:ring-blue-600"} border-slate-300 bg-white`}
+                className={`w-full rounded-lg border px-3 py-2 text-slate-900 transition-all placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528] dark:text-white dark:placeholder:text-white/60 dark:focus:border-blue-400 dark:focus:ring-blue-400" : "dark:border-border dark:bg-card dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-blue-600 dark:focus:ring-blue-600"} border-slate-300 bg-white`}
               />
             </div>
 
@@ -164,7 +164,7 @@ export function SingleSelect({
                             : "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium"
                           : isSearchSurface
                             ? "text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10"
-                            : "text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            : "text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-secondary"
                       }`}
                     >
                       <div
@@ -173,7 +173,7 @@ export function SingleSelect({
                             ? "border-blue-600 bg-blue-600 dark:border-blue-500 dark:bg-blue-500"
                             : isSearchSurface
                               ? "border-slate-300 bg-white dark:border-white/20 dark:bg-[#101528]"
-                              : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+                              : "border-slate-300 bg-white dark:border-border dark:bg-card"
                         }`}
                       >
                         {value === option.value && (

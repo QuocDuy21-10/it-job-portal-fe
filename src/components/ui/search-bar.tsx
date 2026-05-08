@@ -131,12 +131,12 @@ export function SearchBar({
           sizeClasses,
           "pl-9",
           showClearButton && searchTerm && "pr-9",
-          "bg-white dark:bg-gray-900",
-          "border-gray-300 dark:border-gray-700",
+          "bg-white dark:bg-card",
+          "border-gray-300 dark:border-border",
           "focus:border-blue-500 dark:focus:border-blue-500",
           "focus:ring-2 focus:ring-blue-500/20",
           "transition-all duration-200",
-          "placeholder:text-gray-400 dark:placeholder:text-gray-500"
+          "placeholder:text-gray-400 dark:placeholder:text-muted-foreground"
         )}
         aria-label={placeholder}
       />

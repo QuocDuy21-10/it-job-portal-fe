@@ -83,11 +83,11 @@ export function MultiSelect({
               if (!isOpen) inputRef.current?.focus();
             }
           }}
-          className={`flex flex-wrap items-center gap-2 p-3 border rounded-lg bg-white dark:bg-slate-900 transition-all min-h-[44px] ${
+          className={`flex min-h-[44px] flex-wrap items-center gap-2 rounded-lg border bg-white p-3 transition-all dark:bg-card ${
             disabled
-              ? "opacity-50 cursor-not-allowed border-slate-200 dark:border-slate-800"
-              : "cursor-pointer hover:border-blue-400 dark:hover:border-blue-600 border-slate-300 dark:border-slate-700"
-          } ${isOpen ? "ring-2 ring-blue-500 dark:ring-blue-600 border-blue-500 dark:border-blue-600" : ""}`}
+              ? "cursor-not-allowed border-slate-200 opacity-50 dark:border-border"
+              : "cursor-pointer border-slate-300 hover:border-blue-400 dark:border-border dark:hover:border-blue-600"
+          } ${isOpen ? "border-blue-500 ring-2 ring-blue-500 dark:border-blue-600 dark:ring-blue-600" : ""}`}
         >
           {leftIcon && (
             <span className="mr-1 flex items-center text-slate-500 dark:text-slate-400">{leftIcon}</span>
@@ -131,16 +131,16 @@ export function MultiSelect({
         </div>
 
         {isOpen && !disabled && (
-          <div className="absolute top-full left-0 right-0 mt-2 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl">
+          <div className="absolute top-full left-0 right-0 z-50 mt-2 rounded-lg border border-slate-200 bg-white shadow-xl dark:border-border dark:bg-card">
             {/* Search input */}
-            <div className="p-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="border-b border-slate-200 p-3 dark:border-border">
               <input
                 ref={inputRef}
                 type="text"
                 placeholder={searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-blue-500 dark:focus:border-blue-600 transition-all"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition-all placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-border dark:bg-card dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-blue-600 dark:focus:ring-blue-600"
               />
             </div>
 
@@ -155,14 +155,14 @@ export function MultiSelect({
                       className={`w-full text-left px-4 py-2.5 flex items-center gap-3 transition ${
                         value.includes(option.value)
                           ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium"
-                          : "text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          : "text-slate-900 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-secondary"
                       }`}
                     >
                       <div
                         className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
                           value.includes(option.value)
                             ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500"
-                            : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+                            : "border-slate-300 bg-white dark:border-border dark:bg-card"
                         }`}
                       >
                         {value.includes(option.value) && (

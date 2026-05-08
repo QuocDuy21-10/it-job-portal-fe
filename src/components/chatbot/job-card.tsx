@@ -24,7 +24,7 @@ const JobCard = ({ job }: JobCardProps) => {
   return (
     <div
       onClick={handleClick}
-      className="min-w-[250px] max-w-[250px] p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 cursor-pointer transition-all flex-shrink-0 group"
+      className="group min-w-[250px] max-w-[250px] flex-shrink-0 cursor-pointer rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition-all hover:border-blue-400 hover:shadow-md dark:border-border dark:bg-card dark:hover:border-blue-500"
     >
       {/* Header: Logo + Job Title */}
       <div className="flex gap-3 items-start mb-2">
@@ -35,7 +35,7 @@ const JobCard = ({ job }: JobCardProps) => {
             className="w-10 h-10 rounded-md object-cover border border-gray-200 dark:border-gray-600 flex-shrink-0"
           />
         ) : (
-          <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 dark:bg-secondary">
             <BriefcaseIcon className="w-6 h-6 text-gray-400" />
           </div>
         )}
@@ -80,7 +80,7 @@ const JobCard = ({ job }: JobCardProps) => {
       )}
 
       {/* Footer: Salary + Action */}
-      <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+      <div className="mt-2 flex items-center justify-between border-t border-gray-100 pt-2 dark:border-border">
         {/* <span className="text-xs font-semibold text-green-600 dark:text-green-400">
           {formatSalary(job.salary)}
         </span> */}

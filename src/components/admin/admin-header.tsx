@@ -56,7 +56,7 @@ export function AdminHeader({
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-40",
-        "bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800",
+        "border-b border-gray-200 bg-white dark:border-border dark:bg-background",
         "shadow-sm",
         className
       )}
@@ -97,7 +97,7 @@ export function AdminHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center gap-2 h-auto py-1.5 px-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="flex h-auto items-center gap-2 px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-secondary"
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user?.avatar || undefined} alt={user?.name || "Admin"} />

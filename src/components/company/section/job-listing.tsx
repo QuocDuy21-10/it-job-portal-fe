@@ -37,7 +37,7 @@ function JobCard({
   return (
     <Tooltip.Provider>
       <Link href={jobHref} className="block group">
-        <Card className="p-6 hover:shadow-xl transition-all duration-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer transform hover:scale-[1.01]">
+        <Card className="cursor-pointer border-slate-200 bg-white p-6 transition-all duration-300 hover:scale-[1.01] hover:border-blue-300 hover:shadow-xl dark:border-border dark:bg-card dark:hover:border-blue-700">
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <div className="flex-1 space-y-3">
               <div className="flex items-start justify-between gap-3">
@@ -54,7 +54,7 @@ function JobCard({
                         "p-2 rounded-full transition-all duration-300 flex-shrink-0",
                         isSaved
                           ? "bg-rose-100 dark:bg-rose-950 hover:bg-rose-200 dark:hover:bg-rose-900"
-                          : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
+                          : "bg-slate-100 hover:bg-slate-200 dark:bg-secondary dark:hover:bg-secondary/80"
                       )}
                     >
                       <Heart
@@ -195,7 +195,7 @@ export default function JobListing({
 
   if (isLoading) {
     return (
-      <Card className="p-12 text-center border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <Card className="border-slate-200 bg-white p-12 text-center dark:border-border dark:bg-card">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
           <p className="text-slate-600 dark:text-slate-400">Đang tải danh sách công việc...</p>
@@ -218,7 +218,7 @@ export default function JobListing({
           <JobCard key={job._id} job={job} jobPathPrefix={jobPathPrefix} />
         ))
       ) : (
-        <Card className="p-12 text-center border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 p-12 text-center dark:border-border dark:from-card dark:to-blue-950">
           <div className="max-w-md mx-auto space-y-3">
             <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto">
               <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
