@@ -1,5 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import {
+  getMessagesNeedingRecommendationHydration,
+  hydrateRecommendedJobsForMessages,
+  normalizeAssistantResponseMessage,
+  normalizeChatMessage,
+} from "@/features/chatbot/lib/chat-message.utils";
 import {
   useSendMessageMutation,
   useLazyGetChatHistoryQuery,
@@ -13,6 +19,7 @@ import {
   setSuggestedActions,
   setIsOpen,
   toggleChatbox,
+  updateMessageRecommendations,
 } from "@/features/chatbot/redux/chat-bot.slice";
 import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
 import { IMessage } from "@/shared/types/chat";
@@ -25,6 +32,7 @@ export const useChat = () => {
   const { messages, isTyping, suggestedActions, isOpen, streamingContent, streamingMessageId } =
     useAppSelector((state) => state.chatBot);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const hydratedMessageIdsRef = useRef(new Set<string>());
 
   // RTK Query hooks
   const [sendMessageMutation] = useSendMessageMutation();
@@ -33,6 +41,48 @@ export const useChat = () => {
 
   // Streaming hook
   const { sendStreamMessage, abortStream, isStreaming } = useStreamChat();
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      hydratedMessageIdsRef.current.clear();
+      return;
+    }
+
+    const messagesToHydrate = getMessagesNeedingRecommendationHydration(
+      messages
+    ).filter((message) => !hydratedMessageIdsRef.current.has(message.id));
+
+    if (messagesToHydrate.length === 0) {
+      return;
+    }
+
+    messagesToHydrate.forEach((message) => {
+      hydratedMessageIdsRef.current.add(message.id);
+    });
+
+    let isCancelled = false;
+
+    hydrateRecommendedJobsForMessages(dispatch, messagesToHydrate).then(
+      (updates) => {
+        if (isCancelled) {
+          return;
+        }
+
+        updates.forEach((update) => {
+          dispatch(
+            updateMessageRecommendations({
+              messageId: update.messageId,
+              recommendedJobs: update.recommendedJobs,
+            })
+          );
+        });
+      }
+    );
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [dispatch, messages]);
 
   // Load chat history from server
   const loadHistory = useCallback(async () => {
@@ -44,14 +94,9 @@ export const useChat = () => {
         limit: 50,
       }).unwrap();
 
-      // Transform data từ BE sang UI format
-      const formattedMessages: IMessage[] = response.messages.map((msg) => ({
-        id: uuidv4(),
-        role: msg.role,
-        content: msg.content,
-        timestamp: msg.timestamp, 
-        recommendedJobs: msg.recommendedJobs, 
-      }));
+      const formattedMessages: IMessage[] = response.messages.map((msg) =>
+        normalizeChatMessage(msg)
+      );
 
       // Sắp xếp theo timestamp tăng dần (cũ -> mới) để hiển thị đúng thứ tự
       const sortedMessages = formattedMessages.sort((a, b) => 
@@ -102,13 +147,7 @@ export const useChat = () => {
           message: trimmedContent,
         }).unwrap();
 
-        const botMessage: IMessage = {
-          id: uuidv4(),
-          role: "assistant",
-          content: response.response,
-          timestamp: response.timestamp,
-          recommendedJobs: response.recommendedJobs,
-        };
+        const botMessage = normalizeAssistantResponseMessage(response);
 
         dispatch(addMessage(botMessage));
 

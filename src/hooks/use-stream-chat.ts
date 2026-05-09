@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { normalizeStreamDoneEvent } from "@/features/chatbot/lib/chat-message.utils";
 import { useInitiateStreamMutation } from "@/features/chatbot/redux/chat-bot.api";
 import {
   addMessage,
@@ -78,12 +79,15 @@ export const useStreamChat = () => {
 
         eventSource.addEventListener("done", (e: MessageEvent) => {
           try {
-            const doneData: IStreamDoneEvent = JSON.parse(e.data);
+            const doneData = normalizeStreamDoneEvent(
+              JSON.parse(e.data) as IStreamDoneEvent
+            );
 
             // Finalize the streaming message with metadata
             dispatch(
               finalizeStream({
                 recommendedJobs: doneData.recommendedJobs,
+                recommendedJobIds: doneData.recommendedJobIds,
               })
             );
 

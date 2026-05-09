@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IJob } from "@/shared/types/backend";
-import { IMessage } from "@/shared/types/chat";
+import { IChatRecommendationMetadata, IMessage } from "@/shared/types/chat";
 
 interface ChatBotState {
   messages: IMessage[];
@@ -18,6 +17,23 @@ const initialState: ChatBotState = {
   isOpen: false,
   streamingMessageId: null,
   streamingContent: "",
+};
+
+const applyMessageRecommendations = (
+  message: IMessage,
+  metadata?: IChatRecommendationMetadata
+) => {
+  if (!metadata) {
+    return;
+  }
+
+  if (metadata.recommendedJobs !== undefined) {
+    message.recommendedJobs = metadata.recommendedJobs;
+  }
+
+  if (metadata.recommendedJobIds !== undefined) {
+    message.recommendedJobIds = metadata.recommendedJobIds;
+  }
 };
 
 const chatBotSlice = createSlice({
@@ -74,7 +90,7 @@ const chatBotSlice = createSlice({
     // Finalize streaming — update the placeholder message with full content and optional metadata
     finalizeStream: (
       state,
-      action: PayloadAction<{ recommendedJobs?: IJob[] } | undefined>
+      action: PayloadAction<IChatRecommendationMetadata | undefined>
     ) => {
       if (state.streamingMessageId) {
         const msg = state.messages.find(
@@ -82,14 +98,29 @@ const chatBotSlice = createSlice({
         );
         if (msg) {
           msg.content = state.streamingContent;
-          if (action.payload?.recommendedJobs) {
-            msg.recommendedJobs = action.payload.recommendedJobs;
-          }
+          applyMessageRecommendations(msg, action.payload);
         }
       }
       state.streamingMessageId = null;
       state.streamingContent = "";
       state.isTyping = false;
+    },
+
+    updateMessageRecommendations: (
+      state,
+      action: PayloadAction<
+        { messageId: string } & IChatRecommendationMetadata
+      >
+    ) => {
+      const msg = state.messages.find(
+        (message) => message.id === action.payload.messageId
+      );
+
+      if (!msg) {
+        return;
+      }
+
+      applyMessageRecommendations(msg, action.payload);
     },
 
     // Abort streaming — keep partial content, clear streaming state
@@ -121,6 +152,7 @@ export const {
   startStreaming,
   appendStreamToken,
   finalizeStream,
+  updateMessageRecommendations,
   abortStream,
 } = chatBotSlice.actions;
 

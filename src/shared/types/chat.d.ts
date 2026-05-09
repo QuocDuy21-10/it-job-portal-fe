@@ -1,34 +1,34 @@
 import { IJob } from "./backend";
 
+export interface IChatRecommendationMetadata {
+  recommendedJobs?: IJob[];
+  recommendedJobIds?: string[];
+}
 
-export interface IMessage {
-  id: string; 
+export interface IChatTransportMessage extends IChatRecommendationMetadata {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string; // ISO Date string (serializable for Redux)
+}
+
+export interface IMessage extends IChatTransportMessage {
+  id: string;
   isLoading?: boolean;
-  recommendedJobs?: IJob[];
 }
 
 export interface ISendMessageRequest {
-  message: string; 
+  message: string;
 }
 
-export interface IChatResponse {
+export interface IChatResponse extends IChatRecommendationMetadata {
   conversationId: string;
   response: string; // Markdown text
   timestamp: string;
   suggestedActions?: string[];
-  recommendedJobs?: IJob[]; 
 }
 
 export interface IChatHistoryResponse {
-  messages: Array<{
-    role: 'user' | 'assistant';
-    content: string;
-    timestamp: string;
-    recommendedJobs?: IJob[];
-  }>;
+  messages: IChatTransportMessage[];
   total: number;
   title?: string;
 }
@@ -42,8 +42,12 @@ export interface IStreamInitResponse {
   streamId: string;
 }
 
-export interface IStreamDoneEvent {
+export interface IStreamDoneEvent extends IChatRecommendationMetadata {
   conversationId: string;
-  recommendedJobs?: IJob[];
+  suggestedActions?: string[];
+}
+
+export interface INormalizedStreamDoneEvent extends IChatRecommendationMetadata {
+  conversationId: string;
   suggestedActions?: string[];
 }

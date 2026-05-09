@@ -16,7 +16,8 @@ export const chatBotApi = baseApi.injectEndpoints({
         method: "POST",
         data: body,
       }),
-      transformResponse: (response: ApiResponse<IChatResponse>) => response.data,
+      transformResponse: (response: ApiResponse<IChatResponse>) =>
+        response.data as IChatResponse,
     }),
 
     getChatHistory: builder.query<
@@ -29,7 +30,7 @@ export const chatBotApi = baseApi.injectEndpoints({
         params: { page, limit },
       }),
       transformResponse: (response: ApiResponse<IChatHistoryResponse>) =>
-        response.data,
+        response.data as IChatHistoryResponse,
     }),
 
     clearChatHistory: builder.mutation<IClearChatResponse, void>({
@@ -38,7 +39,7 @@ export const chatBotApi = baseApi.injectEndpoints({
         method: "DELETE",
       }),
       transformResponse: (response: ApiResponse<IClearChatResponse>) =>
-        response.data,
+        response.data as IClearChatResponse,
     }),
 
     initiateStream: builder.mutation<IStreamInitResponse, ISendMessageRequest>({
@@ -48,7 +49,7 @@ export const chatBotApi = baseApi.injectEndpoints({
         data: body,
       }),
       transformResponse: (response: ApiResponse<IStreamInitResponse>) =>
-        response.data,
+        response.data as IStreamInitResponse,
     }),
   }),
 });
