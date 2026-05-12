@@ -3,7 +3,7 @@ import { routing, type AppLocale } from "@/i18n/routing";
 
 const FALLBACK_SITE_URL = "http://localhost:3000";
 
-export const SITE_NAME = "JobPortal";
+export const SITE_NAME = "DevLink";
 
 export const PUBLIC_SITEMAP_PATHS = [
   {

@@ -16,7 +16,7 @@ export function HrDashboardLayout({ children }: { children: ReactNode }) {
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <div className="space-y-1">
               <Link href="/" className="text-lg font-semibold text-foreground">
-                JobPortal
+                DevLink
               </Link>
               <p className="text-sm text-muted-foreground">
                 {t("statisticsDashboard.hr.layoutDescription")}

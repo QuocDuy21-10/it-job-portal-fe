@@ -49,7 +49,7 @@ export const en = {
     followTip: "Follow this company to receive notifications about new job openings.",
   },
   meta: {
-    title: "JobPortal - Find Your Dream Job",
+    title: "DevLink - Find Your Dream Job",
     description:
       "Connecting talented professionals with amazing opportunities worldwide. Browse thousands of jobs from top companies.",
     keywords: "jobs, careers, employment, recruitment, job search, hiring",
@@ -92,7 +92,7 @@ export const en = {
       "Connect with top employers and land your dream IT job faster than ever",
     readyToGetStarted: "Ready to Level Up Your Career?",
     readyToGetStartedDescription:
-      "Join thousands of IT professionals who have found their dream careers through JobPortal",
+      "Join thousands of IT professionals who have found their dream careers through DevLink",
     browseJobs: "Get Started",
   },
   nav: {
@@ -243,7 +243,7 @@ export const en = {
     },
   },
   footer: {
-    logoName: "JobPortal",
+    logoName: "DevLink",
     description:
       "Connecting talented professionals with amazing opportunities worldwide.",
     forJobSeekers: "For Job Seekers",
@@ -261,7 +261,7 @@ export const en = {
     contact: "Contact",
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
-    copyright: "© {year} JobPortal. All rights reserved.",
+    copyright: "© {year} DevLink. All rights reserved.",
   },
   cv: {
     personalInfo: {

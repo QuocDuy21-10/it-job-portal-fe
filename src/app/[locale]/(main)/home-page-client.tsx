@@ -454,7 +454,7 @@ export default function Home() {
             <p className="text-lg leading-relaxed text-blue-50 dark:text-white/80 sm:text-xl">
               {i18nMounted
                 ? t("home.readyToGetStartedDescription")
-                : "Join thousands of IT professionals who have found their dream careers through JobPortal"}
+                : "Join thousands of IT professionals who have found their dream careers through DevLink"}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button

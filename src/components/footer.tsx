@@ -1,14 +1,13 @@
 "use client";
 
 import {
-  Briefcase,
   Facebook,
   Twitter,
   Linkedin,
   Instagram,
 } from "lucide-react";
+import Image from "next/image";
 import { useI18n } from "@/hooks/use-i18n";
-import { TYPOGRAPHY, TRANSITIONS } from "@/shared/constants/design";
 import { Link } from "@/i18n/navigation";
 
 export function Footer() {
@@ -25,12 +24,15 @@ export function Footer() {
           <div className="space-y-4">
             <Link
               href="/"
-              className="flex items-center gap-2 font-bold text-xl group"
+              className="inline-flex items-center"
             >
-              <Briefcase className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" aria-hidden="true" />
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                {i18nMounted ? t("footer.logoName") : "JobPortal"}
-              </span>
+              <Image
+                src="/images/logo.png"
+                alt="DevLink"
+                width={150}
+                height={45}
+                className="h-20 w-auto"
+              />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               {i18nMounted
@@ -202,7 +204,7 @@ export function Footer() {
           <p className="text-sm text-muted-foreground/80 font-medium">
             {i18nMounted
               ? t("footer.copyright", { year: new Date().getFullYear() })
-              : `© ${new Date().getFullYear()} JobPortal. All rights reserved.`}
+              : `© ${new Date().getFullYear()} DevLink. All rights reserved.`}
           </p>
         </div>
       </div>

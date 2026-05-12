@@ -183,7 +183,7 @@ function LoginContent() {
 
   return (
     <AuthLayout
-      title="Welcome Back to JobPortal"
+      title="Welcome Back to DevLink"
       description="Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations."
     >
       <AuthHeader

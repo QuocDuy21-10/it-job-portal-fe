@@ -2,7 +2,7 @@ import { AdminStatisticsPage } from "@/components/statistics";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard | IT Job Portal",
+  title: "Admin Dashboard | IT Dev Link",
   description: "Quản lý và theo dõi thống kê tuyển dụng",
 };
 

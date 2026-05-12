@@ -35,7 +35,7 @@ export function AuthFooter({ message, link, showLegalLinks = true }: AuthFooterP
       {/* Legal Links */}
       {showLegalLinks && (
         <p className="text-center text-xs text-gray-500 dark:text-gray-500 mt-6 leading-relaxed">
-          By continuing, you agree to JobPortal's{" "}
+          By continuing, you agree to DevLink's{" "}
           <Link
             href="/terms"
             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors hover:underline underline-offset-2"

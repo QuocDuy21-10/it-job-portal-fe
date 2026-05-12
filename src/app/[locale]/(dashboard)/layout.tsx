@@ -84,7 +84,7 @@ export default function AdminLayout({
           <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
               <p className="text-center text-sm text-gray-500 dark:text-gray-400" suppressHydrationWarning>
-                © {new Date().getFullYear()} IT Job Portal Admin. All rights reserved.
+                © {new Date().getFullYear()} IT Dev Link Admin. All rights reserved.
               </p>
             </div>
           </footer>

@@ -85,7 +85,7 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Join JobPortal Today"
+      title="Join DevLink Today"
       description="Create your account and unlock access to thousands of job opportunities. Start your career journey with us."
     >
       <AuthHeader
@@ -183,7 +183,7 @@ export default function RegisterPage() {
                 htmlFor="acceptTerms"
                 className="text-sm leading-relaxed cursor-pointer select-none dark:text-gray-300"
               >
-                I agree to JobPortal's{" "}
+                I agree to DevLink's{" "}
                 <Link
                   href="/terms"
                   className="auth-link"

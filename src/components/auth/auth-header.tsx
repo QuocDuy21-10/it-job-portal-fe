@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { Briefcase } from "lucide-react";
 
 interface AuthHeaderProps {
   showLogo?: boolean;
@@ -17,19 +17,20 @@ export function AuthHeader({
   description,
 }: AuthHeaderProps) {
   return (
-    <div className="text-center mb-8 space-y-3">
+    <div className="text-center space-y-3">
       {showLogo && (
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-bold text-3xl mb-2 group transition-transform hover:scale-105"
+          className="inline-flex items-center gap-2 font-bold text-3xl group transition-transform hover:scale-105"
         >
-          <Briefcase 
-            className="h-8 w-8 text-blue-600 transition-transform group-hover:rotate-12" 
-            aria-hidden="true" 
+          <Image
+            src="/images/logo.png"
+            alt="DevLink"
+            width={150}
+            height={45}
+            className="h-20 w-auto"
+            priority
           />
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-            JobPortal
-          </span>
         </Link>
       )}
 

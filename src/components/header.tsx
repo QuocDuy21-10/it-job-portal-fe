@@ -1,6 +1,7 @@
 "use client";
 
 import { Briefcase, Menu, X, User, LogOut, Settings, FileText, PlusCircle, Mail, Bell } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,17 +54,15 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-white/10 dark:bg-[#101528] supports-[backdrop-filter]:dark:bg-[#101528]">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="flex items-center gap-2 font-bold text-xl sm:text-2xl group"
-          >
-            <Briefcase
-              className="h-6 w-6 sm:h-7 sm:w-7 text-primary group-hover:scale-110 transition-transform duration-300"
-              aria-hidden="true"
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/logo.png"
+              alt="DevLink"
+              width={150}
+              height={45}
+              className="h-16 w-auto"
+              priority
             />
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              JobPortal
-            </span>
           </Link>
 
         <div className="hidden md:flex items-center gap-6">

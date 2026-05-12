@@ -1,6 +1,7 @@
 "use client";
 
-import { Menu, Search, Bell, User, Settings, LogOut, Briefcase } from "lucide-react";
+import { Menu, Search, Bell, User, Settings, LogOut } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/features/auth/redux/auth.slice";
@@ -62,17 +63,15 @@ export function AdminHeader({
       )}
     >
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-        <Link
-        href="/"
-        className="flex items-center gap-2 font-bold text-xl sm:text-2xl group"
-        >
-        <Briefcase
-            className="h-6 w-6 sm:h-7 sm:w-7 text-primary group-hover:scale-110 transition-transform duration-300"
-            aria-hidden="true"
-        />
-        <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-            JobPortal
-        </span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/images/logo.png"
+            alt="DevLink"
+            width={120}
+            height={36}
+            className="h-16 w-auto"
+            priority
+          />
         </Link>
         <div className="flex items-center gap-4 flex-1">
           {/* Mobile Menu Toggle */}

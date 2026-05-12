@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { Briefcase } from "lucide-react";
-import Link from "next/link";
+import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ 
   children, 
-  title = "Welcome to JobPortal",
+  title = "Welcome to DevLink",
   description = "Your gateway to career opportunities. Connect with top employers and find your dream job."
 }: AuthLayoutProps) {
   return (
@@ -31,16 +31,6 @@ export function AuthLayout({
         <div className="relative z-10 flex flex-col justify-center px-12 py-16 text-white">
           {/* Logo */}
           <div className="mb-8">
-             <Link
-                href="/"
-              >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-                <Briefcase className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold">JobPortal</h1>
-            </div>
-          </Link>
             <div className="space-y-4">
               <h2 className="text-4xl font-bold leading-tight">
                 {title}

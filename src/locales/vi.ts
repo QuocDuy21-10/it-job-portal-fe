@@ -49,7 +49,7 @@ export const vi = {
     followTip: "Theo dõi công ty này để nhận thông báo về các vị trí tuyển dụng mới.",
   },
   meta: {
-    title: "JobPortal - Tìm Công Việc Mơ Ước",
+    title: "DevLink - Tìm Công Việc Mơ Ước",
     description:
       "Kết nối những chuyên gia tài năng với các cơ hội tuyệt vời trên toàn thế giới. Duyệt qua hàng nghìn công việc từ các công ty hàng đầu.",
     keywords: "việc làm, sự nghiệp, tuyển dụng, tìm việc, tuyển người",
@@ -92,7 +92,7 @@ export const vi = {
       "Kết nối với nhà tuyển dụng hàng đầu và nhanh chóng có được công việc IT mơ ước",
     readyToGetStarted: "Sẵn Sàng Nâng Tầm Sự Nghiệp?",
     readyToGetStartedDescription:
-      "Tham gia cùng hàng nghìn chuyên gia IT đã tìm thấy sự nghiệp mơ ước thông qua JobPortal",
+      "Tham gia cùng hàng nghìn chuyên gia IT đã tìm thấy sự nghiệp mơ ước thông qua DevLink",
     browseJobs: "Bắt Đầu Ngay",
   },
   nav: {
@@ -244,7 +244,7 @@ export const vi = {
     },
   },
   footer: {
-    logoName: "JobPortal",
+    logoName: "DevLink",
     description:
       "Kết nối các chuyên gia tài năng với những cơ hội tuyệt vời trên toàn thế giới.",
     forJobSeekers: "Dành cho Người Tìm Việc",
@@ -262,7 +262,7 @@ export const vi = {
     contact: "Liên hệ",
     privacyPolicy: "Chính sách bảo mật",
     termsOfService: "Điều khoản dịch vụ",
-    copyright: "© {year} JobPortal. Bảo lưu mọi quyền.",
+    copyright: "© {year} DevLink. Bảo lưu mọi quyền.",
   },
   cv: {
     personalInfo: {
