@@ -10,6 +10,7 @@ import { Pagination } from "@/components/pagination";
 import { ResumeTable } from "@/components/resume/resume-table";
 import { ResumeDialog } from "@/components/resume/resume-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
+import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { useResumeOperations } from "@/hooks/use-resume";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import {
@@ -80,11 +81,15 @@ export default function ResumesPage() {
   const {
     isDialogOpen,
     editingResume,
+    deletingResume,
     isMutating,
+    isDeleting,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
   } = useResumeOperations();
 
   const [bulkDeleteResumes, { isLoading: isBulkDeleting }] =
@@ -299,7 +304,7 @@ export default function ResumesPage() {
         onEdit={handleOpenDialog}
         onDelete={(id) => {
           const resume = resumes.find((r: Resume) => r._id === id);
-          if (resume) handleDelete(resume);
+          if (resume) handleOpenDeleteDialog(resume);
         }}
         currentPage={currentPage}
         pageSize={pageSize}
@@ -328,6 +333,15 @@ export default function ResumesPage() {
         editingResume={editingResume}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      <SingleDeleteConfirmDialog
+        open={!!deletingResume}
+        itemName={deletingResume?.email || deletingResume?.url}
+        resourceLabel="resume"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseDeleteDialog}
+        isLoading={isDeleting}
       />
 
       {/* Bulk Delete Confirm Dialog */}

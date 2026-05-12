@@ -10,6 +10,7 @@ import { CreateRoleFormData, Role } from "@/features/role/schemas/role.schema";
 export function useRoleOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const [deletingRole, setDeletingRole] = useState<Role | null>(null);
 
   // RTK Query mutations
   const [createRole, { isLoading: isCreating }] = useCreateRoleMutation();
@@ -64,20 +65,26 @@ export function useRoleOperations() {
     }
   };
 
-  // Handle delete role
-  const handleDelete = async (role: Role) => {
-    // Confirm dialog
-    const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa vai trò "${role.name}"?\n\nHành động này không thể hoàn tác.`
-    );
+  const handleOpenDeleteDialog = (role: Role) => {
+    setDeletingRole(role);
+  };
 
-    if (!confirmed) {
+  const handleCloseDeleteDialog = () => {
+    setDeletingRole(null);
+  };
+
+  // Handle delete role
+  const handleConfirmDelete = async () => {
+    if (!deletingRole) {
       return;
     }
 
+    const roleToDelete = deletingRole;
+
     try {
-      await deleteRole(role._id).unwrap();
-      toast.success(`Đã xóa vai trò "${role.name}" thành công!`);
+      await deleteRole(roleToDelete._id).unwrap();
+      toast.success(`Đã xóa vai trò "${roleToDelete.name}" thành công!`);
+      handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete role error:", error);
 
@@ -94,6 +101,7 @@ export function useRoleOperations() {
     // State
     isDialogOpen,
     editingRole,
+    deletingRole,
 
     // Loading states
     isCreating,
@@ -105,6 +113,8 @@ export function useRoleOperations() {
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
   };
 }

@@ -16,6 +16,7 @@ import {
 export function useUserOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [lockingUser, setLockingUser] = useState<User | null>(null);
 
   // RTK Query mutations
@@ -75,20 +76,26 @@ export function useUserOperations() {
     }
   };
 
-  // Handle delete user
-  const handleDelete = async (user: User) => {
-    // Confirm dialog
-    const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa người dùng "${user.name}"?\n\nHành động này không thể hoàn tác.`
-    );
+  const handleOpenDeleteDialog = (user: User) => {
+    setDeletingUser(user);
+  };
 
-    if (!confirmed) {
+  const handleCloseDeleteDialog = () => {
+    setDeletingUser(null);
+  };
+
+  // Handle delete user
+  const handleConfirmDelete = async () => {
+    if (!deletingUser) {
       return;
     }
 
+    const userToDelete = deletingUser;
+
     try {
-      await deleteUser(user._id).unwrap();
-      toast.success(`Đã xóa người dùng "${user.name}" thành công!`);
+      await deleteUser(userToDelete._id).unwrap();
+      toast.success(`Đã xóa người dùng "${userToDelete.name}" thành công!`);
+      handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete user error:", error);
 
@@ -148,6 +155,7 @@ export function useUserOperations() {
     // State
     isDialogOpen,
     editingUser,
+    deletingUser,
     lockingUser,
 
     // Loading states
@@ -162,7 +170,9 @@ export function useUserOperations() {
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
     handleOpenLockDialog,
     handleCloseLockDialog,
     handleConfirmLock,

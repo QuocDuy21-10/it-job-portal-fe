@@ -321,6 +321,7 @@ export const vi = {
       addButton: "Thêm học vấn",
       noData: "Chưa có thông tin học vấn",
       addTitle: "Thêm học vấn",
+      endDatePlaceholder: "Để trống nếu đang học",
       editTitle: "Chỉnh sửa học vấn",
       schoolLabel: "Trường học",
       schoolPlaceholder: "Đại học Công Nghệ",
@@ -440,6 +441,7 @@ export const vi = {
       title: "Dự Án",
       description: "Giới thiệu các dự án của bạn",
       addButton: "Thêm Dự Án",
+      positionLabel: "Vị trí",
       noData: "Chưa có dự án nào",
       addTitle: "Thêm Dự Án",
       editTitle: "Chỉnh sửa Dự Án",
@@ -451,7 +453,6 @@ export const vi = {
       linkPlaceholder: "https://example.com",
       saveLabel: "Thêm",
       updateLabel: "Cập nhật",
-      positionLabel: "Vị trí",
       positionPlaceholder: "Vai trò của bạn trong dự án",
     },
     certificates: {

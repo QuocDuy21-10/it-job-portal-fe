@@ -13,6 +13,7 @@ import {
 export function useCompanyOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [deletingCompany, setDeletingCompany] = useState<Company | null>(null);
 
   // RTK Query mutations
   const [createCompany, { isLoading: isCreating }] = useCreateCompanyMutation();
@@ -67,20 +68,26 @@ export function useCompanyOperations() {
     }
   };
 
-  // Handle delete company
-  const handleDelete = async (company: Company) => {
-    // Confirm dialog
-    const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa công ty "${company.name}"?\n\nHành động này không thể hoàn tác.`
-    );
+  const handleOpenDeleteDialog = (company: Company) => {
+    setDeletingCompany(company);
+  };
 
-    if (!confirmed) {
+  const handleCloseDeleteDialog = () => {
+    setDeletingCompany(null);
+  };
+
+  // Handle delete company
+  const handleConfirmDelete = async () => {
+    if (!deletingCompany) {
       return;
     }
 
+    const companyToDelete = deletingCompany;
+
     try {
-      await deleteCompany(company._id).unwrap();
-      toast.success(`Đã xóa công ty "${company.name}" thành công!`);
+      await deleteCompany(companyToDelete._id).unwrap();
+      toast.success(`Đã xóa công ty "${companyToDelete.name}" thành công!`);
+      handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete company error:", error);
 
@@ -97,6 +104,7 @@ export function useCompanyOperations() {
     // State
     isDialogOpen,
     editingCompany,
+    deletingCompany,
 
     // Loading states
     isCreating,
@@ -108,6 +116,8 @@ export function useCompanyOperations() {
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
   };
 }

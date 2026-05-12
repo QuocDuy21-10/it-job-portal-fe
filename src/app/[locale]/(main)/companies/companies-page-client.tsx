@@ -2,7 +2,6 @@
 
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, X, Building2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";

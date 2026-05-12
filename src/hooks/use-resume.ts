@@ -14,6 +14,7 @@ import {
 export function useResumeOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingResume, setEditingResume] = useState<Resume | null>(null);
+  const [deletingResume, setDeletingResume] = useState<Resume | null>(null);
 
   // RTK Query mutations
   const [createResume, { isLoading: isCreating }] = useCreateResumeMutation();
@@ -66,20 +67,26 @@ export function useResumeOperations() {
     }
   };
 
-  // Handle delete resume
-  const handleDelete = async (resume: Resume) => {
-    // Confirm dialog
-    const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa CV "${resume.url}"?\n\nHành động này không thể hoàn tác.`
-    );
+  const handleOpenDeleteDialog = (resume: Resume) => {
+    setDeletingResume(resume);
+  };
 
-    if (!confirmed) {
+  const handleCloseDeleteDialog = () => {
+    setDeletingResume(null);
+  };
+
+  // Handle delete resume
+  const handleConfirmDelete = async () => {
+    if (!deletingResume) {
       return;
     }
 
+    const resumeToDelete = deletingResume;
+
     try {
-      await deleteResume(resume._id).unwrap();
-      toast.success(`Đã xóa CV "${resume.url}" thành công!`);
+      await deleteResume(resumeToDelete._id).unwrap();
+      toast.success(`Đã xóa CV "${resumeToDelete.url}" thành công!`);
+      handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete resume error:", error);
 
@@ -96,6 +103,7 @@ export function useResumeOperations() {
     // State
     isDialogOpen,
     editingResume,
+    deletingResume,
 
     // Loading states
     isCreating,
@@ -107,6 +115,8 @@ export function useResumeOperations() {
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
   };
 }

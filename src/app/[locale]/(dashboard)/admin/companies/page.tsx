@@ -12,6 +12,7 @@ import { Pagination } from "@/components/pagination";
 import { CompanyTable } from "@/components/company/company-table";
 import { CompanyDialog } from "@/components/company/company-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
+import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Company } from "@/features/company/schemas/company.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
@@ -54,11 +55,15 @@ export default function CompaniesPage() {
   const {
     isDialogOpen,
     editingCompany,
+    deletingCompany,
     isMutating,
+    isDeleting,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
   } = useCompanyOperations();
 
   const [bulkDeleteCompanies, { isLoading: isBulkDeleting }] =
@@ -209,7 +214,7 @@ export default function CompaniesPage() {
           const company: Company | undefined = companies.find(
             (c: Company) => c._id === id
           );
-          if (company) handleDelete(company);
+          if (company) handleOpenDeleteDialog(company);
         }}
         currentPage={currentPage}
         pageSize={pageSize}
@@ -238,6 +243,15 @@ export default function CompaniesPage() {
         editingCompany={editingCompany}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      <SingleDeleteConfirmDialog
+        open={!!deletingCompany}
+        itemName={deletingCompany?.name}
+        resourceLabel="company"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseDeleteDialog}
+        isLoading={isDeleting}
       />
 
       {/* Bulk Delete Confirm Dialog */}

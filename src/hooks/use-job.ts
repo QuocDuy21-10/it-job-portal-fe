@@ -15,6 +15,7 @@ import {
 export function useJobOperations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [deletingJob, setDeletingJob] = useState<Job | null>(null);
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [approvingJob, setApprovingJob] = useState<Job | null>(null);
 
@@ -72,20 +73,26 @@ export function useJobOperations() {
     }
   };
 
-  // Handle delete job
-  const handleDelete = async (job: Job) => {
-    // Confirm dialog
-    const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa việc làm "${job.name}"?\n\nHành động này không thể hoàn tác.`
-    );
+  const handleOpenDeleteDialog = (job: Job) => {
+    setDeletingJob(job);
+  };
 
-    if (!confirmed) {
+  const handleCloseDeleteDialog = () => {
+    setDeletingJob(null);
+  };
+
+  // Handle delete job
+  const handleConfirmDelete = async () => {
+    if (!deletingJob) {
       return;
     }
 
+    const jobToDelete = deletingJob;
+
     try {
-      await deleteJob(job._id).unwrap();
-      toast.success(`Đã xóa việc làm "${job.name}" thành công!`);
+      await deleteJob(jobToDelete._id).unwrap();
+      toast.success(`Đã xóa việc làm "${jobToDelete.name}" thành công!`);
+      handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete job error:", error);
 
@@ -141,6 +148,7 @@ export function useJobOperations() {
     // State
     isDialogOpen,
     editingJob,
+    deletingJob,
     isApprovalDialogOpen,
     approvingJob,
 
@@ -155,7 +163,9 @@ export function useJobOperations() {
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
     handleOpenApprovalDialog,
     handleCloseApprovalDialog,
     handleApprove,

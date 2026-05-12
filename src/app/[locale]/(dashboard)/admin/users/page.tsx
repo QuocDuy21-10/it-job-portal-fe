@@ -19,6 +19,7 @@ import { UserTable } from "@/components/user/user-table";
 import { UserDialog } from "@/components/user/user-dialog";
 import { LockUserDialog } from "@/components/user/lock-user-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
+import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Pagination } from "@/components/pagination";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
@@ -64,13 +65,17 @@ export default function UsersPage() {
   const {
     isDialogOpen,
     editingUser,
+    deletingUser,
     lockingUser,
     isMutating,
+    isDeleting,
     isLocking,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit: handleUserSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
     handleOpenLockDialog,
     handleCloseLockDialog,
     handleConfirmLock,
@@ -233,7 +238,7 @@ export default function UsersPage() {
         onEdit={handleOpenDialog}
         onDelete={(id) => {
           const user: User | undefined = users.find((c: User) => c._id === id);
-          if (user) handleDelete(user);
+          if (user) handleOpenDeleteDialog(user);
         }}
         onLock={handleOpenLockDialog}
         onUnlock={handleUnlock}
@@ -264,6 +269,15 @@ export default function UsersPage() {
         editingUser={editingUser}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      <SingleDeleteConfirmDialog
+        open={!!deletingUser}
+        itemName={deletingUser?.name}
+        resourceLabel="user"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseDeleteDialog}
+        isLoading={isDeleting}
       />
 
       {/* Lock User Dialog */}

@@ -18,6 +18,7 @@ import { Pagination } from "@/components/pagination";
 import { RoleTable } from "@/components/role/role-table";
 import { RoleDialog } from "@/components/role/role-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
+import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Role } from "@/features/role/schemas/role.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
@@ -56,11 +57,15 @@ export default function RolesPage() {
   const {
     isDialogOpen,
     editingRole,
+    deletingRole,
     isMutating,
+    isDeleting,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
   } = useRoleOperations();
 
   const [bulkDeleteRoles, { isLoading: isBulkDeleting }] =
@@ -205,7 +210,7 @@ export default function RolesPage() {
         onEdit={handleOpenDialog}
         onDelete={(id) => {
           const role: Role | undefined = roles.find((c: Role) => c._id === id);
-          if (role) handleDelete(role);
+          if (role) handleOpenDeleteDialog(role);
         }}
         currentPage={currentPage}
         pageSize={pageSize}
@@ -234,6 +239,15 @@ export default function RolesPage() {
         editingRole={editingRole}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      <SingleDeleteConfirmDialog
+        open={!!deletingRole}
+        itemName={deletingRole?.name}
+        resourceLabel="role"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseDeleteDialog}
+        isLoading={isDeleting}
       />
 
       {/* Bulk Delete Confirm Dialog */}

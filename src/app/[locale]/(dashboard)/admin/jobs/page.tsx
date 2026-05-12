@@ -18,6 +18,7 @@ import { JobTable } from "@/components/job/job-table";
 import { JobDialog } from "@/components/job/job-dialog";
 import { JobApprovalDialog } from "@/components/job/job-approval-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
+import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Job } from "@/features/job/schemas/job.schema";
 import { useJobOperations } from "@/hooks/use-job";
 import { useTableSelection } from "@/hooks/use-table-selection";
@@ -85,14 +86,18 @@ export default function JobsPage() {
   const {
     isDialogOpen,
     editingJob,
+    deletingJob,
     isMutating,
+    isDeleting,
     isApprovalDialogOpen,
     approvingJob,
     isApproving,
     handleOpenDialog,
     handleCloseDialog,
     handleSubmit,
-    handleDelete,
+    handleOpenDeleteDialog,
+    handleCloseDeleteDialog,
+    handleConfirmDelete,
     handleOpenApprovalDialog,
     handleCloseApprovalDialog,
     handleApprove,
@@ -316,7 +321,7 @@ export default function JobsPage() {
         onApprove={handleOpenApprovalDialog}
         onDelete={(id) => {
           const job: Job | undefined = jobs.find((c: Job) => c._id === id);
-          if (job) handleDelete(job);
+          if (job) handleOpenDeleteDialog(job);
         }}
         currentPage={currentPage}
         pageSize={pageSize}
@@ -345,6 +350,15 @@ export default function JobsPage() {
         editingJob={editingJob}
         onSubmit={handleSubmit}
         isLoading={isMutating}
+      />
+
+      <SingleDeleteConfirmDialog
+        open={!!deletingJob}
+        itemName={deletingJob?.name}
+        resourceLabel="job"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseDeleteDialog}
+        isLoading={isDeleting}
       />
 
       {/* Approval Dialog */}

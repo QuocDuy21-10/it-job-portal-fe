@@ -266,6 +266,8 @@ export const en = {
   cv: {
     personalInfo: {
       title: "Personal Information",
+      titleLabel: "Title",
+      titlePlaceholder: "Software Engineer",
       description: "Update your personal details",
       editButton: "Edit",
       editTooltip: "Edit personal information",
@@ -319,6 +321,7 @@ export const en = {
       noData: "No education added yet",
       addTitle: "Add Education",
       editTitle: "Edit Education",
+      endDatePlaceholder: "Leave empty if currently studying",
       schoolLabel: "School *",
       schoolPlaceholder: "University of Technology",
       degreeLabel: "Degree *",
@@ -437,6 +440,8 @@ export const en = {
       title: "Projects",
       description: "Showcase your projects",
       addButton: "Add Project",
+      positionLabel: "Position",
+      positionPlaceholder: "Your role in the project (e.g., Lead Developer)",
       noData: "No projects added yet",
       addTitle: "Add Project",
       editTitle: "Edit Project",
