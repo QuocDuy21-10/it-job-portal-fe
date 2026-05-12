@@ -12,7 +12,7 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
-import CompanyFollowButton from "./company-follow-button";
+import CompanyFollowButton from "../../../../../components/company/company-follow-button";
 import CompanyDetailPageClient from "./company-detail-page-client";
 import CompanyContact from "@/components/company/section/company-contact";
 import ShareCompany from "@/components/company/section/share-company";

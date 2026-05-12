@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, X, Building2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import parse from "html-react-parser";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
@@ -141,6 +143,7 @@ export default function CompanyListPage({
         page,
       };
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   const setPageSize = useCallback((pageSize: number) => {
@@ -159,7 +162,7 @@ export default function CompanyListPage({
   return (
     <div className="listing-page-surface min-h-screen px-4 py-10">
       <div className="mx-auto max-w-7xl">
-        <div className="company-list-hero-surface listing-subtle-border mb-10 overflow-hidden rounded-[32px] border shadow-[0_24px_70px_hsl(214_35%_12%/0.08)] dark:shadow-[0_28px_80px_hsl(222_47%_5%/0.32)]">
+        <div className="relative mb-10 overflow-hidden rounded-[32px] border listing-subtle-border bg-gradient-to-br from-blue-50 via-white to-blue-50/50 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 shadow-[0_24px_70px_hsl(214_35%_12%/0.08)] dark:shadow-[0_28px_80px_hsl(222_47%_5%/0.32)]">
           {/* Header */}
           <div className="px-6 py-10 text-center sm:px-8">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary dark:border-primary/30 dark:bg-primary/12 dark:text-sky-200">
@@ -178,7 +181,7 @@ export default function CompanyListPage({
           </div>
 
           {/* Search Bar */}
-          <div className="company-list-search-surface listing-filter-surface listing-strong-border border-t p-6 sm:px-8">
+          <div className="company-list-search-surface listing-filter-surface backdrop-blur-md bg-white/70 dark:bg-slate-900/70 listing-strong-border border-t p-6 sm:px-8">
             <div className="company-list-search-shell mx-auto max-w-3xl">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div className="relative flex-1">
@@ -215,8 +218,8 @@ export default function CompanyListPage({
                 <Button
                   type="button"
                   onClick={() => applySearch()}
-                  disabled={!isDraftDirty || isLoading}
-                  className="company-list-search-button h-12 rounded-full px-8 text-base font-semibold sm:h-14 sm:min-w-[116px]"
+                  disabled={isLoading}
+                  className="company-list-search-button bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-full px-8 text-base font-semibold sm:h-14 sm:min-w-[116px]"
                 >
                   {t("companyList.searchButton")}
                 </Button>
@@ -233,8 +236,26 @@ export default function CompanyListPage({
 
         {/* Companies Grid */}
         {isLoading ? (
-          <div className="text-center py-16">
-            <span className="text-muted-foreground">{t("companyList.loading")}</span>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <Card key={i} className="listing-panel-surface listing-subtle-border h-[230px] border p-6">
+                <div className="mb-5 flex items-start gap-4">
+                  <Skeleton className="h-16 w-16 flex-shrink-0 rounded-full" />
+                  <div className="flex-1 space-y-2 py-1">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+                <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              </Card>
+            ))}
           </div>
         ) : error ? (
           <div className="text-center py-16">
@@ -249,21 +270,21 @@ export default function CompanyListPage({
                 className="group block"
               >
                 <Card
-                  className={`listing-panel-surface listing-subtle-border p-6 ${EFFECTS.cardHover} border hover:bg-background/80 dark:hover:bg-white/[0.02]`}
+                  className={`listing-panel-surface listing-subtle-border p-6 ${EFFECTS.cardHover} border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-background/80 dark:hover:bg-white/[0.02]`}
                 >
                   <div className="mb-5 flex items-start gap-4">
-                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-border/50 bg-secondary/80 shadow-sm transition-shadow duration-300 group-hover:shadow-md dark:border-white/10 dark:bg-white/[0.04]">
-                      <Image
-                        src={
-                          company.logo
-                            ? `${API_BASE_URL_IMAGE}/images/company/${company.logo}`
-                            : "/placeholder.svg"
-                        }
-                        alt={company.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                    <Avatar className="h-16 w-16 rounded-full border border-slate-100 shadow-sm transition-shadow duration-300 group-hover:shadow-md dark:border-white/10">
+                      {company.logo && (
+                        <AvatarImage
+                          src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
+                          alt={company.name}
+                          className="object-cover"
+                        />
+                      )}
+                      <AvatarFallback className="bg-secondary/80 text-lg font-semibold text-secondary-foreground dark:bg-white/[0.04]">
+                        {company.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-bold text-foreground line-clamp-2 transition-colors duration-200 group-hover:text-primary">
                         {company.name}

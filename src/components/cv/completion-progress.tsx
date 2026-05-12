@@ -89,9 +89,9 @@ export default function CompletionProgress({
 
   // Desktop sidebar view
   return (
-    <div className="space-y-4">
-      {/* Progress Card */}
-      <div className="p-6 bg-gradient-to-br from-card to-card/95 border border-border/50 rounded-xl shadow-lg backdrop-blur-sm">
+    <div className="p-6 bg-gradient-to-br from-card to-card/95 border border-border/50 rounded-xl shadow-lg backdrop-blur-sm flex flex-col gap-6">
+      {/* Progress Section */}
+      <div>
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <AlertCircle className="w-5 h-5 text-primary" />
@@ -154,74 +154,73 @@ export default function CompletionProgress({
               </div>
             ))}
           </div>
-
-          {/* Preview & Download Button */}
-          <div className="mt-4 pt-4 border-t border-border/50">
-            {!canPreview && (
-              <div className="mb-3 flex items-start gap-2 text-xs bg-yellow-50 dark:bg-yellow-950/20 text-yellow-800 dark:text-yellow-200 p-3 rounded-lg border border-yellow-200 dark:border-yellow-900">
-                <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <p>
-                  {t("cv.progress.notEnough", { percent: 15 })}
-                </p>
-              </div>
-            )}
-            <Button
-              onClick={() => router.push("/profile/cv-preview")}
-              disabled={!canPreview}
-              className={cn(
-                "w-full font-semibold shadow-md hover:shadow-lg transition-all",
-                "disabled:opacity-50 disabled:cursor-not-allowed",
-                canPreview && "hover:scale-105"
-              )}
-              variant={canPreview ? "default" : "secondary"}
-            >
-              <Download className="w-4 h-4 mr-2" />
-              {t("cv.progress.previewDownload")}
-            </Button>
-          </div>
         </div>
       </div>
 
-      {/* Save Button Card */}
-      {onSave && (
-        <div className="p-4 bg-gradient-to-br from-card to-card/95 border border-border/50 rounded-xl shadow-lg backdrop-blur-sm">
-          <Button
-            onClick={onSave}
-            disabled={isSaving || validationErrors.length > 0}
-            size="lg"
-            className={cn(
-              "w-full font-bold shadow-lg hover:shadow-xl transition-all",
-              "bg-gradient-to-r from-primary to-primary/80",
-              "hover:from-primary/90 hover:to-primary/70",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
-              !isSaving && validationErrors.length === 0 && "hover:scale-105"
-            )}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Đang lưu CV...
-              </>
-            ) : (
-              <>
-                <Save className="w-5 h-5 mr-2" />
-                Lưu CV
-                {validationErrors.length > 0 && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full bg-destructive/20 text-xs font-semibold">
-                    {validationErrors.length} lỗi
-                  </span>
-                )}
-              </>
-            )}
-          </Button>
-          
-          {validationErrors.length > 0 && (
-            <p className="mt-2 text-xs text-destructive text-center font-medium">
-              Vui lòng sửa các lỗi trước khi lưu
+      {/* Actions Section */}
+      <div className="space-y-3 pt-4 border-t border-border/50">
+        {!canPreview && (
+          <div className="mb-3 flex items-start gap-2 text-xs bg-yellow-50 dark:bg-yellow-950/20 text-yellow-800 dark:text-yellow-200 p-3 rounded-lg border border-yellow-200 dark:border-yellow-900">
+            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <p>
+              {t("cv.progress.notEnough", { percent: 15 })}
             </p>
+          </div>
+        )}
+        
+        <Button
+          onClick={() => router.push("/profile/cv-preview")}
+          disabled={!canPreview}
+          className={cn(
+            "w-full font-semibold shadow-md hover:shadow-lg transition-all",
+            "disabled:opacity-50 disabled:cursor-not-allowed",
+            canPreview && "hover:scale-105"
           )}
-        </div>
-      )}
+          variant={canPreview ? "outline" : "secondary"}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          {t("cv.progress.previewDownload")}
+        </Button>
+
+        {onSave && (
+          <div className="space-y-2">
+            <Button
+              onClick={onSave}
+              disabled={isSaving || validationErrors.length > 0}
+              className={cn(
+                "w-full font-bold shadow-lg hover:shadow-xl transition-all",
+                "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground",
+                "hover:from-primary/90 hover:to-primary/70",
+                "disabled:opacity-50 disabled:cursor-not-allowed",
+                !isSaving && validationErrors.length === 0 && "hover:scale-105"
+              )}
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Đang lưu CV...
+                </>
+              ) : (
+                <>
+                  <Save className="w-5 h-5 mr-2" />
+                  Lưu CV
+                  {validationErrors.length > 0 && (
+                    <span className="ml-2 px-2 py-0.5 rounded-full bg-destructive/20 text-xs font-semibold">
+                      {validationErrors.length} lỗi
+                    </span>
+                  )}
+                </>
+              )}
+            </Button>
+            
+            {validationErrors.length > 0 && (
+              <p className="mt-2 text-xs text-destructive text-center font-medium">
+                Vui lòng sửa các lỗi trước khi lưu
+              </p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

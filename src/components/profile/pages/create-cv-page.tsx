@@ -536,16 +536,16 @@ export default function CreateCVPage() {
             </div>
 
             {/* Sidebar - Completion Progress - Desktop sticky, Mobile floating */}
-            <div className="lg:col-span-1 self-start">
+            <div className="lg:col-span-1">
               {/* Desktop Sticky Sidebar */}
-              <div className="hidden lg:block sticky top-[4.5rem] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+              <aside className="hidden lg:block sticky top-24 self-start max-h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar">
                 <CompletionProgress 
                   cvData={cvData}
                   onSave={handleUpdateCV}
                   isSaving={isLoading}
                   // validationErrors={validationErrors}
                 />
-              </div>
+              </aside>
 
               {/* Mobile Floating Action Buttons */}
               <div className="lg:hidden fixed bottom-6 right-4 z-50 flex flex-col gap-3">
