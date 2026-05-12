@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Building2, MapPin, Heart, Clock, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -154,29 +156,32 @@ const CompanyLogo = ({
 }: {
   logo: string | null | undefined;
   name: string | undefined;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }) => {
   const { t } = useI18n();
   const sizeMap = {
     sm: "h-10 w-10 rounded-lg",
     md: "h-12 w-12 rounded-xl",
     lg: "h-14 w-14 rounded-xl",
+    xl: "h-16 w-16 rounded-2xl",
   };
   const imageSize = {
     sm: 40,
     md: 48,
     lg: 56,
+    xl: 64,
   };
   const iconSize = {
     sm: "h-5 w-5",
     md: "h-6 w-6",
     lg: "h-7 w-7",
+    xl: "h-8 w-8",
   };
 
   return (
     <div
       className={cn(
-        "listing-subtle-border flex flex-shrink-0 items-center justify-center overflow-hidden border bg-background p-1 dark:bg-white/[0.04]",
+        "flex flex-shrink-0 items-center justify-center overflow-hidden border bg-white dark:bg-white/[0.04] shadow-sm border-muted/30 dark:border-white/10 p-1",
         sizeMap[size]
       )}
     >
@@ -213,7 +218,7 @@ const SkillTags = ({
       {visible.map((skill) => (
         <span
           key={skill}
-          className="inline-block rounded-md bg-secondary/60 px-2 py-0.5 text-[11px] font-medium text-secondary-foreground/70 dark:bg-white/[0.05] dark:text-white/70"
+          className="inline-block rounded-md bg-secondary/60 px-2 py-0.5 text-[11px] font-medium text-secondary-foreground/70 dark:bg-white/[0.05] dark:text-white/70 transition-colors hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary-foreground cursor-default"
         >
           {skill}
         </span>
@@ -246,7 +251,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
     return (
       <Card
         className={cn(
-          "listing-panel-surface listing-subtle-border group transition-all duration-200 hover:border-primary/15 hover:shadow-sm",
+          "listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary/20 hover:shadow-md hover:-translate-y-[2px]",
           className
         )}
       >
@@ -281,7 +286,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                     {job.location}
                   </span>
                   <span className="text-[11px] text-muted-foreground/30">•</span>
-                  <span className="text-xs font-semibold text-primary">
+                  <span className="text-sm font-bold text-primary dark:text-blue-400">
                     {salaryLabel}
                   </span>
                 </div>
@@ -305,7 +310,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
     return (
       <Card
         className={cn(
-          "listing-panel-surface listing-subtle-border group transition-all duration-200 hover:border-primary/15 hover:shadow-sm",
+          "listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary/20 hover:shadow-md hover:-translate-y-[2px]",
           className
         )}
       >
@@ -318,12 +323,12 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
               <CompanyLogo
                 logo={job.company?.logo}
                 name={job.company?.name}
-                size="lg"
+                size="xl"
               />
 
               <div className="flex-1 min-w-0 space-y-2">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-bold text-xl line-clamp-1 group-hover:text-primary transition-colors">
                     {job.name}
                   </h3>
                   {status && (
@@ -334,7 +339,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                   )}
                 </div>
 
-                <p className="text-sm text-muted-foreground/70">
+                <p className="text-sm font-medium text-foreground/80">
                   {job.company?.name}
                 </p>
 
@@ -375,15 +380,25 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                 </span>
               )}
 
-              <div className="flex items-center gap-1.5 mt-auto">
-                <span className="text-sm font-semibold text-primary">
-                  {salaryLabel}
-                </span>
-                <FavoriteButton
-                  isSaved={isSaved}
-                  onClick={toggleSaveJob}
-                  disabled={isLoading}
-                />
+              <div className="flex flex-col sm:flex-row items-center gap-2 mt-auto">
+                <div className="flex items-center gap-2 mr-2">
+                  <span className="text-base font-bold text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/40 px-2.5 py-1 rounded-md">
+                    {salaryLabel}
+                  </span>
+                  <FavoriteButton
+                    isSaved={isSaved}
+                    onClick={toggleSaveJob}
+                    disabled={isLoading}
+                  />
+                </div>
+                <Button 
+                  asChild
+                  className="w-full sm:w-auto font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
+                >
+                  <Link href={`/jobs/${job._id}`}>
+                    {t("jobsPage.jobCard.applyNow") || "Apply Now"}
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
@@ -396,7 +411,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
   return (
     <Card
       className={cn(
-        "listing-panel-surface listing-subtle-border group relative transition-all duration-300 hover:shadow-md hover:border-primary/15 hover:-translate-y-0.5",
+        "listing-panel-surface listing-subtle-border group relative transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:-translate-y-[2px]",
         className
       )}
     >
@@ -458,7 +473,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
 
           {/* Footer: salary + time */}
           <div className="flex items-center justify-between pt-3 border-t border-border/40">
-            <span className="text-sm font-semibold text-primary">
+            <span className="text-base font-bold text-primary bg-primary/5 dark:bg-primary/10 px-2.5 py-1 rounded-md">
               {salaryLabel}
             </span>
             <span className="text-[11px] text-muted-foreground/50">

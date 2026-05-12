@@ -15,9 +15,13 @@ export function Footer() {
   const { t, mounted: i18nMounted } = useI18n();
 
   return (
-    <footer className="mt-auto border-t bg-gradient-to-br from-secondary/30 via-background to-secondary/20 dark:border-white/10 dark:bg-[#101528] dark:bg-none">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="mt-auto border-t bg-background relative overflow-hidden">
+      {/* Subtle background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           <div className="space-y-4">
             <Link
               href="/"
@@ -194,8 +198,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-20 pt-10 border-t border-border/60 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground/80 font-medium">
             {i18nMounted
               ? t("footer.copyright", { year: new Date().getFullYear() })
               : `© ${new Date().getFullYear()} JobPortal. All rights reserved.`}

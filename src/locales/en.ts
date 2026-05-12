@@ -742,6 +742,7 @@ export const en = {
     },
     jobCard: {
       saveJob: "Save job",
+      applyNow: "Apply now",
       removeSavedJob: "Remove saved job",
       statusNew: "New",
       statusClosing: "Closing soon",

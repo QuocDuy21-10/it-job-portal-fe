@@ -746,6 +746,7 @@ export const vi = {
       salaryLowToHigh: "Lương thấp nhất",
     },
     jobCard: {
+      applyNow: "Ứng tuyển ngay",
       saveJob: "Lưu việc làm",
       removeSavedJob: "Bỏ lưu việc làm",
       statusNew: "Mới",
