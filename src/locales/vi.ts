@@ -119,6 +119,130 @@ export const vi = {
     signIn: "Đăng Nhập",
     signUp: "Đăng Ký",
   },
+  statisticsDashboard: {
+    shared: {
+      guardLoading: "Đang kiểm tra quyền truy cập...",
+      errorTitle: "Không thể tải dữ liệu thống kê",
+      errorDescription: "Dịch vụ thống kê hiện không khả dụng. Vui lòng thử lại sau.",
+      retry: "Thử lại",
+      emptyTitle: "Chưa có dữ liệu thống kê",
+      emptyDescription:
+        "Các chỉ số sẽ xuất hiện ở đây khi hệ thống có đủ dữ liệu để tổng hợp.",
+      refresh: "Làm mới",
+      refreshing: "Đang làm mới...",
+      generatedAt: "Cập nhật lúc",
+      cached: "Ảnh chụp từ cache",
+      live: "Dữ liệu mới nhất",
+      noRankedData: "Chưa có dữ liệu xếp hạng.",
+      notAvailable: "Chưa có",
+    },
+    admin: {
+      eyebrow: "Phân tích nền tảng",
+      title: "Dashboard thống kê quản trị",
+      description:
+        "Theo dõi sức khỏe nền tảng, hoạt động tuyển dụng và hiệu năng xử lý hồ sơ trong một không gian dành riêng cho quản trị viên.",
+      cards: {
+        countJobs24h: {
+          label: "Việc làm mới (24h)",
+          description: "Số việc làm đã tạo trong 24 giờ gần nhất.",
+        },
+        countActiveJobs: {
+          label: "Việc làm đang tuyển",
+          description: "Các tin tuyển dụng đã duyệt và còn hạn nhận hồ sơ.",
+        },
+        countPendingApprovalJobs: {
+          label: "Chờ duyệt",
+          description: "Số việc làm đang chờ quản trị viên phê duyệt.",
+        },
+        countHiringCompanies: {
+          label: "Công ty đang tuyển",
+          description: "Các công ty có ít nhất một việc làm đang hoạt động.",
+        },
+        countCompanies: {
+          label: "Tổng công ty",
+          description: "Tổng số công ty chưa bị xóa trên nền tảng.",
+        },
+        countUsers: {
+          label: "Tổng người dùng",
+          description: "Tổng số người dùng chưa bị xóa trên hệ thống.",
+        },
+      },
+      charts: {
+        jobTrendTitle: "Xu hướng đăng việc làm",
+        jobTrendDescription: "Biến động số việc làm mới trong 7 ngày gần nhất.",
+        applicationTrendTitle: "Xu hướng ứng tuyển",
+        applicationTrendDescription: "Biến động số hồ sơ nộp vào hệ thống trong 7 ngày gần nhất.",
+        topSkillsTitle: "Kỹ năng được tuyển nhiều nhất",
+        topSkillsDescription: "Các kỹ năng xuất hiện nhiều nhất trong nhóm việc làm đang hoạt động.",
+        skillDemandHint: "Lượt xuất hiện trong việc làm đang tuyển",
+        processingHealthTitle: "Sức khỏe xử lý hồ sơ",
+        processingHealthDescription: "Theo dõi trạng thái parse và phân tích hồ sơ bằng AI.",
+        totalResumes: "Tổng hồ sơ theo dõi",
+        parsedResumes: "Hồ sơ đã parse",
+        parseFailedResumes: "Parse thất bại",
+        analyzedResumes: "Hồ sơ đã phân tích",
+        analysisFailedResumes: "Phân tích thất bại",
+      },
+    },
+    hr: {
+      layoutDescription: "Các chỉ số vận hành tuyển dụng dành riêng cho công ty của bạn.",
+      layoutBadge: "HR dashboard",
+      eyebrow: "Hiệu quả tuyển dụng",
+      title: "Dashboard thống kê HR",
+      description:
+        "Theo dõi tốc độ tuyển dụng, luồng hồ sơ ứng tuyển và chất lượng phản hồi cho công ty của bạn.",
+      noCompanyTitle: "Tài khoản HR chưa được gắn với công ty",
+      noCompanyDescription:
+        "Vui lòng liên kết tài khoản HR với một công ty trước khi mở dashboard thống kê.",
+      cards: {
+        countActiveJobs: {
+          label: "Việc làm đang tuyển",
+          description: "Các việc làm đã duyệt của công ty vẫn đang nhận ứng viên.",
+        },
+        countPendingApprovalJobs: {
+          label: "Việc làm chờ duyệt",
+          description: "Các tin tuyển dụng của công ty đang chờ phê duyệt.",
+        },
+        countExpiredJobs: {
+          label: "Việc làm hết hạn",
+          description: "Các việc làm đã duyệt nhưng đã qua hạn nhận hồ sơ.",
+        },
+        totalApplications: {
+          label: "Tổng hồ sơ ứng tuyển",
+          description: "Toàn bộ hồ sơ chưa bị xóa mà công ty đã nhận.",
+        },
+        countApplications24h: {
+          label: "Hồ sơ mới (24h)",
+          description: "Số hồ sơ nộp vào công ty trong 24 giờ gần nhất.",
+        },
+        applicationStatusDistribution: {
+          label: "Trạng thái theo dõi",
+          description: "Tổng số hồ sơ đang được thể hiện trong funnel hiện tại.",
+        },
+      },
+      charts: {
+        statusDistributionTitle: "Phân bố trạng thái hồ sơ",
+        statusDistributionDescription: "Funnel tuyển dụng hiện tại được nhóm theo trạng thái hồ sơ.",
+        applicationTrendTitle: "Xu hướng nhận hồ sơ",
+        applicationTrendDescription: "Biến động số hồ sơ mới của công ty trong 7 ngày gần nhất.",
+        topJobsTitle: "Công việc thu hút nhiều hồ sơ nhất",
+        topJobsDescription: "Các vị trí đang nhận được nhiều lượt ứng tuyển nhất.",
+        topJobsHint: "Số hồ sơ đã nhận",
+        performanceTitle: "Hiệu suất tuyển dụng",
+        performanceDescription: "Tốc độ phản hồi và chất lượng matching AI của công ty.",
+        responseRate: "Tỷ lệ phản hồi",
+        firstResponseHours: "TB phản hồi đầu tiên",
+        matchingScore: "TB điểm matching",
+      },
+    },
+    statuses: {
+      PENDING: "Chờ xử lý",
+      REVIEWING: "Đang xem xét",
+      INTERVIEWING: "Phỏng vấn",
+      APPROVED: "Đã duyệt",
+      REJECTED: "Từ chối",
+    },
+  },
   footer: {
     logoName: "JobPortal",
     description:

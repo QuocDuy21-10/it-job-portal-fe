@@ -8,7 +8,7 @@ import { LucideIcon, Briefcase, Building2, TrendingUp } from "lucide-react";
 // Stats Cards Configuration
 export interface IStatCardConfig {
   key: keyof Pick<
-    import("@/shared/types/dashboard").IDashboardStats,
+    import("@/shared/types/dashboard").IAdminDashboardStats,
     "countJobs24h" | "countActiveJobs" | "countHiringCompanies"
   >;
   label: string;
@@ -77,6 +77,6 @@ export const CHART_CONFIG = {
 
 // API Endpoints
 export const DASHBOARD_API_ENDPOINTS = {
-  getStats: "/statistics/dashboard",
-  refreshCache: "/statistics/dashboard/refresh",
+  adminStats: "/statistics/admin-dashboard",
+  hrStats: "/statistics/hr-dashboard",
 } as const;

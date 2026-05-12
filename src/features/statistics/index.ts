@@ -6,14 +6,17 @@
 // API & Hooks
 export {
   statisticsApi,
-  useGetDashboardStatsQuery,
-  useRefreshDashboardCacheMutation,
+  useGetAdminDashboardStatsQuery,
+  useGetHrDashboardStatsQuery,
 } from "./redux/statistics.api";
 
 // Re-export types for convenience
 export type {
-  IDashboardStats,
-  ISalaryDistribution,
-  IJobTrend,
-  IRefreshCacheResponse,
+  IAdminDashboardStats,
+  IHrDashboardStats,
+  IResumeProcessingHealth,
+  IStatisticsStatusBucket,
+  IStatisticsTopJob,
+  IStatisticsTopSkill,
+  IStatisticsTrendPoint,
 } from "@/shared/types/dashboard";

@@ -1,8 +1,8 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
-  IDashboardStats,
-  IRefreshCacheResponse,
+  IAdminDashboardStats,
+  IHrDashboardStats,
 } from "@/shared/types/dashboard";
 import { DASHBOARD_API_ENDPOINTS } from "@/shared/config/dashboard.config";
 
@@ -13,36 +13,39 @@ import { DASHBOARD_API_ENDPOINTS } from "@/shared/config/dashboard.config";
 export const statisticsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     /**
-     * Lấy thống kê dashboard
-     * @returns Dashboard statistics data
+     * Lấy thống kê dashboard cho SUPER_ADMIN
+     * @returns Admin dashboard statistics data
      */
-    getDashboardStats: builder.query<ApiResponse<IDashboardStats>, void>({
+    getAdminDashboardStats: builder.query<
+      ApiResponse<IAdminDashboardStats>,
+      void
+    >({
       query: () => ({
-        url: DASHBOARD_API_ENDPOINTS.getStats,
+        url: DASHBOARD_API_ENDPOINTS.adminStats,
         method: "GET",
       }),
-      // Tag cho cache invalidation
       providesTags: ["Statistics"],
     }),
 
     /**
-     * Xóa cache và refresh dashboard
-     * @returns Success message
+     * Lấy thống kê dashboard cho HR
+     * @returns HR dashboard statistics data
      */
-    refreshDashboardCache: builder.mutation<
-      ApiResponse<IRefreshCacheResponse>,
+    getHrDashboardStats: builder.query<
+      ApiResponse<IHrDashboardStats>,
       void
     >({
       query: () => ({
-        url: DASHBOARD_API_ENDPOINTS.refreshCache,
+        url: DASHBOARD_API_ENDPOINTS.hrStats,
         method: "GET",
       }),
-      // Invalidate cache để fetch lại data
-      invalidatesTags: ["Statistics"],
+      providesTags: ["Statistics"],
     }),
   }),
 });
 
 // Export hooks để sử dụng trong components
-export const { useGetDashboardStatsQuery, useRefreshDashboardCacheMutation } =
-  statisticsApi;
+export const {
+  useGetAdminDashboardStatsQuery,
+  useGetHrDashboardStatsQuery,
+} = statisticsApi;

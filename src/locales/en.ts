@@ -119,6 +119,129 @@ export const en = {
     theme: "Theme",
     language: "Language",
   },
+  statisticsDashboard: {
+    shared: {
+      guardLoading: "Checking access...",
+      errorTitle: "Unable to load statistics",
+      errorDescription: "The statistics service is currently unavailable. Please try again.",
+      retry: "Try again",
+      emptyTitle: "No statistics available",
+      emptyDescription: "Statistics will appear here once the platform has enough data to aggregate.",
+      refresh: "Refresh",
+      refreshing: "Refreshing...",
+      generatedAt: "Generated at",
+      cached: "Cached snapshot",
+      live: "Live snapshot",
+      noRankedData: "No ranked data is available yet.",
+      notAvailable: "Not available",
+    },
+    admin: {
+      eyebrow: "Platform analytics",
+      title: "Admin Statistics Dashboard",
+      description:
+        "Monitor platform health, hiring activity, and resume processing performance from one admin-only workspace.",
+      cards: {
+        countJobs24h: {
+          label: "New jobs (24h)",
+          description: "Approved jobs created in the last 24 hours.",
+        },
+        countActiveJobs: {
+          label: "Active jobs",
+          description: "Approved jobs that are still open and visible.",
+        },
+        countPendingApprovalJobs: {
+          label: "Pending approval",
+          description: "Jobs currently waiting for moderation.",
+        },
+        countHiringCompanies: {
+          label: "Hiring companies",
+          description: "Companies with at least one approved active job.",
+        },
+        countCompanies: {
+          label: "Companies",
+          description: "Total non-deleted companies on the platform.",
+        },
+        countUsers: {
+          label: "Users",
+          description: "Total non-deleted users across the platform.",
+        },
+      },
+      charts: {
+        jobTrendTitle: "Job creation trend",
+        jobTrendDescription: "Seven-day view of newly created jobs.",
+        applicationTrendTitle: "Application trend",
+        applicationTrendDescription: "Seven-day view of incoming resume submissions.",
+        topSkillsTitle: "Top demanded skills",
+        topSkillsDescription: "Skills that appear most often across approved active jobs.",
+        skillDemandHint: "Active approved job mentions",
+        processingHealthTitle: "Resume processing health",
+        processingHealthDescription: "Pipeline visibility for parsing and analysis stages.",
+        totalResumes: "Total resumes tracked",
+        parsedResumes: "Parsed resumes",
+        parseFailedResumes: "Parse failures",
+        analyzedResumes: "Analyzed resumes",
+        analysisFailedResumes: "Analysis failures",
+      },
+    },
+    hr: {
+      layoutDescription: "Recruitment execution metrics for your company.",
+      layoutBadge: "HR dashboard",
+      eyebrow: "Hiring performance",
+      title: "HR Statistics Dashboard",
+      description:
+        "Track recruiting throughput, application flow, and response quality for your company.",
+      noCompanyTitle: "No company is linked to this HR account",
+      noCompanyDescription:
+        "Attach this HR account to a company before opening the statistics dashboard.",
+      cards: {
+        countActiveJobs: {
+          label: "Active jobs",
+          description: "Approved jobs for your company that are still accepting candidates.",
+        },
+        countPendingApprovalJobs: {
+          label: "Pending approval",
+          description: "Company jobs waiting for admin approval.",
+        },
+        countExpiredJobs: {
+          label: "Expired jobs",
+          description: "Approved jobs whose end date has already passed.",
+        },
+        totalApplications: {
+          label: "Total applications",
+          description: "All non-deleted resumes received by your company.",
+        },
+        countApplications24h: {
+          label: "Applications (24h)",
+          description: "New resumes submitted in the last 24 hours.",
+        },
+        applicationStatusDistribution: {
+          label: "Tracked statuses",
+          description: "Total applications represented in the current funnel.",
+        },
+      },
+      charts: {
+        statusDistributionTitle: "Application status distribution",
+        statusDistributionDescription: "Current recruiting funnel grouped by resume status.",
+        applicationTrendTitle: "Application trend",
+        applicationTrendDescription: "Seven-day view of new applications for your company.",
+        topJobsTitle: "Top jobs by applications",
+        topJobsDescription: "Roles attracting the highest application volume.",
+        topJobsHint: "Applications received",
+        performanceTitle: "Recruiting performance",
+        performanceDescription: "Response speed and AI matching quality for your company.",
+        responseRate: "Response rate",
+        firstResponseHours: "Avg. first response",
+        matchingScore: "Avg. matching score",
+      },
+    },
+    statuses: {
+      PENDING: "Pending",
+      REVIEWING: "Reviewing",
+      INTERVIEWING: "Interviewing",
+      APPROVED: "Approved",
+      REJECTED: "Rejected",
+    },
+  },
   footer: {
     logoName: "JobPortal",
     description:
