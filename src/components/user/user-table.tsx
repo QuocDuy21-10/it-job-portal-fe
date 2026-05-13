@@ -22,6 +22,8 @@ import { useGetRoleQuery } from "@/features/role/redux/role.api";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface UserTableProps {
   users: User[];
@@ -54,6 +56,8 @@ export function UserTable({
   isAllSelected,
   isIndeterminate,
 }: UserTableProps) {
+  const { t } = useI18n();
+
   if (isLoading) {
     return <UserTableSkeleton />;
   }
@@ -69,29 +73,29 @@ export function UserTable({
                   <Checkbox
                     checked={isIndeterminate ? "indeterminate" : isAllSelected}
                     onCheckedChange={onToggleAll}
-                    aria-label="Select all"
+                    aria-label={t("adminPages.shared.selectAll")}
                   />
                 </TableHead>
                 <TableHead className="w-[60px] text-center font-semibold text-gray-700 dark:text-gray-300">
-                  STT
+                  {t("adminPages.shared.number")}
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
-                  User
+                  {t("adminPages.users.table.user")}
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
-                  Email
+                  {t("adminPages.users.table.email")}
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
-                  Role
+                  {t("adminPages.users.table.role")}
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
-                  Status
+                  {t("adminPages.users.table.status")}
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
-                  Created
+                  {t("adminPages.shared.createdAt")}
                 </TableHead>
                 <TableHead className="text-right font-semibold text-gray-700 dark:text-gray-300">
-                  Actions
+                  {t("adminPages.shared.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -108,10 +112,10 @@ export function UserTable({
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          No users found
+                          {t("adminPages.users.table.emptyTitle")}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Try adjusting your search or filters
+                          {t("adminPages.users.table.emptyDescription")}
                         </p>
                       </div>
                     </div>
@@ -144,6 +148,8 @@ export function UserTable({
  * Loading Skeleton Component
  */
 function UserTableSkeleton() {
+  const { t } = useI18n();
+
   return (
     <div className="admin-card overflow-hidden">
       <div className="overflow-x-auto">
@@ -151,13 +157,13 @@ function UserTableSkeleton() {
           <TableHeader>
             <TableRow className="border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-900/50">
               <TableHead className="w-[50px]" />
-              <TableHead className="w-[60px]">#</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[60px]">{t("adminPages.shared.number")}</TableHead>
+              <TableHead>{t("adminPages.users.table.user")}</TableHead>
+              <TableHead>{t("adminPages.users.table.email")}</TableHead>
+              <TableHead>{t("adminPages.users.table.role")}</TableHead>
+              <TableHead>{t("adminPages.users.table.status")}</TableHead>
+              <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+              <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -225,12 +231,12 @@ function UserTableRow({
   isSelected,
   onToggleSelect,
 }: UserTableRowProps) {
+  const { t, language } = useI18n();
   const { data: roleData } = useGetRoleQuery(user.role);
-  const roleName = roleData?.data?.name || "Unknown Role";
+  const roleName = roleData?.data?.name || t("adminPages.users.table.unknownRole");
 
-  // Format date
   const formattedDate = user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("vi-VN", {
+    ? formatLocaleDate(user.createdAt, language, {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -260,7 +266,7 @@ function UserTableRow({
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(user._id)}
-          aria-label={`Select ${user.name}`}
+          aria-label={t("adminPages.shared.selectItem", { resource: user.name })}
         />
       </TableCell>
       {/* Order Number */}
@@ -302,7 +308,7 @@ function UserTableRow({
             className="flex items-center gap-1 w-fit font-medium"
           >
             <Lock className="h-3 w-3" />
-            Locked
+            {t("adminPages.users.table.locked")}
           </Badge>
         ) : (
           <Badge
@@ -310,7 +316,7 @@ function UserTableRow({
             className="flex items-center gap-1 w-fit font-medium text-green-600 dark:text-green-400 border-green-200 dark:border-green-800"
           >
             <Unlock className="h-3 w-3" />
-            Active
+            {t("adminPages.shared.active")}
           </Badge>
         )}
       </TableCell>
@@ -335,12 +341,14 @@ function UserTableRow({
                     size="sm"
                     onClick={() => onEdit(user)}
                     className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    aria-label="Edit user"
+                    aria-label={`${t("adminPages.shared.edit")} ${t("adminPages.resources.user")}`}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Edit user</TooltipContent>
+                <TooltipContent>
+                  {`${t("adminPages.shared.edit")} ${t("adminPages.resources.user")}`}
+                </TooltipContent>
               </Tooltip>
             </Access>
 
@@ -353,7 +361,7 @@ function UserTableRow({
                       size="sm"
                       onClick={() => onUnlock(user._id)}
                       className="h-8 w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/30 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-                      aria-label="Unlock user"
+                      aria-label={`${t("adminPages.shared.unlock")} ${t("adminPages.resources.user")}`}
                     >
                       <Unlock className="h-4 w-4" />
                     </Button>
@@ -363,14 +371,16 @@ function UserTableRow({
                       size="sm"
                       onClick={() => onLock(user)}
                       className="h-8 w-8 p-0 hover:bg-amber-50 dark:hover:bg-amber-950/30 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                      aria-label="Lock user"
+                      aria-label={`${t("adminPages.shared.lock")} ${t("adminPages.resources.user")}`}
                     >
                       <Lock className="h-4 w-4" />
                     </Button>
                   )}
                 </TooltipTrigger>
                 <TooltipContent>
-                  {user.isLocked ? "Unlock user" : "Lock user"}
+                  {user.isLocked
+                    ? `${t("adminPages.shared.unlock")} ${t("adminPages.resources.user")}`
+                    : `${t("adminPages.shared.lock")} ${t("adminPages.resources.user")}`}
                 </TooltipContent>
               </Tooltip>
             </Access>
@@ -383,12 +393,14 @@ function UserTableRow({
                     size="sm"
                     onClick={() => onDelete(user._id)}
                     className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                    aria-label="Delete user"
+                    aria-label={`${t("adminPages.shared.delete")} ${t("adminPages.resources.user")}`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Delete user</TooltipContent>
+                <TooltipContent>
+                  {`${t("adminPages.shared.delete")} ${t("adminPages.resources.user")}`}
+                </TooltipContent>
               </Tooltip>
             </Access>
           </div>

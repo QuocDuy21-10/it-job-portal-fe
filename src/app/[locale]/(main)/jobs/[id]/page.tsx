@@ -159,7 +159,10 @@ export async function generateMetadata({
 
 export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const { locale, id } = await resolveJobDetailParams(params);
-  const job = await fetchPublicJobById(id);
+  const [job, t] = await Promise.all([
+    fetchPublicJobById(id),
+    getTranslations({ locale }),
+  ]);
 
   if (!job) {
     notFound();
@@ -194,7 +197,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     href={homePath}
                     className="text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
                   >
-                    Trang chủ
+                    {t("breadcrumb.home")}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
@@ -205,7 +208,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     href={jobsPath}
                     className="text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
                   >
-                    Việc làm
+                    {t("nav.findJobs")}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
@@ -250,7 +253,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Địa điểm</p>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
+                        {t("jobDetailPage.summary.location")}
+                      </p>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">{job.location}</p>
                     </div>
                   </div>
@@ -259,7 +264,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <Briefcase className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
-                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Cấp bậc</p>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
+                        {t("jobDetailPage.summary.level")}
+                      </p>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">{job.level}</p>
                     </div>
                   </div>
@@ -268,7 +275,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Loại hình</p>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
+                        {t("jobDetailPage.summary.workType")}
+                      </p>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">{job.formOfWork}</p>
                     </div>
                   </div>
@@ -277,7 +286,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                     </div>
                     <div>
-                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Mức lương</p>
+                      <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
+                        {t("jobDetailPage.summary.salary")}
+                      </p>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">
                         {formatVndCurrency(job.salary, locale)}
                       </p>
@@ -301,7 +312,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                        <span className="font-semibold">Hạn nộp hồ sơ:</span> Còn {daysRemaining} ngày
+                        <span className="font-semibold">
+                          {t("jobDetailPage.deadline.label")}
+                        </span>{" "}
+                        {t("jobDetailPage.deadline.value", { days: daysRemaining })}
                       </p>
                     </div>
                   </div>
@@ -317,7 +331,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <h2 className="m-0 text-xl font-bold text-slate-900 dark:text-slate-100">
-                          Kỹ năng yêu cầu
+                          {t("jobDetailPage.skillsTitle")}
                         </h2>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -337,7 +351,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     <div>
                       <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-100">
                         <div className="h-6 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
-                        Mô tả công việc
+                        {t("jobDetailPage.descriptionTitle")}
                       </h2>
                       <div className="space-y-2 leading-relaxed text-slate-700 dark:text-slate-300">
                         {parse(job.description || "")}
@@ -348,7 +362,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 p-6 dark:border-border dark:from-card dark:to-blue-950">
                     <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-100">
                       <div className="h-6 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
-                      Yêu cầu công việc
+                      {t("jobDetailPage.requirementsTitle")}
                     </h2>
                     <ul className="space-y-3 text-slate-700 dark:text-slate-300">
                       <li className="flex items-start gap-3">
@@ -356,7 +370,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>Cấp bậc:</strong> {job.level}
+                          <strong>{t("jobDetailPage.summary.level")}:</strong> {job.level}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
@@ -364,7 +378,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>Hình thức làm việc:</strong> {job.formOfWork}
+                          <strong>{t("jobDetailPage.summary.workType")}:</strong> {job.formOfWork}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
@@ -372,7 +386,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>Địa điểm:</strong> {job.location}
+                          <strong>{t("jobDetailPage.summary.location")}:</strong> {job.location}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
@@ -380,7 +394,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>Số lượng tuyển:</strong> {job.quantity} vị trí
+                          <strong>{t("jobDetailPage.requirements.quantityLabel")}:</strong>{" "}
+                          {t("jobDetailPage.requirements.quantityValue", {
+                            quantity: job.quantity,
+                          })}
                         </span>
                       </li>
                     </ul>
@@ -407,7 +424,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   <div className="space-y-4 p-6">
                     <div>
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                        Công ty tuyển dụng
+                        {t("jobDetailPage.sidebar.hiringCompany")}
                       </p>
                       <h2 className="mt-1 text-xl font-bold text-foreground">{job.company.name}</h2>
                     </div>
@@ -415,13 +432,13 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <MapPin className="mt-0.5 h-4 w-4 text-primary" />
                       <div>
                         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          Khu vực tuyển dụng
+                          {t("jobDetailPage.sidebar.hiringArea")}
                         </p>
                         <p className="text-sm font-semibold text-foreground">{job.location}</p>
                       </div>
                     </div>
                     <Button asChild className="w-full" size="lg">
-                      <Link href={companyPath}>Xem hồ sơ công ty</Link>
+                      <Link href={companyPath}>{t("jobDetailPage.sidebar.viewCompanyProfile")}</Link>
                     </Button>
                   </div>
                 </Card>

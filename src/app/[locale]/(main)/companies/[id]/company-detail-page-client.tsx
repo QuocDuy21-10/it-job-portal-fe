@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import JobListing from "@/components/company/section/job-listing";
+import { useI18n } from "@/hooks/use-i18n";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 type CompanyDetailPageClientProps = {
@@ -21,6 +22,7 @@ export default function CompanyDetailPageClient({
 }: CompanyDetailPageClientProps) {
   const [selectedLocationCode, setSelectedLocationCode] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const { t } = useI18n();
   const debouncedSearchQuery = useDebounce(searchQuery, 400);
 
   return (
@@ -29,7 +31,7 @@ export default function CompanyDetailPageClient({
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="flex-1">
             <Input
-              placeholder="Tìm kiếm theo tên công việc..."
+              placeholder={t("companyDetailPage.filters.searchPlaceholder")}
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               className="h-11 w-full border-slate-300 transition-colors focus:border-blue-500 focus:ring-blue-500 dark:border-slate-700"
@@ -40,7 +42,7 @@ export default function CompanyDetailPageClient({
             onChange={(event) => setSelectedLocationCode(event.target.value)}
             className="h-11 cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 transition-all hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-border dark:bg-card dark:text-slate-100"
           >
-            <option value="">Tất cả vị trí</option>
+            <option value="">{t("companyDetailPage.filters.allLocations")}</option>
             {LOCATION_OPTIONS.map((location) => (
               <option key={location.value} value={location.value}>
                 {location.label}
@@ -49,7 +51,7 @@ export default function CompanyDetailPageClient({
           </select>
           <Button className="h-11 bg-primary text-primary-foreground shadow-md transition-all duration-300 hover:bg-primary/90 hover:shadow-lg">
             <Search className="mr-2 h-4 w-4" />
-            Tìm kiếm
+            {t("companyDetailPage.filters.searchButton")}
           </Button>
         </div>
       </Card>

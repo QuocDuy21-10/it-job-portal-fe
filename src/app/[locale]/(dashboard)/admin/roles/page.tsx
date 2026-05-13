@@ -22,9 +22,11 @@ import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-conf
 import { Role } from "@/features/role/schemas/role.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 
 export default function RolesPage() {
+  const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,6 +82,10 @@ export default function RolesPage() {
 
   const pagination = rolesData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
+  const selectedResourceLabel =
+    selectedCount === 1
+      ? t("adminPages.resources.role")
+      : t("adminPages.resources.roles");
 
   // Handlers với useCallback để tránh re-render không cần thiết
   const handlePageChange = useCallback((newPage: number) => {
@@ -110,17 +116,36 @@ export default function RolesPage() {
       const result = await bulkDeleteRoles(Array.from(selectedIds)).unwrap();
       const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
       if (deletedCount < requestedCount) {
-        toast.warning(`Deleted ${deletedCount} of ${requestedCount} roles. Some records may have already been removed.`);
+        toast.warning(
+          t("adminPages.shared.bulkDeletePartial", {
+            deletedCount,
+            requestedCount,
+            resource: t("adminPages.resources.roles"),
+          })
+        );
       } else {
-        toast.success(`Successfully deleted ${deletedCount} role${deletedCount !== 1 ? "s" : ""}.`);
+        toast.success(
+          t("adminPages.shared.bulkDeleteSuccess", {
+            deletedCount,
+            resource:
+              deletedCount === 1
+                ? t("adminPages.resources.role")
+                : t("adminPages.resources.roles"),
+          })
+        );
       }
       clear();
       setShowBulkDeleteDialog(false);
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.message || "Failed to delete roles. Please try again.";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        t("adminPages.shared.bulkDeleteError", {
+          resource: t("adminPages.resources.roles"),
+        });
       toast.error(errorMessage);
     }
-  }, [bulkDeleteRoles, selectedIds, clear]);
+  }, [bulkDeleteRoles, clear, selectedIds, t]);
 
   return (
     <div className="space-y-6">
@@ -131,16 +156,16 @@ export default function RolesPage() {
             <Shield className="h-6 w-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h1 className="admin-page-title">Roles</h1>
+            <h1 className="admin-page-title">{t("adminPages.roles.title")}</h1>
             <p className="admin-page-description">
-              Manage role profiles and permissions
+              {t("adminPages.roles.description")}
             </p>
           </div>
         </div>
 
         <Button onClick={() => handleOpenDialog()} className="gap-2">
           <Plus className="h-4 w-4" />
-          Add Role
+          {t("adminPages.roles.addButton")}
         </Button>
       </div>
 
@@ -152,7 +177,7 @@ export default function RolesPage() {
             <SearchBar
               value={searchQuery}
               onSearch={handleSearchChange}
-              placeholder="Search by role name..."
+              placeholder={t("adminPages.roles.searchPlaceholder")}
               debounceDelay={500}
               showClearButton
               width="full"
@@ -165,13 +190,13 @@ export default function RolesPage() {
               <SelectTrigger className="h-10">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-gray-500" />
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder={t("adminPages.roles.statusFilterPlaceholder")} />
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="true">Active</SelectItem>
-                <SelectItem value="false">Inactive</SelectItem>
+                <SelectItem value="all">{t("adminPages.shared.allStatus")}</SelectItem>
+                <SelectItem value="true">{t("adminPages.shared.active")}</SelectItem>
+                <SelectItem value="false">{t("adminPages.shared.inactive")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -182,12 +207,15 @@ export default function RolesPage() {
       {selectedCount > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
           <span className="text-sm font-medium text-foreground">
-            {selectedCount} role{selectedCount !== 1 ? "s" : ""} selected
+            {t("adminPages.shared.selectedSummary", {
+              count: selectedCount,
+              resource: selectedResourceLabel,
+            })}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
               <X className="h-4 w-4" />
-              Clear
+              {t("adminPages.shared.clear")}
             </Button>
             <Access action={EAction.DELETE} subject="Role" hideChildren>
               <Button
@@ -197,7 +225,7 @@ export default function RolesPage() {
                 className="gap-1.5"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                {t("adminPages.shared.deleteSelected")}
               </Button>
             </Access>
           </div>
@@ -244,7 +272,7 @@ export default function RolesPage() {
       <SingleDeleteConfirmDialog
         open={!!deletingRole}
         itemName={deletingRole?.name}
-        resourceLabel="role"
+        resourceLabel={t("adminPages.resources.role")}
         onConfirm={handleConfirmDelete}
         onCancel={handleCloseDeleteDialog}
         isLoading={isDeleting}
@@ -255,7 +283,7 @@ export default function RolesPage() {
         open={showBulkDeleteDialog}
         onOpenChange={setShowBulkDeleteDialog}
         count={selectedCount}
-        resourceName={selectedCount === 1 ? "role" : "roles"}
+        resourceName={selectedResourceLabel}
         onConfirm={handleBulkDelete}
         isLoading={isBulkDeleting}
       />

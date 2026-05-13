@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useCreateResumeMutation,
   useDeleteResumeMutation,
@@ -12,6 +13,7 @@ import {
 } from "@/features/resume/schemas/resume.schema";
 
 export function useResumeOperations() {
+  const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingResume, setEditingResume] = useState<Resume | null>(null);
   const [deletingResume, setDeletingResume] = useState<Resume | null>(null);
@@ -48,7 +50,7 @@ export function useResumeOperations() {
           },
         }).unwrap();
 
-        toast.success("Cập nhật CV thành công!");
+        toast.success(t("adminPages.resumes.toasts.updateSuccess"));
 
         handleCloseDialog();
         return true;
@@ -60,7 +62,7 @@ export function useResumeOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đã xảy ra lỗi. Vui lòng thử lại.";
+        t("adminPages.resumes.toasts.operationError");
 
       toast.error(errorMessage);
       return false;
@@ -85,7 +87,11 @@ export function useResumeOperations() {
 
     try {
       await deleteResume(resumeToDelete._id).unwrap();
-      toast.success(`Đã xóa CV "${resumeToDelete.url}" thành công!`);
+      toast.success(
+        t("adminPages.resumes.toasts.deleteSuccess", {
+          name: resumeToDelete.url,
+        })
+      );
       handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete resume error:", error);
@@ -93,7 +99,7 @@ export function useResumeOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể xóa CV. Vui lòng thử lại.";
+        t("adminPages.resumes.toasts.deleteError");
 
       toast.error(errorMessage);
     }

@@ -16,10 +16,12 @@ import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-conf
 import { Company } from "@/features/company/schemas/company.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import provinces from "@/shared/data/provinces.json";
 
 export default function CompaniesPage() {
+  const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAddress, setSelectedAddress] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -78,6 +80,10 @@ export default function CompaniesPage() {
 
   const pagination = companiesData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
+  const selectedResourceLabel =
+    selectedCount === 1
+      ? t("adminPages.resources.company")
+      : t("adminPages.resources.companies");
 
   // Handlers với useCallback để tránh re-render không cần thiết
   const handlePageChange = useCallback((newPage: number) => {
@@ -108,17 +114,36 @@ export default function CompaniesPage() {
       const result = await bulkDeleteCompanies(Array.from(selectedIds)).unwrap();
       const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
       if (deletedCount < requestedCount) {
-        toast.warning(`Deleted ${deletedCount} of ${requestedCount} companies. Some records may have already been removed.`);
+        toast.warning(
+          t("adminPages.shared.bulkDeletePartial", {
+            deletedCount,
+            requestedCount,
+            resource: t("adminPages.resources.companies"),
+          })
+        );
       } else {
-        toast.success(`Successfully deleted ${deletedCount} compan${deletedCount !== 1 ? "ies" : "y"}.`);
+        toast.success(
+          t("adminPages.shared.bulkDeleteSuccess", {
+            deletedCount,
+            resource:
+              deletedCount === 1
+                ? t("adminPages.resources.company")
+                : t("adminPages.resources.companies"),
+          })
+        );
       }
       clear();
       setShowBulkDeleteDialog(false);
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.message || "Failed to delete companies. Please try again.";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        t("adminPages.shared.bulkDeleteError", {
+          resource: t("adminPages.resources.companies"),
+        });
       toast.error(errorMessage);
     }
-  }, [bulkDeleteCompanies, selectedIds, clear]);
+  }, [bulkDeleteCompanies, clear, selectedIds, t]);
 
   return (
     <div className="space-y-6">
@@ -129,9 +154,9 @@ export default function CompaniesPage() {
             <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h1 className="admin-page-title">Companies</h1>
+            <h1 className="admin-page-title">{t("adminPages.companies.title")}</h1>
             <p className="admin-page-description">
-              Manage company profiles and information
+              {t("adminPages.companies.description")}
             </p>
           </div>
         </div>
@@ -139,7 +164,7 @@ export default function CompaniesPage() {
         <Access action={EAction.CREATE} subject="Company" hideChildren>
           <Button onClick={() => handleOpenDialog()} className="gap-2">
             <Plus className="h-4 w-4" />
-            Add Company
+            {t("adminPages.companies.addButton")}
           </Button>
         </Access>
       </div>
@@ -152,7 +177,7 @@ export default function CompaniesPage() {
             <SearchBar
               value={searchQuery}
               onSearch={handleSearchChange}
-              placeholder="Search by company name..."
+              placeholder={t("adminPages.companies.searchPlaceholder")}
               debounceDelay={500}
               showClearButton
               width="full"
@@ -163,7 +188,7 @@ export default function CompaniesPage() {
           <div className="w-full md:w-64">
             <SingleSelect
               options={[
-                { label: "All Locations", value: "" },
+                { label: t("adminPages.companies.allLocations"), value: "" },
                 ...provinces.map((province) => ({
                   label: province.label,
                   value: province.value,
@@ -171,8 +196,8 @@ export default function CompaniesPage() {
               ]}
               value={selectedAddress}
               onChange={handleAddressChange}
-              placeholder="Filter by location"
-              searchPlaceholder="Search location..."
+              placeholder={t("adminPages.companies.locationFilterPlaceholder")}
+              searchPlaceholder={t("adminPages.companies.locationSearchPlaceholder")}
               leftIcon={<Building2 className="h-4 w-4" />}
               allowClear
             />
@@ -184,12 +209,15 @@ export default function CompaniesPage() {
       {selectedCount > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
           <span className="text-sm font-medium text-foreground">
-            {selectedCount} compan{selectedCount !== 1 ? "ies" : "y"} selected
+            {t("adminPages.shared.selectedSummary", {
+              count: selectedCount,
+              resource: selectedResourceLabel,
+            })}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
               <X className="h-4 w-4" />
-              Clear
+              {t("adminPages.shared.clear")}
             </Button>
             <Access action={EAction.DELETE} subject="Company" hideChildren>
               <Button
@@ -199,7 +227,7 @@ export default function CompaniesPage() {
                 className="gap-1.5"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                {t("adminPages.shared.deleteSelected")}
               </Button>
             </Access>
           </div>
@@ -248,7 +276,7 @@ export default function CompaniesPage() {
       <SingleDeleteConfirmDialog
         open={!!deletingCompany}
         itemName={deletingCompany?.name}
-        resourceLabel="company"
+        resourceLabel={t("adminPages.resources.company")}
         onConfirm={handleConfirmDelete}
         onCancel={handleCloseDeleteDialog}
         isLoading={isDeleting}
@@ -259,7 +287,7 @@ export default function CompaniesPage() {
         open={showBulkDeleteDialog}
         onOpenChange={setShowBulkDeleteDialog}
         count={selectedCount}
-        resourceName={selectedCount === 1 ? "company" : "companies"}
+        resourceName={selectedResourceLabel}
         onConfirm={handleBulkDelete}
         isLoading={isBulkDeleting}
       />

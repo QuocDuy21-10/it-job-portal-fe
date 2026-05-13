@@ -38,22 +38,28 @@ interface HrDashboardChartsProps {
   >;
 }
 
-const statusChartConfig: ChartConfig = {
-  count: {
-    label: "Count",
-    color: "hsl(var(--chart-4))",
-  },
-};
-
-const applicationChartConfig: ChartConfig = {
-  count: {
-    label: "Count",
-    color: "hsl(var(--chart-5))",
-  },
-};
-
 export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
   const { t, language } = useI18n();
+
+  const statusChartConfig = useMemo<ChartConfig>(
+    () => ({
+      count: {
+        label: t("statisticsDashboard.shared.seriesCount"),
+        color: "hsl(var(--chart-4))",
+      },
+    }),
+    [t]
+  );
+
+  const applicationChartConfig = useMemo<ChartConfig>(
+    () => ({
+      count: {
+        label: t("statisticsDashboard.shared.seriesCount"),
+        color: "hsl(var(--chart-5))",
+      },
+    }),
+    [t]
+  );
 
   const shortDateFormatter = useMemo(
     () =>
@@ -87,7 +93,7 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
         ...item,
         label: getStatusLabel(item.status),
       })),
-    [stats.applicationStatusDistribution]
+    [stats.applicationStatusDistribution, t]
   );
 
   const applicationTrendData = useMemo(

@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface BulkDeleteConfirmDialogProps {
   open: boolean;
@@ -29,24 +30,30 @@ export function BulkDeleteConfirmDialog({
   onConfirm,
   isLoading,
 }: BulkDeleteConfirmDialogProps) {
+  const { t } = useI18n();
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Delete {count} selected {resourceName}?
+            {t("adminDialogs.bulkDelete.title", {
+              count,
+              resource: resourceName,
+            })}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are about to delete{" "}
+            {t("adminDialogs.bulkDelete.descriptionPrefix")}{" "}
             <span className="font-semibold text-foreground">
               {count} {resourceName}
             </span>
-            . This is a soft delete — records can be restored from the trash.
-            Confirm to proceed.
+            {t("adminDialogs.bulkDelete.descriptionSuffix")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>
+            {t("common.cancel")}
+          </AlertDialogCancel>
           <Button
             variant="destructive"
             onClick={onConfirm}
@@ -55,12 +62,15 @@ export function BulkDeleteConfirmDialog({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Deleting…
+                {t("adminDialogs.bulkDelete.deleting")}
               </>
             ) : (
               <>
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete {count} {resourceName}
+                {t("adminDialogs.bulkDelete.confirm", {
+                  count,
+                  resource: resourceName,
+                })}
               </>
             )}
           </Button>

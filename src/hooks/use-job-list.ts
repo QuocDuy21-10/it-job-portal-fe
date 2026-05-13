@@ -161,7 +161,12 @@ export function useJobList({
   );
 
   const resetAllFilters = useCallback(() => {
-    setDraftState(EMPTY_DRAFT_STATE);
+    setDraftState((currentState) => {
+      return areDraftStatesEqual(currentState, EMPTY_DRAFT_STATE)
+        ? currentState
+        : EMPTY_DRAFT_STATE;
+    });
+
     setCurrentSearchState((currentState) => {
       const nextSearchState: JobListSearchState = {
         ...currentState,

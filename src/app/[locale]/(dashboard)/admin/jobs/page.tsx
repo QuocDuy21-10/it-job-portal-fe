@@ -24,10 +24,12 @@ import { useJobOperations } from "@/hooks/use-job";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 export default function JobsPage() {
+  const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedLocation, setSelectedLocation] = useState("");
@@ -39,11 +41,11 @@ export default function JobsPage() {
 
   // Salary ranges (in VND)
   const salaryRanges = [
-    { label: "Tất cả mức lương", value: "all" },
-    { label: "Dưới 10 triệu", value: "0-10000000" },
-    { label: "10 - 20 triệu", value: "10000000-20000000" },
-    { label: "20 - 50 triệu", value: "20000000-50000000" },
-    { label: "Trên 50 triệu", value: "50000000-999999999" },
+    { label: t("adminPages.jobs.salaryRanges.all"), value: "all" },
+    { label: t("adminPages.jobs.salaryRanges.under10m"), value: "0-10000000" },
+    { label: t("adminPages.jobs.salaryRanges.tenTo20m"), value: "10000000-20000000" },
+    { label: t("adminPages.jobs.salaryRanges.twentyTo50m"), value: "20000000-50000000" },
+    { label: t("adminPages.jobs.salaryRanges.above50m"), value: "50000000-999999999" },
   ];
 
   // Construct filter queries with useMemo
@@ -115,6 +117,10 @@ export default function JobsPage() {
 
   const pagination = jobsData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
+  const selectedResourceLabel =
+    selectedCount === 1
+      ? t("adminPages.resources.job")
+      : t("adminPages.resources.jobs");
 
   // Handlers với useCallback để tránh re-render không cần thiết
   const handlePageChange = useCallback((newPage: number) => {
@@ -138,17 +144,36 @@ export default function JobsPage() {
       const result = await bulkDeleteJobs(Array.from(selectedIds)).unwrap();
       const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
       if (deletedCount < requestedCount) {
-        toast.warning(`Deleted ${deletedCount} of ${requestedCount} jobs. Some records may have already been removed.`);
+        toast.warning(
+          t("adminPages.shared.bulkDeletePartial", {
+            deletedCount,
+            requestedCount,
+            resource: t("adminPages.resources.jobs"),
+          })
+        );
       } else {
-        toast.success(`Successfully deleted ${deletedCount} job${deletedCount !== 1 ? "s" : ""}.`);
+        toast.success(
+          t("adminPages.shared.bulkDeleteSuccess", {
+            deletedCount,
+            resource:
+              deletedCount === 1
+                ? t("adminPages.resources.job")
+                : t("adminPages.resources.jobs"),
+          })
+        );
       }
       clear();
       setShowBulkDeleteDialog(false);
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.message || "Failed to delete jobs. Please try again.";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        t("adminPages.shared.bulkDeleteError", {
+          resource: t("adminPages.resources.jobs"),
+        });
       toast.error(errorMessage);
     }
-  }, [bulkDeleteJobs, selectedIds, clear]);
+  }, [bulkDeleteJobs, clear, selectedIds, t]);
 
   const handleStatusChange = useCallback((value: string) => {
     setSelectedStatus(value);
@@ -180,16 +205,16 @@ export default function JobsPage() {
             <Briefcase className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
           <div>
-            <h1 className="admin-page-title">Jobs</h1>
+            <h1 className="admin-page-title">{t("adminPages.jobs.title")}</h1>
             <p className="admin-page-description">
-              Manage job postings and opportunities
+              {t("adminPages.jobs.description")}
             </p>
           </div>
         </div>
 
         <Button onClick={() => handleOpenDialog()} className="gap-2">
           <Plus className="h-4 w-4" />
-          Add Job
+          {t("adminPages.jobs.addButton")}
         </Button>
       </div>
 
@@ -201,7 +226,7 @@ export default function JobsPage() {
             <SearchBar
               value={searchQuery}
               onSearch={handleSearchChange}
-              placeholder="Search by job name..."
+              placeholder={t("adminPages.jobs.searchPlaceholder")}
               debounceDelay={500}
               showClearButton
               width="full"
@@ -216,13 +241,13 @@ export default function JobsPage() {
                 <SelectTrigger className="h-10">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue placeholder="Status" />
+                    <SelectValue placeholder={t("adminPages.jobs.statusPlaceholder")} />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="true">Active</SelectItem>
-                  <SelectItem value="false">Inactive</SelectItem>
+                    <SelectItem value="all">{t("adminPages.shared.allStatus")}</SelectItem>
+                    <SelectItem value="true">{t("adminPages.shared.active")}</SelectItem>
+                    <SelectItem value="false">{t("adminPages.shared.inactive")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -231,13 +256,13 @@ export default function JobsPage() {
             <div>
               <SingleSelect
                 options={[
-                  { label: "All Locations", value: "" },
+                    { label: t("adminPages.jobs.allLocations"), value: "" },
                   ...LOCATION_OPTIONS,
                 ]}
                 value={selectedLocation}
                 onChange={handleLocationChange}
-                placeholder="Filter by location"
-                searchPlaceholder="Search location..."
+                  placeholder={t("adminPages.jobs.locationFilterPlaceholder")}
+                  searchPlaceholder={t("adminPages.jobs.locationSearchPlaceholder")}
                 leftIcon={<Briefcase className="h-4 w-4" />}
                 allowClear
               />
@@ -249,7 +274,7 @@ export default function JobsPage() {
                 <SelectTrigger className="h-10">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue placeholder="Salary range" />
+                    <SelectValue placeholder={t("adminPages.jobs.salaryPlaceholder")} />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -273,14 +298,14 @@ export default function JobsPage() {
                 <SelectTrigger className="h-10">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue placeholder="Approval status" />
+                    <SelectValue placeholder={t("adminPages.jobs.approvalPlaceholder")} />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Approval Status</SelectItem>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="APPROVED">Approved</SelectItem>
-                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                  <SelectItem value="all">{t("adminPages.jobs.allApprovalStatuses")}</SelectItem>
+                  <SelectItem value="PENDING">{t("adminPages.jobs.table.pending")}</SelectItem>
+                  <SelectItem value="APPROVED">{t("adminPages.jobs.table.approved")}</SelectItem>
+                  <SelectItem value="REJECTED">{t("adminPages.jobs.table.rejected")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -292,12 +317,15 @@ export default function JobsPage() {
       {selectedCount > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
           <span className="text-sm font-medium text-foreground">
-            {selectedCount} job{selectedCount !== 1 ? "s" : ""} selected
+            {t("adminPages.shared.selectedSummary", {
+              count: selectedCount,
+              resource: selectedResourceLabel,
+            })}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
               <X className="h-4 w-4" />
-              Clear
+              {t("adminPages.shared.clear")}
             </Button>
             <Access action={EAction.DELETE} subject="Job" hideChildren>
               <Button
@@ -307,7 +335,7 @@ export default function JobsPage() {
                 className="gap-1.5"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                {t("adminPages.shared.deleteSelected")}
               </Button>
             </Access>
           </div>
@@ -355,7 +383,7 @@ export default function JobsPage() {
       <SingleDeleteConfirmDialog
         open={!!deletingJob}
         itemName={deletingJob?.name}
-        resourceLabel="job"
+        resourceLabel={t("adminPages.resources.job")}
         onConfirm={handleConfirmDelete}
         onCancel={handleCloseDeleteDialog}
         isLoading={isDeleting}
@@ -375,7 +403,7 @@ export default function JobsPage() {
         open={showBulkDeleteDialog}
         onOpenChange={setShowBulkDeleteDialog}
         count={selectedCount}
-        resourceName={selectedCount === 1 ? "job" : "jobs"}
+        resourceName={selectedResourceLabel}
         onConfirm={handleBulkDelete}
         isLoading={isBulkDeleting}
       />

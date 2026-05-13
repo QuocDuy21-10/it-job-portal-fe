@@ -7,6 +7,7 @@ import { Briefcase, Heart } from "lucide-react";
 import ApplyModal from "@/components/modals/apply-modal";
 import { Button } from "@/components/ui/button";
 import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
+import { useI18n } from "@/hooks/use-i18n";
 import { useJobFavorite } from "@/hooks/use-job-favorite";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ export default function JobDetailPageClient({
   loginHref,
 }: JobDetailPageClientProps) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { isSaved, toggleSaveJob, isLoading: isSavingJob } = useJobFavorite(jobId);
@@ -43,7 +45,7 @@ export default function JobDetailPageClient({
           className="h-12 flex-1 rounded-lg bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300 hover:bg-primary/90 hover:shadow-lg"
         >
           <Briefcase className="mr-2 h-5 w-5" />
-          Ứng tuyển ngay
+          {t("jobDetailPage.actions.applyNow")}
         </Button>
         <Button
           onClick={toggleSaveJob}
@@ -64,7 +66,9 @@ export default function JobDetailPageClient({
                 : "text-slate-400 dark:text-slate-500"
             )}
           />
-          {isSaved ? "Đã lưu" : "Lưu tin"}
+          {isSaved
+            ? t("jobDetailPage.actions.saved")
+            : t("jobDetailPage.actions.saveJob")}
         </Button>
       </div>
 

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useAuthModal } from "@/contexts/auth-modal-context";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useSaveJobMutation,
   useUnsaveJobMutation,
@@ -13,6 +14,7 @@ import {
 
 export function useJobFavorite(jobId: string) {
   const { openModal } = useAuthModal();
+  const { t } = useI18n();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const jobFavorites = useSelector(selectJobFavorites); // Danh sách thực từ Server/Redux
 
@@ -50,22 +52,33 @@ export function useJobFavorite(jobId: string) {
         if (previousState) {
           // Nếu đang là true (đã lưu) -> Gọi API bỏ lưu
           await unsaveJob(jobId).unwrap();
-          toast.success("Đã bỏ lưu công việc", { duration: 1000 }); 
+          toast.success(t("jobFavorites.removedSuccess"), { duration: 1000 });
         } else {
           // Nếu đang là false (chưa lưu) -> Gọi API lưu
           await saveJob(jobId).unwrap();
-          toast.success("Đã lưu công việc", { duration: 1000 });
+          toast.success(t("jobFavorites.savedSuccess"), { duration: 1000 });
         }
       } catch (error: any) {
         // 4. REVERT: Nếu API lỗi, trả về trạng thái cũ
         setOptimisticIsSaved(previousState);
         
         console.error("Toggle job favorite error:", error);
-        const errorMessage = error?.data?.message || error?.message || "Đã xảy ra lỗi.";
+                const errorMessage =
+                  error?.data?.message ||
+                  error?.message ||
+                  t("jobFavorites.errorFallback");
         toast.error(errorMessage);
       }
     },
-    [isAuthenticated, optimisticIsSaved, jobId, saveJob, unsaveJob, openModal]
+            [
+              isAuthenticated,
+              jobId,
+              openModal,
+              optimisticIsSaved,
+              saveJob,
+              t,
+              unsaveJob,
+            ]
   );
 
   return {

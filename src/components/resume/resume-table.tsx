@@ -1,4 +1,4 @@
-import { FileText, Mail, ExternalLink, Building2, Trophy, Target, Calendar, Edit, Trash2 } from "lucide-react";
+import { FileText, ExternalLink, Calendar, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,8 @@ import { Resume } from "@/features/resume/schemas/resume.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface ResumeTableProps {
   resumes: Resume[];
@@ -50,6 +52,8 @@ export function ResumeTable({
   isAllSelected,
   isIndeterminate,
 }: ResumeTableProps) {
+  const { t } = useI18n();
+
   if (isLoading) {
     return <ResumeTableSkeleton />;
   }
@@ -65,19 +69,19 @@ export function ResumeTable({
                   <Checkbox
                     checked={isIndeterminate ? "indeterminate" : isAllSelected}
                     onCheckedChange={onToggleAll}
-                    aria-label="Select all"
+                    aria-label={t("adminPages.shared.selectAll")}
                   />
                 </TableHead>
-                <TableHead className="w-[80px]">STT</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Link</TableHead>
-                <TableHead>Job</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Matching Score</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.email")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.link")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.job")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.company")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.priority")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.matchingScore")}</TableHead>
+                <TableHead>{t("adminPages.resumes.table.status")}</TableHead>
+                <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+                <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -88,10 +92,10 @@ export function ResumeTable({
                       <FileText className="h-12 w-12 text-gray-300" />
                       <div className="text-center">
                         <p className="font-medium text-gray-900 dark:text-gray-100">
-                          No resumes found
+                          {t("adminPages.resumes.table.emptyTitle")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          Try adjusting your search or filters
+                          {t("adminPages.resumes.table.emptyDescription")}
                         </p>
                       </div>
                     </div>
@@ -129,7 +133,8 @@ interface ResumeTableRowProps {
 }
 
 function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onToggleSelect }: ResumeTableRowProps) {
-  // Get priority badge color
+  const { t, language } = useI18n();
+
   const getPriorityColor = () => {
     const priority = resume.priority?.toUpperCase() || "";
     if (priority === "EXCELLENT") return "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400";
@@ -163,7 +168,7 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(resume._id as string)}
-          aria-label={`Select resume from ${resume.email}`}
+          aria-label={t("adminPages.shared.selectItem", { resource: resume.email })}
         />
       </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
@@ -184,7 +189,7 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
           className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
         >
           <ExternalLink className="h-4 w-4" />
-          <span className="hover:underline">Xem CV</span>
+          <span className="hover:underline">{t("adminPages.resumes.table.viewResume")}</span>
         </a>
       </TableCell>
       <TableCell>
@@ -219,7 +224,9 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
       <TableCell>
         <div className="flex items-center gap-2">
           <Badge className={getPriorityColor()}>
-            {resume.priority || "-"}
+            {resume.priority
+              ? t(`adminPages.resumes.priorities.${resume.priority.toLowerCase()}`)
+              : "-"}
           </Badge>
         </div>
       </TableCell>
@@ -236,16 +243,14 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
       </TableCell>
       <TableCell>
         <Badge className={getStatusColor()}>
-          {resume.status.toUpperCase()}
+          {t(`statisticsDashboard.statuses.${resume.status.toUpperCase()}`)}
         </Badge>
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
-            {resume.createdAt
-              ? new Date(resume.createdAt).toLocaleDateString()
-              : "-"}
+            {resume.createdAt ? formatLocaleDate(resume.createdAt, language) : "-"}
           </span>
         </div>
       </TableCell>
@@ -259,12 +264,13 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
                   size="sm"
                   onClick={() => onEdit(resume)}
                   className="h-8 w-8 p-0 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400"
+                  aria-label={`${t("adminPages.shared.edit")} ${t("adminPages.resources.resume")}`}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit resume status</p>
+                <p>{`${t("adminPages.shared.edit")} ${t("adminPages.resources.resume")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -276,12 +282,13 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
                   size="sm"
                   onClick={() => onDelete(resume._id as string)}
                   className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+                  aria-label={`${t("adminPages.shared.delete")} ${t("adminPages.resources.resume")}`}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Delete resume</p>
+                <p>{`${t("adminPages.shared.delete")} ${t("adminPages.resources.resume")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -293,22 +300,24 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
 
 // Skeleton loader component
 function ResumeTableSkeleton() {
+  const { t } = useI18n();
+
   return (
     <div className="admin-card">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Link</TableHead>
-            <TableHead>Job</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead>Matching Score</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.email")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.link")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.job")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.company")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.priority")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.matchingScore")}</TableHead>
+            <TableHead>{t("adminPages.resumes.table.status")}</TableHead>
+            <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

@@ -21,6 +21,8 @@ import {
 import { Role } from "@/features/role/schemas/role.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface RoleTableProps {
   roles: Role[];
@@ -49,6 +51,8 @@ export function RoleTable({
   isAllSelected,
   isIndeterminate,
 }: RoleTableProps) {
+  const { t } = useI18n();
+
   if (isLoading) {
     return <RoleTableSkeleton />;
   }
@@ -64,15 +68,15 @@ export function RoleTable({
                   <Checkbox
                     checked={isIndeterminate ? "indeterminate" : isAllSelected}
                     onCheckedChange={onToggleAll}
-                    aria-label="Select all"
+                    aria-label={t("adminPages.shared.selectAll")}
                   />
                 </TableHead>
-                <TableHead className="w-[80px]">STT</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>IsActive</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+                <TableHead>{t("adminPages.roles.table.name")}</TableHead>
+                <TableHead>{t("adminPages.roles.table.description")}</TableHead>
+                <TableHead>{t("adminPages.roles.table.isActive")}</TableHead>
+                <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+                <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -83,10 +87,10 @@ export function RoleTable({
                       <Shield className="h-12 w-12 text-gray-300" />
                       <div className="text-center">
                         <p className="font-medium text-gray-900 dark:text-gray-100">
-                          No roles found
+                          {t("adminPages.roles.table.emptyTitle")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          Try adjusting your search or filters
+                          {t("adminPages.roles.table.emptyDescription")}
                         </p>
                       </div>
                     </div>
@@ -131,15 +135,7 @@ function RoleTableRow({
   isSelected,
   onToggleSelect,
 }: RoleTableRowProps) {
-  // Determine badge color based on role name
-  const getRoleBadgeColor = () => {
-    const name = role.name?.toLowerCase() || "";
-    if (name.includes("admin")) return "from-red-500 to-red-600";
-    if (name.includes("manager")) return "from-orange-500 to-orange-600";
-    if (name.includes("user")) return "from-blue-500 to-blue-600";
-    if (name.includes("hr")) return "from-green-500 to-green-600";
-    return "from-purple-500 to-purple-600";
-  };
+  const { t, language } = useI18n();
   
   return (
     <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
@@ -147,7 +143,7 @@ function RoleTableRow({
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(role._id)}
-          aria-label={`Select ${role.name}`}
+          aria-label={t("adminPages.shared.selectItem", { resource: role.name })}
         />
       </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
@@ -173,14 +169,14 @@ function RoleTableRow({
           <div className="flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-green-500" />
             <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
-              Active
+              {t("adminPages.shared.active")}
             </Badge>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             <XCircle className="h-4 w-4 text-red-500" />
             <Badge variant="destructive" className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
-              Inactive
+              {t("adminPages.shared.inactive")}
             </Badge>
           </div>
         )}
@@ -189,7 +185,7 @@ function RoleTableRow({
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
-            {role.createdAt ? new Date(role.createdAt).toLocaleDateString() : "-"}
+            {role.createdAt ? formatLocaleDate(role.createdAt, language) : "-"}
           </span>
         </div>
       </TableCell>
@@ -203,12 +199,13 @@ function RoleTableRow({
                   size="sm"
                   onClick={() => onEdit(role)}
                   className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400"
+                  aria-label={`${t("adminPages.shared.edit")} ${t("adminPages.resources.role")}`}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit role</p>
+                <p>{`${t("adminPages.shared.edit")} ${t("adminPages.resources.role")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -220,12 +217,13 @@ function RoleTableRow({
                   size="sm"
                   onClick={() => onDelete(role._id)}
                   className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+                  aria-label={`${t("adminPages.shared.delete")} ${t("adminPages.resources.role")}`}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Delete role</p>
+                <p>{`${t("adminPages.shared.delete")} ${t("adminPages.resources.role")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -237,18 +235,20 @@ function RoleTableRow({
 
 // Skeleton loader component
 function RoleTableSkeleton() {
+  const { t } = useI18n();
+
   return (
     <div className="admin-card">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>IsActive</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead>{t("adminPages.roles.table.name")}</TableHead>
+            <TableHead>{t("adminPages.roles.table.description")}</TableHead>
+            <TableHead>{t("adminPages.roles.table.isActive")}</TableHead>
+            <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

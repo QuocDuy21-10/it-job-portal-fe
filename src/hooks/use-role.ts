@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useCreateRoleMutation,
   useDeleteRoleMutation,
@@ -8,6 +9,7 @@ import {
 import { CreateRoleFormData, Role } from "@/features/role/schemas/role.schema";
 
 export function useRoleOperations() {
+  const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
   const [deletingRole, setDeletingRole] = useState<Role | null>(null);
@@ -42,12 +44,12 @@ export function useRoleOperations() {
           data: formData,
         }).unwrap();
 
-        toast.success("Cập nhật vai trò thành công!");
+        toast.success(t("adminPages.roles.toasts.updateSuccess"));
       } else {
         // Create role
         const response = await createRole(formData).unwrap();
 
-        toast.success("Tạo vai trò thành công!");
+        toast.success(t("adminPages.roles.toasts.createSuccess"));
       }
 
       handleCloseDialog();
@@ -58,7 +60,7 @@ export function useRoleOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đã xảy ra lỗi. Vui lòng thử lại.";
+        t("adminPages.roles.toasts.operationError");
 
       toast.error(errorMessage);
       return false;
@@ -83,7 +85,9 @@ export function useRoleOperations() {
 
     try {
       await deleteRole(roleToDelete._id).unwrap();
-      toast.success(`Đã xóa vai trò "${roleToDelete.name}" thành công!`);
+      toast.success(
+        t("adminPages.roles.toasts.deleteSuccess", { name: roleToDelete.name })
+      );
       handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete role error:", error);
@@ -91,7 +95,7 @@ export function useRoleOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể xóa vai trò. Vui lòng thử lại.";
+        t("adminPages.roles.toasts.deleteError");
 
       toast.error(errorMessage);
     }

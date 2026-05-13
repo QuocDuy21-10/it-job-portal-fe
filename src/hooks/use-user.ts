@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useCreateUserMutation,
   useDeleteUserMutation,
@@ -14,6 +15,7 @@ import {
 } from "@/features/user/schemas/user.schema";
 
 export function useUserOperations() {
+  const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
@@ -53,12 +55,12 @@ export function useUserOperations() {
           data: formData as UpdateUserFormData,
         }).unwrap();
 
-        toast.success("Cập nhật người dùng thành công!");
+        toast.success(t("adminPages.users.toasts.updateSuccess"));
       } else {
         // Create user
         await createUser(formData as CreateUserFormData).unwrap();
 
-        toast.success("Tạo người dùng thành công!");
+        toast.success(t("adminPages.users.toasts.createSuccess"));
       }
 
       handleCloseDialog();
@@ -69,7 +71,7 @@ export function useUserOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đã xảy ra lỗi. Vui lòng thử lại.";
+        t("adminPages.users.toasts.operationError");
 
       toast.error(errorMessage);
       return false;
@@ -94,7 +96,9 @@ export function useUserOperations() {
 
     try {
       await deleteUser(userToDelete._id).unwrap();
-      toast.success(`Đã xóa người dùng "${userToDelete.name}" thành công!`);
+      toast.success(
+        t("adminPages.users.toasts.deleteSuccess", { name: userToDelete.name })
+      );
       handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete user error:", error);
@@ -102,7 +106,7 @@ export function useUserOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể xóa người dùng. Vui lòng thử lại.";
+        t("adminPages.users.toasts.deleteError");
 
       toast.error(errorMessage);
     }
@@ -124,14 +128,16 @@ export function useUserOperations() {
 
     try {
       await lockUser({ id: lockingUser._id, reason }).unwrap();
-      toast.success(`Đã khóa tài khoản "${lockingUser.name}" thành công!`);
+      toast.success(
+        t("adminPages.users.toasts.lockSuccess", { name: lockingUser.name })
+      );
       handleCloseLockDialog();
     } catch (error: any) {
       console.error("Lock user error:", error);
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể khóa tài khoản. Vui lòng thử lại.";
+        t("adminPages.users.toasts.lockError");
       toast.error(errorMessage);
     }
   };
@@ -140,13 +146,13 @@ export function useUserOperations() {
   const handleUnlock = async (id: string) => {
     try {
       await unlockUser(id).unwrap();
-      toast.success("Đã mở khóa tài khoản thành công!");
+      toast.success(t("adminPages.users.toasts.unlockSuccess"));
     } catch (error: any) {
       console.error("Unlock user error:", error);
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể mở khóa tài khoản. Vui lòng thử lại.";
+        t("adminPages.users.toasts.unlockError");
       toast.error(errorMessage);
     }
   };

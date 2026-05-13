@@ -20,6 +20,8 @@ import {
 import { Company } from "@/features/company/schemas/company.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface CompanyTableProps {
   companies: Company[];
@@ -48,6 +50,8 @@ export function   CompanyTable({
   isAllSelected,
   isIndeterminate,
 }: CompanyTableProps) {
+  const { t } = useI18n();
+
   if (isLoading) {
     return <CompanyTableSkeleton />;
   }
@@ -63,16 +67,16 @@ export function   CompanyTable({
                 <Checkbox
                   checked={isIndeterminate ? "indeterminate" : isAllSelected}
                   onCheckedChange={onToggleAll}
-                  aria-label="Select all"
+                  aria-label={t("adminPages.shared.selectAll")}
                 />
               </TableHead>
-              <TableHead className="w-[80px]">STT</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Website</TableHead>
-              <TableHead>Number of Employees</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+              <TableHead>{t("adminPages.companies.table.name")}</TableHead>
+              <TableHead>{t("adminPages.companies.table.address")}</TableHead>
+              <TableHead>{t("adminPages.companies.table.website")}</TableHead>
+              <TableHead>{t("adminPages.companies.table.employees")}</TableHead>
+              <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+              <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -83,10 +87,10 @@ export function   CompanyTable({
                     <Building2 className="h-12 w-12 text-gray-300" />
                     <div className="text-center">
                       <p className="font-medium text-gray-900 dark:text-gray-100">
-                        No companies found
+                        {t("adminPages.companies.table.emptyTitle")}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Try adjusting your search or filters
+                        {t("adminPages.companies.table.emptyDescription")}
                       </p>
                     </div>
                   </div>
@@ -131,7 +135,7 @@ function CompanyTableRow({
   isSelected,
   onToggleSelect,
 }: CompanyTableRowProps) {
-  // Get first letter for avatar
+  const { t, language } = useI18n();
   
   return (
     <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
@@ -139,7 +143,7 @@ function CompanyTableRow({
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(company._id as string)}
-          aria-label={`Select ${company.name}`}
+          aria-label={t("adminPages.shared.selectItem", { resource: company.name })}
         />
       </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
@@ -169,7 +173,7 @@ function CompanyTableRow({
               rel="noopener noreferrer"
               className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors"
             >
-              Visit
+              {t("adminPages.companies.table.visit")}
             </a>
           </div>
         ) : (
@@ -192,7 +196,7 @@ function CompanyTableRow({
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
-            {new Date(company.createdAt || "").toLocaleDateString()}
+            {company.createdAt ? formatLocaleDate(company.createdAt, language) : "-"}
           </span>
         </div>
       </TableCell>
@@ -206,12 +210,13 @@ function CompanyTableRow({
                   size="sm"
                   onClick={() => onEdit(company)}
                   className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400"
+                  aria-label={`${t("adminPages.shared.edit")} ${t("adminPages.resources.company")}`}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit company</p>
+                <p>{`${t("adminPages.shared.edit")} ${t("adminPages.resources.company")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -223,12 +228,13 @@ function CompanyTableRow({
                   size="sm"
                   onClick={() => onDelete(company._id as string)}
                   className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+                  aria-label={`${t("adminPages.shared.delete")} ${t("adminPages.resources.company")}`}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Delete company</p>
+                <p>{`${t("adminPages.shared.delete")} ${t("adminPages.resources.company")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -240,19 +246,21 @@ function CompanyTableRow({
 
 // Skeleton loader component
 function CompanyTableSkeleton() {
+  const { t } = useI18n();
+
   return (
     <div className="admin-card">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead>Website</TableHead>
-            <TableHead>Number of Employees</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead>{t("adminPages.companies.table.name")}</TableHead>
+            <TableHead>{t("adminPages.companies.table.address")}</TableHead>
+            <TableHead>{t("adminPages.companies.table.website")}</TableHead>
+            <TableHead>{t("adminPages.companies.table.employees")}</TableHead>
+            <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

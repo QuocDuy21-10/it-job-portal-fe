@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useCreateJobMutation,
   useDeleteJobMutation,
@@ -13,6 +14,7 @@ import {
 } from "@/features/job/schemas/job.schema";
 
 export function useJobOperations() {
+  const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [deletingJob, setDeletingJob] = useState<Job | null>(null);
@@ -50,12 +52,12 @@ export function useJobOperations() {
           data: formData,
         }).unwrap();
 
-        toast.success("Cập nhật việc làm thành công!");
+        toast.success(t("adminPages.jobs.toasts.updateSuccess"));
       } else {
         // Create job
         const response = await createJob(formData).unwrap();
 
-        toast.success("Tạo việc làm thành công!");
+        toast.success(t("adminPages.jobs.toasts.createSuccess"));
       }
 
       handleCloseDialog();
@@ -66,7 +68,7 @@ export function useJobOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đã xảy ra lỗi. Vui lòng thử lại.";
+        t("adminPages.jobs.toasts.operationError");
 
       toast.error(errorMessage);
       return false;
@@ -91,7 +93,9 @@ export function useJobOperations() {
 
     try {
       await deleteJob(jobToDelete._id).unwrap();
-      toast.success(`Đã xóa việc làm "${jobToDelete.name}" thành công!`);
+      toast.success(
+        t("adminPages.jobs.toasts.deleteSuccess", { name: jobToDelete.name })
+      );
       handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete job error:", error);
@@ -99,7 +103,7 @@ export function useJobOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể xóa việc làm. Vui lòng thử lại.";
+        t("adminPages.jobs.toasts.deleteError");
 
       toast.error(errorMessage);
     }
@@ -126,8 +130,15 @@ export function useJobOperations() {
     try {
       await approveJob({ id: approvingJob._id, data }).unwrap();
 
-      const statusLabel = data.status === "APPROVED" ? "Đã duyệt" : "Đã từ chối";
-      toast.success(`${statusLabel} việc làm "${approvingJob.name}" thành công!`);
+      toast.success(
+        data.status === "APPROVED"
+          ? t("adminPages.jobs.toasts.approveSuccess", {
+              name: approvingJob.name,
+            })
+          : t("adminPages.jobs.toasts.rejectSuccess", {
+              name: approvingJob.name,
+            })
+      );
 
       handleCloseApprovalDialog();
       return true;
@@ -137,7 +148,7 @@ export function useJobOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể cập nhật trạng thái. Vui lòng thử lại.";
+        t("adminPages.jobs.toasts.approvalError");
 
       toast.error(errorMessage);
       return false;

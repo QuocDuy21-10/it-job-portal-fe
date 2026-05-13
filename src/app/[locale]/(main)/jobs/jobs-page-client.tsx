@@ -5,7 +5,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useJobList } from "@/hooks/use-job-list";
 import { Pagination } from "@/components/pagination";
 import { Link } from "@/i18n/navigation";
-import { Briefcase, X, ChevronRight, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  Briefcase,
+  ChevronRight,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -30,6 +36,7 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard as JobCardComponent } from "@/components/job/job-card";
 import {
+  DEFAULT_JOB_LIST_SORT,
   buildJobListUrlSearchParams,
   buildPathWithSearchParams,
   type JobListSearchState,
@@ -113,7 +120,7 @@ function JobsPageContent({
     setPage,
     setLimit,
     applyFilters,
-    resetFilterBar,
+    resetAllFilters,
     isDraftDirty,
   } = useJobList({
     initialData,
@@ -172,30 +179,37 @@ function JobsPageContent({
     router.replace(targetUrl, { scroll: false });
   }, [currentUrl, router, targetUrl]);
 
-  // Clear only filter bar values (job type / experience / salary)
   const clearAllFilters = () => {
-    resetFilterBar();
+    resetAllFilters();
   };
 
-  // Check if any filters are active
-  const hasActiveFilters = Boolean(
+  const hasAppliedFilters = Boolean(
     searchQuery ||
       locationQuery ||
       jobType !== "all" ||
       experience !== "all" ||
       salaryRange !== "all" ||
-      sortBy !== "-createdAt"
+      sortBy !== DEFAULT_JOB_LIST_SORT
   );
+  const hasResettableState = hasAppliedFilters || isDraftDirty;
 
   return (
     <Tooltip.Provider>
       <div className="listing-page-surface min-h-screen">
         {/* Header with blue background */}
-        <div className="listing-hero-surface min-h-[220px] text-foreground relative overflow-hidden">
-          {/* Subtle background patterns */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-transparent dark:from-blue-900/20 pointer-events-none" />
-          <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-          
+        <div className="listing-hero-surface relative z-40 min-h-[220px] overflow-visible text-foreground">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-transparent dark:from-blue-900/20" />
+            <div
+              className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)",
+                backgroundSize: "24px 24px",
+              }}
+            />
+          </div>
+
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14 relative z-10">
             <JobSearchBox
               searchQuery={searchInput}
@@ -207,6 +221,7 @@ function JobsPageContent({
                 else applyFilters();
               }}
               searchDisabled={false}
+              className="relative z-10"
             />
           </div>
         </div>
@@ -238,7 +253,7 @@ function JobsPageContent({
         </div>
 
         {/* Mobile Filter Bar (Hidden on Desktop) */}
-        <div className="lg:hidden listing-filter-surface listing-strong-border sticky top-0 z-40 border-b shadow-sm bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="lg:hidden listing-filter-surface listing-strong-border sticky top-0 z-30 border-b shadow-sm bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
              <div className="flex flex-wrap items-center gap-3">
                <div className="w-[160px]">
@@ -284,7 +299,7 @@ function JobsPageContent({
                   </Select>
                </div>
                <div className="ml-auto flex items-center gap-2">
-                  {(hasActiveFilters || isDraftDirty) && (
+                  {hasResettableState && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -312,7 +327,7 @@ function JobsPageContent({
               <div className="sticky top-24 space-y-6 bg-card border rounded-xl p-5 shadow-sm">
                 <div className="flex items-center justify-between border-b pb-4">
                   <h3 className="font-bold text-lg">{t("jobsPage.filters") || "Filters"}</h3>
-                  {(hasActiveFilters || isDraftDirty) && (
+                  {hasResettableState && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -380,29 +395,35 @@ function JobsPageContent({
             {/* Right List Column */}
             <div className="col-span-1 lg:col-span-3 space-y-6">
               <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h2 className="text-lg font-medium text-foreground">
-                <span className="font-bold">{totalItems.toLocaleString()}</span> {totalItems === 1 ? 'Job' : 'IT Jobs'} found
-              </h2>
+                <h2 className="text-lg font-medium text-foreground">
+                  <span className="font-bold">{totalItems.toLocaleString()}</span>{" "}
+                  {totalItems === 1 ? "Job" : "IT Jobs"} found
+                </h2>
 
-              {/* Sort Dropdown */}
-              <div className="flex items-center gap-2">
-                <label className="listing-muted-text flex items-center whitespace-nowrap text-sm">
-                  Sort by:
-                </label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="h-auto w-[140px] border-none bg-transparent p-0 font-medium text-foreground shadow-none focus:ring-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SORT_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {t(option.labelKey)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex w-full sm:w-auto sm:justify-end">
+                  <div className="listing-input-surface listing-strong-border inline-flex h-11 w-full items-center gap-2 rounded-full border px-2 shadow-sm sm:w-auto">
+                    <div className="flex items-center gap-2 pl-2">
+                      <ArrowUpDown className="h-4 w-4 text-primary" />
+                      <span className="listing-muted-text whitespace-nowrap text-sm font-medium">
+                        {t("jobsPage.sortLabel")}
+                      </span>
+                    </div>
+                    <div className="listing-subtle-border hidden h-5 w-px border-l sm:block" />
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="h-9 min-w-0 flex-1 rounded-full border-0 bg-transparent px-3 text-sm font-semibold text-foreground shadow-none focus:ring-0 focus:ring-offset-0 sm:min-w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="listing-panel-surface listing-strong-border">
+                        {SORT_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {t(option.labelKey)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
-            </div>
 
             {isLoading ? (
               <div className="space-y-4">
@@ -438,7 +459,7 @@ function JobsPageContent({
                   <p className="listing-muted-text mb-6">
                     {t("jobsPage.emptyDescription")}
                   </p>
-                  {hasActiveFilters && (
+                  {hasAppliedFilters && (
                     <Button onClick={clearAllFilters} variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-900 dark:text-blue-300 dark:hover:bg-blue-950/40">
                       {t("jobsPage.clearAllFilters")}
                     </Button>

@@ -23,10 +23,12 @@ import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-conf
 import { Pagination } from "@/components/pagination";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { CreateUserFormData, UpdateUserFormData, User } from "@/features/user/schemas/user.schema";
 
 export default function UsersPage() {
+  const { t } = useI18n();
   // State Management
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("all");
@@ -98,6 +100,10 @@ export default function UsersPage() {
   }, [rolesData]) as Array<{ _id: string; name: string }>;
 
   const totalItems = usersData?.data?.meta?.pagination?.total || 0;
+  const selectedResourceLabel =
+    selectedCount === 1
+      ? t("adminPages.resources.user")
+      : t("adminPages.resources.users");
 
   // Optimized handlers with useCallback
   const handleSearchChange = useCallback((value: string) => {
@@ -128,17 +134,36 @@ export default function UsersPage() {
       const result = await bulkDeleteUsers(Array.from(selectedIds)).unwrap();
       const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
       if (deletedCount < requestedCount) {
-        toast.warning(`Deleted ${deletedCount} of ${requestedCount} users. Some records may have already been removed.`);
+        toast.warning(
+          t("adminPages.shared.bulkDeletePartial", {
+            deletedCount,
+            requestedCount,
+            resource: t("adminPages.resources.users"),
+          })
+        );
       } else {
-        toast.success(`Successfully deleted ${deletedCount} user${deletedCount !== 1 ? "s" : ""}.`);
+        toast.success(
+          t("adminPages.shared.bulkDeleteSuccess", {
+            deletedCount,
+            resource:
+              deletedCount === 1
+                ? t("adminPages.resources.user")
+                : t("adminPages.resources.users"),
+          })
+        );
       }
       clear();
       setShowBulkDeleteDialog(false);
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.message || "Failed to delete users. Please try again.";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        t("adminPages.shared.bulkDeleteError", {
+          resource: t("adminPages.resources.users"),
+        });
       toast.error(errorMessage);
     }
-  }, [bulkDeleteUsers, selectedIds, clear]);
+  }, [bulkDeleteUsers, clear, selectedIds, t]);
 
   const handleSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
     return handleUserSubmit(formData);
@@ -153,10 +178,10 @@ export default function UsersPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
               <UsersIcon className="h-4 w-4 text-white" />
             </div>
-            <h1 className="admin-page-title">Users Management</h1>
+            <h1 className="admin-page-title">{t("adminPages.users.title")}</h1>
           </div>
           <p className="admin-page-description">
-            Manage user profiles, roles and permissions
+            {t("adminPages.users.description")}
           </p>
         </div>
 
@@ -165,7 +190,7 @@ export default function UsersPage() {
           className="admin-btn-primary"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add User
+          {t("adminPages.users.addButton")}
         </Button>
       </div>
 
@@ -177,7 +202,7 @@ export default function UsersPage() {
             <SearchBar
               value={searchQuery}
               onSearch={handleSearchChange}
-              placeholder="Search by user name..."
+              placeholder={t("adminPages.users.searchPlaceholder")}
               debounceDelay={500}
               showClearButton
               width="full"
@@ -190,11 +215,11 @@ export default function UsersPage() {
               <SelectTrigger className="w-full bg-white dark:bg-gray-900">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-gray-400" />
-                  <SelectValue placeholder="Filter by role" />
+                  <SelectValue placeholder={t("adminPages.users.roleFilterPlaceholder")} />
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="all">{t("adminPages.users.allRoles")}</SelectItem>
                 {roles.map((role) => (
                   <SelectItem key={role._id} value={role._id}>
                     {role.name}
@@ -210,12 +235,15 @@ export default function UsersPage() {
       {selectedCount > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
           <span className="text-sm font-medium text-foreground">
-            {selectedCount} user{selectedCount !== 1 ? "s" : ""} selected
+            {t("adminPages.shared.selectedSummary", {
+              count: selectedCount,
+              resource: selectedResourceLabel,
+            })}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
               <X className="h-4 w-4" />
-              Clear
+              {t("adminPages.shared.clear")}
             </Button>
             <Access action={EAction.DELETE} subject="User" hideChildren>
               <Button
@@ -225,7 +253,7 @@ export default function UsersPage() {
                 className="gap-1.5"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                {t("adminPages.shared.deleteSelected")}
               </Button>
             </Access>
           </div>
@@ -274,7 +302,7 @@ export default function UsersPage() {
       <SingleDeleteConfirmDialog
         open={!!deletingUser}
         itemName={deletingUser?.name}
-        resourceLabel="user"
+        resourceLabel={t("adminPages.resources.user")}
         onConfirm={handleConfirmDelete}
         onCancel={handleCloseDeleteDialog}
         isLoading={isDeleting}
@@ -293,7 +321,7 @@ export default function UsersPage() {
         open={showBulkDeleteDialog}
         onOpenChange={setShowBulkDeleteDialog}
         count={selectedCount}
-        resourceName={selectedCount === 1 ? "user" : "users"}
+        resourceName={selectedResourceLabel}
         onConfirm={handleBulkDelete}
         isLoading={isBulkDeleting}
       />

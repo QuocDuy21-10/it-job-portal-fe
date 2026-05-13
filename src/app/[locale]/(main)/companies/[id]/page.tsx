@@ -126,7 +126,10 @@ export default async function CompanyDetailPage({
   params,
 }: CompanyDetailPageProps) {
   const { locale, id } = await resolveCompanyDetailParams(params);
-  const company = await fetchPublicCompanyById(id);
+  const [company, t] = await Promise.all([
+    fetchPublicCompanyById(id),
+    getTranslations({ locale }),
+  ]);
 
   if (!company) {
     notFound();
@@ -158,7 +161,7 @@ export default async function CompanyDetailPage({
                     href={homePath}
                     className="text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
                   >
-                    Trang chủ
+                    {t("breadcrumb.home")}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
@@ -169,7 +172,7 @@ export default async function CompanyDetailPage({
                     href={companiesPath}
                     className="text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
                   >
-                    Công ty
+                    {t("nav.companies")}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator>
@@ -217,8 +220,10 @@ export default async function CompanyDetailPage({
                       <Users className="h-5 w-5" />
                       <span className="font-medium">
                         {company.numberOfEmployees > 0
-                          ? `${company.numberOfEmployees} nhân viên`
-                          : "Chưa cập nhật"}
+                          ? t("companyDetailPage.employeesCount", {
+                              count: company.numberOfEmployees,
+                            })
+                          : t("companyDetailPage.notUpdated")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
@@ -252,7 +257,7 @@ export default async function CompanyDetailPage({
                 <div className="mb-6 flex items-center gap-3">
                   <div className="h-8 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    Thông tin về công ty
+                    {t("companyDetailPage.aboutTitle")}
                   </h2>
                 </div>
 
@@ -268,11 +273,11 @@ export default async function CompanyDetailPage({
                   <div className="mb-2 flex items-center gap-3">
                     <div className="h-8 w-1 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                      Các việc làm đang tuyển dụng
+                      {t("companyDetailPage.openJobsTitle")}
                     </h2>
                   </div>
                   <p className="ml-4 text-slate-600 dark:text-slate-400">
-                    Khám phá các cơ hội nghề nghiệp hiện có từ công ty này.
+                    {t("companyDetailPage.openJobsDescription")}
                   </p>
                 </div>
 
@@ -287,23 +292,29 @@ export default async function CompanyDetailPage({
               <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
                 <div className="space-y-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    Hồ sơ doanh nghiệp
+                    {t("companyDetailPage.profileTitle")}
                   </p>
                   <div className="flex items-start gap-3 rounded-lg bg-blue-50 p-4 dark:bg-blue-950">
                     <MapPin className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
                     <div>
-                      <p className="font-medium text-slate-900 dark:text-slate-100">Địa chỉ</p>
+                      <p className="font-medium text-slate-900 dark:text-slate-100">
+                        {t("companyDetailPage.addressLabel")}
+                      </p>
                       <p className="text-sm text-slate-600 dark:text-slate-400">{company.address}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950">
                     <Users className="mt-0.5 h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                     <div>
-                      <p className="font-medium text-slate-900 dark:text-slate-100">Quy mô</p>
+                      <p className="font-medium text-slate-900 dark:text-slate-100">
+                        {t("companyDetailPage.sizeLabel")}
+                      </p>
                       <p className="text-sm text-slate-600 dark:text-slate-400">
                         {company.numberOfEmployees > 0
-                          ? `${company.numberOfEmployees} nhân viên`
-                          : "Chưa cập nhật"}
+                          ? t("companyDetailPage.employeesCount", {
+                              count: company.numberOfEmployees,
+                            })
+                          : t("companyDetailPage.notUpdated")}
                       </p>
                     </div>
                   </div>
@@ -311,7 +322,7 @@ export default async function CompanyDetailPage({
                     href={companyPath}
                     className="block rounded-lg border border-slate-200 px-4 py-3 text-center text-sm font-semibold text-slate-700 transition-colors hover:border-blue-300 hover:text-blue-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-blue-700 dark:hover:text-blue-400"
                   >
-                    Liên kết công ty
+                    {t("companyDetailPage.companyLink")}
                   </Link>
                 </div>
               </Card>

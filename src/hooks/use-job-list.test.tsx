@@ -2,7 +2,10 @@ import { act, renderHook } from "@testing-library/react";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useJobList } from "@/hooks/use-job-list";
 import type { Job } from "@/features/job/schemas/job.schema";
-import type { JobListSearchState } from "@/lib/utils/public-listing";
+import {
+  DEFAULT_JOB_LIST_SORT,
+  type JobListSearchState,
+} from "@/lib/utils/public-listing";
 import type { PaginatedResult } from "@/shared/types/pagination";
 
 jest.mock("@/features/job/redux/job.api", () => ({
@@ -115,20 +118,33 @@ describe("useJobList", () => {
     );
   });
 
-  it("clears draft and applied filters together on resetAllFilters", () => {
+  it("clears draft, applied filters, and sort together on resetAllFilters", () => {
     const { result } = renderHook(() =>
       useJobList({
         initialData: createInitialData(),
-        initialSearchState: createInitialSearchState({
-          experience: "Senior",
-          locationCode: "da-nang",
-          q: "golang",
-          salary: "10000000-20000000",
-          sort: "salary",
-          type: "Remote",
-        }),
+        initialSearchState: createInitialSearchState(),
       })
     );
+
+    act(() => {
+      result.current.setSearchInput("golang");
+      result.current.setLocationInput("da-nang");
+      result.current.setDraftJobType("Remote");
+      result.current.setDraftExperience("Senior");
+      result.current.setDraftSalaryRange("10000000-20000000");
+    });
+
+    act(() => {
+      result.current.applyFilters();
+      result.current.setSortBy("salary");
+      result.current.setSearchInput("typescript");
+    });
+
+    expect(result.current.searchInput).toBe("typescript");
+    expect(result.current.searchQuery).toBe("golang");
+    expect(result.current.locationQuery).toBe("da-nang");
+    expect(result.current.sortBy).toBe("salary");
+    expect(result.current.isDraftDirty).toBe(true);
 
     act(() => {
       result.current.resetAllFilters();
@@ -137,10 +153,47 @@ describe("useJobList", () => {
     expect(result.current.searchInput).toBe("");
     expect(result.current.searchQuery).toBe("");
     expect(result.current.locationInput).toBe("");
+    expect(result.current.locationQuery).toBe("");
     expect(result.current.jobType).toBe("all");
     expect(result.current.experience).toBe("all");
     expect(result.current.salaryRange).toBe("all");
-    expect(result.current.sortBy).toBe("-createdAt");
+    expect(result.current.sortBy).toBe(DEFAULT_JOB_LIST_SORT);
     expect(result.current.currentPage).toBe(1);
+    expect(result.current.isDraftDirty).toBe(false);
+  });
+
+  it("keeps sort changes applied until resetAllFilters is called", () => {
+    const { result } = renderHook(() =>
+      useJobList({
+        initialData: createInitialData(),
+        initialSearchState: createInitialSearchState(),
+      })
+    );
+
+    act(() => {
+      result.current.setSortBy("salary");
+    });
+
+    expect(result.current.sortBy).toBe("salary");
+    expect(result.current.currentPage).toBe(1);
+
+    act(() => {
+      result.current.setSearchInput("react");
+      result.current.setDraftJobType("Full-time");
+    });
+
+    expect(result.current.sortBy).toBe("salary");
+    expect(result.current.searchQuery).toBe("");
+    expect(result.current.isDraftDirty).toBe(true);
+
+    act(() => {
+      result.current.resetAllFilters();
+    });
+
+    expect(result.current.searchInput).toBe("");
+    expect(result.current.draftJobType).toBe("all");
+    expect(result.current.sortBy).toBe(DEFAULT_JOB_LIST_SORT);
+    expect(result.current.currentPage).toBe(1);
+    expect(result.current.isDraftDirty).toBe(false);
   });
 });

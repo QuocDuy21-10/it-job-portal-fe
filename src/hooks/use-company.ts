@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   useCreateCompanyMutation,
   useDeleteCompanyMutation,
@@ -11,6 +12,7 @@ import {
 } from "@/features/company/schemas/company.schema";
 
 export function useCompanyOperations() {
+  const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [deletingCompany, setDeletingCompany] = useState<Company | null>(null);
@@ -45,12 +47,12 @@ export function useCompanyOperations() {
           data: formData,
         }).unwrap();
 
-        toast.success("Cập nhật công ty thành công!");
+        toast.success(t("adminPages.companies.toasts.updateSuccess"));
       } else {
         // Create company
         const response = await createCompany(formData).unwrap();
 
-        toast.success("Tạo công ty thành công!");
+        toast.success(t("adminPages.companies.toasts.createSuccess"));
       }
 
       handleCloseDialog();
@@ -61,7 +63,7 @@ export function useCompanyOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đã xảy ra lỗi. Vui lòng thử lại.";
+        t("adminPages.companies.toasts.operationError");
 
       toast.error(errorMessage);
       return false;
@@ -86,7 +88,11 @@ export function useCompanyOperations() {
 
     try {
       await deleteCompany(companyToDelete._id).unwrap();
-      toast.success(`Đã xóa công ty "${companyToDelete.name}" thành công!`);
+      toast.success(
+        t("adminPages.companies.toasts.deleteSuccess", {
+          name: companyToDelete.name,
+        })
+      );
       handleCloseDeleteDialog();
     } catch (error: any) {
       console.error("Delete company error:", error);
@@ -94,7 +100,7 @@ export function useCompanyOperations() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể xóa công ty. Vui lòng thử lại.";
+        t("adminPages.companies.toasts.deleteError");
 
       toast.error(errorMessage);
     }

@@ -1,9 +1,13 @@
+"use client";
+
 import { MapPin, DollarSign, Briefcase, Heart, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useJobFavorite } from "@/hooks/use-job-favorite";
+import { useI18n } from "@/hooks/use-i18n";
 import Link from "next/link";
+import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 import { cn } from "@/lib/utils";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -23,6 +27,7 @@ function JobCard({
   job: any;
   jobPathPrefix?: string;
 }) {
+  const { t, language } = useI18n();
   const { isSaved, toggleSaveJob } = useJobFavorite(job._id);
   const jobHref = `${jobPathPrefix}/${job._id}`;
   
@@ -69,7 +74,9 @@ function JobCard({
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      {isSaved ? "Bỏ lưu công việc" : "Lưu công việc"}
+                      {isSaved
+                        ? t("jobsPage.jobCard.removeSavedJob")
+                        : t("jobsPage.jobCard.saveJob")}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -88,7 +95,7 @@ function JobCard({
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      Địa điểm làm việc
+                      {t("companyDetailPage.jobListing.tooltips.location")}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -98,13 +105,15 @@ function JobCard({
                   <Tooltip.Trigger asChild>
                     <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 bg-emerald-50 dark:bg-emerald-950 px-3 py-1.5 rounded-lg group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900 transition-colors">
                       <span className="font-medium">
-                        {typeof job.salary === "number" ? job.salary.toLocaleString() + " VNĐ" : job.salary}
+                        {typeof job.salary === "number"
+                          ? formatVndCurrency(job.salary, language)
+                          : job.salary}
                       </span>
                     </div>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      Mức lương
+                      {t("companyDetailPage.jobListing.tooltips.salary")}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -119,7 +128,7 @@ function JobCard({
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      Hình thức làm việc
+                      {t("companyDetailPage.jobListing.tooltips.workType")}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -130,12 +139,16 @@ function JobCard({
                     <Tooltip.Trigger asChild>
                       <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-3 py-1.5 rounded-lg group-hover:bg-amber-100 dark:group-hover:bg-amber-900 transition-colors">
                         <Clock className="w-4 h-4" />
-                        <span className="font-medium">Còn {daysRemaining} ngày</span>
+                        <span className="font-medium">
+                          {t("companyDetailPage.jobListing.deadlineDays", {
+                            days: daysRemaining,
+                          })}
+                        </span>
                       </div>
                     </Tooltip.Trigger>
                     <Tooltip.Portal>
                       <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                        Hạn nộp hồ sơ
+                        {t("companyDetailPage.jobListing.tooltips.deadline")}
                         <Tooltip.Arrow className="fill-slate-900" />
                       </Tooltip.Content>
                     </Tooltip.Portal>
@@ -153,12 +166,12 @@ function JobCard({
                     window.location.href = jobHref;
                   }}
                 >
-                  Ứng tuyển
+                  {t("jobsPage.jobCard.applyNow")}
                 </Button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
                 <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                  Xem chi tiết và ứng tuyển
+                  {t("companyDetailPage.jobListing.tooltips.apply")}
                   <Tooltip.Arrow className="fill-slate-900" />
                 </Tooltip.Content>
               </Tooltip.Portal>
@@ -176,6 +189,8 @@ export default function JobListing({
   selectedLocation,
   jobPathPrefix,
 }: JobListingProps) {
+  const { t } = useI18n();
+
   // Xây dựng filter string cho API
   let filter = "isActive=true";
   if (companyId) {
@@ -198,7 +213,9 @@ export default function JobListing({
       <Card className="border-slate-200 bg-white p-12 text-center dark:border-border dark:bg-card">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
-          <p className="text-slate-600 dark:text-slate-400">Đang tải danh sách công việc...</p>
+          <p className="text-slate-600 dark:text-slate-400">
+            {t("companyDetailPage.jobListing.loading")}
+          </p>
         </div>
       </Card>
     );
@@ -206,7 +223,9 @@ export default function JobListing({
   if (error) {
     return (
       <Card className="p-12 text-center border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950">
-        <p className="text-red-600 dark:text-red-400 font-medium">Không thể tải danh sách công việc.</p>
+        <p className="text-red-600 dark:text-red-400 font-medium">
+          {t("companyDetailPage.jobListing.error")}
+        </p>
       </Card>
     );
   }
@@ -224,10 +243,10 @@ export default function JobListing({
               <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
             <p className="text-slate-700 dark:text-slate-300 font-medium">
-              Không tìm thấy công việc phù hợp với tiêu chí tìm kiếm của bạn
+                {t("companyDetailPage.jobListing.emptyTitle")}
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Hãy thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác
+                {t("companyDetailPage.jobListing.emptyDescription")}
             </p>
           </div>
         </Card>

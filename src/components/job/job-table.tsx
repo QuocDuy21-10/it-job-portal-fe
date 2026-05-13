@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Briefcase, MapPin, DollarSign, Calendar, TrendingUp, CheckCircle, XCircle, ShieldCheck } from "lucide-react";
+import { Pencil, Trash2, Briefcase, MapPin, Calendar, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,6 +20,8 @@ import {
 import { Job } from "@/features/job/schemas/job.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatLocaleDate, formatVndCurrency } from "@/lib/utils/locale-formatters";
 
 
 interface JobTableProps {
@@ -51,6 +53,8 @@ export function JobTable({
   isAllSelected,
   isIndeterminate,
 }: JobTableProps) {
+  const { t } = useI18n();
+
   if (isLoading) {
     return <JobTableSkeleton />;
   }
@@ -66,18 +70,18 @@ export function JobTable({
                   <Checkbox
                     checked={isIndeterminate ? "indeterminate" : isAllSelected}
                     onCheckedChange={onToggleAll}
-                    aria-label="Select all"
+                    aria-label={t("adminPages.shared.selectAll")}
                   />
                 </TableHead>
-                <TableHead className="w-[80px]">STT</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Salary</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>IsActive</TableHead>
-                <TableHead>Approval</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+                <TableHead>{t("adminPages.jobs.table.name")}</TableHead>
+                <TableHead>{t("adminPages.jobs.table.location")}</TableHead>
+                <TableHead>{t("adminPages.jobs.table.salary")}</TableHead>
+                <TableHead>{t("adminPages.jobs.table.level")}</TableHead>
+                <TableHead>{t("adminPages.jobs.table.isActive")}</TableHead>
+                <TableHead>{t("adminPages.jobs.table.approval")}</TableHead>
+                <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+                <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -88,10 +92,10 @@ export function JobTable({
                       <Briefcase className="h-12 w-12 text-gray-300" />
                       <div className="text-center">
                         <p className="font-medium text-gray-900 dark:text-gray-100">
-                          No jobs found
+                          {t("adminPages.jobs.table.emptyTitle")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          Try adjusting your search or filters
+                          {t("adminPages.jobs.table.emptyDescription")}
                         </p>
                       </div>
                     </div>
@@ -131,7 +135,8 @@ interface JobTableRowProps {
 }
 
 function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected, onToggleSelect }: JobTableRowProps) {
-  // Get level badge color
+  const { t, language } = useI18n();
+
   const getLevelColor = () => {
     const level = job.level?.toLowerCase() || "";
     if (level === "internship") return "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400";
@@ -149,28 +154,39 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
     if (status === "APPROVED")
       return (
         <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
-          Approved
+          {t("adminPages.jobs.table.approved")}
         </Badge>
       );
     if (status === "REJECTED")
       return (
         <Badge className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
-          Rejected
+          {t("adminPages.jobs.table.rejected")}
         </Badge>
       );
     return (
       <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800">
-        Pending
+        {t("adminPages.jobs.table.pending")}
       </Badge>
     );
   };
 
-  // Format salary
-  const formatSalary = (salary: number) => {
-    if (salary >= 1000000) {
-      return `${(salary / 1000000).toFixed(0)}M`;
+  const getLevelLabel = (level?: string) => {
+    switch (level?.toLowerCase()) {
+      case "internship":
+        return t("adminPages.jobs.levels.internship");
+      case "junior":
+        return t("adminPages.jobs.levels.junior");
+      case "mid":
+        return t("adminPages.jobs.levels.mid");
+      case "senior":
+        return t("adminPages.jobs.levels.senior");
+      case "lead":
+        return t("adminPages.jobs.levels.lead");
+      case "manager":
+        return t("adminPages.jobs.levels.manager");
+      default:
+        return level || "-";
     }
-    return salary.toLocaleString();
   };
   
   return (
@@ -179,7 +195,7 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(job._id)}
-          aria-label={`Select ${job.name}`}
+          aria-label={t("adminPages.shared.selectItem", { resource: job.name })}
         />
       </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
@@ -203,14 +219,14 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
       <TableCell>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="font-mono">
-            {formatSalary(job.salary)} VND
+            {formatVndCurrency(job.salary, language)}
           </Badge>
         </div>
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
           <Badge className={getLevelColor()}>
-            {job.level}
+            {getLevelLabel(job.level)}
           </Badge>
         </div>
       </TableCell>
@@ -218,13 +234,13 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
         {job.isActive ? (
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
-              Active
+              {t("adminPages.shared.active")}
             </Badge>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             <Badge variant="destructive" className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
-              Inactive
+              {t("adminPages.shared.inactive")}
             </Badge>
           </div>
         )}
@@ -247,7 +263,7 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
-            {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "-"}
+            {job.createdAt ? formatLocaleDate(job.createdAt, language) : "-"}
           </span>
         </div>
       </TableCell>
@@ -261,12 +277,13 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
                   size="sm"
                   onClick={() => onApprove(job)}
                   className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400"
+                  aria-label={t("adminPages.shared.approveOrReject")}
                 >
                   <ShieldCheck className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Approve / Reject</p>
+                <p>{t("adminPages.shared.approveOrReject")}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -278,12 +295,13 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
                   size="sm"
                   onClick={() => onEdit(job)}
                   className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400"
+                  aria-label={`${t("adminPages.shared.edit")} ${t("adminPages.resources.job")}`}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit job</p>
+                <p>{`${t("adminPages.shared.edit")} ${t("adminPages.resources.job")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -295,12 +313,13 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
                   size="sm"
                   onClick={() => onDelete(job._id)}
                   className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+                  aria-label={`${t("adminPages.shared.delete")} ${t("adminPages.resources.job")}`}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Delete job</p>
+                <p>{`${t("adminPages.shared.delete")} ${t("adminPages.resources.job")}`}</p>
               </TooltipContent>
             </Tooltip>
           </Access>
@@ -312,21 +331,23 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
 
 // Skeleton loader component
 function JobTableSkeleton() {
+  const { t } = useI18n();
+
   return (
     <div className="admin-card">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">STT</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Salary</TableHead>
-            <TableHead>Level</TableHead>
-            <TableHead>IsActive</TableHead>
-            <TableHead>Approval</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead>{t("adminPages.jobs.table.name")}</TableHead>
+            <TableHead>{t("adminPages.jobs.table.location")}</TableHead>
+            <TableHead>{t("adminPages.jobs.table.salary")}</TableHead>
+            <TableHead>{t("adminPages.jobs.table.level")}</TableHead>
+            <TableHead>{t("adminPages.jobs.table.isActive")}</TableHead>
+            <TableHead>{t("adminPages.jobs.table.approval")}</TableHead>
+            <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

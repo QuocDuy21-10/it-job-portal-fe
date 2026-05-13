@@ -1,10 +1,30 @@
 import { AdminStatisticsPage } from "@/components/statistics";
-import { Metadata } from "next";
+import { routing } from "@/i18n/routing";
+import { hasLocale } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Admin Dashboard | IT Dev Link",
-  description: "Quản lý và theo dõi thống kê tuyển dụng",
+type AdminDashboardPageProps = {
+  params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: AdminDashboardPageProps): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  const t = await getTranslations({ locale });
+
+  return {
+    title: t("adminPages.dashboard.metaTitle"),
+    description: t("adminPages.dashboard.metaDescription"),
+  };
+}
 
 /**
  * Admin Dashboard Page (Server Component)

@@ -29,22 +29,28 @@ interface AdminDashboardChartsProps {
   >;
 }
 
-const trendChartConfig: ChartConfig = {
-  count: {
-    label: "Count",
-    color: "hsl(var(--chart-1))",
-  },
-};
-
-const applicationChartConfig: ChartConfig = {
-  count: {
-    label: "Count",
-    color: "hsl(var(--chart-2))",
-  },
-};
-
 export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
   const { t, language } = useI18n();
+
+  const trendChartConfig = useMemo<ChartConfig>(
+    () => ({
+      count: {
+        label: t("statisticsDashboard.shared.seriesCount"),
+        color: "hsl(var(--chart-1))",
+      },
+    }),
+    [t]
+  );
+
+  const applicationChartConfig = useMemo<ChartConfig>(
+    () => ({
+      count: {
+        label: t("statisticsDashboard.shared.seriesCount"),
+        color: "hsl(var(--chart-2))",
+      },
+    }),
+    [t]
+  );
 
   const shortDateFormatter = useMemo(
     () =>

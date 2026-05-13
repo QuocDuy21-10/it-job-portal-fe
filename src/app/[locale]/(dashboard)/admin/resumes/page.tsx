@@ -22,10 +22,12 @@ import {
 } from "@/components/ui/select";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 
 
 export default function ResumesPage() {
+  const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
@@ -37,11 +39,11 @@ export default function ResumesPage() {
 
   // Matching score ranges
   const scoreRanges = [
-    { label: "Tất cả điểm số", value: "all" },
-    { label: "Xuất sắc (≥80%)", value: "80-100" },
-    { label: "Tốt (60-79%)", value: "60-79" },
-    { label: "Trung bình (40-59%)", value: "40-59" },
-    { label: "Yếu (<40%)", value: "0-39" },
+    { label: t("adminPages.resumes.scoreRanges.all"), value: "all" },
+    { label: t("adminPages.resumes.scoreRanges.excellent"), value: "80-100" },
+    { label: t("adminPages.resumes.scoreRanges.good"), value: "60-79" },
+    { label: t("adminPages.resumes.scoreRanges.average"), value: "40-59" },
+    { label: t("adminPages.resumes.scoreRanges.low"), value: "0-39" },
   ];
 
   // Construct filter queries with useMemo
@@ -104,6 +106,10 @@ export default function ResumesPage() {
 
   const pagination = resumesData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
+  const selectedResourceLabel =
+    selectedCount === 1
+      ? t("adminPages.resources.resume")
+      : t("adminPages.resources.resumes");
 
   // Handlers với useCallback để tránh re-render không cần thiết
   const handlePageChange = useCallback((newPage: number) => {
@@ -153,17 +159,36 @@ export default function ResumesPage() {
       const result = await bulkDeleteResumes(Array.from(selectedIds)).unwrap();
       const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
       if (deletedCount < requestedCount) {
-        toast.warning(`Deleted ${deletedCount} of ${requestedCount} resumes. Some records may have already been removed.`);
+        toast.warning(
+          t("adminPages.shared.bulkDeletePartial", {
+            deletedCount,
+            requestedCount,
+            resource: t("adminPages.resources.resumes"),
+          })
+        );
       } else {
-        toast.success(`Successfully deleted ${deletedCount} resume${deletedCount !== 1 ? "s" : ""}.`);
+        toast.success(
+          t("adminPages.shared.bulkDeleteSuccess", {
+            deletedCount,
+            resource:
+              deletedCount === 1
+                ? t("adminPages.resources.resume")
+                : t("adminPages.resources.resumes"),
+          })
+        );
       }
       clear();
       setShowBulkDeleteDialog(false);
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.message || "Failed to delete resumes. Please try again.";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        t("adminPages.shared.bulkDeleteError", {
+          resource: t("adminPages.resources.resumes"),
+        });
       toast.error(errorMessage);
     }
-  }, [bulkDeleteResumes, selectedIds, clear]);
+  }, [bulkDeleteResumes, clear, selectedIds, t]);
 
   return (
     <div className="space-y-6">
@@ -174,8 +199,12 @@ export default function ResumesPage() {
             <FileText className="h-6 w-6 text-orange-600 dark:text-orange-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">CV Ứng Tuyển</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Quản lý hồ sơ ứng tuyển và theo dõi trạng thái</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {t("adminPages.resumes.title")}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              {t("adminPages.resumes.description")}
+            </p>
           </div>
         </div>
       </div>
@@ -185,7 +214,7 @@ export default function ResumesPage() {
         <div className="space-y-4">
           {/* Row 1: Search full width */}
           <SearchBar
-            placeholder="Tìm kiếm theo email..."
+            placeholder={t("adminPages.resumes.searchPlaceholder")}
             onSearch={handleSearchChange}
             value={searchQuery}
             width="full"
@@ -197,14 +226,14 @@ export default function ResumesPage() {
             <Select value={selectedStatus} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Trạng thái" />
+                <SelectValue placeholder={t("adminPages.resumes.statusPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                <SelectItem value="PENDING">Chờ xử lý</SelectItem>
-                <SelectItem value="REVIEWING">Đang xem xét</SelectItem>
-                <SelectItem value="APPROVED">Đã duyệt</SelectItem>
-                <SelectItem value="REJECTED">Từ chối</SelectItem>
+                <SelectItem value="all">{t("adminPages.shared.allStatus")}</SelectItem>
+                <SelectItem value="PENDING">{t("statisticsDashboard.statuses.PENDING")}</SelectItem>
+                <SelectItem value="REVIEWING">{t("statisticsDashboard.statuses.REVIEWING")}</SelectItem>
+                <SelectItem value="APPROVED">{t("statisticsDashboard.statuses.APPROVED")}</SelectItem>
+                <SelectItem value="REJECTED">{t("statisticsDashboard.statuses.REJECTED")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -212,14 +241,14 @@ export default function ResumesPage() {
             <Select value={selectedPriority} onValueChange={handlePriorityChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Độ ưu tiên" />
+                <SelectValue placeholder={t("adminPages.resumes.priorityPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả mức độ</SelectItem>
-                <SelectItem value="EXCELLENT">Xuất sắc</SelectItem>
-                <SelectItem value="HIGH">Cao</SelectItem>
-                <SelectItem value="MEDIUM">Trung bình</SelectItem>
-                <SelectItem value="LOW">Thấp</SelectItem>
+                <SelectItem value="all">{t("adminPages.resumes.priorities.all")}</SelectItem>
+                <SelectItem value="EXCELLENT">{t("adminPages.resumes.priorities.excellent")}</SelectItem>
+                <SelectItem value="HIGH">{t("adminPages.resumes.priorities.high")}</SelectItem>
+                <SelectItem value="MEDIUM">{t("adminPages.resumes.priorities.medium")}</SelectItem>
+                <SelectItem value="LOW">{t("adminPages.resumes.priorities.low")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -227,7 +256,7 @@ export default function ResumesPage() {
             <Select value={selectedScore} onValueChange={handleScoreChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Điểm khớp" />
+                <SelectValue placeholder={t("adminPages.resumes.scorePlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {scoreRanges.map((range) => (
@@ -242,14 +271,14 @@ export default function ResumesPage() {
             <Select value={sort} onValueChange={handleSortChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Sắp xếp" />
+                <SelectValue placeholder={t("adminPages.resumes.sortPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default">Mặc định</SelectItem>
-                <SelectItem value="-createdAt">Mới nhất</SelectItem>
-                <SelectItem value="createdAt">Cũ nhất</SelectItem>
-                <SelectItem value="-aiAnalysis.matchingScore">Điểm cao nhất</SelectItem>
-                <SelectItem value="aiAnalysis.matchingScore">Điểm thấp nhất</SelectItem>
+                <SelectItem value="default">{t("adminPages.resumes.sortOptions.default")}</SelectItem>
+                <SelectItem value="-createdAt">{t("adminPages.resumes.sortOptions.newest")}</SelectItem>
+                <SelectItem value="createdAt">{t("adminPages.resumes.sortOptions.oldest")}</SelectItem>
+                <SelectItem value="-aiAnalysis.matchingScore">{t("adminPages.resumes.sortOptions.highestScore")}</SelectItem>
+                <SelectItem value="aiAnalysis.matchingScore">{t("adminPages.resumes.sortOptions.lowestScore")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -266,7 +295,7 @@ export default function ResumesPage() {
               }}
               className="w-full"
             >
-              Xóa bộ lọc
+              {t("adminPages.resumes.clearFilters")}
             </Button>
           </div>
         </div>
@@ -276,12 +305,15 @@ export default function ResumesPage() {
       {selectedCount > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
           <span className="text-sm font-medium text-foreground">
-            {selectedCount} resume{selectedCount !== 1 ? "s" : ""} selected
+            {t("adminPages.shared.selectedSummary", {
+              count: selectedCount,
+              resource: selectedResourceLabel,
+            })}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
               <X className="h-4 w-4" />
-              Clear
+              {t("adminPages.shared.clear")}
             </Button>
             <Access action={EAction.DELETE} subject="Resume" hideChildren>
               <Button
@@ -291,7 +323,7 @@ export default function ResumesPage() {
                 className="gap-1.5"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete Selected
+                {t("adminPages.shared.deleteSelected")}
               </Button>
             </Access>
           </div>
@@ -338,7 +370,7 @@ export default function ResumesPage() {
       <SingleDeleteConfirmDialog
         open={!!deletingResume}
         itemName={deletingResume?.email || deletingResume?.url}
-        resourceLabel="resume"
+        resourceLabel={t("adminPages.resources.resume")}
         onConfirm={handleConfirmDelete}
         onCancel={handleCloseDeleteDialog}
         isLoading={isDeleting}
@@ -349,7 +381,7 @@ export default function ResumesPage() {
         open={showBulkDeleteDialog}
         onOpenChange={setShowBulkDeleteDialog}
         count={selectedCount}
-        resourceName={selectedCount === 1 ? "resume" : "resumes"}
+        resourceName={selectedResourceLabel}
         onConfirm={handleBulkDelete}
         isLoading={isBulkDeleting}
       />

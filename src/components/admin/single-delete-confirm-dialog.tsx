@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface SingleDeleteConfirmDialogProps {
   open: boolean;
@@ -29,6 +30,8 @@ export function SingleDeleteConfirmDialog({
   onCancel,
   isLoading = false,
 }: SingleDeleteConfirmDialogProps) {
+  const { t } = useI18n();
+
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       onCancel();
@@ -44,19 +47,28 @@ export function SingleDeleteConfirmDialog({
               <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             <div className="space-y-2">
-              <AlertDialogTitle>Delete this {resourceLabel}?</AlertDialogTitle>
+              <AlertDialogTitle>
+                {t("adminDialogs.singleDelete.title", {
+                  resource: resourceLabel,
+                })}
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                You are about to delete{" "}
+                {t("adminDialogs.singleDelete.descriptionPrefix")}{" "}
                 <span className="font-semibold text-foreground">
-                  {itemName || `this ${resourceLabel}`}
+                  {itemName ||
+                    t("adminDialogs.singleDelete.thisResource", {
+                      resource: resourceLabel,
+                    })}
                 </span>
-                . This is a soft delete and can be restored later. Confirm to proceed.
+                {t("adminDialogs.singleDelete.descriptionSuffix")}
               </AlertDialogDescription>
             </div>
           </div>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>
+            {t("common.cancel")}
+          </AlertDialogCancel>
           <Button
             variant="destructive"
             onClick={onConfirm}
@@ -65,12 +77,14 @@ export function SingleDeleteConfirmDialog({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Deleting...
+                {t("adminDialogs.singleDelete.deleting")}
               </>
             ) : (
               <>
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete {resourceLabel}
+                {t("adminDialogs.singleDelete.confirm", {
+                  resource: resourceLabel,
+                })}
               </>
             )}
           </Button>
