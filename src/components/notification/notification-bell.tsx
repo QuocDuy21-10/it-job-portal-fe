@@ -2,8 +2,6 @@
 
 import { useCallback, useState } from "react";
 import { Bell, Check } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,6 +16,7 @@ import { useGetNotificationsQuery } from "@/features/notification/redux/notifica
 import { Notification } from "@/features/notification/schemas/notification.schema";
 import { useAuth } from "@/hooks/use-auth";
 import { NotificationItem } from "@/components/notification/notification-item";
+import { Link, useRouter } from "@/i18n/navigation";
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);

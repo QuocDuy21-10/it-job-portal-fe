@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Search, Bell, User, Settings, LogOut } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -17,7 +17,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/notification/notification-bell";
-import Link from "next/link";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
 
 interface AdminHeaderProps {
   onMobileMenuToggle?: () => void;
@@ -42,6 +43,7 @@ export function AdminHeader({
   className,
 }: AdminHeaderProps) {
   const user = useAppSelector(selectUser);
+  const { t } = useI18n();
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
@@ -80,7 +82,7 @@ export function AdminHeader({
             size="icon"
             className="lg:hidden"
             onClick={onMobileMenuToggle}
-            aria-label="Toggle mobile menu"
+            aria-label={t("adminShell.toggleMobileMenu")}
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -99,17 +101,20 @@ export function AdminHeader({
                 className="flex h-auto items-center gap-2 px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-secondary"
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.avatar || undefined} alt={user?.name || "Admin"} />
+                  <AvatarImage
+                    src={user?.avatar || undefined}
+                    alt={user?.name || t("adminShell.userFallback")}
+                  />
                   <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs">
                     {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden md:flex flex-col items-start">
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {user?.name || "Admin"}
+                    {user?.name || t("adminShell.userFallback")}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {user?.email || "admin@example.com"}
+                    {user?.email || t("adminShell.emailFallback")}
                   </span>
                 </div>
               </Button>
@@ -117,7 +122,9 @@ export function AdminHeader({
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{user?.name || "Admin"}</p>
+                  <p className="text-sm font-medium">
+                    {user?.name || t("adminShell.userFallback")}
+                  </p>
                   <p className="text-xs text-gray-500">{user?.email}</p>
                   {user?.role && (
                     <Badge variant="secondary" className="w-fit text-xs">
@@ -133,7 +140,7 @@ export function AdminHeader({
                 className="text-red-600 focus:text-red-700 focus:bg-red-50 dark:focus:bg-red-950/30"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Đăng xuất</span>
+                <span>{t("adminShell.logout")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

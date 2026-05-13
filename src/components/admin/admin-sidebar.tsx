@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ADMIN_NAVIGATION } from "@/shared/config/admin-navigation";
 import { useFilteredNavigation } from "@/hooks/use-permission-check";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link, usePathname } from "@/i18n/navigation";
 import {
   Tooltip,
   TooltipContent,
@@ -38,6 +38,7 @@ export function AdminSidebar({
   isLoggingOut = false,
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { t } = useI18n();
 
   /**
    * Filter navigation dựa trên permissions
@@ -64,7 +65,7 @@ export function AdminSidebar({
               <span className="text-white font-bold text-sm">A</span>
             </div>
             <span className="font-semibold text-gray-900 dark:text-gray-100 text-base">
-              Admin Panel
+              {t("adminShell.panelTitle")}
             </span>
           </div>
         )}
@@ -78,7 +79,11 @@ export function AdminSidebar({
                   "rounded-md transition-colors",
                   !isExpanded && "mx-auto"
                 )}
-                aria-label={isExpanded ? "Thu gọn sidebar" : "Mở rộng sidebar"}
+                aria-label={
+                  isExpanded
+                    ? t("adminShell.collapseSidebarAria")
+                    : t("adminShell.expandSidebarAria")
+                }
                 type="button"
               >
                 <ArrowLeft
@@ -91,7 +96,9 @@ export function AdminSidebar({
               </button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              {isExpanded ? "Thu gọn" : "Mở rộng"}
+              {isExpanded
+                ? t("adminShell.collapseSidebar")
+                : t("adminShell.expandSidebar")}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -109,10 +116,14 @@ export function AdminSidebar({
             {filteredNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
+              const label = item.labelKey ? t(item.labelKey) : item.name;
+              const description = item.descriptionKey
+                ? t(item.descriptionKey)
+                : item.description;
 
               const navLink = (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={cn(
                     "group flex items-center py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
@@ -133,7 +144,7 @@ export function AdminSidebar({
                     aria-hidden="true"
                   />
                   {isExpanded && (
-                    <span className="flex-1">{item.name}</span>
+                    <span className="flex-1">{label}</span>
                   )}
                   {isExpanded && item.badge && (
                     <span className="badge-primary text-xs px-2 py-0.5">
@@ -146,13 +157,13 @@ export function AdminSidebar({
               // Wrap với Tooltip khi collapsed
               if (!isExpanded) {
                 return (
-                  <Tooltip key={item.name}>
+                  <Tooltip key={item.href}>
                     <TooltipTrigger asChild>{navLink}</TooltipTrigger>
                     <TooltipContent side="right">
-                      <p>{item.name}</p>
-                      {item.description && (
+                      <p>{label}</p>
+                      {description && (
                         <p className="text-xs text-gray-500 mt-1">
-                          {item.description}
+                          {description}
                         </p>
                       )}
                     </TooltipContent>
@@ -189,12 +200,18 @@ export function AdminSidebar({
                 >
                   <LogOut className="h-5 w-5 flex-shrink-0" />
                   {isExpanded && (
-                    <span>{isLoggingOut ? "Đang đăng xuất..." : "Đăng xuất"}</span>
+                    <span>
+                      {isLoggingOut
+                        ? t("adminShell.loggingOut")
+                        : t("adminShell.logout")}
+                    </span>
                   )}
                 </button>
               </TooltipTrigger>
               {!isExpanded && (
-                <TooltipContent side="right">Đăng xuất</TooltipContent>
+                <TooltipContent side="right">
+                  {t("adminShell.logout")}
+                </TooltipContent>
               )}
             </Tooltip>
           </TooltipProvider>

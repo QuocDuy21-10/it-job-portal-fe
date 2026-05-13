@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ADMIN_NAVIGATION } from "@/shared/config/admin-navigation";
 import { useFilteredNavigation } from "@/hooks/use-permission-check";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link, usePathname } from "@/i18n/navigation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -25,6 +25,7 @@ interface AdminMobileNavProps {
  */
 export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
   const pathname = usePathname();
+  const { t } = useI18n();
 
   /**
    * Filter navigation dựa trên permissions
@@ -45,7 +46,9 @@ export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">A</span>
               </div>
-              <span className="font-semibold text-base">Admin Panel</span>
+              <span className="font-semibold text-base">
+                {t("adminShell.panelTitle")}
+              </span>
             </SheetTitle>
           </div>
         </SheetHeader>
@@ -55,10 +58,11 @@ export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
             {filteredNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
+              const label = item.labelKey ? t(item.labelKey) : item.name;
 
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   onClick={handleNavClick}
                   className={cn(
@@ -77,7 +81,7 @@ export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
                     )}
                     aria-hidden="true"
                   />
-                  <span className="flex-1">{item.name}</span>
+                  <span className="flex-1">{label}</span>
                   {item.badge && (
                     <span className="badge-primary text-xs px-2 py-0.5">
                       {item.badge}
