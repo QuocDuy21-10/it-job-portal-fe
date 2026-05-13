@@ -10,43 +10,43 @@ const PASSWORD_SPECIAL = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
 const NAME_REGEX = /^[a-zA-ZÀ-ỹ\s]+$/; // Cho phép chữ cái và khoảng trắng, hỗ trợ tiếng Việt
 const NO_WHITESPACE_START_END = /^(?!\s).*(?<!\s)$/; // Không cho phép space đầu/cuối
 
-// LOGIN SCHEMA
-export const LoginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Vui lòng nhập email")
-    .trim()
-    .toLowerCase()
-    .email("Email không hợp lệ")
-    .regex(EMAIL_REGEX, "Định dạng email không đúng")
-    .max(255, "Email không được quá 255 ký tự")
-    .refine(
-      (email) => {
-        // Kiểm tra không có khoảng trắng
-        return !/\s/.test(email);
-      },
-      { message: "Email không được chứa khoảng trắng" }
-    )
-    .refine(
-      (email) => {
-        // Kiểm tra không có ký tự đặc biệt không hợp lệ
-        const localPart = email.split("@")[0];
-        return !/[(),:;<>[\]\\]/.test(localPart);
-      },
-      { message: "Email chứa ký tự không hợp lệ" }
-    ),
+type AuthSchemaTranslationValues = Record<string, string | number | Date>;
+type AuthSchemaTranslator = (
+  key: string,
+  values?: AuthSchemaTranslationValues
+) => string;
 
-  password: z.string().min(1, "Vui lòng nhập mật khẩu"),
-  // .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-  // .max(128, "Mật khẩu không được quá 128 ký tự")
-  // .refine((password) => !/\s/.test(password), {
-  //   message: "Mật khẩu không được chứa khoảng trắng",
-  // }),
+const defaultAuthSchemaTranslator: AuthSchemaTranslator = (key) => key;
 
-  // rememberMe: z.boolean().optional().default(false),
-});
+export const createLoginSchema = (t: AuthSchemaTranslator) =>
+  z.object({
+    email: z
+      .string()
+      .min(1, t("authModal.validation.email.required"))
+      .trim()
+      .toLowerCase()
+      .email(t("authModal.validation.email.invalid"))
+      .regex(EMAIL_REGEX, t("authModal.validation.email.format"))
+      .max(255, t("authModal.validation.email.max"))
+      .refine(
+        (email) => {
+          return !/\s/.test(email);
+        },
+        { message: t("authModal.validation.email.whitespace") }
+      )
+      .refine(
+        (email) => {
+          const localPart = email.split("@")[0];
+          return !/[(),:;<>[\]\\]/.test(localPart);
+        },
+        { message: t("authModal.validation.email.invalidCharacter") }
+      ),
+    password: z.string().min(1, t("authModal.validation.password.required")),
+  });
 
-export type LoginFormData = z.infer<typeof LoginSchema>;
+export const LoginSchema = createLoginSchema(defaultAuthSchemaTranslator);
+
+export type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;
 
 // LOGIN RESPONSE SCHEMA
 export const LoginResponseSchema = z.object({
@@ -62,146 +62,127 @@ export const LoginResponseSchema = z.object({
       _id: z.string(),
       name: z.string(),
     }),
-    savedJobs: z.array(z.string()),
-    companyFollowed: z.array(z.string()),
+    savedJobIds: z.array(z.string()).optional(),
+    jobFavorites: z.array(z.string()).optional(),
+    savedJobs: z.array(z.string()).optional(),
+    companyFollowed: z.array(z.string()).optional(),
     scheduledDeletionAt: z.string().nullable().optional(),
   }),
 });
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
-// REGISTER SCHEMA
-export const RegisterSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, "Vui lòng nhập tên hiển thị")
-      .trim()
-      .min(2, "Tên phải có ít nhất 2 ký tự")
-      .max(50, "Tên không được quá 50 ký tự")
-      .regex(NAME_REGEX, "Tên chỉ được chứa chữ cái và khoảng trắng")
-      .refine(
-        (name) => {
-          // Không cho phép nhiều khoảng trắng liên tiếp
-          return !/\s{2,}/.test(name);
-        },
-        { message: "Tên không được chứa nhiều khoảng trắng liên tiếp" }
-      )
-      .refine(
-        (name) => {
-          // Không cho phép số
-          return !/\d/.test(name);
-        },
-        { message: "Tên không được chứa số" }
-      )
-      .refine(
-        (name) => {
-          // Không cho phép ký tự đặc biệt
-          return !/[!@#$%^&*()_+=\[\]{};':"\\|,.<>\/?`~]/.test(name);
-        },
-        { message: "Tên không được chứa ký tự đặc biệt" }
-      ),
+export const createRegisterSchema = (t: AuthSchemaTranslator) =>
+  z
+    .object({
+      name: z
+        .string()
+        .min(1, t("authModal.validation.name.required"))
+        .trim()
+        .min(2, t("authModal.validation.name.min"))
+        .max(50, t("authModal.validation.name.max"))
+        .regex(NAME_REGEX, t("authModal.validation.name.lettersOnly"))
+        .refine(
+          (name) => {
+            return !/\s{2,}/.test(name);
+          },
+          { message: t("authModal.validation.name.multipleSpaces") }
+        )
+        .refine(
+          (name) => {
+            return !/\d/.test(name);
+          },
+          { message: t("authModal.validation.name.noNumbers") }
+        )
+        .refine(
+          (name) => {
+            return !/[!@#$%^&*()_+=\[\]{};':"\\|,.<>\/?`~]/.test(name);
+          },
+          { message: t("authModal.validation.name.noSpecialCharacters") }
+        ),
+      email: z
+        .string()
+        .min(1, t("authModal.validation.email.required"))
+        .trim()
+        .toLowerCase()
+        .email(t("authModal.validation.email.invalid"))
+        .regex(EMAIL_REGEX, t("authModal.validation.email.format"))
+        .max(255, t("authModal.validation.email.max"))
+        .refine(
+          (email) => {
+            return !/\s/.test(email);
+          },
+          { message: t("authModal.validation.email.whitespace") }
+        )
+        .refine(
+          (email) => {
+            const localPart = email.split("@")[0];
+            return !localPart.startsWith(".") && !localPart.endsWith(".");
+          },
+          { message: t("authModal.validation.email.invalidDots") }
+        )
+        .refine(
+          (email) => {
+            return !email.includes("..");
+          },
+          { message: t("authModal.validation.email.consecutiveDots") }
+        )
+        .refine(
+          (email) => {
+            const domain = email.split("@")[1];
+            return domain && domain.includes(".");
+          },
+          { message: t("authModal.validation.email.invalidDomain") }
+        ),
+      password: z
+        .string()
+        .min(1, t("authModal.validation.password.required"))
+        .min(8, t("authModal.validation.password.min"))
+        .max(128, t("authModal.validation.password.max"))
+        .regex(PASSWORD_UPPERCASE, t("authModal.validation.password.uppercase"))
+        .regex(PASSWORD_LOWERCASE, t("authModal.validation.password.lowercase"))
+        .regex(PASSWORD_DIGIT, t("authModal.validation.password.digit"))
+        .regex(PASSWORD_SPECIAL, t("authModal.validation.password.special"))
+        .refine((password) => !/\s/.test(password), {
+          message: t("authModal.validation.password.whitespace"),
+        })
+        .refine(
+          (password) => {
+            return !/(.)\1{3,}/.test(password);
+          },
+          { message: t("authModal.validation.password.repeatedCharacters") }
+        )
+        .refine(
+          (password) => {
+            const commonPasswords = [
+              "password",
+              "12345678",
+              "password123",
+              "qwerty123",
+              "admin123",
+              "welcome123",
+              "password1",
+            ];
+            return !commonPasswords.some((common) =>
+              password.toLowerCase().includes(common)
+            );
+          },
+          { message: t("authModal.validation.password.common") }
+        ),
+      confirmPassword: z
+        .string()
+        .min(1, t("authModal.validation.confirmPassword.required")),
+      acceptTerms: z.boolean().refine((value) => value === true, {
+        message: t("authModal.validation.acceptTerms.required"),
+      }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("authModal.validation.confirmPassword.mismatch"),
+      path: ["confirmPassword"],
+    });
 
-    email: z
-      .string()
-      .min(1, "Vui lòng nhập email")
-      .trim()
-      .toLowerCase()
-      .email("Email không hợp lệ")
-      .regex(EMAIL_REGEX, "Định dạng email không đúng")
-      .max(255, "Email không được quá 255 ký tự")
-      .refine(
-        (email) => {
-          // Kiểm tra không có khoảng trắng
-          return !/\s/.test(email);
-        },
-        { message: "Email không được chứa khoảng trắng" }
-      )
-      .refine(
-        (email) => {
-          // Kiểm tra local part không bắt đầu/kết thúc bằng dấu chấm
-          const localPart = email.split("@")[0];
-          return !localPart.startsWith(".") && !localPart.endsWith(".");
-        },
-        {
-          message:
-            "Email không hợp lệ (không được bắt đầu/kết thúc bằng dấu chấm)",
-        }
-      )
-      .refine(
-        (email) => {
-          // Kiểm tra không có hai dấu chấm liên tiếp
-          return !email.includes("..");
-        },
-        { message: "Email không được chứa hai dấu chấm liên tiếp" }
-      )
-      .refine(
-        (email) => {
-          // Kiểm tra domain có ít nhất 1 dấu chấm
-          const domain = email.split("@")[1];
-          return domain && domain.includes(".");
-        },
-        { message: "Domain email không hợp lệ" }
-      ),
+export const RegisterSchema = createRegisterSchema(defaultAuthSchemaTranslator);
 
-    password: z
-      .string()
-      .min(1, "Vui lòng nhập mật khẩu")
-      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-      .max(128, "Mật khẩu không được quá 128 ký tự")
-      .regex(
-        PASSWORD_UPPERCASE,
-        "Mật khẩu phải chứa ít nhất một chữ cái viết hoa"
-      )
-      .regex(
-        PASSWORD_LOWERCASE,
-        "Mật khẩu phải chứa ít nhất một chữ cái viết thường"
-      )
-      .regex(PASSWORD_DIGIT, "Mật khẩu phải chứa ít nhất một số")
-      .regex(
-        PASSWORD_SPECIAL,
-        "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (!@#$%^&*...)"
-      )
-      .refine((password) => !/\s/.test(password), {
-        message: "Mật khẩu không được chứa khoảng trắng",
-      })
-      .refine(
-        (password) => {
-          // Kiểm tra không có ký tự lặp quá 3 lần liên tiếp
-          return !/(.)\1{3,}/.test(password);
-        },
-        { message: "Mật khẩu không được chứa ký tự lặp quá 3 lần liên tiếp" }
-      )
-      .refine(
-        (password) => {
-          // Kiểm tra không phải là mật khẩu phổ biến
-          const commonPasswords = [
-            "password",
-            "12345678",
-            "password123",
-            "qwerty123",
-            "admin123",
-            "welcome123",
-            "password1",
-          ];
-          return !commonPasswords.some((common) =>
-            password.toLowerCase().includes(common)
-          );
-        },
-        { message: "Mật khẩu quá phổ biến, vui lòng chọn mật khẩu khác" }
-      ),
-
-    confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu"),
-
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "Bạn phải chấp nhận điều khoản sử dụng",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
-    path: ["confirmPassword"],
-  });
-
-export type RegisterFormData = z.infer<typeof RegisterSchema>;
+export type RegisterFormData = z.infer<ReturnType<typeof createRegisterSchema>>;
 
 // FORGOT PASSWORD SCHEMA
 export const ForgotPasswordSchema = z.object({
@@ -349,6 +330,7 @@ export const AuthStateSchema = z.object({
         _id: z.string(),
         name: z.string(),
       }),
+      savedJobIds: z.array(z.string()).optional(),
       jobFavorites: z.array(z.string()).optional(),
       savedJobs: z.array(z.string()).optional(),
       companyFollowed: z.array(z.string()).optional(),
@@ -372,8 +354,31 @@ export interface UserInfo {
   email: string;
   avatar: string | null;
   name: string;
+  authProvider?: string;
+  hasPassword?: boolean;
+  scheduledDeletionAt?: string | null;
   role: Role;
+  savedJobIds?: string[];
   jobFavorites?: string[];
   savedJobs?: string[];
   companyFollowed?: string[];
+}
+
+type SavedJobFields = Pick<
+  UserInfo,
+  "savedJobIds" | "savedJobs" | "jobFavorites"
+>;
+
+export function normalizeSavedJobIds(user?: SavedJobFields | null): string[] {
+  if (!user) {
+    return [];
+  }
+
+  return Array.from(
+    new Set([
+      ...(user.savedJobIds ?? []),
+      ...(user.savedJobs ?? []),
+      ...(user.jobFavorites ?? []),
+    ])
+  );
 }

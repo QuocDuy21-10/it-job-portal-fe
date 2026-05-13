@@ -4,6 +4,7 @@ import { useState, forwardRef } from "react";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -12,12 +13,8 @@ interface PasswordInputProps
   showIcon?: boolean;
 }
 
-/**
- * PasswordInput - Reusable password input with toggle visibility
- * Eliminates code duplication across auth pages
- */
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ label, error, showIcon = true, ...props }, ref) => {
+  ({ label, error, showIcon = true, className, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -35,7 +32,12 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <Input
             ref={ref}
             type={showPassword ? "text" : "password"}
-            className={`${showIcon ? "pl-10" : ""} pr-10 dark:bg-slate-700 dark:text-white dark:border-slate-600 transition-all focus-ring-primary`}
+            className={cn(
+              showIcon && "pl-10",
+              "pr-10 transition-all",
+              error && "border-destructive focus-visible:border-destructive",
+              className
+            )}
             {...props}
           />
           <button

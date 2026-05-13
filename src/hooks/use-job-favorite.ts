@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { useI18n } from "@/hooks/use-i18n";
@@ -8,28 +7,31 @@ import {
   useUnsaveJobMutation,
 } from "@/features/user/redux/user.api";
 import {
+  addSavedJobId,
+  removeSavedJobId,
   selectIsAuthenticated,
-  selectJobFavorites,
+  selectSavedJobIds,
 } from "@/features/auth/redux/auth.slice";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 
 export function useJobFavorite(jobId: string) {
+  const dispatch = useAppDispatch();
   const { openModal } = useAuthModal();
   const { t } = useI18n();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const jobFavorites = useSelector(selectJobFavorites); // Danh sách thực từ Server/Redux
+  const [isHydrated, setIsHydrated] = useState(false);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const savedJobIds = useAppSelector(selectSavedJobIds);
 
-  const [saveJob] = useSaveJobMutation();
-  const [unsaveJob] = useUnsaveJobMutation();
+  const [saveJob, { isLoading: isSavingJob }] = useSaveJobMutation();
+  const [unsaveJob, { isLoading: isUnsavingJob }] = useUnsaveJobMutation();
+  const isSaved = isHydrated && savedJobIds.includes(jobId);
+  const isLoading = isSavingJob || isUnsavingJob;
+  const canUseFavoriteState = isHydrated && !isLoading;
+  const isFavoriteAuthenticated = isHydrated && isAuthenticated;
 
-  // 1. Tạo local state để lưu trạng thái UI ngay lập tức
-  // Khởi tạo bằng việc kiểm tra trong Redux store
-  const isSavedInStore = jobFavorites.includes(jobId);
-  const [optimisticIsSaved, setOptimisticIsSaved] = useState(isSavedInStore);
-
-  // 2. Đồng bộ local state khi Redux store thay đổi (để đảm bảo tính nhất quán sau khi API chạy xong hoặc reload)
   useEffect(() => {
-    setOptimisticIsSaved(isSavedInStore);
-  }, [isSavedInStore]);
+    setIsHydrated(true);
+  }, []);
 
   const toggleSaveJob = useCallback(
     async (e?: React.MouseEvent) => {
@@ -38,53 +40,61 @@ export function useJobFavorite(jobId: string) {
         e.stopPropagation();
       }
 
+      if (!isHydrated) {
+        return;
+      }
+
       // Show Auth Modal if not authenticated
       if (!isAuthenticated) {
         openModal("signin");
         return;
       }
 
-      // 3. OPTIMISTIC UPDATE: Đảo ngược trạng thái UI ngay lập tức
-      const previousState = optimisticIsSaved; // Lưu trạng thái cũ để revert nếu lỗi
-      setOptimisticIsSaved(!previousState); 
+      if (!canUseFavoriteState) {
+        return;
+      }
+
+      const previousState = isSaved;
+      dispatch(previousState ? removeSavedJobId(jobId) : addSavedJobId(jobId));
 
       try {
         if (previousState) {
-          // Nếu đang là true (đã lưu) -> Gọi API bỏ lưu
           await unsaveJob(jobId).unwrap();
           toast.success(t("jobFavorites.removedSuccess"), { duration: 1000 });
         } else {
-          // Nếu đang là false (chưa lưu) -> Gọi API lưu
           await saveJob(jobId).unwrap();
           toast.success(t("jobFavorites.savedSuccess"), { duration: 1000 });
         }
       } catch (error: any) {
-        // 4. REVERT: Nếu API lỗi, trả về trạng thái cũ
-        setOptimisticIsSaved(previousState);
-        
+        dispatch(previousState ? addSavedJobId(jobId) : removeSavedJobId(jobId));
+
         console.error("Toggle job favorite error:", error);
-                const errorMessage =
-                  error?.data?.message ||
-                  error?.message ||
-                  t("jobFavorites.errorFallback");
+        const errorMessage =
+          error?.data?.message ||
+          error?.message ||
+          t("jobFavorites.errorFallback");
         toast.error(errorMessage);
       }
     },
-            [
-              isAuthenticated,
-              jobId,
-              openModal,
-              optimisticIsSaved,
-              saveJob,
-              t,
-              unsaveJob,
-            ]
+    [
+      canUseFavoriteState,
+      dispatch,
+      isAuthenticated,
+      isHydrated,
+      isSaved,
+      jobId,
+      openModal,
+      saveJob,
+      t,
+      unsaveJob,
+    ]
   );
 
   return {
-    isSaved: optimisticIsSaved, // Trả về trạng thái Optimistic cho UI
+    isSaved,
     toggleSaveJob,
-    isLoading: false, // Không cần loading spinner nữa vì UI đã phản hồi ngay tức thì
-    isAuthenticated,
+    isLoading,
+    isAuthenticated: isFavoriteAuthenticated,
+    isHydrated,
   };
 }

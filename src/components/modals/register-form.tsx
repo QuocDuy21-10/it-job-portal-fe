@@ -1,23 +1,28 @@
 "use client";
 
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PasswordInput } from "@/components/auth";
+import { AuthModalTab } from "@/contexts/auth-modal-context";
 import { useRegisterMutation } from "@/features/auth/redux/auth.api";
 import {
   RegisterFormData,
-  RegisterSchema,
+  createRegisterSchema,
 } from "@/features/auth/schemas/auth.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface RegisterFormProps {
   onSuccess?: (redirectUrl?: string) => void;
   isModal?: boolean;
+  onTabChange?: (tab: AuthModalTab) => void;
 }
 
 /**
@@ -29,7 +34,14 @@ interface RegisterFormProps {
  * @param onSuccess - Callback after successful registration
  * @param isModal - Whether form is inside modal
  */
-export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) {
+export function RegisterForm({
+  onSuccess,
+  isModal = false,
+  onTabChange,
+}: RegisterFormProps) {
+  const { t } = useI18n();
+  const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
+
   const {
     register,
     handleSubmit,
@@ -37,7 +49,7 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
     setValue,
     watch,
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(RegisterSchema),
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -55,16 +67,16 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
       const response = await signUp(data).unwrap();
       
       if (response.statusCode === 201) {
-        toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+        toast.success(t("authModal.toasts.registerSuccess"));
         
-        // If in modal, auto switch to login tab or close
-        // Otherwise redirect to login page
         onSuccess?.(isModal ? undefined : "/login");
       }
     } catch (error: any) {
       console.error("Register error:", error);
       const errorMessage =
-        error?.data?.message || error?.message || "Đăng ký thất bại";
+        error?.data?.message ||
+        error?.message ||
+        t("authModal.toasts.registerFailedFallback");
       toast.error(errorMessage);
     }
   };
@@ -77,12 +89,13 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
           htmlFor="name"
           className="text-sm font-medium text-foreground"
         >
-          Họ và tên <span className="text-destructive">*</span>
+          {t("authModal.register.fields.name.label")}{" "}
+          <span className="text-destructive">*</span>
         </Label>
         <Input
           id="name"
           type="text"
-          placeholder="Nguyễn Văn A"
+          placeholder={t("authModal.register.fields.name.placeholder")}
           autoComplete="name"
           {...register("name")}
           className={errors.name ? "border-destructive focus-visible:ring-destructive" : ""}
@@ -100,12 +113,13 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
           htmlFor="email"
           className="text-sm font-medium text-foreground"
         >
-          Email <span className="text-destructive">*</span>
+          {t("authModal.register.fields.email.label")}{" "}
+          <span className="text-destructive">*</span>
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder="example@email.com"
+          placeholder={t("authModal.register.fields.email.placeholder")}
           autoComplete="email"
           {...register("email")}
           className={errors.email ? "border-destructive focus-visible:ring-destructive" : ""}
@@ -123,8 +137,8 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
         <div className="space-y-2">
           <PasswordInput
             id="password"
-            label="Mật khẩu"
-            placeholder="Tối thiểu 6 ký tự"
+            label={t("authModal.register.fields.password.label")}
+            placeholder={t("authModal.register.fields.password.placeholder")}
             autoComplete="new-password"
             error={errors.password?.message}
             {...register("password")}
@@ -135,8 +149,8 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
         <div className="space-y-2">
           <PasswordInput
             id="confirmPassword"
-            label="Xác nhận mật khẩu"
-            placeholder="Nhập lại mật khẩu"
+            label={t("authModal.register.fields.confirmPassword.label")}
+            placeholder={t("authModal.register.fields.confirmPassword.placeholder")}
             autoComplete="new-password"
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
@@ -157,26 +171,26 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
             htmlFor="acceptTerms"
             className="text-sm leading-relaxed text-muted-foreground cursor-pointer select-none"
           >
-            Tôi đồng ý với{" "}
-            <a 
+            {t("authModal.register.fields.acceptTerms.prefix")}{" "}
+            <Link
               href="/terms" 
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
-              Điều khoản dịch vụ
-            </a>{" "}
-            và{" "}
-            <a 
+              {t("authModal.register.fields.acceptTerms.terms")}
+            </Link>{" "}
+            {t("authModal.register.fields.acceptTerms.and")}{" "}
+            <Link
               href="/privacy" 
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
-              Chính sách bảo mật
-            </a>
+              {t("authModal.register.fields.acceptTerms.privacy")}
+            </Link>
           </label>
         </div>
         {errors.acceptTerms && (
@@ -195,22 +209,22 @@ export function RegisterForm({ onSuccess, isModal = false }: RegisterFormProps) 
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Đang xử lý...
+            {t("authModal.register.actions.submitting")}
           </>
         ) : (
-          "Tạo tài khoản"
+          t("authModal.register.actions.submit")
         )}
       </Button>
 
-      {/* Login Prompt - Only show in modal */}
       {isModal && (
         <p className="text-center text-sm text-muted-foreground pt-2">
-          Đã có tài khoản?{" "}
+          {t("authModal.register.footer.alreadyHaveAccount")}{" "}
           <button
             type="button"
+            onClick={() => onTabChange?.("signin")}
             className="font-medium text-primary hover:text-primary/80 transition-colors"
           >
-            Đăng nhập ngay
+            {t("authModal.register.footer.signInNow")}
           </button>
         </p>
       )}

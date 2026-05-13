@@ -11,7 +11,9 @@ interface CompanyHeaderProps {
 }
 
 export default function CompanyHeader({ company }: CompanyHeaderProps) {
-  const { isFollowing, toggleFollowCompany } = useCompanyFollow(company?._id || "");
+  const { isFollowing, isHydrated, toggleFollowCompany } = useCompanyFollow(
+    company?._id || ""
+  );
 
   return (
     <Tooltip.Provider>
@@ -87,6 +89,7 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
               <Tooltip.Trigger asChild>
                 <Button 
                   onClick={toggleFollowCompany}
+                  disabled={!isHydrated}
                   className={cn(
                     "font-semibold whitespace-nowrap shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95",
                     isFollowing

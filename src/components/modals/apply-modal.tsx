@@ -8,6 +8,7 @@ import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { useCreateResumeWithUploadMutation } from "@/features/resume/redux/resume.api";
 import { selectAuth } from "@/features/auth/redux/auth.slice";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface ApplyModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export default function ApplyModal({
   companyId,
 }: ApplyModalProps) {
   const { user } = useSelector(selectAuth);
+  const { t } = useI18n();
   const [createResumeWithUpload, { isLoading: isUploading }] = useCreateResumeWithUploadMutation();
   const [formData, setFormData] = useState({
     name: user?.name || "",
@@ -51,12 +53,12 @@ export default function ApplyModal({
       const maxSize = 5 * 1024 * 1024; // 5MB
 
       if (!validTypes.includes(file.type)) {
-        alert("Only .doc, .docx, and .pdf files are allowed");
+        toast.error(t("applyModal.validation.invalidFileType"));
         return;
       }
 
       if (file.size > maxSize) {
-        alert("File size must not exceed 5MB");
+        toast.error(t("applyModal.validation.fileTooLarge"));
         return;
       }
 
@@ -67,7 +69,7 @@ export default function ApplyModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cvFile) {
-      toast.error("Vui lòng chọn file CV");
+      toast.error(t("applyModal.validation.fileRequired"));
       return;
     }
 
@@ -80,7 +82,7 @@ export default function ApplyModal({
       }).unwrap();
 
       if (response.statusCode === 201) {
-        toast.success("Nộp đơn ứng tuyển thành công!");
+        toast.success(t("applyModal.toasts.submitSuccess"));
         setFormData({
           name: user?.name || "",
           phone: "",
@@ -92,7 +94,10 @@ export default function ApplyModal({
         throw new Error(response.message || "Có lỗi khi nộp đơn");
       }
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.message || "Có lỗi xảy ra, vui lòng thử lại";
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        t("applyModal.toasts.submitErrorFallback");
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -107,11 +112,12 @@ export default function ApplyModal({
         {/* Header */}
         <div className="sticky top-0 bg-card border-b border-border p-6 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold">Ứng tuyển ngay</h2>
+            <h2 className="text-xl font-bold">{t("applyModal.title")}</h2>
             <p className="text-sm text-muted-foreground mt-1">{jobTitle}</p>
           </div>
           <button
             onClick={onClose}
+            aria-label={t("applyModal.actions.close")}
             className="text-muted-foreground hover:text-foreground transition"
           >
             <X className="w-5 h-5" />
@@ -123,7 +129,8 @@ export default function ApplyModal({
           {/* Name */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Họ và Tên  <span className="text-destructive">*</span>
+              {t("applyModal.fields.name.label")}{" "}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
@@ -131,7 +138,7 @@ export default function ApplyModal({
               value={formData.name}
               onChange={handleInputChange}
               required
-              placeholder="Nhập họ và tên"
+              placeholder={t("applyModal.fields.name.placeholder")}
               className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -139,7 +146,8 @@ export default function ApplyModal({
           {/* Phone */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Số điện thoại  <span className="text-destructive">*</span>
+              {t("applyModal.fields.phone.label")}{" "}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="tel"
@@ -147,21 +155,24 @@ export default function ApplyModal({
               value={formData.phone}
               onChange={handleInputChange}
               required
-              placeholder="Nhập số điện thoại"
+              placeholder={t("applyModal.fields.phone.placeholder")}
               className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-2">Email <span className="text-destructive">*</span></label>
+            <label className="block text-sm font-medium mb-2">
+              {t("applyModal.fields.email.label")}{" "}
+              <span className="text-destructive">*</span>
+            </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              placeholder="Nhập email"
+              placeholder={t("applyModal.fields.email.placeholder")}
               className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -169,7 +180,8 @@ export default function ApplyModal({
           {/* CV Upload */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Tải lên CV <span className="text-destructive">*</span>
+              {t("applyModal.fields.cv.label")}{" "}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="file"
@@ -196,15 +208,13 @@ export default function ApplyModal({
               ) : (
                 <div className="flex items-center justify-center gap-2">
                   <Upload className="w-5 h-5" />
-                  <span>
-                    Chọn tệp hoặc kéo thả (.doc, .docx, .pdf - Max 5MB)
-                  </span>
+                  <span>{t("applyModal.fields.cv.placeholder")}</span>
                 </div>
               )}
             </button>
             {!cvFile && (
               <p className="text-xs text-destructive mt-1">
-                Vui lòng chọn tệp CV
+                {t("applyModal.validation.fileRequired")}
               </p>
             )}
           </div>
@@ -215,7 +225,9 @@ export default function ApplyModal({
             disabled={isSubmitting || isUploading || !cvFile}
             className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground font-semibold h-10"
           >
-            {isSubmitting || isUploading ? "Đang gửi..." : "Gửi đơn ứng tuyển"}
+            {isSubmitting || isUploading
+              ? t("applyModal.actions.submitting")
+              : t("applyModal.actions.submit")}
           </Button>
         </form>
       </Card>

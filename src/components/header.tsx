@@ -202,7 +202,7 @@ export function Header() {
                     }}
                     className="w-full text-left px-4 py-2.5 text-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200 font-medium"
                   >
-                    🇬🇧 English
+                    English
                   </button>
                   <button
                     onClick={() => {
@@ -211,7 +211,7 @@ export function Header() {
                     }}
                     className="w-full text-left px-4 py-2.5 text-foreground hover:bg-primary/10 hover:text-primary border-t border-border transition-all duration-200 font-medium"
                   >
-                    🇻🇳 Tiếng Việt
+                    Tiếng Việt
                   </button>
                 </div>
               )}

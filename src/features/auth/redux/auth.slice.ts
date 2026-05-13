@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { authApi } from "./auth.api";
-import { AuthState, UserInfo } from "../schemas/auth.schema";
+import {
+  AuthState,
+  UserInfo,
+  normalizeSavedJobIds,
+} from "../schemas/auth.schema";
 import { isAdminRole, isSuperAdmin } from "@/shared/constants/roles";
 
 const initialState: AuthState = {
@@ -10,6 +14,32 @@ const initialState: AuthState = {
   isRefreshToken: false,
   errorRefreshToken: "",
 };
+
+type AuthUserPayload = Omit<UserInfo, "avatar"> & {
+  avatar?: string | null;
+};
+
+function buildAuthUser(userData: AuthUserPayload) {
+  const savedJobIds = normalizeSavedJobIds(userData);
+
+  return {
+    _id: userData._id,
+    name: userData.name,
+    email: userData.email,
+    avatar: userData.avatar || null,
+    authProvider: userData.authProvider,
+    hasPassword: userData.hasPassword,
+    scheduledDeletionAt: userData.scheduledDeletionAt,
+    role: {
+      _id: userData.role._id,
+      name: userData.role.name,
+    },
+    savedJobIds,
+    savedJobs: savedJobIds,
+    jobFavorites: savedJobIds,
+    companyFollowed: userData.companyFollowed || [],
+  };
+}
 
 const authSlice = createSlice({
   name: "auth",
@@ -33,7 +63,35 @@ const authSlice = createSlice({
     setUserLoginInfo: (state, action: PayloadAction<UserInfo>) => {
       state.isAuthenticated = true;
       state.isLoading = false;
-      state.user = action.payload;
+      state.user = buildAuthUser(action.payload);
+    },
+
+    addSavedJobId: (state, action: PayloadAction<string>) => {
+      if (!state.user) {
+        return;
+      }
+
+      const savedJobIds = Array.from(
+        new Set([...normalizeSavedJobIds(state.user), action.payload])
+      );
+
+      state.user.savedJobIds = savedJobIds;
+      state.user.savedJobs = savedJobIds;
+      state.user.jobFavorites = savedJobIds;
+    },
+
+    removeSavedJobId: (state, action: PayloadAction<string>) => {
+      if (!state.user) {
+        return;
+      }
+
+      const savedJobIds = normalizeSavedJobIds(state.user).filter(
+        (savedJobId) => savedJobId !== action.payload
+      );
+
+      state.user.savedJobIds = savedJobIds;
+      state.user.savedJobs = savedJobIds;
+      state.user.jobFavorites = savedJobIds;
     },
 
     setLogoutAction: (state) => {
@@ -66,16 +124,7 @@ const authSlice = createSlice({
         const userData = action.payload.data?.user;
 
         if (userData) {
-          state.user = {
-            _id: userData._id,
-            name: userData.name,
-            email: userData.email,
-            avatar: userData.avatar || null,
-            role: {
-              _id: userData.role._id,
-              name: userData.role.name,
-            },
-          };
+          state.user = buildAuthUser(userData);
           state.isAuthenticated = true;
         }
         state.isLoading = false;
@@ -94,17 +143,7 @@ const authSlice = createSlice({
         const userData = action.payload.data?.user;
 
         if (userData) {
-          state.user = {
-            _id: userData._id,
-            name: userData.name,
-            email: userData.email,
-            avatar: userData.avatar || null,
-            role: {
-              _id: userData.role._id,
-              name: userData.role.name,
-            },
-            jobFavorites: userData.jobFavorites || [],
-          };
+          state.user = buildAuthUser(userData);
           state.isAuthenticated = true;
         } else {
           state.user = null;
@@ -153,17 +192,7 @@ const authSlice = createSlice({
           const userData = action.payload.data?.user;
 
           if (userData) {
-            state.user = {
-              _id: userData._id,
-              name: userData.name,
-              email: userData.email,
-              avatar: userData.avatar || null,
-              role: {
-                _id: userData.role._id,
-                name: userData.role.name,
-              },
-              jobFavorites: userData.jobFavorites || [],
-            };
+            state.user = buildAuthUser(userData);
             state.isAuthenticated = true;
           }
           state.isLoading = false;
@@ -203,6 +232,8 @@ export const {
   clearAuth,
   setLoading,
   setUserLoginInfo,
+  addSavedJobId,
+  removeSavedJobId,
   setLogoutAction,
   setRefreshTokenAction,
 } = authSlice.actions;
@@ -250,11 +281,12 @@ export const selectIsSuperAdmin = createSelector(
   (role) => isSuperAdmin(role)
 );
 
-// ✅ NEW: Selector để lấy jobFavorites
-export const selectJobFavorites = createSelector(
+export const selectSavedJobIds = createSelector(
   [selectUser],
-  (user) => user?.jobFavorites ?? []
+  (user) => normalizeSavedJobIds(user)
 );
+
+export const selectJobFavorites = selectSavedJobIds;
 
 // ✅ NEW: Selector để lấy companyFollowing
 export const selectCompanyFollowing = createSelector(

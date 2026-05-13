@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Mail, User, Loader2 } from "lucide-react";
@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useRegisterMutation } from "@/features/auth/redux/auth.api";
 import {
   RegisterFormData,
-  RegisterSchema,
+  createRegisterSchema,
 } from "@/features/auth/schemas/auth.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,10 +24,13 @@ import {
   SocialAuthButtons,
   AuthFooter,
 } from "@/components/auth";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function RegisterPage() {
   const [socialLoading, setSocialLoading] = useState<"google" | "facebook" | null>(null);
   const router = useRouter();
+  const { t } = useI18n();
+  const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
 
   const {
     register,
@@ -36,7 +39,7 @@ export default function RegisterPage() {
     setValue,
     watch,
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(RegisterSchema),
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",

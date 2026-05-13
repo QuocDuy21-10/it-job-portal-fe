@@ -334,6 +334,160 @@ export const en = {
       viewCompanyProfile: "View company profile",
     },
   },
+  authModal: {
+    title: {
+      signin: "Welcome back",
+      signup: "Create a new account",
+    },
+    description: {
+      signin: "Sign in to continue",
+    },
+    tabs: {
+      signin: "Sign in",
+      signup: "Sign up",
+    },
+    login: {
+      fields: {
+        email: {
+          label: "Email",
+          placeholder: "example@email.com",
+        },
+        password: {
+          label: "Password",
+          placeholder: "Enter your password",
+        },
+      },
+      forgotPassword: "Forgot password?",
+      actions: {
+        submit: "Sign in",
+        submitting: "Signing in...",
+      },
+      socialDivider: "Or continue with",
+      footer: {
+        noAccount: "Don't have an account?",
+        signUpNow: "Sign up now",
+      },
+    },
+    register: {
+      fields: {
+        name: {
+          label: "Full name",
+          placeholder: "John Doe",
+        },
+        email: {
+          label: "Email",
+          placeholder: "example@email.com",
+        },
+        password: {
+          label: "Password",
+          placeholder: "At least 8 characters",
+        },
+        confirmPassword: {
+          label: "Confirm password",
+          placeholder: "Re-enter your password",
+        },
+        acceptTerms: {
+          prefix: "I agree to the",
+          terms: "Terms of Service",
+          and: "and",
+          privacy: "Privacy Policy",
+        },
+      },
+      actions: {
+        submit: "Create account",
+        submitting: "Processing...",
+      },
+      footer: {
+        alreadyHaveAccount: "Already have an account?",
+        signInNow: "Sign in now",
+      },
+    },
+    toasts: {
+      loginSuccess: "Login successful.",
+      loginFailedFallback: "Login failed. Please try again.",
+      googleCredentialMissing: "Failed to receive Google credentials.",
+      googleLoginSuccess: "Google login successful.",
+      googleLoginFailed: "Google login failed.",
+      registerSuccess: "Registration successful. Please sign in.",
+      registerFailedFallback: "Registration failed.",
+    },
+    validation: {
+      name: {
+        required: "Please enter your display name",
+        min: "Name must be at least 2 characters",
+        max: "Name must not exceed 50 characters",
+        lettersOnly: "Name can only contain letters and spaces",
+        multipleSpaces: "Name must not contain multiple consecutive spaces",
+        noNumbers: "Name must not contain numbers",
+        noSpecialCharacters: "Name must not contain special characters",
+      },
+      email: {
+        required: "Please enter your email",
+        invalid: "Invalid email address",
+        format: "Email format is invalid",
+        max: "Email must not exceed 255 characters",
+        whitespace: "Email must not contain spaces",
+        invalidCharacter: "Email contains invalid characters",
+        invalidDots: "Email cannot start or end with a dot",
+        consecutiveDots: "Email must not contain consecutive dots",
+        invalidDomain: "Email domain is invalid",
+      },
+      password: {
+        required: "Please enter your password",
+        min: "Password must be at least 8 characters",
+        max: "Password must not exceed 128 characters",
+        uppercase: "Password must include at least one uppercase letter",
+        lowercase: "Password must include at least one lowercase letter",
+        digit: "Password must include at least one number",
+        special: "Password must include at least one special character",
+        whitespace: "Password must not contain spaces",
+        repeatedCharacters: "Password must not repeat a character more than 3 times in a row",
+        common: "Password is too common. Please choose another password",
+      },
+      confirmPassword: {
+        required: "Please confirm your password",
+        mismatch: "Passwords do not match",
+      },
+      acceptTerms: {
+        required: "You must accept the terms of service",
+      },
+    },
+  },
+  applyModal: {
+    title: "Apply now",
+    fields: {
+      name: {
+        label: "Full name",
+        placeholder: "Enter your full name",
+      },
+      phone: {
+        label: "Phone number",
+        placeholder: "Enter your phone number",
+      },
+      email: {
+        label: "Email",
+        placeholder: "Enter your email",
+      },
+      cv: {
+        label: "Upload CV",
+        placeholder: "Choose a file or drag and drop (.doc, .docx, .pdf - Max 5MB)",
+      },
+    },
+    actions: {
+      close: "Close apply modal",
+      submit: "Submit application",
+      submitting: "Submitting...",
+    },
+    validation: {
+      fileRequired: "Please choose a CV file",
+      invalidFileType: "Only .doc, .docx, and .pdf files are allowed",
+      fileTooLarge: "File size must not exceed 5MB",
+    },
+    toasts: {
+      submitSuccess: "Application submitted successfully.",
+      submitErrorFallback: "Something went wrong. Please try again.",
+    },
+  },
   companyDetailPage: {
     notUpdated: "Not updated yet",
     employeesCount: "{count} employees",

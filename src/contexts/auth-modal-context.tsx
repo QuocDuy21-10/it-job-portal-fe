@@ -2,12 +2,17 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 
-type AuthModalTab = "signin" | "signup";
+export type AuthModalTab = "signin" | "signup";
+
+type AuthModalOptions = {
+  onSuccess?: () => void;
+};
 
 interface AuthModalContextValue {
   isOpen: boolean;
   activeTab: AuthModalTab;
-  openModal: (tab?: AuthModalTab) => void;
+  successCallback: (() => void) | null;
+  openModal: (tab?: AuthModalTab, options?: AuthModalOptions) => void;
   closeModal: () => void;
   setActiveTab: (tab: AuthModalTab) => void;
 }
@@ -25,14 +30,22 @@ const AuthModalContext = createContext<AuthModalContextValue | undefined>(
 export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<AuthModalTab>("signin");
+  const [successCallback, setSuccessCallback] = useState<(() => void) | null>(
+    null
+  );
 
-  const openModal = useCallback((tab: AuthModalTab = "signin") => {
-    setActiveTab(tab);
-    setIsOpen(true);
-  }, []);
+  const openModal = useCallback(
+    (tab: AuthModalTab = "signin", options?: AuthModalOptions) => {
+      setActiveTab(tab);
+      setSuccessCallback(() => options?.onSuccess ?? null);
+      setIsOpen(true);
+    },
+    []
+  );
 
   const closeModal = useCallback(() => {
     setIsOpen(false);
+    setSuccessCallback(null);
   }, []);
 
   return (
@@ -40,6 +53,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
       value={{
         isOpen,
         activeTab,
+        successCallback,
         openModal,
         closeModal,
         setActiveTab,

@@ -12,11 +12,13 @@ type CompanyFollowButtonProps = {
 export default function CompanyFollowButton({
   companyId,
 }: CompanyFollowButtonProps) {
-  const { isFollowing, toggleFollowCompany } = useCompanyFollow(companyId);
+  const { isFollowing, isHydrated, toggleFollowCompany } =
+    useCompanyFollow(companyId);
 
   return (
     <Button
       onClick={toggleFollowCompany}
+      disabled={!isHydrated}
       className={cn(
         "whitespace-nowrap border-2 font-semibold shadow-lg transition-all duration-300 hover:shadow-xl",
         isFollowing

@@ -11,8 +11,11 @@ import {
   UpdateUserFormData,
 } from "../schemas/user.schema";
 import { authApi } from "@/features/auth/redux/auth.api";
+import { normalizeSavedJobIds } from "@/features/auth/schemas/auth.schema";
 
 type AuthMeCacheUser = {
+  savedJobIds?: string[];
+  savedJobs?: string[];
   jobFavorites?: string[];
   companyFollowed?: string[];
 };
@@ -111,10 +114,13 @@ export const userApi = baseApi.injectEndpoints({
           authApi.util.updateQueryData("getMe", undefined, (draft) => {
             const user = draft.data?.user as AuthMeCacheUser | undefined;
             if (user) {
-              const currentFavorites = user.jobFavorites || [];
-              if (!currentFavorites.includes(jobId)) {
-                user.jobFavorites = [...currentFavorites, jobId];
-              }
+              const nextSavedJobIds = Array.from(
+                new Set([...normalizeSavedJobIds(user), jobId])
+              );
+
+              user.savedJobIds = nextSavedJobIds;
+              user.savedJobs = nextSavedJobIds;
+              user.jobFavorites = nextSavedJobIds;
             }
           })
         );
@@ -141,10 +147,13 @@ export const userApi = baseApi.injectEndpoints({
           authApi.util.updateQueryData("getMe", undefined, (draft) => {
             const user = draft.data?.user as AuthMeCacheUser | undefined;
             if (user) {
-              const currentFavorites = user.jobFavorites || [];
-              user.jobFavorites = currentFavorites.filter(
-                (id: string) => id !== jobId
+              const nextSavedJobIds = normalizeSavedJobIds(user).filter(
+                (id) => id !== jobId
               );
+
+              user.savedJobIds = nextSavedJobIds;
+              user.savedJobs = nextSavedJobIds;
+              user.jobFavorites = nextSavedJobIds;
             }
           })
         );

@@ -235,7 +235,9 @@ const SkillTags = ({
 // Main component                                                     
 export function JobCard({ job, variant = "default", className }: JobCardProps) {
   const { t, language } = useI18n();
-  const { isSaved, toggleSaveJob, isLoading } = useJobFavorite(job._id);
+  const { isSaved, toggleSaveJob, isLoading, isHydrated } = useJobFavorite(
+    job._id
+  );
   const status = getJobStatus(job);
   const statusLabel = status?.variant
     ? t(JOB_STATUS_LABEL_KEYS[status.variant])
@@ -295,7 +297,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
               <FavoriteButton
                 isSaved={isSaved}
                 onClick={toggleSaveJob}
-                disabled={isLoading}
+                disabled={!isHydrated || isLoading}
                 className="h-8 w-8"
               />
             </div>
@@ -388,7 +390,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
                   <FavoriteButton
                     isSaved={isSaved}
                     onClick={toggleSaveJob}
-                    disabled={isLoading}
+                    disabled={!isHydrated || isLoading}
                   />
                 </div>
                 <Button 
@@ -421,7 +423,7 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
           <FavoriteButton
             isSaved={isSaved}
             onClick={toggleSaveJob}
-            disabled={isLoading}
+            disabled={!isHydrated || isLoading}
           />
         </div>
 

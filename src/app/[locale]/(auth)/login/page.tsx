@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Loader2 } from "lucide-react";
@@ -16,7 +16,7 @@ import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
-  LoginSchema,
+  createLoginSchema,
 } from "@/features/auth/schemas/auth.schema";
 import {
   useGoogleLoginMutation,
@@ -31,6 +31,7 @@ import {
   AuthFooter,
   VerificationAlert,
 } from "@/components/auth";
+import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 
@@ -43,6 +44,8 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale() as AppLocale;
+  const { t } = useI18n();
+  const loginSchema = useMemo(() => createLoginSchema(t), [t]);
 
   // Check if user just verified their email (chỉ hiện toast 1 lần)
   useEffect(() => {
@@ -70,7 +73,7 @@ function LoginContent() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",

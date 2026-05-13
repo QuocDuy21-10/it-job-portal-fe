@@ -6,11 +6,16 @@ import { Card } from "@/components/ui/card";
 import { FileText, Briefcase, Heart, User, TrendingUp, Building2 } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
+import {
+  selectCompanyFollowing,
+  selectSavedJobIds,
+} from "@/features/auth/redux/auth.slice";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 import { StatCard } from "../shared/stat-card";
 import { SectionCard } from "../shared/section-card";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 export default function OverviewPage() {
   const { t } = useI18n();
@@ -18,8 +23,10 @@ export default function OverviewPage() {
   const [appliedJobs, setAppliedJobs] = useState<ResumeAppliedJob[]>([]);
   const { data: meData } = useGetMeQuery();
   const user = meData?.data?.user;
-  const jobFavoritesCount = meData?.data?.user?.savedJobs?.length || 0;
-  const companyFollowingCount = meData?.data?.user?.companyFollowed?.length || 0;
+  const savedJobIds = useAppSelector(selectSavedJobIds);
+  const companyFollowing = useAppSelector(selectCompanyFollowing);
+  const jobFavoritesCount = savedJobIds.length;
+  const companyFollowingCount = companyFollowing.length;
 
   // Fetch applied jobs on component mount
   useEffect(() => {

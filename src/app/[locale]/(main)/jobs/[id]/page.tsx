@@ -170,10 +170,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
   const homePath = getLocalizedPath("/", locale);
   const jobsPath = getLocalizedPath("/jobs", locale);
-  const jobPath = getLocalizedPath(`/jobs/${job._id}`, locale);
   const companyPath = getLocalizedPath(`/companies/${job.company._id}`, locale);
   const companyLogoUrl = getCompanyLogoUrl(job.company.logo);
-  const loginHref = `${getLocalizedPath("/login", locale)}?returnUrl=${encodeURIComponent(jobPath)}`;
   const daysRemaining = Math.ceil(
     (new Date(job.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   );
@@ -301,7 +299,6 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                 companyId={job.company._id}
                 jobId={job._id}
                 jobTitle={job.name}
-                loginHref={loginHref}
               />
 
               {daysRemaining > 0 && (

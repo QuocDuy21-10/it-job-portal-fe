@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { Briefcase, Heart } from "lucide-react";
 import ApplyModal from "@/components/modals/apply-modal";
 import { Button } from "@/components/ui/button";
+import { useAuthModal } from "@/contexts/auth-modal-context";
 import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
 import { useI18n } from "@/hooks/use-i18n";
 import { useJobFavorite } from "@/hooks/use-job-favorite";
@@ -15,20 +15,23 @@ type JobDetailPageClientProps = {
   companyId: string;
   jobId: string;
   jobTitle: string;
-  loginHref: string;
 };
 
 export default function JobDetailPageClient({
   companyId,
   jobId,
   jobTitle,
-  loginHref,
 }: JobDetailPageClientProps) {
-  const router = useRouter();
   const { t } = useI18n();
+  const { openModal } = useAuthModal();
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const { isSaved, toggleSaveJob, isLoading: isSavingJob } = useJobFavorite(jobId);
+  const {
+    isSaved,
+    toggleSaveJob,
+    isLoading: isSavingJob,
+    isHydrated,
+  } = useJobFavorite(jobId);
 
   return (
     <>
@@ -36,7 +39,9 @@ export default function JobDetailPageClient({
         <Button
           onClick={() => {
             if (!isAuthenticated) {
-              router.push(loginHref);
+              openModal("signin", {
+                onSuccess: () => setIsApplyModalOpen(true),
+              });
               return;
             }
 
@@ -49,7 +54,7 @@ export default function JobDetailPageClient({
         </Button>
         <Button
           onClick={toggleSaveJob}
-          disabled={isSavingJob}
+          disabled={!isHydrated || isSavingJob}
           variant="outline"
           className={cn(
             "flex h-12 min-w-32 items-center justify-center gap-2 rounded-lg px-4 transition-all duration-300",

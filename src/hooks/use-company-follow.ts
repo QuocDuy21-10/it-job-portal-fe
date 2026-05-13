@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useAuthModal } from "@/contexts/auth-modal-context";
@@ -13,21 +13,27 @@ import {
 
 export function useCompanyFollow(companyId: string) {
   const { openModal } = useAuthModal();
+  const [isHydrated, setIsHydrated] = useState(false);
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const companyFollowing = useSelector(selectCompanyFollowing); // Danh sách thực từ Server/Redux
+  const companyFollowing = useSelector(selectCompanyFollowing);
 
   const [followCompany] = useFollowCompanyMutation();
   const [unfollowCompany] = useUnfollowCompanyMutation();
 
-  // 1. Tạo local state để lưu trạng thái UI ngay lập tức
-  // Khởi tạo bằng việc kiểm tra trong Redux store
   const isFollowingInStore = companyFollowing.includes(companyId);
-  const [optimisticIsFollowing, setOptimisticIsFollowing] = useState(isFollowingInStore);
+  const [optimisticIsFollowing, setOptimisticIsFollowing] = useState(false);
 
-  // 2. Đồng bộ local state khi Redux store thay đổi
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
     setOptimisticIsFollowing(isFollowingInStore);
-  }, [isFollowingInStore]);
+  }, [isFollowingInStore, isHydrated]);
 
   const toggleFollowCompany = useCallback(
     async (e?: React.MouseEvent) => {
@@ -36,42 +42,51 @@ export function useCompanyFollow(companyId: string) {
         e.stopPropagation();
       }
 
-      // Show Auth Modal if not authenticated
+      if (!isHydrated) {
+        return;
+      }
+
       if (!isAuthenticated) {
         openModal("signin");
         return;
       }
 
-      // 3. OPTIMISTIC UPDATE: Đảo ngược trạng thái UI ngay lập tức
       const previousState = optimisticIsFollowing;
-      setOptimisticIsFollowing(!previousState); // Cập nhật UI ngay -> Icon đổi màu liền
+      setOptimisticIsFollowing(!previousState);
 
       try {
         if (previousState) {
-          // Nếu đang theo dõi -> Gọi API bỏ theo dõi
           await unfollowCompany(companyId).unwrap();
           toast.success("Đã bỏ theo dõi công ty", { duration: 1000 });
         } else {
-          // Nếu chưa theo dõi -> Gọi API theo dõi
           await followCompany(companyId).unwrap();
           toast.success("Đã theo dõi công ty", { duration: 1000 });
         }
       } catch (error: any) {
-        // 4. REVERT: Nếu API lỗi, trả về trạng thái cũ
         setOptimisticIsFollowing(previousState);
-        
+
         console.error("Toggle company follow error:", error);
-        const errorMessage = error?.data?.message || error?.message || "Đã xảy ra lỗi.";
+        const errorMessage =
+          error?.data?.message || error?.message || "Đã xảy ra lỗi.";
         toast.error(errorMessage);
       }
     },
-    [isAuthenticated, optimisticIsFollowing, companyId, followCompany, unfollowCompany, openModal]
+    [
+      companyId,
+      followCompany,
+      isAuthenticated,
+      isHydrated,
+      openModal,
+      optimisticIsFollowing,
+      unfollowCompany,
+    ]
   );
 
   return {
-    isFollowing: optimisticIsFollowing, // Trả về trạng thái Optimistic cho UI
+    isFollowing: optimisticIsFollowing,
     toggleFollowCompany,
-    isLoading: false, // Không cần loading spinner vì UI đã phản hồi ngay
+    isLoading: false,
     isAuthenticated,
+    isHydrated,
   };
 }

@@ -28,8 +28,13 @@ function JobCard({
   jobPathPrefix?: string;
 }) {
   const { t, language } = useI18n();
-  const { isSaved, toggleSaveJob } = useJobFavorite(job._id);
+  const { isSaved, toggleSaveJob, isHydrated, isLoading } = useJobFavorite(
+    job._id
+  );
   const jobHref = `${jobPathPrefix}/${job._id}`;
+  const favoriteLabel = isSaved
+    ? t("jobsPage.jobCard.removeSavedJob")
+    : t("jobsPage.jobCard.saveJob");
   
   // Calculate days remaining
   const daysRemaining = job?.endDate
@@ -55,6 +60,9 @@ function JobCard({
                   <Tooltip.Trigger asChild>
                     <button
                       onClick={(e) => toggleSaveJob(e)}
+                      type="button"
+                      disabled={!isHydrated || isLoading}
+                      aria-label={favoriteLabel}
                       className={cn(
                         "p-2 rounded-full transition-all duration-300 flex-shrink-0",
                         isSaved
@@ -74,9 +82,7 @@ function JobCard({
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                      {isSaved
-                        ? t("jobsPage.jobCard.removeSavedJob")
-                        : t("jobsPage.jobCard.saveJob")}
+                      {favoriteLabel}
                       <Tooltip.Arrow className="fill-slate-900" />
                     </Tooltip.Content>
                   </Tooltip.Portal>

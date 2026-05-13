@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuthModal } from "@/contexts/auth-modal-context";
+import { useI18n } from "@/hooks/use-i18n";
 import { LoginForm } from "@/components/modals/login-form";
 import { RegisterForm } from "@/components/modals/register-form";
 import { cn } from "@/lib/utils";
@@ -35,17 +34,28 @@ import { cn } from "@/lib/utils";
  * 3. Use useAuthModal() hook to open modal: openModal('signin')
  */
 export function AuthModal() {
-  const { isOpen, activeTab, closeModal, setActiveTab } = useAuthModal();
+  const { t } = useI18n();
+  const {
+    isOpen,
+    activeTab,
+    successCallback,
+    closeModal,
+    setActiveTab,
+  } = useAuthModal();
   const router = useRouter();
 
-  // Close modal on successful authentication
-  const handleAuthSuccess = (redirectUrl?: string) => {
+  const handleLoginSuccess = (redirectUrl?: string) => {
+    const modalSuccessCallback = successCallback;
     closeModal();
-    
+
+    if (modalSuccessCallback) {
+      modalSuccessCallback();
+      return;
+    }
+
     if (redirectUrl) {
       router.push(redirectUrl);
     } else {
-      // Refresh current page to update auth state
       router.refresh();
     }
   };
@@ -53,25 +63,24 @@ export function AuthModal() {
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent className="sm:max-w-[500px] p-0 gap-0 overflow-hidden">
-        {/* Header với gradient subtle */}
         <DialogHeader className="px-6 pt-6 pb-5 border-b bg-gradient-to-br from-background to-muted/20">
           <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
-            {activeTab === "signin" ? "Chào mừng trở lại" : "Tạo tài khoản mới"}
+            {activeTab === "signin"
+              ? t("authModal.title.signin")
+              : t("authModal.title.signup")}
           </DialogTitle>
           {activeTab === "signin" && (
             <p className="text-sm text-muted-foreground text-center mt-1">
-              Đăng nhập để tiếp tục
+              {t("authModal.description.signin")}
             </p>
           )}
         </DialogHeader>
 
-        {/* Tabs Content */}
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as "signin" | "signup")}
           className="w-full"
         >
-          {/* Tabs List với better styling */}
           <TabsList className="w-full grid grid-cols-2 rounded-none h-12 bg-muted/30 p-1">
             <TabsTrigger
               value="signin"
@@ -80,7 +89,7 @@ export function AuthModal() {
                 "font-medium transition-all data-[state=active]:text-primary"
               )}
             >
-              Đăng nhập
+              {t("authModal.tabs.signin")}
             </TabsTrigger>
             <TabsTrigger
               value="signup"
@@ -89,18 +98,24 @@ export function AuthModal() {
                 "font-medium transition-all data-[state=active]:text-primary"
               )}
             >
-              Đăng ký
+              {t("authModal.tabs.signup")}
             </TabsTrigger>
           </TabsList>
 
-          {/* Sign In Tab */}
           <TabsContent value="signin" className="px-6 py-6 m-0 focus-visible:outline-none">
-            <LoginForm onSuccess={handleAuthSuccess} isModal />
+            <LoginForm
+              onSuccess={handleLoginSuccess}
+              onTabChange={setActiveTab}
+              isModal
+            />
           </TabsContent>
 
-          {/* Sign Up Tab */}
           <TabsContent value="signup" className="px-6 py-6 m-0 focus-visible:outline-none">
-            <RegisterForm onSuccess={handleAuthSuccess} isModal />
+            <RegisterForm
+              onSuccess={() => setActiveTab("signin")}
+              onTabChange={setActiveTab}
+              isModal
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>

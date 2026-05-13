@@ -1,33 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth";
 import { SocialAuthButtons } from "@/components/auth";
+import { AuthModalTab } from "@/contexts/auth-modal-context";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
-  LoginSchema,
+  createLoginSchema,
 } from "@/features/auth/schemas/auth.schema";
 import {
   useLoginMutation,
   useGoogleLoginMutation,
 } from "@/features/auth/redux/auth.api";
+import { useI18n } from "@/hooks/use-i18n";
 import type { AppLocale } from "@/i18n/routing";
 
 interface LoginFormProps {
   onSuccess?: (redirectUrl?: string) => void;
   isModal?: boolean;
+  onTabChange?: (tab: AuthModalTab) => void;
 }
 
 /**
@@ -39,17 +43,23 @@ interface LoginFormProps {
  * @param onSuccess - Callback after successful login
  * @param isModal - Whether form is inside modal (affects styling/behavior)
  */
-export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
+export function LoginForm({
+  onSuccess,
+  isModal = false,
+  onTabChange,
+}: LoginFormProps) {
   const [socialLoading, setSocialLoading] = useState<"google" | null>(null);
   const dispatch = useAppDispatch();
   const locale = useLocale() as AppLocale;
+  const { t } = useI18n();
+  const loginSchema = useMemo(() => createLoginSchema(t), [t]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -78,7 +88,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
           );
         }
 
-        toast.success("Đăng nhập thành công!");
+        toast.success(t("authModal.toasts.loginSuccess"));
 
         const userRole = response.data?.user?.role?.name;
         const redirectUrl = getLocalizedDefaultRoute(userRole, locale);
@@ -89,7 +99,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đăng nhập thất bại. Vui lòng thử lại.";
+        t("authModal.toasts.loginFailedFallback");
       toast.error(errorMessage);
     }
   };
@@ -99,7 +109,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
       setSocialLoading("google");
 
       if (!credentialResponse.credential) {
-        throw new Error("No credential received from Google");
+        throw new Error(t("authModal.toasts.googleCredentialMissing"));
       }
 
       const response = await googleLogin({
@@ -121,7 +131,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
           );
         }
 
-        toast.success("Đăng nhập Google thành công!");
+        toast.success(t("authModal.toasts.googleLoginSuccess"));
 
         const userRole = response.data?.user?.role?.name;
         const redirectUrl = getLocalizedDefaultRoute(userRole, locale);
@@ -132,7 +142,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Đăng nhập Google thất bại.";
+        t("authModal.toasts.googleLoginFailed");
       toast.error(errorMessage);
     } finally {
       setSocialLoading(null);
@@ -140,7 +150,7 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
   };
 
   const handleGoogleError = () => {
-    toast.error("Đăng nhập Google thất bại.");
+    toast.error(t("authModal.toasts.googleLoginFailed"));
     setSocialLoading(null);
   };
 
@@ -154,12 +164,12 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
             htmlFor="email" 
             className="text-sm font-medium text-foreground"
           >
-            Email
+            {t("authModal.login.fields.email.label")}
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder="example@email.com"
+            placeholder={t("authModal.login.fields.email.placeholder")}
             autoComplete="email"
             {...register("email")}
             className={errors.email ? "border-destructive focus-visible:ring-destructive" : ""}
@@ -175,8 +185,8 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
         <div className="space-y-2">
           <PasswordInput
             id="password"
-            label="Mật khẩu"
-            placeholder="Nhập mật khẩu"
+            label={t("authModal.login.fields.password.label")}
+            placeholder={t("authModal.login.fields.password.placeholder")}
             autoComplete="current-password"
             error={errors.password?.message}
             {...register("password")}
@@ -186,12 +196,12 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
         {/* Forgot Password Link */}
         {!isModal && (
           <div className="flex items-center justify-end">
-            <a
+            <Link
               href="/forgot-password"
               className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
             >
-              Quên mật khẩu?
-            </a>
+              {t("authModal.login.forgotPassword")}
+            </Link>
           </div>
         )}
 
@@ -204,35 +214,32 @@ export function LoginForm({ onSuccess, isModal = false }: LoginFormProps) {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Đang đăng nhập...
+              {t("authModal.login.actions.submitting")}
             </>
           ) : (
-            "Đăng nhập"
+            t("authModal.login.actions.submit")
           )}
         </Button>
       </form>
 
-                {/* Social Auth Section */}
       <div className="space-y-3">
         <SocialAuthButtons
           onGoogleSuccess={handleGoogleSuccess}
           onGoogleError={handleGoogleError}
           isGoogleLoading={socialLoading === "google"}
+          dividerText={t("authModal.login.socialDivider")}
         />
       </div>
-      {/* Sign Up Prompt - Only show in modal */}
+
       {isModal && (
         <p className="text-center text-sm text-muted-foreground">
-          Chưa có tài khoản?{" "}
+          {t("authModal.login.footer.noAccount")}{" "}
           <button
             type="button"
-            onClick={() => {
-              // This will be handled by parent AuthModal component
-              // Just for visual hint, actual switching happens via tabs
-            }}
+            onClick={() => onTabChange?.("signup")}
             className="font-medium text-primary hover:text-primary/80 transition-colors"
           >
-            Đăng ký ngay
+            {t("authModal.login.footer.signUpNow")}
           </button>
         </p>
       )}

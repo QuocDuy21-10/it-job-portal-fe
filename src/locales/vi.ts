@@ -335,6 +335,160 @@ export const vi = {
       viewCompanyProfile: "Xem hồ sơ công ty",
     },
   },
+  authModal: {
+    title: {
+      signin: "Chào mừng trở lại",
+      signup: "Tạo tài khoản mới",
+    },
+    description: {
+      signin: "Đăng nhập để tiếp tục",
+    },
+    tabs: {
+      signin: "Đăng nhập",
+      signup: "Đăng ký",
+    },
+    login: {
+      fields: {
+        email: {
+          label: "Email",
+          placeholder: "example@email.com",
+        },
+        password: {
+          label: "Mật khẩu",
+          placeholder: "Nhập mật khẩu",
+        },
+      },
+      forgotPassword: "Quên mật khẩu?",
+      actions: {
+        submit: "Đăng nhập",
+        submitting: "Đang đăng nhập...",
+      },
+      socialDivider: "Hoặc tiếp tục với",
+      footer: {
+        noAccount: "Chưa có tài khoản?",
+        signUpNow: "Đăng ký ngay",
+      },
+    },
+    register: {
+      fields: {
+        name: {
+          label: "Họ và tên",
+          placeholder: "Nguyễn Văn A",
+        },
+        email: {
+          label: "Email",
+          placeholder: "example@email.com",
+        },
+        password: {
+          label: "Mật khẩu",
+          placeholder: "Tối thiểu 8 ký tự",
+        },
+        confirmPassword: {
+          label: "Xác nhận mật khẩu",
+          placeholder: "Nhập lại mật khẩu",
+        },
+        acceptTerms: {
+          prefix: "Tôi đồng ý với",
+          terms: "Điều khoản dịch vụ",
+          and: "và",
+          privacy: "Chính sách bảo mật",
+        },
+      },
+      actions: {
+        submit: "Tạo tài khoản",
+        submitting: "Đang xử lý...",
+      },
+      footer: {
+        alreadyHaveAccount: "Đã có tài khoản?",
+        signInNow: "Đăng nhập ngay",
+      },
+    },
+    toasts: {
+      loginSuccess: "Đăng nhập thành công!",
+      loginFailedFallback: "Đăng nhập thất bại. Vui lòng thử lại.",
+      googleCredentialMissing: "Không nhận được thông tin xác thực từ Google.",
+      googleLoginSuccess: "Đăng nhập Google thành công!",
+      googleLoginFailed: "Đăng nhập Google thất bại.",
+      registerSuccess: "Đăng ký thành công! Vui lòng đăng nhập.",
+      registerFailedFallback: "Đăng ký thất bại.",
+    },
+    validation: {
+      name: {
+        required: "Vui lòng nhập tên hiển thị",
+        min: "Tên phải có ít nhất 2 ký tự",
+        max: "Tên không được quá 50 ký tự",
+        lettersOnly: "Tên chỉ được chứa chữ cái và khoảng trắng",
+        multipleSpaces: "Tên không được chứa nhiều khoảng trắng liên tiếp",
+        noNumbers: "Tên không được chứa số",
+        noSpecialCharacters: "Tên không được chứa ký tự đặc biệt",
+      },
+      email: {
+        required: "Vui lòng nhập email",
+        invalid: "Email không hợp lệ",
+        format: "Định dạng email không đúng",
+        max: "Email không được quá 255 ký tự",
+        whitespace: "Email không được chứa khoảng trắng",
+        invalidCharacter: "Email chứa ký tự không hợp lệ",
+        invalidDots: "Email không hợp lệ (không được bắt đầu hoặc kết thúc bằng dấu chấm)",
+        consecutiveDots: "Email không được chứa hai dấu chấm liên tiếp",
+        invalidDomain: "Domain email không hợp lệ",
+      },
+      password: {
+        required: "Vui lòng nhập mật khẩu",
+        min: "Mật khẩu phải có ít nhất 8 ký tự",
+        max: "Mật khẩu không được quá 128 ký tự",
+        uppercase: "Mật khẩu phải chứa ít nhất một chữ cái viết hoa",
+        lowercase: "Mật khẩu phải chứa ít nhất một chữ cái viết thường",
+        digit: "Mật khẩu phải chứa ít nhất một số",
+        special: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt",
+        whitespace: "Mật khẩu không được chứa khoảng trắng",
+        repeatedCharacters: "Mật khẩu không được chứa ký tự lặp quá 3 lần liên tiếp",
+        common: "Mật khẩu quá phổ biến, vui lòng chọn mật khẩu khác",
+      },
+      confirmPassword: {
+        required: "Vui lòng xác nhận mật khẩu",
+        mismatch: "Mật khẩu xác nhận không khớp",
+      },
+      acceptTerms: {
+        required: "Bạn phải chấp nhận điều khoản sử dụng",
+      },
+    },
+  },
+  applyModal: {
+    title: "Ứng tuyển ngay",
+    fields: {
+      name: {
+        label: "Họ và tên",
+        placeholder: "Nhập họ và tên",
+      },
+      phone: {
+        label: "Số điện thoại",
+        placeholder: "Nhập số điện thoại",
+      },
+      email: {
+        label: "Email",
+        placeholder: "Nhập email",
+      },
+      cv: {
+        label: "Tải lên CV",
+        placeholder: "Chọn tệp hoặc kéo thả (.doc, .docx, .pdf - Tối đa 5MB)",
+      },
+    },
+    actions: {
+      close: "Đóng hộp thoại ứng tuyển",
+      submit: "Gửi đơn ứng tuyển",
+      submitting: "Đang gửi...",
+    },
+    validation: {
+      fileRequired: "Vui lòng chọn tệp CV",
+      invalidFileType: "Chỉ chấp nhận tệp .doc, .docx và .pdf",
+      fileTooLarge: "Kích thước tệp không được vượt quá 5MB",
+    },
+    toasts: {
+      submitSuccess: "Nộp đơn ứng tuyển thành công!",
+      submitErrorFallback: "Có lỗi xảy ra, vui lòng thử lại.",
+    },
+  },
   companyDetailPage: {
     notUpdated: "Chưa cập nhật",
     employeesCount: "{count} nhân viên",
