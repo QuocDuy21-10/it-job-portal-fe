@@ -35,6 +35,10 @@ const applyMessageRecommendations = (
     message.recommendedJobIds = metadata.recommendedJobIds;
   }
 
+  if (metadata.pendingToolActions !== undefined) {
+    message.pendingToolActions = metadata.pendingToolActions;
+  }
+
   if (metadata.intent !== undefined) {
     message.intent = metadata.intent;
   }
@@ -127,6 +131,51 @@ const chatBotSlice = createSlice({
       applyMessageRecommendations(msg, action.payload);
     },
 
+    removePendingToolAction: (
+      state,
+      action: PayloadAction<{ messageId: string; actionId: string }>
+    ) => {
+      const msg = state.messages.find(
+        (message) => message.id === action.payload.messageId
+      );
+
+      if (!msg?.pendingToolActions?.length) {
+        return;
+      }
+
+      const pendingToolActions = msg.pendingToolActions.filter(
+        (pendingAction) => pendingAction.actionId !== action.payload.actionId
+      );
+
+      msg.pendingToolActions =
+        pendingToolActions.length > 0 ? pendingToolActions : undefined;
+    },
+
+    pruneExpiredPendingToolActions: (state) => {
+      const now = Date.now();
+
+      state.messages.forEach((message) => {
+        if (!message.pendingToolActions?.length) {
+          return;
+        }
+
+        const pendingToolActions = message.pendingToolActions.filter(
+          (pendingAction) => {
+            if (!pendingAction.expiresAt) {
+              return true;
+            }
+
+            const expiresAt = Date.parse(pendingAction.expiresAt);
+
+            return Number.isNaN(expiresAt) || expiresAt > now;
+          }
+        );
+
+        message.pendingToolActions =
+          pendingToolActions.length > 0 ? pendingToolActions : undefined;
+      });
+    },
+
     // Abort streaming — keep partial content, clear streaming state
     abortStream: (state) => {
       if (state.streamingMessageId) {
@@ -157,6 +206,8 @@ export const {
   appendStreamToken,
   finalizeStream,
   updateMessageRecommendations,
+  removePendingToolAction,
+  pruneExpiredPendingToolActions,
   abortStream,
 } = chatBotSlice.actions;
 

@@ -3,6 +3,8 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { AppDispatch } from "@/lib/redux/store";
 import { IJob } from "@/shared/types/backend";
 import {
+  IChatToolAction,
+  ChatToolActionType,
   IChatRecommendationMetadata,
   IChatResponse,
   IChatTransportMessage,
@@ -43,6 +45,41 @@ const dedupeJobs = (jobs?: IJob[]): IJob[] => {
   return normalizedJobs;
 };
 
+const dedupePendingToolActions = (
+  actions?: IChatToolAction[]
+): IChatToolAction[] => {
+  const seenActionIds = new Set<string>();
+  const normalizedActions: IChatToolAction[] = [];
+
+  for (const action of actions ?? []) {
+    if (
+      !action?.actionId ||
+      seenActionIds.has(action.actionId) ||
+      !action.payload?.jobId
+    ) {
+      continue;
+    }
+
+    seenActionIds.add(action.actionId);
+    normalizedActions.push(action);
+  }
+
+  return normalizedActions;
+};
+
+export const isChatToolActionExpired = (
+  action: Pick<IChatToolAction, "expiresAt">,
+  now: number = Date.now()
+): boolean => {
+  if (!action.expiresAt) {
+    return false;
+  }
+
+  const expiresAt = Date.parse(action.expiresAt);
+
+  return Number.isFinite(expiresAt) && expiresAt <= now;
+};
+
 export const normalizeRecommendationMetadata = (
   metadata?: IChatRecommendationMetadata
 ): IChatRecommendationMetadata => {
@@ -51,11 +88,16 @@ export const normalizeRecommendationMetadata = (
     ...(metadata?.recommendedJobIds ?? []),
     ...recommendedJobs.map((job) => job._id),
   ]);
+  const pendingToolActions = dedupePendingToolActions(
+    metadata?.pendingToolActions
+  );
 
   return {
     recommendedJobs: recommendedJobs.length > 0 ? recommendedJobs : undefined,
     recommendedJobIds:
       recommendedJobIds.length > 0 ? recommendedJobIds : undefined,
+    pendingToolActions:
+      pendingToolActions.length > 0 ? pendingToolActions : undefined,
     intent: metadata?.intent,
   };
 };
@@ -89,6 +131,16 @@ export const normalizeStreamDoneEvent = (
   suggestedActions: event.suggestedActions,
   ...normalizeRecommendationMetadata(event),
 });
+
+export const getPendingToolActionForJob = (
+  message: IMessage,
+  jobId: string,
+  actionType: ChatToolActionType = "save_job"
+): IChatToolAction | undefined =>
+  message.pendingToolActions?.find(
+    (action) =>
+      action.type === actionType && action.payload.jobId === jobId
+  );
 
 export const getMissingRecommendedJobIds = (message: IMessage): string[] => {
   const hydratedJobIds = new Set(

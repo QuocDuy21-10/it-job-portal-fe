@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { usePathname } from "next/navigation";
 import { useChat } from "@/hooks/use-chat";
+import { useI18n } from "@/hooks/use-i18n";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -25,6 +26,8 @@ import JobCard from "@/components/chatbot/job-card";
 import ChatTooltip from "@/components/chatbot/chat-tooltip";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/features/auth/redux/auth.slice";
+import { getPendingToolActionForJob } from "@/features/chatbot/lib/chat-message.utils";
+import { IChatToolAction } from "@/shared/types/chat";
 import { getChatJobIdFromPathname } from "@/features/chatbot/lib/chat-route.utils";
 
 const BUTTON_SIZE = 56; // w-14 = 56px
@@ -32,22 +35,6 @@ const CHAT_WIDTH = 400;
 const CHAT_HEIGHT = 600;
 const EDGE_MARGIN = 20;
 const DRAG_THRESHOLD = 5;
-
-// Phase 3: Initial quick-action chips (shown before first message)
-const PLATFORM_CHIPS = [
-  "Có bao nhiêu việc Node.js đang mở?",
-  "Kỹ năng hot nhất năm 2026?",
-  "Top 5 công ty tuyển dụng nhiều nhất?",
-];
-
-const USER_CHIPS = [
-  "CV của tôi còn thiếu kỹ năng gì?",
-  "Gợi ý việc làm phù hợp cho tôi",
-  "So sánh lương Backend vs Frontend",
-];
-
-const INITIAL_CHIPS = [...PLATFORM_CHIPS, ...USER_CHIPS];
-const JOB_DETAIL_CHIP = "Đánh giá mức độ phù hợp của tôi với công việc này";
 
 const ChatSkeletonBubble = () => (
   <div className="flex justify-start">
@@ -73,19 +60,68 @@ const ChatWidget = () => {
     isStreaming,
     streamingContent,
     streamingMessageId,
+    confirmPendingToolAction,
+    cancelPendingToolAction,
+    pruneExpiredToolActions,
     abortStream,
   } = useChat();
+  const { t } = useI18n();
   const { openModal } = useAuthModal();
   const user = useAppSelector(selectUser);
   const pathname = usePathname();
   const jobId = getChatJobIdFromPathname(pathname);
-  const initialChips = useMemo(
-    () => (jobId ? [JOB_DETAIL_CHIP, ...INITIAL_CHIPS] : INITIAL_CHIPS),
-    [jobId]
+  const initialChips = useMemo(() => {
+    const chips = [
+      t("chatWidget.chips.platformJobs"),
+      t("chatWidget.chips.hotSkills"),
+      t("chatWidget.chips.topCompanies"),
+      t("chatWidget.chips.cvSkills"),
+      t("chatWidget.chips.matchingJobs"),
+      t("chatWidget.chips.salaryCompare"),
+    ];
+
+    return jobId ? [t("chatWidget.chips.jobDetail"), ...chips] : chips;
+  }, [jobId, t]);
+  const featureCards = useMemo(
+    () => [
+      {
+        id: "search",
+        emoji: "🔍",
+        title: t("chatWidget.features.search.title"),
+        desc: t("chatWidget.features.search.description"),
+      },
+      {
+        id: "cv",
+        emoji: "📄",
+        title: t("chatWidget.features.cv.title"),
+        desc: t("chatWidget.features.cv.description"),
+      },
+      {
+        id: "stats",
+        emoji: "📊",
+        title: t("chatWidget.features.stats.title"),
+        desc: t("chatWidget.features.stats.description"),
+      },
+    ],
+    [t]
+  );
+  const greetingMessage = useMemo(
+    () =>
+      user?.name
+        ? t("chatWidget.messages.greetingWithName", { name: user.name })
+        : t("chatWidget.messages.greeting"),
+    [t, user?.name]
+  );
+  const hasPendingToolActions = useMemo(
+    () => messages.some((message) => Boolean(message.pendingToolActions?.length)),
+    [messages]
   );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState("");
+  const [activeToolActionId, setActiveToolActionId] = useState<string | null>(
+    null
+  );
 
   // === Drag State ===
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
@@ -218,6 +254,20 @@ const ChatWidget = () => {
     scrollToBottom();
   }, [messages, isTyping, streamingContent]);
 
+  useEffect(() => {
+    if (!hasPendingToolActions) {
+      return;
+    }
+
+    pruneExpiredToolActions();
+
+    const timer = window.setInterval(() => {
+      pruneExpiredToolActions();
+    }, 30000);
+
+    return () => window.clearInterval(timer);
+  }, [hasPendingToolActions, pruneExpiredToolActions]);
+
   // Load history when opening chat (authenticated only)
   useEffect(() => {
     if (isOpen && messages.length === 0 && isAuthenticated) {
@@ -247,6 +297,40 @@ const ChatWidget = () => {
     openModal("signin");
   };
 
+  const handleConfirmPendingToolAction = useCallback(
+    async (messageId: string, pendingToolAction: IChatToolAction) => {
+      setActiveToolActionId(pendingToolAction.actionId);
+
+      try {
+        await confirmPendingToolAction(messageId, pendingToolAction);
+      } finally {
+        setActiveToolActionId((currentActionId) =>
+          currentActionId === pendingToolAction.actionId
+            ? null
+            : currentActionId
+        );
+      }
+    },
+    [confirmPendingToolAction]
+  );
+
+  const handleCancelPendingToolAction = useCallback(
+    async (messageId: string, pendingToolAction: IChatToolAction) => {
+      setActiveToolActionId(pendingToolAction.actionId);
+
+      try {
+        await cancelPendingToolAction(messageId, pendingToolAction);
+      } finally {
+        setActiveToolActionId((currentActionId) =>
+          currentActionId === pendingToolAction.actionId
+            ? null
+            : currentActionId
+        );
+      }
+    },
+    [cancelPendingToolAction]
+  );
+
   // Don't render until we have a position
   if (!position) return null;
 
@@ -262,13 +346,13 @@ const ChatWidget = () => {
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 flex justify-between items-center text-white">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <h3 className="font-bold">AI Career Advisor</h3>
+              <h3 className="font-bold">{t("chatWidget.title")}</h3>
             </div>
             <div className="flex gap-2">
               {isAuthenticated && (
                 <button
                   onClick={clearChat}
-                  title="Xóa lịch sử"
+                  title={t("chatWidget.header.clearHistory")}
                   className="hover:bg-white/10 p-1.5 rounded-full transition-colors"
                 >
                   <TrashIcon className="w-5 h-5" />
@@ -292,16 +376,16 @@ const ChatWidget = () => {
                   <LockClosedIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 </div>
                 <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                  Đăng nhập để sử dụng AI Chat
+                  {t("chatWidget.header.loginRequiredTitle")}
                 </h4>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                  Hãy đăng nhập để được tư vấn nghề nghiệp, phân tích CV và nhận gợi ý việc làm phù hợp.
+                  {t("chatWidget.header.loginRequiredDescription")}
                 </p>
                 <button
                   onClick={handleLoginClick}
                   className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-medium hover:bg-blue-700 transition-colors text-sm"
                 >
-                  Đăng nhập ngay
+                  {t("chatWidget.header.loginCta")}
                 </button>
               </div>
             ) : (
@@ -317,7 +401,7 @@ const ChatWidget = () => {
                       <div className="max-w-[85%] p-3 rounded-lg rounded-tl-none bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm text-sm text-gray-800 dark:text-gray-100">
                         <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {`Xin chào${user?.name ? ` **${user.name}**` : ""}! Tôi là **AI Career Advisor** — trợ lý nghề nghiệp thông minh của bạn. Tôi có thể giúp bạn tìm việc phù hợp, đánh giá CV và cung cấp thống kê thị trường lao động. Bạn muốn bắt đầu từ đâu?`}
+                            {greetingMessage}
                           </ReactMarkdown>
                         </div>
                       </div>
@@ -325,13 +409,9 @@ const ChatWidget = () => {
 
                     {/* Phase 2B: Feature cards */}
                     <div className="grid grid-cols-1 gap-2 px-1">
-                      {[
-                        { emoji: "🔍", title: "Tìm việc theo kỹ năng", desc: "Node.js, React, NestJS..." },
-                        { emoji: "📄", title: "Đánh giá & tối ưu CV", desc: "Phân tích điểm mạnh và thiếu sót" },
-                        { emoji: "📊", title: "Thống kê thị trường", desc: "Mức lương, kỹ năng hot, công ty top" },
-                      ].map((feature) => (
+                      {featureCards.map((feature) => (
                         <div
-                          key={feature.title}
+                          key={feature.id}
                           className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700/50 px-3 py-2.5"
                         >
                           <span className="text-lg leading-none">{feature.emoji}</span>
@@ -387,7 +467,8 @@ const ChatWidget = () => {
                             }}
                           >
                             {msg.id === streamingMessageId
-                              ? streamingContent || "..."
+                              ? streamingContent ||
+                                t("chatWidget.messages.streamingPlaceholder")
                               : msg.content}
                           </ReactMarkdown>
                           {msg.id === streamingMessageId && (
@@ -403,12 +484,38 @@ const ChatWidget = () => {
                     {msg.role === "assistant" && msg.recommendedJobs && msg.recommendedJobs.length > 0 && (
                       <div className="w-full max-w-[85%]">
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 px-1">
-                          💼 Công việc gợi ý cho bạn:
+                          {t("chatWidget.recommendedJobs.title")}
                         </p>
                         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
-                          {msg.recommendedJobs.map((job) => (
-                            <JobCard key={job._id} job={job} />
-                          ))}
+                          {msg.recommendedJobs.map((job, index) => {
+                            const recommendedJobId = job._id;
+                            const pendingToolAction = recommendedJobId
+                              ? getPendingToolActionForJob(msg, recommendedJobId)
+                              : undefined;
+
+                            return (
+                              <JobCard
+                                key={recommendedJobId || `${msg.id}-${index}`}
+                                job={job}
+                                pendingToolAction={pendingToolAction}
+                                onConfirmPendingToolAction={(nextPendingToolAction) =>
+                                  handleConfirmPendingToolAction(
+                                    msg.id,
+                                    nextPendingToolAction
+                                  )
+                                }
+                                onCancelPendingToolAction={(nextPendingToolAction) =>
+                                  handleCancelPendingToolAction(
+                                    msg.id,
+                                    nextPendingToolAction
+                                  )
+                                }
+                                isActionPending={
+                                  activeToolActionId === pendingToolAction?.actionId
+                                }
+                              />
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -470,7 +577,7 @@ const ChatWidget = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Hỏi về việc làm, CV..."
+                    placeholder={t("chatWidget.input.placeholder")}
                     maxLength={1000}
                     className="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-secondary dark:text-white"
                     disabled={isTyping || isStreaming}
@@ -479,7 +586,7 @@ const ChatWidget = () => {
                     <button
                       onClick={abortStream}
                       className="bg-red-500 text-white p-2.5 rounded-full hover:bg-red-600 transition-colors flex-shrink-0"
-                      title="Dừng tạo phản hồi"
+                      title={t("chatWidget.input.stop")}
                     >
                       <StopIcon className="w-5 h-5" />
                     </button>
@@ -487,7 +594,7 @@ const ChatWidget = () => {
                     <button
                       disabled
                       className="bg-gray-300 dark:bg-gray-700 text-white p-2.5 rounded-full flex-shrink-0 cursor-not-allowed"
-                      title="Đang xử lý..."
+                      title={t("chatWidget.input.processing")}
                     >
                       <svg
                         className="w-5 h-5 animate-spin"
@@ -514,7 +621,7 @@ const ChatWidget = () => {
                       onClick={handleSend}
                       disabled={!inputValue.trim()}
                       className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors flex-shrink-0"
-                      title="Gửi tin nhắn"
+                      title={t("chatWidget.input.send")}
                     >
                       <PaperAirplaneIcon className="w-5 h-5" />
                     </button>
@@ -530,7 +637,7 @@ const ChatWidget = () => {
                   onClick={handleLoginClick}
                   className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
                 >
-                  Đăng nhập để bắt đầu trò chuyện →
+                  {t("chatWidget.input.loginCta")}
                 </button>
               </div>
             )}
@@ -558,7 +665,11 @@ const ChatWidget = () => {
         aria-hidden={isOpen}
         className={`fixed z-50 w-14 h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center group select-none touch-none transition-all duration-200 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{ left: position.x, top: position.y }}
-        title={isOpen ? "Đóng chat" : "Mở chat"}
+        title={
+          isOpen
+            ? t("chatWidget.actions.closeChat")
+            : t("chatWidget.actions.openChat")
+        }
       >
         {isOpen ? (
           <XMarkIcon className="w-8 h-8 transition-transform group-hover:rotate-90" />

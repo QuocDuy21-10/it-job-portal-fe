@@ -58,6 +58,14 @@ describe("chat stream utils", () => {
       data: JSON.stringify({
         conversationId: "conversation-1",
         recommendedJobIds: ["job-1"],
+        pendingToolActions: [
+          {
+            actionId: "action-1",
+            type: "save_job",
+            payload: { jobId: "job-1" },
+            expiresAt: "2026-05-14T00:00:00.000Z",
+          },
+        ],
         suggestedActions: ["Tiếp tục"],
         intent: "job_matching",
       }),
@@ -68,6 +76,14 @@ describe("chat stream utils", () => {
       data: {
         conversationId: "conversation-1",
         recommendedJobIds: ["job-1"],
+        pendingToolActions: [
+          {
+            actionId: "action-1",
+            type: "save_job",
+            payload: { jobId: "job-1" },
+            expiresAt: "2026-05-14T00:00:00.000Z",
+          },
+        ],
         suggestedActions: ["Tiếp tục"],
         intent: "job_matching",
       },

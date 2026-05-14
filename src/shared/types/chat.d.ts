@@ -9,9 +9,23 @@ export type ChatIntent =
   | "recruiter_support"
   | "general";
 
+export type ChatToolActionType = "save_job";
+
+export interface IChatToolActionPayload {
+  jobId: string;
+}
+
+export interface IChatToolAction {
+  actionId: string;
+  type: ChatToolActionType;
+  payload: IChatToolActionPayload;
+  expiresAt?: string;
+}
+
 export interface IChatRecommendationMetadata {
   recommendedJobs?: IJob[];
   recommendedJobIds?: string[];
+  pendingToolActions?: IChatToolAction[];
   intent?: ChatIntent;
 }
 
@@ -45,6 +59,10 @@ export interface IChatHistoryResponse {
 }
 
 export interface IClearChatResponse {
+  message: string;
+}
+
+export interface IChatToolActionResponse {
   message: string;
 }
 

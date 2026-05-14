@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   getMessagesNeedingRecommendationHydration,
   hydrateRecommendedJobsForMessages,
+  isChatToolActionExpired,
   normalizeAssistantResponseMessage,
   normalizeChatMessage,
 } from "@/features/chatbot/lib/chat-message.utils";
 import {
+  useCancelToolActionMutation,
+  useConfirmToolActionMutation,
   useSendMessageMutation,
   useLazyGetChatHistoryQuery,
   useClearChatHistoryMutation,
@@ -19,10 +23,15 @@ import {
   setSuggestedActions,
   setIsOpen,
   toggleChatbox,
+  removePendingToolAction,
+  pruneExpiredPendingToolActions,
   updateMessageRecommendations,
 } from "@/features/chatbot/redux/chat-bot.slice";
-import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
-import { IMessage } from "@/shared/types/chat";
+import {
+  addSavedJobId,
+  selectIsAuthenticated,
+} from "@/features/auth/redux/auth.slice";
+import { IChatToolAction, IMessage } from "@/shared/types/chat";
 import { useStreamChat } from "@/hooks/use-stream-chat";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
@@ -33,6 +42,7 @@ interface SendMessageOptions {
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
+  const { t } = useI18n();
   const { messages, isTyping, suggestedActions, isOpen, streamingContent, streamingMessageId } =
     useAppSelector((state) => state.chatBot);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
@@ -42,6 +52,8 @@ export const useChat = () => {
   const [sendMessageMutation] = useSendMessageMutation();
   const [getChatHistoryTrigger] = useLazyGetChatHistoryQuery();
   const [clearChatHistoryMutation] = useClearChatHistoryMutation();
+  const [confirmToolActionMutation] = useConfirmToolActionMutation();
+  const [cancelToolActionMutation] = useCancelToolActionMutation();
 
   // Streaming hook
   const { sendStreamMessage, abortStream, isStreaming } = useStreamChat();
@@ -140,10 +152,13 @@ export const useChat = () => {
       dispatch(setSuggestedActions([]));
 
       // Try streaming first, fall back to REST
-      const streamStarted = await sendStreamMessage(trimmedContent, {
+      const streamResult = await sendStreamMessage(trimmedContent, {
         jobId: options?.jobId,
       });
-      if (streamStarted) return;
+
+      if (streamResult.status !== "fallback") {
+        return;
+      }
 
       // Fallback: standard REST mutation
       dispatch(setIsTyping(true));
@@ -203,6 +218,76 @@ export const useChat = () => {
     }
   }, [isAuthenticated, clearChatHistoryMutation, dispatch]);
 
+  const confirmPendingToolAction = useCallback(
+    async (messageId: string, pendingToolAction: IChatToolAction) => {
+      if (isChatToolActionExpired(pendingToolAction)) {
+        dispatch(
+          removePendingToolAction({
+            messageId,
+            actionId: pendingToolAction.actionId,
+          })
+        );
+        toast.error(t("chatWidget.toolActions.expiredError"));
+        return;
+      }
+
+      try {
+        const response = await confirmToolActionMutation(
+          pendingToolAction.actionId
+        ).unwrap();
+
+        dispatch(addSavedJobId(pendingToolAction.payload.jobId));
+        dispatch(
+          removePendingToolAction({
+            messageId,
+            actionId: pendingToolAction.actionId,
+          })
+        );
+        toast.success(
+          response.message || t("chatWidget.toolActions.confirmSuccess")
+        );
+      } catch (error: any) {
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            t("chatWidget.toolActions.confirmError")
+        );
+      }
+    },
+    [confirmToolActionMutation, dispatch, t]
+  );
+
+  const cancelPendingToolAction = useCallback(
+    async (messageId: string, pendingToolAction: IChatToolAction) => {
+      try {
+        const response = await cancelToolActionMutation(
+          pendingToolAction.actionId
+        ).unwrap();
+
+        dispatch(
+          removePendingToolAction({
+            messageId,
+            actionId: pendingToolAction.actionId,
+          })
+        );
+        toast.success(
+          response.message || t("chatWidget.toolActions.cancelSuccess")
+        );
+      } catch (error: any) {
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            t("chatWidget.toolActions.cancelError")
+        );
+      }
+    },
+    [cancelToolActionMutation, dispatch, t]
+  );
+
+  const pruneExpiredToolActions = useCallback(() => {
+    dispatch(pruneExpiredPendingToolActions());
+  }, [dispatch]);
+
   const handleToggleChatbox = useCallback(() => {
     dispatch(toggleChatbox());
   }, [dispatch]);
@@ -230,6 +315,9 @@ export const useChat = () => {
     sendMessage,
     loadHistory,
     clearChat,
+    confirmPendingToolAction,
+    cancelPendingToolAction,
+    pruneExpiredToolActions,
     abortStream,
     toggleChatbox: handleToggleChatbox,
     openChatbox,

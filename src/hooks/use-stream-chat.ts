@@ -22,6 +22,50 @@ import { toast } from "sonner";
 
 const STREAM_ENDPOINT = `${API_BASE_URL}/chat/message/stream`;
 
+type StreamSendResult =
+  | { status: "started" }
+  | { status: "handled_error" }
+  | { status: "fallback" };
+
+const DEFAULT_STREAM_ERROR_MESSAGE =
+  "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.";
+
+const getResponseErrorMessage = async (
+  response: Response
+): Promise<string> => {
+  const contentType = response.headers.get("content-type") || "";
+
+  try {
+    if (contentType.includes("application/json")) {
+      const payload = (await response.json()) as {
+        message?: string | string[];
+        error?: string | string[];
+      };
+
+      const message = payload.message ?? payload.error;
+
+      if (Array.isArray(message)) {
+        return message[0] || DEFAULT_STREAM_ERROR_MESSAGE;
+      }
+
+      if (typeof message === "string" && message.trim()) {
+        return message;
+      }
+    }
+
+    const text = await response.text();
+    return text.trim() || DEFAULT_STREAM_ERROR_MESSAGE;
+  } catch {
+    return DEFAULT_STREAM_ERROR_MESSAGE;
+  }
+};
+
+const shouldFallbackToRest = (response: Response): boolean =>
+  response.status === 401 ||
+  response.status === 404 ||
+  response.status === 405 ||
+  response.status === 501;
+
 const buildStreamRequestBody = (
   content: string,
   jobId?: string
@@ -76,6 +120,7 @@ export const useStreamChat = () => {
           finalizeStream({
             recommendedJobs: doneData.recommendedJobs,
             recommendedJobIds: doneData.recommendedJobIds,
+            pendingToolActions: doneData.pendingToolActions,
             intent: doneData.intent,
           })
         );
@@ -147,7 +192,7 @@ export const useStreamChat = () => {
     async (
       content: string,
       options?: { jobId?: string }
-    ): Promise<boolean> => {
+    ): Promise<StreamSendResult> => {
       closeStream(true);
       dispatch(setIsTyping(true));
 
@@ -167,17 +212,22 @@ export const useStreamChat = () => {
           signal: abortController.signal,
         });
 
-        if (!response.ok || !response.body) {
+        if (!response.ok) {
           dispatch(setIsTyping(false));
           closeStream();
 
-          if (response.status === 429) {
-            toast.error(
-              "Bạn đang gửi tin nhắn quá nhanh. Vui lòng chờ một chút."
-            );
+          if (shouldFallbackToRest(response)) {
+            return { status: "fallback" };
           }
 
-          return false;
+          toast.error(await getResponseErrorMessage(response));
+          return { status: "handled_error" };
+        }
+
+        if (!response.body) {
+          dispatch(setIsTyping(false));
+          closeStream();
+          return { status: "fallback" };
         }
 
         const messageId = uuidv4();
@@ -194,11 +244,11 @@ export const useStreamChat = () => {
         dispatch(startStreaming(messageId));
         void readStream(response.body, abortController.signal);
 
-        return true;
+        return { status: "started" };
       } catch {
         dispatch(setIsTyping(false));
         closeStream();
-        return false;
+        return { status: "fallback" };
       }
     },
     [closeStream, dispatch, readStream]
