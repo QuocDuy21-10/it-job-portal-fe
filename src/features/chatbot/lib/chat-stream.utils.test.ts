@@ -38,6 +38,28 @@ describe("chat stream utils", () => {
     ]);
   });
 
+  it("preserves a standalone space token", () => {
+    const result = parseServerSentEventChunk("", "event: token\ndata: \n\n");
+
+    expect(result.events).toEqual([
+      {
+        event: "token",
+        data: " ",
+      },
+    ]);
+  });
+
+  it("reconstructs streamed words separated by space tokens", () => {
+    const result = parseServerSentEventChunk(
+      "",
+      "event: token\ndata: Để\n\n" +
+        "event: token\ndata: \n\n" +
+        "event: token\ndata: tìm\n\n"
+    );
+
+    expect(result.events.map((event) => event.data).join("")).toBe("Để tìm");
+  });
+
   it("ignores comments and blank events", () => {
     const result = parseServerSentEventChunk(
       "",
