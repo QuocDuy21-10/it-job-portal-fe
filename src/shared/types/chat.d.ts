@@ -1,8 +1,18 @@
 import { IJob } from "./backend";
 
+export type ChatIntent =
+  | "job_search"
+  | "company"
+  | "cv_review"
+  | "job_matching"
+  | "faq"
+  | "recruiter_support"
+  | "general";
+
 export interface IChatRecommendationMetadata {
   recommendedJobs?: IJob[];
   recommendedJobIds?: string[];
+  intent?: ChatIntent;
 }
 
 export interface IChatTransportMessage extends IChatRecommendationMetadata {
@@ -18,6 +28,7 @@ export interface IMessage extends IChatTransportMessage {
 
 export interface ISendMessageRequest {
   message: string;
+  jobId?: string;
 }
 
 export interface IChatResponse extends IChatRecommendationMetadata {
@@ -35,11 +46,6 @@ export interface IChatHistoryResponse {
 
 export interface IClearChatResponse {
   message: string;
-}
-
-// SSE Streaming types
-export interface IStreamInitResponse {
-  streamId: string;
 }
 
 export interface IStreamDoneEvent extends IChatRecommendationMetadata {

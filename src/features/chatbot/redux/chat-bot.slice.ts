@@ -34,6 +34,10 @@ const applyMessageRecommendations = (
   if (metadata.recommendedJobIds !== undefined) {
     message.recommendedJobIds = metadata.recommendedJobIds;
   }
+
+  if (metadata.intent !== undefined) {
+    message.intent = metadata.intent;
+  }
 };
 
 const chatBotSlice = createSlice({

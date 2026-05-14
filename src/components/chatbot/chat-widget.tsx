@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { usePathname } from "next/navigation";
 import { useChat } from "@/hooks/use-chat";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import ReactMarkdown from "react-markdown";
@@ -18,6 +25,7 @@ import JobCard from "@/components/chatbot/job-card";
 import ChatTooltip from "@/components/chatbot/chat-tooltip";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/features/auth/redux/auth.slice";
+import { getChatJobIdFromPathname } from "@/features/chatbot/lib/chat-route.utils";
 
 const BUTTON_SIZE = 56; // w-14 = 56px
 const CHAT_WIDTH = 400;
@@ -39,6 +47,7 @@ const USER_CHIPS = [
 ];
 
 const INITIAL_CHIPS = [...PLATFORM_CHIPS, ...USER_CHIPS];
+const JOB_DETAIL_CHIP = "Đánh giá mức độ phù hợp của tôi với công việc này";
 
 const ChatSkeletonBubble = () => (
   <div className="flex justify-start">
@@ -68,6 +77,12 @@ const ChatWidget = () => {
   } = useChat();
   const { openModal } = useAuthModal();
   const user = useAppSelector(selectUser);
+  const pathname = usePathname();
+  const jobId = getChatJobIdFromPathname(pathname);
+  const initialChips = useMemo(
+    () => (jobId ? [JOB_DETAIL_CHIP, ...INITIAL_CHIPS] : INITIAL_CHIPS),
+    [jobId]
+  );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState("");
@@ -212,7 +227,7 @@ const ChatWidget = () => {
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
-    sendMessage(inputValue);
+    sendMessage(inputValue, { jobId });
     setInputValue("");
   };
 
@@ -224,7 +239,7 @@ const ChatWidget = () => {
   };
 
   const handleSuggestedAction = (action: string) => {
-    sendMessage(action);
+    sendMessage(action, { jobId });
   };
 
   const handleLoginClick = () => {
@@ -418,9 +433,9 @@ const ChatWidget = () => {
           {/* Phase 3: Initial chips — shown before first message */}
           {isAuthenticated && messages.length === 0 && !isTyping && !isStreaming && (
             <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 border-t border-gray-100 dark:border-gray-700">
-              {INITIAL_CHIPS.map((chip, idx) => (
+              {initialChips.map((chip) => (
                 <button
-                  key={idx}
+                  key={chip}
                   onClick={() => handleSuggestedAction(chip)}
                   className="whitespace-nowrap text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex-shrink-0"
                 >

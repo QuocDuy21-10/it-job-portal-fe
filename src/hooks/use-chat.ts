@@ -27,6 +27,10 @@ import { useStreamChat } from "@/hooks/use-stream-chat";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
+interface SendMessageOptions {
+  jobId?: string;
+}
+
 export const useChat = () => {
   const dispatch = useAppDispatch();
   const { messages, isTyping, suggestedActions, isOpen, streamingContent, streamingMessageId } =
@@ -111,7 +115,7 @@ export const useChat = () => {
   }, [isAuthenticated, getChatHistoryTrigger, dispatch]);
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string, options?: SendMessageOptions) => {
       if (!content.trim()) return;
       if (!isAuthenticated) {
         toast.error("Vui lòng đăng nhập để sử dụng AI Chat");
@@ -136,7 +140,9 @@ export const useChat = () => {
       dispatch(setSuggestedActions([]));
 
       // Try streaming first, fall back to REST
-      const streamStarted = await sendStreamMessage(trimmedContent);
+      const streamStarted = await sendStreamMessage(trimmedContent, {
+        jobId: options?.jobId,
+      });
       if (streamStarted) return;
 
       // Fallback: standard REST mutation
@@ -145,6 +151,7 @@ export const useChat = () => {
       try {
         const response = await sendMessageMutation({
           message: trimmedContent,
+          ...(options?.jobId ? { jobId: options.jobId } : {}),
         }).unwrap();
 
         const botMessage = normalizeAssistantResponseMessage(response);

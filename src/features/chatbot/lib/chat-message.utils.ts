@@ -56,6 +56,7 @@ export const normalizeRecommendationMetadata = (
     recommendedJobs: recommendedJobs.length > 0 ? recommendedJobs : undefined,
     recommendedJobIds:
       recommendedJobIds.length > 0 ? recommendedJobIds : undefined,
+    intent: metadata?.intent,
   };
 };
 

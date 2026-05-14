@@ -5,7 +5,6 @@ import {
   IChatHistoryResponse,
   IClearChatResponse,
   ISendMessageRequest,
-  IStreamInitResponse,
 } from "@/shared/types/chat";
 
 export const chatBotApi = baseApi.injectEndpoints({
@@ -41,16 +40,6 @@ export const chatBotApi = baseApi.injectEndpoints({
       transformResponse: (response: ApiResponse<IClearChatResponse>) =>
         response.data as IClearChatResponse,
     }),
-
-    initiateStream: builder.mutation<IStreamInitResponse, ISendMessageRequest>({
-      query: (body) => ({
-        url: "/chat/stream",
-        method: "POST",
-        data: body,
-      }),
-      transformResponse: (response: ApiResponse<IStreamInitResponse>) =>
-        response.data as IStreamInitResponse,
-    }),
   }),
 });
 
@@ -59,5 +48,4 @@ export const {
   useGetChatHistoryQuery,
   useLazyGetChatHistoryQuery,
   useClearChatHistoryMutation,
-  useInitiateStreamMutation,
 } = chatBotApi;
