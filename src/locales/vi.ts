@@ -366,6 +366,7 @@ export const vi = {
     quota: {
       unlimited: "Không giới hạn",
       remainingCompact: "Còn {remaining}",
+      dailyLimitTooltip: "Mỗi ngày có {limit} lượt trao đổi.",
       resetTooltip:
         "Còn {remaining} lượt trả lời AI. Làm mới {relativeTime} lúc {localTime}.",
       lowRemainingWithReset:

@@ -364,6 +364,7 @@ export const en = {
     quota: {
       unlimited: "Unlimited",
       remainingCompact: "{remaining} left",
+      dailyLimitTooltip: "You get {limit} AI exchanges per day.",
       resetTooltip:
         "{remaining} AI replies left. Resets {relativeTime} at {localTime}.",
       lowRemainingWithReset:

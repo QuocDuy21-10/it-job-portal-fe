@@ -18,7 +18,7 @@ import { LockClosedIcon } from "@heroicons/react/24/outline";
 import ChatAiDisclaimer from "@/components/chatbot/chat-ai-disclaimer";
 import ChatComposer from "@/components/chatbot/chat-composer";
 import {
-  ChatQuotaMeter,
+  ChatBatteryMeter,
   ChatQuotaWarning,
 } from "@/components/chatbot/chat-quota-meter";
 import ChatTypingIndicator from "@/components/chatbot/chat-typing-indicator";
@@ -262,13 +262,15 @@ const ChatSurface = ({
               <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
               <h3 className="truncate font-bold">{t("chatWidget.title")}</h3>
             </div>
-            <ChatQuotaMeter
+            <ChatBatteryMeter
               quota={quota}
               locale={language}
               labels={{
                 unlimited: t("chatWidget.quota.unlimited"),
                 remainingCompact: (remaining) =>
                   t("chatWidget.quota.remainingCompact", { remaining }),
+                dailyLimitTooltip: (limit) =>
+                  t("chatWidget.quota.dailyLimitTooltip", { limit }),
                 resetTooltip: (remaining, relativeTime, localTime) =>
                   t("chatWidget.quota.resetTooltip", {
                     remaining,

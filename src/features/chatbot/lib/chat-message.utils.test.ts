@@ -103,6 +103,7 @@ describe("chat message utils", () => {
     const quota = {
       remainingQuota: 18,
       nextResetTime: 1778836964,
+      limit: 30,
     };
 
     expect(normalizeChatQuotaStatus(quota)).toEqual(quota);

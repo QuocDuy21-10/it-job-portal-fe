@@ -32,6 +32,8 @@ export interface IChatRecommendationMetadata {
 export interface IChatQuotaStatus {
   remainingQuota: number | null;
   nextResetTime: number;
+  /** Total daily quota cap. `null` = unlimited plan; `undefined` = not yet sent by backend. */
+  limit?: number | null;
 }
 
 export interface IChatTransportMessage extends IChatRecommendationMetadata {

@@ -71,6 +71,7 @@ const translations: Record<string, string> = {
   "chatWidget.chips.jobDetail": "Evaluate how well I match this job",
   "chatWidget.quota.unlimited": "Unlimited",
   "chatWidget.quota.remainingCompact": "{remaining} left",
+  "chatWidget.quota.dailyLimitTooltip": "You get {limit} AI exchanges per day.",
   "chatWidget.quota.resetTooltip":
     "{remaining} AI replies left. Resets {relativeTime} at {localTime}.",
   "chatWidget.quota.resetFallback": "the next reset",
@@ -175,5 +176,19 @@ describe("ChatSurface", () => {
     });
 
     expect(screen.getByRole("textbox")).not.toBeDisabled();
+  });
+
+  it("shows the daily quota tooltip copy when the limit is available", () => {
+    renderSurface({
+      quota: {
+        remainingQuota: 25,
+        nextResetTime: Math.ceil(Date.now() / 1000) + 86400,
+        limit: 30,
+      },
+    });
+
+    expect(
+      screen.getByLabelText("You get 30 AI exchanges per day.")
+    ).toBeInTheDocument();
   });
 });

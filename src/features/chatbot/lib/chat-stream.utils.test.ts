@@ -94,6 +94,7 @@ describe("chat stream utils", () => {
         quota: {
           remainingQuota: 18,
           nextResetTime: 1778836964,
+          limit: 30,
         },
       }),
     });
@@ -117,6 +118,7 @@ describe("chat stream utils", () => {
         quota: {
           remainingQuota: 18,
           nextResetTime: 1778836964,
+          limit: 30,
         },
       },
     });
@@ -142,6 +144,7 @@ describe("chat stream utils", () => {
         quota: {
           remainingQuota: 0,
           nextResetTime: 1778836964,
+          limit: 30,
         },
       }),
     });
@@ -152,6 +155,7 @@ describe("chat stream utils", () => {
       quota: {
         remainingQuota: 0,
         nextResetTime: 1778836964,
+        limit: 30,
       },
     });
   });

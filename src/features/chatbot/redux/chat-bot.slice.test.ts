@@ -12,6 +12,7 @@ describe("chat bot slice", () => {
   const quota = {
     remainingQuota: 5,
     nextResetTime: 1778836964,
+    limit: 30,
   };
 
   it("stores the last known quota", () => {

@@ -1,21 +1,17 @@
 "use client";
 
-import { AlertCircle, Clock3, Infinity } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import { AlertCircle, Infinity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveIntlLocale } from "@/lib/utils/locale-formatters";
 import { IChatQuotaStatus } from "@/shared/types/chat";
 
 const LOW_QUOTA_THRESHOLD = 5;
 
-interface ChatQuotaMeterLabels {
+interface ChatBatteryMeterLabels {
   unlimited: string;
   remainingCompact: (remaining: number) => string;
+  dailyLimitTooltip: (limit: number) => string;
   resetTooltip: (
     remaining: number,
     relativeTime: string,
@@ -34,9 +30,9 @@ interface ChatQuotaWarningLabels {
   resetFallback: string;
 }
 
-interface ChatQuotaMeterProps {
+interface ChatBatteryMeterProps {
   quota?: IChatQuotaStatus;
-  labels: ChatQuotaMeterLabels;
+  labels: ChatBatteryMeterLabels;
   locale?: string;
 }
 
@@ -115,14 +111,46 @@ const getResetCopyParts = (
   return { localTime, relativeTime };
 };
 
-export const ChatQuotaMeter = ({
+const getQuotaTooltipText = (
+  quota: IChatQuotaStatus,
+  labels: ChatBatteryMeterLabels,
+  locale?: string
+) => {
+  if (typeof quota.limit === "number" && Number.isFinite(quota.limit)) {
+    return labels.dailyLimitTooltip(quota.limit);
+  }
+
+  const { localTime, relativeTime } = getResetCopyParts(quota, labels, locale);
+
+  return labels.resetTooltip(quota.remainingQuota ?? 0, relativeTime, localTime);
+};
+
+const getBatteryFill = (
+  remainingQuota: number,
+  limit?: number | null
+): number => {
+  if (typeof limit === "number" && limit > 0) {
+    return Math.min(100, Math.max(0, (remainingQuota / limit) * 100));
+  }
+
+  // Threshold-based fallback when limit is not yet provided by the backend
+  if (remainingQuota <= 0) return 0;
+  if (remainingQuota <= LOW_QUOTA_THRESHOLD) return 25;
+  return 75;
+};
+
+const getBatteryFillColor = (fillPercent: number): string => {
+  if (fillPercent > 50) return "bg-emerald-500";
+  if (fillPercent > 20) return "bg-amber-500";
+  return "bg-destructive";
+};
+
+export const ChatBatteryMeter = ({
   quota,
   labels,
   locale,
-}: ChatQuotaMeterProps) => {
-  if (!quota) {
-    return null;
-  }
+}: ChatBatteryMeterProps) => {
+  if (!quota) return null;
 
   if (quota.remainingQuota === null) {
     return (
@@ -133,47 +161,66 @@ export const ChatQuotaMeter = ({
     );
   }
 
-  const { localTime, relativeTime } = getResetCopyParts(
-    quota,
-    labels,
-    locale
-  );
-  const tooltipText = labels.resetTooltip(
-    quota.remainingQuota,
-    relativeTime,
-    localTime
-  );
-  const isLow = quota.remainingQuota <= LOW_QUOTA_THRESHOLD;
-  const isExhausted = quota.remainingQuota <= 0;
+  const tooltipText = getQuotaTooltipText(quota, labels, locale);
+
+  const fillPercent = getBatteryFill(quota.remainingQuota, quota.limit);
+  const fillColor = getBatteryFillColor(fillPercent);
+  const isCritical = fillPercent <= 20;
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
+    <Tooltip.Provider>
+      <Tooltip.Root delayDuration={150}>
+        <Tooltip.Trigger asChild>
           <div
             tabIndex={0}
+            role="img"
             aria-label={tooltipText}
             title={tooltipText}
-            className={cn(
-              "mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-white/40",
-              isExhausted
-                ? "bg-destructive/20 text-white hover:bg-destructive/30"
-                : isLow
-                  ? "bg-amber-400/20 text-white hover:bg-amber-400/30"
-                  : "bg-white/10 text-white/90 hover:bg-white/15"
-            )}
+            className="group mt-2 inline-flex cursor-default items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
-            <Clock3 className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
-            <span className="truncate">
+            <div className="flex items-center">
+              {/* Battery body */}
+              <div
+                className="h-[14px] w-9 rounded-[3px] border-2 border-white/40 p-[2px] transition-colors group-hover:border-white/70"
+                aria-hidden="true"
+              >
+                <div
+                  className={cn(
+                    "h-full rounded-[1px] transition-all duration-700 ease-in-out",
+                    fillColor,
+                    isCritical && "animate-pulse"
+                  )}
+                  style={{ width: `${fillPercent}%` }}
+                />
+              </div>
+              {/* Positive terminal nub */}
+              <div className="h-[6px] w-[3px] rounded-r-sm bg-white/40 transition-colors group-hover:bg-white/70" />
+            </div>
+            {/* Compact remaining label */}
+            <span
+              className={cn(
+                "text-xs font-medium transition-colors",
+                isCritical
+                  ? "animate-pulse text-red-300"
+                  : "text-white/80 group-hover:text-white"
+              )}
+            >
               {labels.remainingCompact(quota.remainingQuota)}
             </span>
           </div>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-[220px] text-xs">
-          <p>{tooltipText}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            side="bottom"
+            sideOffset={6}
+            className="z-50 max-w-[220px] overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+          >
+            <p>{tooltipText}</p>
+            <Tooltip.Arrow className="fill-popover" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 };
 

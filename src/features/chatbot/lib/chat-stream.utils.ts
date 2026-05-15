@@ -21,6 +21,7 @@ const parseQuota = (quota?: unknown): IChatQuotaStatus | undefined => {
   const candidate = quota as Partial<IChatQuotaStatus>;
   const remainingQuota = candidate.remainingQuota;
   const nextResetTime = candidate.nextResetTime;
+  const limit = candidate.limit;
   const hasValidRemaining =
     remainingQuota === null ||
     (typeof remainingQuota === "number" &&
@@ -28,14 +29,19 @@ const parseQuota = (quota?: unknown): IChatQuotaStatus | undefined => {
       remainingQuota >= 0);
   const hasValidResetTime =
     typeof nextResetTime === "number" && Number.isFinite(nextResetTime);
+  const hasValidLimit =
+    limit === undefined ||
+    limit === null ||
+    (typeof limit === "number" && Number.isFinite(limit) && limit >= 0);
 
-  if (!hasValidRemaining || !hasValidResetTime) {
+  if (!hasValidRemaining || !hasValidResetTime || !hasValidLimit) {
     return undefined;
   }
 
   return {
     remainingQuota,
     nextResetTime,
+    ...(limit !== undefined ? { limit } : {}),
   };
 };
 

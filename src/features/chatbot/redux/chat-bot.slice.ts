@@ -38,6 +38,7 @@ export const getActiveChatQuotaStatus = (
   const candidate = quota as Partial<IChatQuotaStatus>;
   const remainingQuota = candidate.remainingQuota;
   const nextResetTime = candidate.nextResetTime;
+  const limit = candidate.limit;
   const hasValidRemaining =
     remainingQuota === null ||
     (typeof remainingQuota === "number" &&
@@ -45,10 +46,15 @@ export const getActiveChatQuotaStatus = (
       remainingQuota >= 0);
   const hasValidResetTime =
     typeof nextResetTime === "number" && Number.isFinite(nextResetTime);
+  const hasValidLimit =
+    limit === undefined ||
+    limit === null ||
+    (typeof limit === "number" && Number.isFinite(limit) && limit >= 0);
 
   if (
     !hasValidRemaining ||
     !hasValidResetTime ||
+    !hasValidLimit ||
     nextResetTime * 1000 <= now
   ) {
     return undefined;
@@ -57,6 +63,7 @@ export const getActiveChatQuotaStatus = (
   return {
     remainingQuota,
     nextResetTime,
+    ...(limit !== undefined ? { limit } : {}),
   };
 };
 
