@@ -305,6 +305,90 @@ export const en = {
     removedSuccess: "Job removed from saved list",
     errorFallback: "Something went wrong.",
   },
+  chatWidget: {
+    title: "AI Career Advisor",
+    header: {
+      clearHistory: "Clear history",
+      loginRequiredTitle: "Sign in to use AI chat",
+      loginRequiredDescription:
+        "Sign in to get career advice, CV review, and job recommendations tailored to you.",
+      loginCta: "Sign in now",
+    },
+    messages: {
+      greeting:
+        "Hello! I am **AI Career Advisor** — your smart career assistant. I can help you find matching jobs, review your CV, and share job market insights. Where would you like to start?",
+      greetingWithName:
+        "Hello **{name}**! I am **AI Career Advisor** — your smart career assistant. I can help you find matching jobs, review your CV, and share job market insights. Where would you like to start?",
+      streamingPlaceholder: "Thinking...",
+    },
+    features: {
+      search: {
+        title: "Search jobs by skill",
+        description: "Node.js, React, NestJS...",
+      },
+      cv: {
+        title: "Review and improve your CV",
+        description: "Analyze strengths and missing points",
+      },
+      stats: {
+        title: "Market insights",
+        description: "Salary, trending skills, top companies",
+      },
+    },
+    chips: {
+      platformJobs: "How many Node.js jobs are open?",
+      hotSkills: "What are the hottest skills in 2026?",
+      topCompanies: "Top 5 companies hiring the most?",
+      cvSkills: "Which skills are missing from my CV?",
+      matchingJobs: "Recommend jobs that fit me",
+      salaryCompare: "Compare Backend vs Frontend salaries",
+      jobDetail: "Evaluate how well I match this job",
+    },
+    recommendedJobs: {
+      title: "Recommended jobs for you:",
+      companyFallback: "Not updated yet",
+      viewJob: "View now",
+    },
+    input: {
+      placeholder: "Ask about jobs, CVs...",
+      send: "Send message",
+      stop: "Stop generating",
+      processing: "Processing...",
+      loginCta: "Sign in to start chatting →",
+    },
+    disclaimer: {
+      default:
+        "AI may be inaccurate. Verify important job, salary, and application decisions.",
+      quotaExhaustedInput: "Daily AI quota reached. Wait for the next reset.",
+    },
+    quota: {
+      unlimited: "Unlimited",
+      remainingCompact: "{remaining} left",
+      dailyLimitTooltip: "You get {limit} AI exchanges per day.",
+      resetTooltip:
+        "{remaining} AI replies left. Resets {relativeTime} at {localTime}.",
+      lowRemainingWithReset:
+        "You have {remaining} AI replies left. Resets {relativeTime} at {localTime}.",
+      exhaustedWithReset:
+        "Daily AI quota reached. Resets {relativeTime} at {localTime}.",
+      resetFallback: "the next reset",
+    },
+    actions: {
+      openChat: "Open chat",
+      closeChat: "Close chat",
+    },
+    toolActions: {
+      confirmSave: "Save this job",
+      dismiss: "Dismiss",
+      expired: "Expired",
+      confirmSuccess: "Job saved successfully",
+      confirmError: "Could not save this suggested job.",
+      cancelSuccess: "Suggestion dismissed",
+      cancelError: "Could not dismiss this suggestion.",
+      expiredError:
+        "This suggestion has expired. Please ask again if you still want to save it.",
+    },
+  },
   jobDetailPage: {
     actions: {
       applyNow: "Apply now",

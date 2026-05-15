@@ -1,23 +1,79 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IChatRecommendationMetadata, IMessage } from "@/shared/types/chat";
+import {
+  IChatQuotaStatus,
+  IChatRecommendationMetadata,
+  IMessage,
+} from "@/shared/types/chat";
 
-interface ChatBotState {
+export interface ChatBotState {
   messages: IMessage[];
   isTyping: boolean;
   suggestedActions: string[];
-  isOpen: boolean;
   streamingMessageId: string | null;
   streamingContent: string;
+  quota?: IChatQuotaStatus;
 }
+
+type StreamFinalizationPayload =
+  | (IChatRecommendationMetadata & { content?: string })
+  | undefined;
 
 const initialState: ChatBotState = {
   messages: [],
   isTyping: false,
   suggestedActions: [],
-  isOpen: false,
   streamingMessageId: null,
   streamingContent: "",
+  quota: undefined,
 };
+
+export const getActiveChatQuotaStatus = (
+  quota: unknown,
+  now: number = Date.now()
+): IChatQuotaStatus | undefined => {
+  if (!quota || typeof quota !== "object") {
+    return undefined;
+  }
+
+  const candidate = quota as Partial<IChatQuotaStatus>;
+  const remainingQuota = candidate.remainingQuota;
+  const nextResetTime = candidate.nextResetTime;
+  const limit = candidate.limit;
+  const hasValidRemaining =
+    remainingQuota === null ||
+    (typeof remainingQuota === "number" &&
+      Number.isFinite(remainingQuota) &&
+      remainingQuota >= 0);
+  const hasValidResetTime =
+    typeof nextResetTime === "number" && Number.isFinite(nextResetTime);
+  const hasValidLimit =
+    limit === undefined ||
+    limit === null ||
+    (typeof limit === "number" && Number.isFinite(limit) && limit >= 0);
+
+  if (
+    !hasValidRemaining ||
+    !hasValidResetTime ||
+    !hasValidLimit ||
+    nextResetTime * 1000 <= now
+  ) {
+    return undefined;
+  }
+
+  return {
+    remainingQuota,
+    nextResetTime,
+    ...(limit !== undefined ? { limit } : {}),
+  };
+};
+
+const isLogoutMutationSettled = (action: {
+  type: string;
+  meta?: { arg?: { endpointName?: string } };
+}) =>
+  action.meta?.arg?.endpointName === "logout" &&
+  (action.type === "api/executeMutation/fulfilled" ||
+    action.type === "api/executeMutation/rejected");
 
 const applyMessageRecommendations = (
   message: IMessage,
@@ -33,6 +89,14 @@ const applyMessageRecommendations = (
 
   if (metadata.recommendedJobIds !== undefined) {
     message.recommendedJobIds = metadata.recommendedJobIds;
+  }
+
+  if (metadata.pendingToolActions !== undefined) {
+    message.pendingToolActions = metadata.pendingToolActions;
+  }
+
+  if (metadata.intent !== undefined) {
+    message.intent = metadata.intent;
   }
 };
 
@@ -66,14 +130,8 @@ const chatBotSlice = createSlice({
       state.suggestedActions = action.payload;
     },
 
-    // Toggle chatbox mở/đóng
-    setIsOpen: (state, action: PayloadAction<boolean>) => {
-      state.isOpen = action.payload;
-    },
-
-    // Toggle chatbox
-    toggleChatbox: (state) => {
-      state.isOpen = !state.isOpen;
+    setQuota: (state, action: PayloadAction<IChatQuotaStatus>) => {
+      state.quota = action.payload;
     },
 
     // Start streaming — set the message ID being streamed
@@ -90,14 +148,14 @@ const chatBotSlice = createSlice({
     // Finalize streaming — update the placeholder message with full content and optional metadata
     finalizeStream: (
       state,
-      action: PayloadAction<IChatRecommendationMetadata | undefined>
+      action: PayloadAction<StreamFinalizationPayload>
     ) => {
       if (state.streamingMessageId) {
         const msg = state.messages.find(
           (m) => m.id === state.streamingMessageId
         );
         if (msg) {
-          msg.content = state.streamingContent;
+          msg.content = action.payload?.content ?? state.streamingContent;
           applyMessageRecommendations(msg, action.payload);
         }
       }
@@ -123,6 +181,51 @@ const chatBotSlice = createSlice({
       applyMessageRecommendations(msg, action.payload);
     },
 
+    removePendingToolAction: (
+      state,
+      action: PayloadAction<{ messageId: string; actionId: string }>
+    ) => {
+      const msg = state.messages.find(
+        (message) => message.id === action.payload.messageId
+      );
+
+      if (!msg?.pendingToolActions?.length) {
+        return;
+      }
+
+      const pendingToolActions = msg.pendingToolActions.filter(
+        (pendingAction) => pendingAction.actionId !== action.payload.actionId
+      );
+
+      msg.pendingToolActions =
+        pendingToolActions.length > 0 ? pendingToolActions : undefined;
+    },
+
+    pruneExpiredPendingToolActions: (state) => {
+      const now = Date.now();
+
+      state.messages.forEach((message) => {
+        if (!message.pendingToolActions?.length) {
+          return;
+        }
+
+        const pendingToolActions = message.pendingToolActions.filter(
+          (pendingAction) => {
+            if (!pendingAction.expiresAt) {
+              return true;
+            }
+
+            const expiresAt = Date.parse(pendingAction.expiresAt);
+
+            return Number.isNaN(expiresAt) || expiresAt > now;
+          }
+        );
+
+        message.pendingToolActions =
+          pendingToolActions.length > 0 ? pendingToolActions : undefined;
+      });
+    },
+
     // Abort streaming — keep partial content, clear streaming state
     abortStream: (state) => {
       if (state.streamingMessageId) {
@@ -139,6 +242,18 @@ const chatBotSlice = createSlice({
       state.isTyping = false;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase("auth/clearAuth", (state) => {
+        state.quota = undefined;
+      })
+      .addCase("auth/setLogoutAction", (state) => {
+        state.quota = undefined;
+      })
+      .addMatcher(isLogoutMutationSettled, (state) => {
+        state.quota = undefined;
+      });
+  },
 });
 
 export const {
@@ -147,12 +262,13 @@ export const {
   clearMessages,
   setIsTyping,
   setSuggestedActions,
-  setIsOpen,
-  toggleChatbox,
+  setQuota,
   startStreaming,
   appendStreamToken,
   finalizeStream,
   updateMessageRecommendations,
+  removePendingToolAction,
+  pruneExpiredPendingToolActions,
   abortStream,
 } = chatBotSlice.actions;
 

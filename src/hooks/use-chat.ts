@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   getMessagesNeedingRecommendationHydration,
   hydrateRecommendedJobsForMessages,
+  isChatToolActionExpired,
   normalizeAssistantResponseMessage,
+  normalizeChatQuotaStatus,
   normalizeChatMessage,
 } from "@/features/chatbot/lib/chat-message.utils";
 import {
+  useCancelToolActionMutation,
+  useConfirmToolActionMutation,
   useSendMessageMutation,
   useLazyGetChatHistoryQuery,
   useClearChatHistoryMutation,
@@ -16,28 +21,66 @@ import {
   setMessages,
   clearMessages,
   setIsTyping,
+  setQuota,
   setSuggestedActions,
-  setIsOpen,
-  toggleChatbox,
+  removePendingToolAction,
+  pruneExpiredPendingToolActions,
   updateMessageRecommendations,
 } from "@/features/chatbot/redux/chat-bot.slice";
-import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
-import { IMessage } from "@/shared/types/chat";
+import {
+  addSavedJobId,
+  selectIsAuthenticated,
+  selectUser,
+} from "@/features/auth/redux/auth.slice";
+import { IChatToolAction, IMessage } from "@/shared/types/chat";
 import { useStreamChat } from "@/hooks/use-stream-chat";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
+interface SendMessageOptions {
+  jobId?: string;
+}
+
+const DEFAULT_CHAT_ERROR_MESSAGE =
+  "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.";
+
+const getErrorMessage = (error: any): string => {
+  const message = error?.data?.message ?? error?.data?.error ?? error?.message;
+
+  if (Array.isArray(message)) {
+    return message[0] || DEFAULT_CHAT_ERROR_MESSAGE;
+  }
+
+  return typeof message === "string" && message.trim()
+    ? message
+    : DEFAULT_CHAT_ERROR_MESSAGE;
+};
+
+const getErrorQuota = (error: any) =>
+  normalizeChatQuotaStatus(error?.data?.quota ?? error?.data?.data?.quota);
+
 export const useChat = () => {
   const dispatch = useAppDispatch();
-  const { messages, isTyping, suggestedActions, isOpen, streamingContent, streamingMessageId } =
+  const { t } = useI18n();
+  const {
+    messages,
+    isTyping,
+    suggestedActions,
+    streamingContent,
+    streamingMessageId,
+    quota,
+  } =
     useAppSelector((state) => state.chatBot);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const user = useAppSelector(selectUser);
   const hydratedMessageIdsRef = useRef(new Set<string>());
 
   // RTK Query hooks
   const [sendMessageMutation] = useSendMessageMutation();
   const [getChatHistoryTrigger] = useLazyGetChatHistoryQuery();
   const [clearChatHistoryMutation] = useClearChatHistoryMutation();
+  const [confirmToolActionMutation] = useConfirmToolActionMutation();
+  const [cancelToolActionMutation] = useCancelToolActionMutation();
 
   // Streaming hook
   const { sendStreamMessage, abortStream, isStreaming } = useStreamChat();
@@ -104,6 +147,12 @@ export const useChat = () => {
       );
 
       dispatch(setMessages(sortedMessages));
+
+      const historyQuota = normalizeChatQuotaStatus(response.quota);
+
+      if (historyQuota) {
+        dispatch(setQuota(historyQuota));
+      }
     } catch (error: any) {
       console.error("Failed to load chat history:", error);
       toast.error("Không thể tải lịch sử chat");
@@ -111,7 +160,7 @@ export const useChat = () => {
   }, [isAuthenticated, getChatHistoryTrigger, dispatch]);
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string, options?: SendMessageOptions) => {
       if (!content.trim()) return;
       if (!isAuthenticated) {
         toast.error("Vui lòng đăng nhập để sử dụng AI Chat");
@@ -136,8 +185,13 @@ export const useChat = () => {
       dispatch(setSuggestedActions([]));
 
       // Try streaming first, fall back to REST
-      const streamStarted = await sendStreamMessage(trimmedContent);
-      if (streamStarted) return;
+      const streamResult = await sendStreamMessage(trimmedContent, {
+        jobId: options?.jobId,
+      });
+
+      if (streamResult.status !== "fallback") {
+        return;
+      }
 
       // Fallback: standard REST mutation
       dispatch(setIsTyping(true));
@@ -145,11 +199,16 @@ export const useChat = () => {
       try {
         const response = await sendMessageMutation({
           message: trimmedContent,
+          ...(options?.jobId ? { jobId: options.jobId } : {}),
         }).unwrap();
 
         const botMessage = normalizeAssistantResponseMessage(response);
 
         dispatch(addMessage(botMessage));
+
+        if (response.quota) {
+          dispatch(setQuota(response.quota));
+        }
 
         if (response.suggestedActions && response.suggestedActions.length > 0) {
           dispatch(setSuggestedActions(response.suggestedActions));
@@ -157,22 +216,22 @@ export const useChat = () => {
       } catch (error: any) {
         console.error("Failed to send message:", error);
 
+        const errorMessageText = getErrorMessage(error);
+        const errorQuota = getErrorQuota(error);
         const errorMessage: IMessage = {
           id: uuidv4(),
           role: "assistant",
-          content:
-            error?.data?.message ||
-            "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.",
+          content: errorMessageText,
           timestamp: new Date().toISOString(),
         };
 
         dispatch(addMessage(errorMessage));
 
-        if (error?.status === 429) {
-          toast.error("Bạn đang gửi tin nhắn quá nhanh. Vui lòng chờ một chút.");
-        } else {
-          toast.error("Không thể gửi tin nhắn. Vui lòng thử lại.");
+        if (errorQuota) {
+          dispatch(setQuota(errorQuota));
         }
+
+        toast.error(errorMessageText);
       } finally {
         dispatch(setIsTyping(false));
       }
@@ -196,16 +255,74 @@ export const useChat = () => {
     }
   }, [isAuthenticated, clearChatHistoryMutation, dispatch]);
 
-  const handleToggleChatbox = useCallback(() => {
-    dispatch(toggleChatbox());
-  }, [dispatch]);
+  const confirmPendingToolAction = useCallback(
+    async (messageId: string, pendingToolAction: IChatToolAction) => {
+      if (isChatToolActionExpired(pendingToolAction)) {
+        dispatch(
+          removePendingToolAction({
+            messageId,
+            actionId: pendingToolAction.actionId,
+          })
+        );
+        toast.error(t("chatWidget.toolActions.expiredError"));
+        return;
+      }
 
-  const openChatbox = useCallback(() => {
-    dispatch(setIsOpen(true));
-  }, [dispatch]);
+      try {
+        const response = await confirmToolActionMutation(
+          pendingToolAction.actionId
+        ).unwrap();
 
-  const closeChatbox = useCallback(() => {
-    dispatch(setIsOpen(false));
+        dispatch(addSavedJobId(pendingToolAction.payload.jobId));
+        dispatch(
+          removePendingToolAction({
+            messageId,
+            actionId: pendingToolAction.actionId,
+          })
+        );
+        toast.success(
+          response.message || t("chatWidget.toolActions.confirmSuccess")
+        );
+      } catch (error: any) {
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            t("chatWidget.toolActions.confirmError")
+        );
+      }
+    },
+    [confirmToolActionMutation, dispatch, t]
+  );
+
+  const cancelPendingToolAction = useCallback(
+    async (messageId: string, pendingToolAction: IChatToolAction) => {
+      try {
+        const response = await cancelToolActionMutation(
+          pendingToolAction.actionId
+        ).unwrap();
+
+        dispatch(
+          removePendingToolAction({
+            messageId,
+            actionId: pendingToolAction.actionId,
+          })
+        );
+        toast.success(
+          response.message || t("chatWidget.toolActions.cancelSuccess")
+        );
+      } catch (error: any) {
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            t("chatWidget.toolActions.cancelError")
+        );
+      }
+    },
+    [cancelToolActionMutation, dispatch, t]
+  );
+
+  const pruneExpiredToolActions = useCallback(() => {
+    dispatch(pruneExpiredPendingToolActions());
   }, [dispatch]);
 
   return {
@@ -213,7 +330,7 @@ export const useChat = () => {
     messages,
     isTyping,
     suggestedActions,
-    isOpen,
+    quota,
     isAuthenticated,
     isStreaming,
     streamingContent,
@@ -223,10 +340,9 @@ export const useChat = () => {
     sendMessage,
     loadHistory,
     clearChat,
+    confirmPendingToolAction,
+    cancelPendingToolAction,
+    pruneExpiredToolActions,
     abortStream,
-    toggleChatbox: handleToggleChatbox,
-    openChatbox,
-    closeChatbox,
-    setIsOpen: (value: boolean) => dispatch(setIsOpen(value)),
   };
 };

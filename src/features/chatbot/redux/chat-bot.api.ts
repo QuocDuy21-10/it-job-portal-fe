@@ -4,9 +4,23 @@ import {
   IChatResponse,
   IChatHistoryResponse,
   IClearChatResponse,
+  IChatToolActionResponse,
   ISendMessageRequest,
-  IStreamInitResponse,
 } from "@/shared/types/chat";
+
+const transformToolActionResponse = (
+  response: ApiResponse<{ message?: string } | undefined>
+): IChatToolActionResponse => ({
+  message:
+    (response.data &&
+    typeof response.data === "object" &&
+    "message" in response.data &&
+    typeof response.data.message === "string"
+      ? response.data.message
+      : undefined) ||
+    response.message ||
+    "",
+});
 
 export const chatBotApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -42,14 +56,21 @@ export const chatBotApi = baseApi.injectEndpoints({
         response.data as IClearChatResponse,
     }),
 
-    initiateStream: builder.mutation<IStreamInitResponse, ISendMessageRequest>({
-      query: (body) => ({
-        url: "/chat/stream",
+    confirmToolAction: builder.mutation<IChatToolActionResponse, string>({
+      query: (actionId) => ({
+        url: `/chat/tool-actions/${actionId}/confirm`,
         method: "POST",
-        data: body,
       }),
-      transformResponse: (response: ApiResponse<IStreamInitResponse>) =>
-        response.data as IStreamInitResponse,
+      transformResponse: transformToolActionResponse,
+      invalidatesTags: ["Auth", "User"],
+    }),
+
+    cancelToolAction: builder.mutation<IChatToolActionResponse, string>({
+      query: (actionId) => ({
+        url: `/chat/tool-actions/${actionId}`,
+        method: "DELETE",
+      }),
+      transformResponse: transformToolActionResponse,
     }),
   }),
 });
@@ -59,5 +80,6 @@ export const {
   useGetChatHistoryQuery,
   useLazyGetChatHistoryQuery,
   useClearChatHistoryMutation,
-  useInitiateStreamMutation,
+  useConfirmToolActionMutation,
+  useCancelToolActionMutation,
 } = chatBotApi;

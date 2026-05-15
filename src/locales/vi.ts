@@ -306,6 +306,91 @@ export const vi = {
     removedSuccess: "Đã bỏ lưu công việc",
     errorFallback: "Đã xảy ra lỗi.",
   },
+  chatWidget: {
+    title: "AI Career Advisor",
+    header: {
+      clearHistory: "Xóa lịch sử",
+      loginRequiredTitle: "Đăng nhập để sử dụng AI Chat",
+      loginRequiredDescription:
+        "Hãy đăng nhập để được tư vấn nghề nghiệp, phân tích CV và nhận gợi ý việc làm phù hợp.",
+      loginCta: "Đăng nhập ngay",
+    },
+    messages: {
+      greeting:
+        "Xin chào! Tôi là **AI Career Advisor** — trợ lý nghề nghiệp thông minh của bạn. Tôi có thể giúp bạn tìm việc phù hợp, đánh giá CV và cung cấp thống kê thị trường lao động. Bạn muốn bắt đầu từ đâu?",
+      greetingWithName:
+        "Xin chào **{name}**! Tôi là **AI Career Advisor** — trợ lý nghề nghiệp thông minh của bạn. Tôi có thể giúp bạn tìm việc phù hợp, đánh giá CV và cung cấp thống kê thị trường lao động. Bạn muốn bắt đầu từ đâu?",
+      streamingPlaceholder: "Đang suy nghĩ...",
+    },
+    features: {
+      search: {
+        title: "Tìm việc theo kỹ năng",
+        description: "Node.js, React, NestJS...",
+      },
+      cv: {
+        title: "Đánh giá và tối ưu CV",
+        description: "Phân tích điểm mạnh và thiếu sót",
+      },
+      stats: {
+        title: "Thống kê thị trường",
+        description: "Mức lương, kỹ năng hot, công ty top",
+      },
+    },
+    chips: {
+      platformJobs: "Có bao nhiêu việc Node.js đang mở?",
+      hotSkills: "Kỹ năng hot nhất năm 2026?",
+      topCompanies: "Top 5 công ty tuyển dụng nhiều nhất?",
+      cvSkills: "CV của tôi còn thiếu kỹ năng gì?",
+      matchingJobs: "Gợi ý việc làm phù hợp cho tôi",
+      salaryCompare: "So sánh lương Backend vs Frontend",
+      jobDetail: "Đánh giá mức độ phù hợp của tôi với công việc này",
+    },
+    recommendedJobs: {
+      title: "💼 Công việc gợi ý cho bạn:",
+      companyFallback: "Chưa cập nhật",
+      viewJob: "Xem ngay",
+    },
+    input: {
+      placeholder: "Hỏi về việc làm, CV...",
+      send: "Gửi tin nhắn",
+      stop: "Dừng tạo phản hồi",
+      processing: "Đang xử lý...",
+      loginCta: "Đăng nhập để bắt đầu trò chuyện →",
+    },
+    disclaimer: {
+      default:
+        "AI có thể chưa chính xác. Hãy kiểm chứng các quyết định quan trọng về việc làm, lương và ứng tuyển.",
+      quotaExhaustedInput:
+        "Bạn đã hết lượt AI hôm nay. Vui lòng chờ lần làm mới tiếp theo.",
+    },
+    quota: {
+      unlimited: "Không giới hạn",
+      remainingCompact: "Còn {remaining}",
+      dailyLimitTooltip: "Mỗi ngày có {limit} lượt trao đổi.",
+      resetTooltip:
+        "Còn {remaining} lượt trả lời AI. Làm mới {relativeTime} lúc {localTime}.",
+      lowRemainingWithReset:
+        "Bạn còn {remaining} lượt trả lời AI. Làm mới {relativeTime} lúc {localTime}.",
+      exhaustedWithReset:
+        "Bạn đã hết lượt AI hôm nay. Làm mới {relativeTime} lúc {localTime}.",
+      resetFallback: "lần làm mới tiếp theo",
+    },
+    actions: {
+      openChat: "Mở chat",
+      closeChat: "Đóng chat",
+    },
+    toolActions: {
+      confirmSave: "Lưu việc này",
+      dismiss: "Bỏ qua",
+      expired: "Đã hết hạn",
+      confirmSuccess: "Đã lưu công việc",
+      confirmError: "Không thể lưu gợi ý việc làm này.",
+      cancelSuccess: "Đã bỏ gợi ý",
+      cancelError: "Không thể bỏ gợi ý này.",
+      expiredError:
+        "Gợi ý này đã hết hạn. Hãy hỏi lại nếu bạn vẫn muốn lưu công việc này.",
+    },
+  },
   jobDetailPage: {
     actions: {
       applyNow: "Ứng tuyển ngay",

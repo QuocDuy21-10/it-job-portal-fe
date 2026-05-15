@@ -3,17 +3,21 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useLocale } from "next-intl";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 import { HrRoute } from "@/components/hr-route";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
+import HrChatAssistant from "@/components/chatbot/hr-chat-assistant";
+import { Button } from "@/components/ui/button";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { setLogoutAction } from "@/features/auth/redux/auth.slice";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import { getPathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function HrDashboardShellLayout({
   children,
@@ -22,11 +26,13 @@ export default function HrDashboardShellLayout({
 }) {
   const router = useRouter();
   const locale = useLocale() as AppLocale;
+  const { t } = useI18n();
   const dispatch = useAppDispatch();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -38,6 +44,16 @@ export default function HrDashboardShellLayout({
       dispatch(setLogoutAction());
       router.push(getPathname({ locale, href: "/login" }));
     }
+  };
+
+  const handleMobileMenuToggle = () => {
+    setIsAssistantOpen(false);
+    setIsMobileNavOpen(true);
+  };
+
+  const handleAssistantToggle = () => {
+    setIsMobileNavOpen(false);
+    setIsAssistantOpen((currentOpen) => !currentOpen);
   };
 
   return (
@@ -62,8 +78,22 @@ export default function HrDashboardShellLayout({
           )}
         >
           <AdminHeader
-            onMobileMenuToggle={() => setIsMobileNavOpen(true)}
+            onMobileMenuToggle={handleMobileMenuToggle}
             onLogout={handleLogout}
+            assistantTrigger={
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-10 gap-2"
+                onClick={handleAssistantToggle}
+                aria-pressed={isAssistantOpen}
+                aria-label={t("chatWidget.title")}
+              >
+                <SparklesIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">{t("chatWidget.title")}</span>
+              </Button>
+            }
           />
 
           <section className="flex-1 pt-16">
@@ -82,6 +112,11 @@ export default function HrDashboardShellLayout({
             </div>
           </footer>
         </div>
+
+        <HrChatAssistant
+          isOpen={isAssistantOpen}
+          onOpenChange={setIsAssistantOpen}
+        />
       </div>
     </HrRoute>
   );
