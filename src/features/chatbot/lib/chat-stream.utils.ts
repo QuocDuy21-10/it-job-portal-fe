@@ -1,4 +1,4 @@
-import type { IStreamDoneEvent } from "@/shared/types/chat";
+import type { IChatQuotaStatus, IStreamDoneEvent } from "@/shared/types/chat";
 
 export interface ServerSentEvent {
   event: string;
@@ -8,10 +8,36 @@ export interface ServerSentEvent {
 export type ParsedChatStreamEvent =
   | { type: "token"; data: string }
   | { type: "done"; data: IStreamDoneEvent }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string; quota?: IStreamDoneEvent["quota"] };
 
 const DEFAULT_STREAM_ERROR_MESSAGE =
   "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.";
+
+const parseQuota = (quota?: unknown): IChatQuotaStatus | undefined => {
+  if (!quota || typeof quota !== "object") {
+    return undefined;
+  }
+
+  const candidate = quota as Partial<IChatQuotaStatus>;
+  const remainingQuota = candidate.remainingQuota;
+  const nextResetTime = candidate.nextResetTime;
+  const hasValidRemaining =
+    remainingQuota === null ||
+    (typeof remainingQuota === "number" &&
+      Number.isFinite(remainingQuota) &&
+      remainingQuota >= 0);
+  const hasValidResetTime =
+    typeof nextResetTime === "number" && Number.isFinite(nextResetTime);
+
+  if (!hasValidRemaining || !hasValidResetTime) {
+    return undefined;
+  }
+
+  return {
+    remainingQuota,
+    nextResetTime,
+  };
+};
 
 const parseServerSentEventBlock = (block: string): ServerSentEvent | null => {
   let event = "message";
@@ -101,11 +127,16 @@ export const parseChatStreamEvent = (
 
   if (event.event === "error") {
     try {
-      const payload = JSON.parse(event.data) as { message?: string };
+      const payload = JSON.parse(event.data) as {
+        message?: string;
+        quota?: unknown;
+      };
+      const quota = parseQuota(payload.quota);
 
       return {
         type: "error",
         message: payload.message || DEFAULT_STREAM_ERROR_MESSAGE,
+        ...(quota ? { quota } : {}),
       };
     } catch {
       return {

@@ -6,7 +6,9 @@ import {
   getPendingToolActionForJob,
   isChatToolActionExpired,
   normalizeAssistantResponseMessage,
+  normalizeChatQuotaStatus,
   normalizeRecommendationMetadata,
+  normalizeStreamDoneEvent,
 } from "./chat-message.utils";
 
 describe("chat message utils", () => {
@@ -95,5 +97,55 @@ describe("chat message utils", () => {
       )
     ).toBe(false);
     expect(isChatToolActionExpired({}, now)).toBe(false);
+  });
+
+  it("preserves optional quota metadata when present", () => {
+    const quota = {
+      remainingQuota: 18,
+      nextResetTime: 1778836964,
+    };
+
+    expect(normalizeChatQuotaStatus(quota)).toEqual(quota);
+    expect(
+      normalizeStreamDoneEvent({
+        conversationId: "conversation-1",
+        response: "Final answer",
+        quota,
+      }).quota
+    ).toEqual(quota);
+  });
+
+  it("preserves unlimited quota metadata", () => {
+    const quota = {
+      remainingQuota: null,
+      nextResetTime: 1778836964,
+    };
+
+    expect(normalizeChatQuotaStatus(quota)).toEqual(quota);
+  });
+
+  it("ignores invalid quota metadata", () => {
+    expect(
+      normalizeChatQuotaStatus({
+        remainingQuota: "18",
+        nextResetTime: 1778836964,
+      })
+    ).toBeUndefined();
+    expect(
+      normalizeChatQuotaStatus({
+        remainingQuota: 18,
+        nextResetTime: "1778836964",
+      })
+    ).toBeUndefined();
+  });
+
+  it("keeps quota metadata absent when success payload omits it", () => {
+    expect(normalizeChatQuotaStatus()).toBeUndefined();
+    expect(
+      normalizeStreamDoneEvent({
+        conversationId: "conversation-1",
+        response: "Final answer",
+      }).quota
+    ).toBeUndefined();
   });
 });

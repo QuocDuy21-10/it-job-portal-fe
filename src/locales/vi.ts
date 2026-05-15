@@ -357,6 +357,23 @@ export const vi = {
       processing: "Đang xử lý...",
       loginCta: "Đăng nhập để bắt đầu trò chuyện →",
     },
+    disclaimer: {
+      default:
+        "AI có thể chưa chính xác. Hãy kiểm chứng các quyết định quan trọng về việc làm, lương và ứng tuyển.",
+      quotaExhaustedInput:
+        "Bạn đã hết lượt AI hôm nay. Vui lòng chờ lần làm mới tiếp theo.",
+    },
+    quota: {
+      unlimited: "Không giới hạn",
+      remainingCompact: "Còn {remaining}",
+      resetTooltip:
+        "Còn {remaining} lượt trả lời AI. Làm mới {relativeTime} lúc {localTime}.",
+      lowRemainingWithReset:
+        "Bạn còn {remaining} lượt trả lời AI. Làm mới {relativeTime} lúc {localTime}.",
+      exhaustedWithReset:
+        "Bạn đã hết lượt AI hôm nay. Làm mới {relativeTime} lúc {localTime}.",
+      resetFallback: "lần làm mới tiếp theo",
+    },
     actions: {
       openChat: "Mở chat",
       closeChat: "Đóng chat",

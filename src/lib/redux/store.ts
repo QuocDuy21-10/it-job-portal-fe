@@ -1,5 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistReducer, persistStore } from "redux-persist";
+import {
+  createTransform,
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistReducer,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { baseApi } from "./api";
 import authSlice from "@/features/auth/redux/auth.slice";
@@ -10,7 +20,9 @@ import userReducer from '@/features/user/redux/user.slice';
 import jobReducer from '@/features/job/redux/job.slice';
 import resumeReducer from '@/features/resume/redux/resume.slice';
 import roleReducer from '@/features/role/redux/role.slice';
-import chatBotReducer from '@/features/chatbot/redux/chat-bot.slice';
+import chatBotReducer, {
+  getActiveChatQuotaStatus,
+} from '@/features/chatbot/redux/chat-bot.slice';
 import notificationReducer from '@/features/notification/redux/notification.slice';
 import { authErrorMiddleware } from "./middleware/auth-error.middleware";
 
@@ -23,6 +35,24 @@ const authPersistConfig = {
 
 const persistedAuthReducer = persistReducer(authPersistConfig, authSlice);
 
+const chatBotQuotaTransform = createTransform(
+  (inboundQuota: unknown) => getActiveChatQuotaStatus(inboundQuota),
+  (outboundQuota: unknown) => getActiveChatQuotaStatus(outboundQuota),
+  { whitelist: ["quota"] }
+);
+
+const chatBotPersistConfig = {
+  key: "chatBot",
+  storage,
+  whitelist: ["quota"],
+  transforms: [chatBotQuotaTransform],
+};
+
+const persistedChatBotReducer = persistReducer(
+  chatBotPersistConfig,
+  chatBotReducer
+);
+
 export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
@@ -32,13 +62,13 @@ export const store = configureStore({
     job: jobReducer,
     resume: resumeReducer,
     role: roleReducer,
-    chatBot: chatBotReducer,
+    chatBot: persistedChatBotReducer,
     notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     })
       .concat(baseApi.middleware)

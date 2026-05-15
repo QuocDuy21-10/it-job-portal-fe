@@ -79,6 +79,7 @@ describe("chat stream utils", () => {
       event: "done",
       data: JSON.stringify({
         conversationId: "conversation-1",
+        response: "Final canonical answer",
         recommendedJobIds: ["job-1"],
         pendingToolActions: [
           {
@@ -90,6 +91,10 @@ describe("chat stream utils", () => {
         ],
         suggestedActions: ["Tiếp tục"],
         intent: "job_matching",
+        quota: {
+          remainingQuota: 18,
+          nextResetTime: 1778836964,
+        },
       }),
     });
 
@@ -97,6 +102,7 @@ describe("chat stream utils", () => {
       type: "done",
       data: {
         conversationId: "conversation-1",
+        response: "Final canonical answer",
         recommendedJobIds: ["job-1"],
         pendingToolActions: [
           {
@@ -108,6 +114,10 @@ describe("chat stream utils", () => {
         ],
         suggestedActions: ["Tiếp tục"],
         intent: "job_matching",
+        quota: {
+          remainingQuota: 18,
+          nextResetTime: 1778836964,
+        },
       },
     });
   });
@@ -121,6 +131,40 @@ describe("chat stream utils", () => {
     expect(parsedEvent).toEqual({
       type: "error",
       message: "Không thể xử lý yêu cầu.",
+    });
+  });
+
+  it("parses quota metadata from error JSON", () => {
+    const parsedEvent = parseChatStreamEvent({
+      event: "error",
+      data: JSON.stringify({
+        message: "Daily chatbot quota exceeded.",
+        quota: {
+          remainingQuota: 0,
+          nextResetTime: 1778836964,
+        },
+      }),
+    });
+
+    expect(parsedEvent).toEqual({
+      type: "error",
+      message: "Daily chatbot quota exceeded.",
+      quota: {
+        remainingQuota: 0,
+        nextResetTime: 1778836964,
+      },
+    });
+  });
+
+  it("falls back safely for malformed error JSON", () => {
+    const parsedEvent = parseChatStreamEvent({
+      event: "error",
+      data: "{not-json",
+    });
+
+    expect(parsedEvent).toEqual({
+      type: "error",
+      message: "{not-json",
     });
   });
 });

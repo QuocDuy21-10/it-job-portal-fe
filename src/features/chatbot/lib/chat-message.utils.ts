@@ -5,6 +5,7 @@ import { IJob } from "@/shared/types/backend";
 import {
   IChatToolAction,
   ChatToolActionType,
+  IChatQuotaStatus,
   IChatRecommendationMetadata,
   IChatResponse,
   IChatTransportMessage,
@@ -102,6 +103,34 @@ export const normalizeRecommendationMetadata = (
   };
 };
 
+export const normalizeChatQuotaStatus = (
+  quota?: unknown
+): IChatQuotaStatus | undefined => {
+  if (!quota || typeof quota !== "object") {
+    return undefined;
+  }
+
+  const candidate = quota as Partial<IChatQuotaStatus>;
+  const remainingQuota = candidate.remainingQuota;
+  const nextResetTime = candidate.nextResetTime;
+  const hasValidRemaining =
+    remainingQuota === null ||
+    (typeof remainingQuota === "number" &&
+      Number.isFinite(remainingQuota) &&
+      remainingQuota >= 0);
+  const hasValidResetTime =
+    typeof nextResetTime === "number" && Number.isFinite(nextResetTime);
+
+  if (!hasValidRemaining || !hasValidResetTime) {
+    return undefined;
+  }
+
+  return {
+    remainingQuota,
+    nextResetTime,
+  };
+};
+
 export const normalizeChatMessage = (
   message: IChatTransportMessage,
   id: string = uuidv4()
@@ -120,7 +149,7 @@ export const normalizeAssistantResponseMessage = (
   id,
   role: "assistant",
   content: response.response,
-  timestamp: response.timestamp,
+  timestamp: response.timestamp || new Date().toISOString(),
   ...normalizeRecommendationMetadata(response),
 });
 
@@ -128,7 +157,9 @@ export const normalizeStreamDoneEvent = (
   event: IStreamDoneEvent
 ): INormalizedStreamDoneEvent => ({
   conversationId: event.conversationId,
+  response: event.response || "",
   suggestedActions: event.suggestedActions,
+  quota: normalizeChatQuotaStatus(event.quota),
   ...normalizeRecommendationMetadata(event),
 });
 

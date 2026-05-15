@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { cn } from "@/lib/utils";
 import { selectSavedJobIds } from "@/features/auth/redux/auth.slice";
 import { isChatToolActionExpired } from "@/features/chatbot/lib/chat-message.utils";
 import { IJob } from "@/shared/types/backend";
@@ -39,6 +40,8 @@ const JobCard = ({
   const isExpired = pendingToolAction
     ? isChatToolActionExpired(pendingToolAction)
     : false;
+  const mobileHiddenSkillCount = Math.max(0, (job.skills?.length ?? 0) - 2);
+  const desktopHiddenSkillCount = Math.max(0, (job.skills?.length ?? 0) - 3);
 
   const handleClick = () => {
     if (!jobId) {
@@ -83,7 +86,7 @@ const JobCard = ({
   return (
     <div
       onClick={handleClick}
-      className="group min-w-[250px] max-w-[250px] flex-shrink-0 cursor-pointer rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition-all hover:border-blue-400 hover:shadow-md dark:border-border dark:bg-card dark:hover:border-blue-500"
+      className="group min-w-[82vw] max-w-[320px] flex-shrink-0 cursor-pointer rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition-all hover:border-blue-400 hover:shadow-md dark:border-border dark:bg-card dark:hover:border-blue-500 md:min-w-[250px] md:max-w-[250px]"
     >
       {/* Header: Logo + Job Title */}
       <div className="flex gap-3 items-start mb-2">
@@ -117,13 +120,23 @@ const JobCard = ({
           {job.skills.slice(0, 3).map((skill, idx) => (
             <span
               key={idx}
-              className="text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-800"
+              className={cn(
+                "text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-800",
+                idx === 2 && "hidden md:inline-flex"
+              )}
             >
               {skill}
             </span>
           ))}
-          {job.skills.length > 3 && (
-            <span className="text-[10px] text-gray-400">+{job.skills.length - 3}</span>
+          {mobileHiddenSkillCount > 0 && (
+            <span className="text-[10px] text-gray-400 md:hidden">
+              +{mobileHiddenSkillCount}
+            </span>
+          )}
+          {desktopHiddenSkillCount > 0 && (
+            <span className="hidden text-[10px] text-gray-400 md:inline">
+              +{desktopHiddenSkillCount}
+            </span>
           )}
         </div>
       )}

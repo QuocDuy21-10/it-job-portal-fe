@@ -13,6 +13,7 @@ import {
   finalizeStream,
   abortStream as abortStreamAction,
   setIsTyping,
+  setQuota,
   setSuggestedActions,
 } from "@/features/chatbot/redux/chat-bot.slice";
 import { IMessage, ISendMessageRequest } from "@/shared/types/chat";
@@ -118,12 +119,17 @@ export const useStreamChat = () => {
 
         dispatch(
           finalizeStream({
+            content: doneData.response,
             recommendedJobs: doneData.recommendedJobs,
             recommendedJobIds: doneData.recommendedJobIds,
             pendingToolActions: doneData.pendingToolActions,
             intent: doneData.intent,
           })
         );
+
+        if (doneData.quota) {
+          dispatch(setQuota(doneData.quota));
+        }
 
         if (doneData.suggestedActions && doneData.suggestedActions.length > 0) {
           dispatch(setSuggestedActions(doneData.suggestedActions));
@@ -133,8 +139,11 @@ export const useStreamChat = () => {
         return;
       }
 
-      dispatch(appendStreamToken(parsedEvent.message));
-      dispatch(finalizeStream());
+      if (parsedEvent.quota) {
+        dispatch(setQuota(parsedEvent.quota));
+      }
+
+      dispatch(finalizeStream({ content: parsedEvent.message }));
       toast.error(parsedEvent.message);
       closeStream();
     },

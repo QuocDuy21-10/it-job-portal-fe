@@ -19,11 +19,13 @@ import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/notification/notification-bell";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
+import type { ReactNode } from "react";
 
 interface AdminHeaderProps {
   onMobileMenuToggle?: () => void;
   onLogout: () => void;
   className?: string;
+  assistantTrigger?: ReactNode;
 }
 
 /**
@@ -41,6 +43,7 @@ export function AdminHeader({
   onMobileMenuToggle,
   onLogout,
   className,
+  assistantTrigger,
 }: AdminHeaderProps) {
   const user = useAppSelector(selectUser);
   const { t } = useI18n();
@@ -90,6 +93,8 @@ export function AdminHeader({
 
         {/* Right Section - Notifications & User Menu */}
         <div className="flex items-center gap-3">
+          {assistantTrigger}
+
           {/* Notifications */}
           <NotificationBell />
 

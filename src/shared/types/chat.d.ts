@@ -29,6 +29,11 @@ export interface IChatRecommendationMetadata {
   intent?: ChatIntent;
 }
 
+export interface IChatQuotaStatus {
+  remainingQuota: number | null;
+  nextResetTime: number;
+}
+
 export interface IChatTransportMessage extends IChatRecommendationMetadata {
   role: 'user' | 'assistant';
   content: string;
@@ -48,14 +53,16 @@ export interface ISendMessageRequest {
 export interface IChatResponse extends IChatRecommendationMetadata {
   conversationId: string;
   response: string; // Markdown text
-  timestamp: string;
+  timestamp?: string;
   suggestedActions?: string[];
+  quota?: IChatQuotaStatus;
 }
 
 export interface IChatHistoryResponse {
   messages: IChatTransportMessage[];
   total: number;
   title?: string;
+  quota?: IChatQuotaStatus;
 }
 
 export interface IClearChatResponse {
@@ -68,10 +75,14 @@ export interface IChatToolActionResponse {
 
 export interface IStreamDoneEvent extends IChatRecommendationMetadata {
   conversationId: string;
+  response: string;
   suggestedActions?: string[];
+  quota?: IChatQuotaStatus;
 }
 
 export interface INormalizedStreamDoneEvent extends IChatRecommendationMetadata {
   conversationId: string;
+  response: string;
   suggestedActions?: string[];
+  quota?: IChatQuotaStatus;
 }

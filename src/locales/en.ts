@@ -356,6 +356,22 @@ export const en = {
       processing: "Processing...",
       loginCta: "Sign in to start chatting →",
     },
+    disclaimer: {
+      default:
+        "AI may be inaccurate. Verify important job, salary, and application decisions.",
+      quotaExhaustedInput: "Daily AI quota reached. Wait for the next reset.",
+    },
+    quota: {
+      unlimited: "Unlimited",
+      remainingCompact: "{remaining} left",
+      resetTooltip:
+        "{remaining} AI replies left. Resets {relativeTime} at {localTime}.",
+      lowRemainingWithReset:
+        "You have {remaining} AI replies left. Resets {relativeTime} at {localTime}.",
+      exhaustedWithReset:
+        "Daily AI quota reached. Resets {relativeTime} at {localTime}.",
+      resetFallback: "the next reset",
+    },
     actions: {
       openChat: "Open chat",
       closeChat: "Close chat",
