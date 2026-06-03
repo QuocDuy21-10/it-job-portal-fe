@@ -3,7 +3,7 @@
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, X, Building2, MapPin } from "lucide-react";
+import { Search, X, Building2, MapPin, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -159,97 +159,89 @@ export default function CompanyListPage({
   }, []);
 
   return (
-    <div className="listing-page-surface min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-7xl">
-        <div className="relative mb-10 overflow-hidden rounded-[32px] border listing-subtle-border bg-gradient-to-br from-blue-50 via-white to-blue-50/50 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 shadow-[0_24px_70px_hsl(214_35%_12%/0.08)] dark:shadow-[0_28px_80px_hsl(222_47%_5%/0.32)]">
-          {/* Header */}
-          <div className="px-6 py-10 text-center sm:px-8">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary dark:border-primary/30 dark:bg-primary/12 dark:text-sky-200">
-              <Building2 className="h-4 w-4" />
-              <span>{t("companyList.topEmployers")}</span>
-            </div>
-            <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
-              {t("companyList.findYourNext")}
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
-                {t("companyList.employer")}
-              </span>
-            </h1>
-            <p className="listing-muted-text mx-auto max-w-2xl text-lg sm:text-xl">
-              {t("companyList.browseTopCompanies")}
-            </p>
-          </div>
+    <div className="listing-page-surface min-h-screen">
+      {/* Hero Section */}
+      <div className="home-hero-surface relative z-40 text-foreground py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-foreground">
+            {t("companyList.findYourNext")}{t("companyList.employer")}
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground mb-10">
+            {t("companyList.browseTopCompanies")}
+          </p>
 
           {/* Search Bar */}
-          <div className="company-list-search-surface listing-filter-surface backdrop-blur-md bg-white/70 dark:bg-slate-900/70 listing-strong-border border-t p-6 sm:px-8">
-            <div className="company-list-search-shell mx-auto max-w-3xl">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <div className="relative flex-1">
-                  <label htmlFor="company-list-search" className="sr-only">
-                    {t("companyList.searchPlaceholder")}
-                  </label>
-                  <Search className="company-list-search-icon absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" />
-                  <input
-                    id="company-list-search"
-                    type="text"
-                    placeholder={t("companyList.searchPlaceholder")}
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key !== "Enter") {
-                        return;
-                      }
+          <div className="company-list-search-shell mx-auto max-w-3xl transition-all duration-300 focus-within:border-primary">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <label htmlFor="company-list-search" className="sr-only">
+                  {t("companyList.searchPlaceholder")}
+                </label>
+                <Search className="company-list-search-icon absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" />
+                <input
+                  id="company-list-search"
+                  type="text"
+                  placeholder={t("companyList.searchPlaceholder")}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter") {
+                      return;
+                    }
 
-                      event.preventDefault();
-                      applySearch();
-                    }}
-                    className="company-list-search-input h-12 w-full rounded-full border-0 bg-transparent pl-12 pr-12 text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:h-14 sm:pr-16"
-                  />
-                  {searchInput && (
-                    <button
-                      onClick={clearSearch}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 dark:hover:bg-white/10"
-                      aria-label={t("companyList.clearSearch")}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                <Button
-                  type="button"
-                  onClick={() => applySearch()}
-                  disabled={isLoading}
-                  className="company-list-search-button bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-full px-8 text-base font-semibold sm:h-14 sm:min-w-[116px]"
-                >
-                  {t("companyList.searchButton")}
-                </Button>
+                    event.preventDefault();
+                    applySearch();
+                  }}
+                  className="company-list-search-input h-12 w-full rounded-full border-0 bg-transparent pl-12 pr-12 text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:h-14 sm:pr-16"
+                />
+                {searchInput && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 dark:hover:bg-white/10"
+                    aria-label={t("companyList.clearSearch")}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
+              <Button
+                type="button"
+                onClick={() => applySearch()}
+                disabled={isLoading}
+                className="company-list-search-button bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-full px-8 text-base font-semibold sm:h-14 sm:min-w-[116px]"
+              >
+                {t("companyList.searchButton")}
+              </Button>
             </div>
-            {total > 0 && (
-              <p className="company-list-result-count mt-4 text-center text-sm">
-                <span className="font-semibold text-foreground">{total}</span>{" "}
-                {t("companyList.companiesFound")}
-              </p>
-            )}
           </div>
+          {total > 0 && (
+            <p className="company-list-result-count mt-6 text-center text-sm">
+              <span className="font-bold text-primary">{total}</span>{" "}
+              {t("companyList.companiesFound")}
+            </p>
+          )}
         </div>
+      </div>
 
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Companies Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 9 }).map((_, i) => (
-              <Card key={i} className="listing-panel-surface listing-subtle-border h-[230px] border p-6">
-                <div className="mb-5 flex items-start gap-4">
-                  <Skeleton className="h-16 w-16 flex-shrink-0 rounded-full" />
-                  <div className="flex-1 space-y-2 py-1">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+              <Card key={i} className="listing-panel-surface listing-subtle-border border p-6 flex flex-col justify-between h-[300px]">
+                <div>
+                  <div className="flex items-start justify-between mb-6">
+                    <Skeleton className="h-16 w-16 rounded-lg" />
+                  </div>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/2 mb-4" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                </div>
-                <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+                <div className="border-t border-border pt-6 flex items-center justify-between">
                   <Skeleton className="h-4 w-24" />
                   <Skeleton className="h-4 w-20" />
                 </div>
@@ -269,44 +261,54 @@ export default function CompanyListPage({
                 className="group block"
               >
                 <Card
-                  className={`listing-panel-surface listing-subtle-border p-6 ${EFFECTS.cardHover} border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-background/80 dark:hover:bg-white/[0.02]`}
+                  className={`bg-card border border-border rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 flex flex-col h-[300px] justify-between`}
                 >
-                  <div className="mb-5 flex items-start gap-4">
-                    <Avatar className="h-16 w-16 rounded-full border border-slate-100 shadow-sm transition-shadow duration-300 group-hover:shadow-md dark:border-white/10">
-                      {company.logo && (
-                        <AvatarImage
-                          src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
-                          alt={company.name}
-                          className="object-cover"
-                        />
+                  <div>
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-16 h-16 rounded-lg bg-secondary/85 flex items-center justify-center p-2 border border-slate-100 shadow-sm transition-shadow duration-300 group-hover:shadow-md dark:border-white/10 dark:bg-white/[0.04]">
+                        {company.logo ? (
+                          <img
+                            src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
+                            alt={company.name}
+                            className="h-full w-full object-contain rounded"
+                          />
+                        ) : (
+                          <Building2 className="h-8 w-8 text-primary" />
+                        )}
+                      </div>
+                      {company.totalJobs > 0 && (
+                        <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
+                          Hiring
+                        </span>
                       )}
-                      <AvatarFallback className="bg-secondary/80 text-lg font-semibold text-secondary-foreground dark:bg-white/[0.04]">
-                        {company.name.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-foreground line-clamp-2 transition-colors duration-200 group-hover:text-primary">
-                        {company.name}
-                      </h3>
-                      {company.address && (
-                        <div className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-                          <MapPin className="h-3.5 w-3.5" />
-                          <span className="line-clamp-1">{company.address}</span>
-                        </div>
-                      )}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-foreground line-clamp-1 transition-colors duration-200 group-hover:text-primary mb-2">
+                      {company.name}
+                    </h3>
+
+                    {company.address && (
+                      <div className="flex items-start gap-1 mb-4">
+                        <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground line-clamp-1">{company.address}</p>
+                      </div>
+                    )}
+
+                    <div className="listing-muted-text line-clamp-2 text-sm leading-relaxed">
+                      {parse(truncateDescription(company.description || "", 2))}
                     </div>
                   </div>
 
-                  <div className="listing-muted-text line-clamp-3 text-sm leading-relaxed">
-                    {parse(truncateDescription(company.description || ""))}
-                  </div>
-
-                  <div className="listing-subtle-border mt-4 flex items-center justify-between border-t pt-4">
-                    <span className="listing-muted-text text-xs">
-                      {company.totalJobs || 0} {t("companyList.openPositions")}
-                    </span>
-                    <span className="text-sm font-medium text-primary transition-transform duration-300 group-hover:translate-x-1">
-                      {t("companyList.viewDetails")} →
+                  <div className="listing-subtle-border mt-auto pt-6 border-t flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-primary">
+                      <Briefcase className="h-4 w-4" />
+                      <span className="text-xs font-semibold">
+                        {company.totalJobs || 0} {t("companyList.openPositions")}
+                      </span>
+                    </div>
+                    <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:underline">
+                      {t("companyList.viewDetails")}
+                      <span className="text-sm">→</span>
                     </span>
                   </div>
                 </Card>
@@ -347,5 +349,5 @@ export default function CompanyListPage({
         )}
       </div>
     </div>
-  )
+  );
 }

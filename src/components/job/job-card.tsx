@@ -375,32 +375,33 @@ export function JobCard({ job, variant = "default", className }: JobCardProps) {
               </div>
             </Link>
 
-            <div className="listing-subtle-border flex items-center justify-between gap-2 sm:min-w-[100px] sm:flex-col sm:items-end sm:justify-between sm:border-l sm:pl-4">
+            <div className="listing-subtle-border flex flex-col justify-between items-end gap-3 sm:min-w-[190px] sm:border-l sm:pl-6 w-full sm:w-auto">
               {job.createdAt && (
-                <span className="text-[11px] text-muted-foreground/50">
+                <span className="text-[11px] text-muted-foreground/50 self-end">
                   {timeAgo(job.createdAt, language)}
                 </span>
               )}
 
-              <div className="flex flex-col sm:flex-row items-center gap-2 mt-auto">
-                <div className="flex items-center gap-2 mr-2">
-                  <span className="text-base font-bold text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/40 px-2.5 py-1 rounded-md">
-                    {salaryLabel}
-                  </span>
+              <div className="text-right w-full mt-2 sm:mt-0 flex flex-col items-end gap-2">
+                <div className="text-lg font-bold text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/40 px-2.5 py-1 rounded-md sm:bg-transparent sm:dark:bg-transparent sm:px-0 sm:py-0 sm:text-2xl sm:text-emerald-600 sm:dark:text-emerald-400 sm:mb-2">
+                  {salaryLabel}
+                </div>
+                <div className="flex gap-2 w-full justify-end">
                   <FavoriteButton
                     isSaved={isSaved}
                     onClick={toggleSaveJob}
                     disabled={!isHydrated || isLoading}
+                    className="h-10 w-10 border border-border rounded-lg bg-transparent hover:bg-primary/5 hover:border-primary"
                   />
+                  <Button 
+                    asChild
+                    className="flex-1 sm:flex-initial sm:px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 shadow-sm"
+                  >
+                    <Link href={`/jobs/${job._id}`}>
+                      {t("jobsPage.jobCard.applyNow") || "Apply Now"}
+                    </Link>
+                  </Button>
                 </div>
-                <Button 
-                  asChild
-                  className="w-full sm:w-auto font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
-                >
-                  <Link href={`/jobs/${job._id}`}>
-                    {t("jobsPage.jobCard.applyNow") || "Apply Now"}
-                  </Link>
-                </Button>
               </div>
             </div>
           </div>

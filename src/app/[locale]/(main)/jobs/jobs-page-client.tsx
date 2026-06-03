@@ -197,20 +197,8 @@ function JobsPageContent({
     <Tooltip.Provider>
       <div className="listing-page-surface min-h-screen">
         {/* Header with blue background */}
-        <div className="listing-hero-surface relative z-40 min-h-[220px] overflow-visible text-foreground">
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-transparent dark:from-blue-900/20" />
-            <div
-              className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)",
-                backgroundSize: "24px 24px",
-              }}
-            />
-          </div>
-
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14 relative z-10">
+        <div className="home-hero-surface relative z-40 text-foreground">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
             <JobSearchBox
               searchQuery={searchInput}
               onSearchQueryChange={setSearchInput}
@@ -324,9 +312,12 @@ function JobsPageContent({
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Left Sidebar (Desktop Filters) */}
             <div className="hidden lg:block col-span-1">
-              <div className="sticky top-24 space-y-6 bg-card border rounded-xl p-5 shadow-sm">
+              <div className="sticky top-24 space-y-6 bg-card border rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between border-b pb-4">
-                  <h3 className="font-bold text-lg">{t("jobsPage.filters") || "Filters"}</h3>
+                  <h3 className="font-bold text-lg flex items-center gap-2">
+                    <SlidersHorizontal className="w-5 h-5 text-primary" />
+                    {t("jobsPage.filters") || "Filters"}
+                  </h3>
                   {hasResettableState && (
                     <Button
                       variant="ghost"
@@ -340,9 +331,9 @@ function JobsPageContent({
                   )}
                 </div>
                 
-                <div className="space-y-5">
-                  <div className="space-y-2.5">
-                    <label className="text-sm font-semibold">{t("jobsPage.jobTypePlaceholder")}</label>
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-foreground">{t("jobsPage.jobTypeLabel") || "Select work type"}</label>
                     <Select value={draftJobType} onValueChange={handleDesktopJobTypeChange}>
                       <SelectTrigger className="listing-input-surface h-10 w-full text-foreground">
                         <SelectValue placeholder={t("jobsPage.jobTypePlaceholder")} />
@@ -357,24 +348,35 @@ function JobsPageContent({
                     </Select>
                   </div>
                   
-                  <div className="space-y-2.5">
-                    <label className="text-sm font-semibold">{t("jobsPage.levelPlaceholder")}</label>
-                    <Select value={draftExperience} onValueChange={handleDesktopExperienceChange}>
-                      <SelectTrigger className="listing-input-surface h-10 w-full text-foreground">
-                        <SelectValue placeholder={t("jobsPage.levelPlaceholder")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {jobLevels.map((level) => (
-                          <SelectItem key={level.value} value={level.value}>
-                            {getTranslatedLabel(level.value, JOB_LEVEL_LABEL_KEYS, t)}
-                          </SelectItem>
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-foreground">{t("jobsPage.levelLabel") || "Select level"}</label>
+                    <div className="space-y-3">
+                      {Object.entries(JOB_LEVEL_LABEL_KEYS)
+                        .filter(([value]) => value !== "all")
+                        .map(([value, labelKey]) => (
+                          <label key={value} className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={draftExperience === value}
+                              onChange={() => {
+                                if (draftExperience === value) {
+                                  handleDesktopExperienceChange("all");
+                                } else {
+                                  handleDesktopExperienceChange(value);
+                                }
+                              }}
+                              className="rounded text-primary focus:ring-primary border-border"
+                            />
+                            <span className="text-body-md font-body-md text-foreground">
+                              {t(labelKey)}
+                            </span>
+                          </label>
                         ))}
-                      </SelectContent>
-                    </Select>
+                    </div>
                   </div>
                   
-                  <div className="space-y-2.5">
-                    <label className="text-sm font-semibold">{t("jobsPage.salaryPlaceholder")}</label>
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-foreground">{t("jobsPage.salaryLabel") || "Salary range"}</label>
                     <Select value={draftSalaryRange} onValueChange={handleDesktopSalaryRangeChange}>
                       <SelectTrigger className="listing-input-surface h-10 w-full text-foreground">
                         <SelectValue placeholder={t("jobsPage.salaryPlaceholder")} />

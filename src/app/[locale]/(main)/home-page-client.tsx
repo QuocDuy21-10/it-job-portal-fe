@@ -94,7 +94,7 @@ export default function Home() {
     <div className="flex flex-col">
       <section className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32">
         {/* Decorative background */}
-        <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
+        <div className="hidden dark:block absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-10">
@@ -442,7 +442,9 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="home-cta-surface relative overflow-hidden py-16 text-white sm:py-20 lg:py-24">
-        <div className="absolute inset-0 bg-grid-white/[0.05] pointer-events-none"></div>
+        <div
+          className="absolute inset-0 opacity-30 pointer-events-none">
+          </div>
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="max-w-3xl mx-auto space-y-8">
