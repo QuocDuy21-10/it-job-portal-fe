@@ -3,14 +3,17 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, FileText } from 'lucide-react';
+import { Loader2, FileText, CheckCircle2, AlertCircle, Save, Download } from 'lucide-react';
 import { useCV } from "@/hooks/use-cv";
+import { useRouter } from "next/navigation";
+import { calculateCVCompletion } from "@/lib/utils/cv-helpers";
 import { 
   UpsertCVProfileRequestSchema,
   type UpsertCVProfileRequest,
 } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
+import { cn } from "@/lib/utils";
 
 // Section imports
 import PersonalInfoSection from "@/components/cv/sections/personal-info-section";
@@ -48,7 +51,9 @@ const initialCVData: CVData = {
 
 export default function CreateCVPage() {
   const { t } = useI18n();
+  const router = useRouter();
   const [cvData, setCVData] = useState<CVData>(initialCVData);
+  const completion = calculateCVCompletion(cvData);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [avatarFile, setAvatarFile] = useState<File | undefined>(undefined); // Store avatar file
 
@@ -340,7 +345,7 @@ export default function CreateCVPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-48 lg:pb-8">
         {/* Initial Loading State */}
         {isInitialLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
@@ -351,6 +356,45 @@ export default function CreateCVPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Form Content */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Mobile Completion Progress Card */}
+              <div className="block lg:hidden bg-white dark:bg-card p-5 rounded-lg border border-border shadow-sm">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-bold text-foreground">Hồ sơ của tôi</h2>
+                  <span className="text-primary font-bold text-sm">{completion}%</span>
+                </div>
+                <div className="w-full bg-secondary/35 h-2.5 rounded-full mb-6 overflow-hidden">
+                  <div 
+                    className="bg-primary h-full rounded-full transition-all duration-1000" 
+                    style={{ width: `${completion}%` }}
+                  ></div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "Kinh nghiệm", completed: cvData.experience.length > 0 },
+                    { label: "Học vấn", completed: cvData.education.length > 0 },
+                    { label: "Kỹ năng", completed: cvData.skills.length > 0 },
+                    { label: "Ngôn ngữ", completed: cvData.languages.length > 0 },
+                    { label: "Thông tin cá nhân", completed: !!(cvData.personalInfo.fullName && cvData.personalInfo.email) },
+                  ].map((item, idx) => (
+                    <span
+                      key={idx}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all duration-300",
+                        item.completed 
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
+                          : "bg-destructive/10 text-destructive dark:text-red-400 border-destructive/20"
+                      )}
+                    >
+                      {item.completed ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                      ) : (
+                        <AlertCircle className="w-3.5 h-3.5 text-destructive" />
+                      )}
+                      {item.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
               {/* Form Sections */}
               <PersonalInfoSection
                 personalInfo={cvData.personalInfo}
@@ -543,18 +587,31 @@ export default function CreateCVPage() {
                   cvData={cvData}
                   onSave={handleUpdateCV}
                   isSaving={isLoading}
-                  // validationErrors={validationErrors}
                 />
               </aside>
 
-              {/* Mobile Floating Action Buttons */}
-              <div className="lg:hidden fixed bottom-6 right-4 z-50 flex flex-col gap-3">
-                <CompletionProgress 
-                  cvData={cvData}
-                  onSave={handleUpdateCV}
-                  isSaving={isLoading}
-                  isMobile
-                />
+              {/* Mobile/Tablet Sticky Action Bar */}
+              <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white dark:bg-card border-t border-gray-200 dark:border-border p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-40 flex flex-col gap-2">
+                <button
+                  onClick={handleUpdateCV}
+                  disabled={isLoading}
+                  className="w-full bg-primary hover:bg-primary/95 text-white font-bold py-3 rounded-lg text-sm transition-transform active:scale-[0.98] flex justify-center items-center gap-2"
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  Lưu CV
+                </button>
+                <button
+                  onClick={() => router.push("/profile/cv-preview")}
+                  disabled={completion < 15}
+                  className="w-full border border-gray-200 dark:border-border text-gray-700 dark:text-gray-300 py-3 rounded-lg font-bold text-sm flex justify-center items-center gap-2 active:bg-secondary/20 transition-colors disabled:opacity-50"
+                >
+                  <Download className="w-4 h-4" />
+                  Xem trước &amp; Tải PDF
+                </button>
               </div>
             </div>
           </div>

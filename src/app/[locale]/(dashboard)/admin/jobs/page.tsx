@@ -27,6 +27,7 @@ import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
+import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
 
 export default function JobsPage() {
   const { t } = useI18n();
@@ -217,6 +218,8 @@ export default function JobsPage() {
           {t("adminPages.jobs.addButton")}
         </Button>
       </div>
+
+      <DesktopWarningBanner />
 
       {/* Filters Card */}
       <div className="admin-card p-4">

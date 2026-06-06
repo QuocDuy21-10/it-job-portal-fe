@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import ChatWidget from "@/components/chatbot/chat-widget";
 import ProfileSidebar from "@/components/profile/profile-sidebar";
+import ProfileBottomNav from "@/components/profile/profile-bottom-nav";
 import { PendingDeletionBanner } from "@/components/profile/pending-deletion-banner";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { cn } from "@/lib/utils";
@@ -25,8 +26,9 @@ export default function ProfileLayout({
         <ProfileSidebar onExpandedChange={setSidebarExpanded} />
         <div
           className={cn(
-            "flex flex-col flex-1 transition-all duration-300",
-            sidebarExpanded ? "pl-64" : "pl-16"
+            "flex flex-col flex-1 transition-all duration-300 min-w-0",
+            sidebarExpanded ? "md:pl-64" : "md:pl-16",
+            "pl-0"
           )}
         >
           {scheduledDeletionAt && (
@@ -36,11 +38,12 @@ export default function ProfileLayout({
               </div>
             </div>
           )}
-          <main className="flex-1 pt-16">{children}</main>
+          <main className="flex-1 pt-16 pb-20 md:pb-0">{children}</main>
           <Footer />
         </div>
       </div>
       <ChatWidget />
+      <ProfileBottomNav className="md:hidden" />
     </>
   );
 }

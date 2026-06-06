@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import parse from "html-react-parser";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
 import { useI18n } from "@/hooks/use-i18n";
-import { Pagination } from "@/components/pagination";
+import { SimplePagination } from "@/components/simple-pagination";
 import { Link } from "@/i18n/navigation";
 import type { Company } from "@/features/company/schemas/company.schema";
 import {
@@ -75,6 +76,7 @@ export default function CompanyListPage({
   const {
     data: response,
     isLoading,
+    isFetching,
     error,
   } = useGetCompaniesQuery(buildCompanyListQueryArgs(currentSearchState), {
     skip: shouldUseInitialData,
@@ -84,6 +86,8 @@ export default function CompanyListPage({
 
   const companies = paginatedData?.result || [];
   const total = paginatedData?.meta?.pagination?.total || 0;
+  const totalPages = paginatedData?.meta?.pagination?.total_pages || 1;
+  const isCompaniesLoading = shouldUseInitialData ? false : isLoading || isFetching;
 
   useEffect(() => {
     if (currentUrl === targetUrl) {
@@ -145,18 +149,6 @@ export default function CompanyListPage({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const setPageSize = useCallback((pageSize: number) => {
-    setCurrentSearchState((state) => {
-      if (state.limit === pageSize) {
-        return state;
-      }
-
-      return {
-        ...state,
-        limit: pageSize,
-      };
-    });
-  }, []);
 
   return (
     <div className="listing-page-surface min-h-screen">
@@ -171,14 +163,14 @@ export default function CompanyListPage({
           </p>
 
           {/* Search Bar */}
-          <div className="company-list-search-shell mx-auto max-w-3xl transition-all duration-300 focus-within:border-primary">
+          <div className="company-list-search-shell mx-auto max-w-3xl transition-all focus-within:border-primary duration-300">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <div className="relative flex-1">
                 <label htmlFor="company-list-search" className="sr-only">
                   {t("companyList.searchPlaceholder")}
                 </label>
                 <Search className="company-list-search-icon absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" />
-                <input
+                <Input
                   id="company-list-search"
                   type="text"
                   placeholder={t("companyList.searchPlaceholder")}
@@ -192,7 +184,7 @@ export default function CompanyListPage({
                     event.preventDefault();
                     applySearch();
                   }}
-                  className="company-list-search-input h-12 w-full rounded-full border-0 bg-transparent pl-12 pr-12 text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:h-14 sm:pr-16"
+                  className="company-list-search-input h-12 w-full rounded-full border-0 bg-transparent pl-12 pr-12 text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:border-transparent sm:h-14 sm:pr-16"
                 />
                 {searchInput && (
                   <button
@@ -338,12 +330,12 @@ export default function CompanyListPage({
         {/* Pagination */}
         {total > 0 && (
           <div className="mt-12 flex justify-center">
-            <Pagination
-              currentPage={currentSearchState.page}
-              pageSize={currentSearchState.limit}
-              totalItems={total}
+            <SimplePagination
+              page={currentSearchState.page}
+              totalPages={totalPages}
               onPageChange={setPage}
-              onPageSizeChange={setPageSize}
+              isLoading={isCompaniesLoading}
+              labelText={t("jobsPage.pageLabel")}
             />
           </div>
         )}

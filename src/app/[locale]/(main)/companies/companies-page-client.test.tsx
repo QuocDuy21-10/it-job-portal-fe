@@ -38,8 +38,8 @@ jest.mock("@/components/sections/page-breadcrumb", () => ({
   PageBreadcrumb: () => <div data-testid="breadcrumb" />,
 }));
 
-jest.mock("@/components/pagination", () => ({
-  Pagination: () => <div data-testid="pagination" />,
+jest.mock("@/components/simple-pagination", () => ({
+  SimplePagination: () => <div data-testid="pagination" />,
 }));
 
 jest.mock("@/i18n/navigation", () => ({
@@ -108,9 +108,8 @@ describe("CompaniesPageClient", () => {
       />
     );
 
-    expect(screen.getByText("companyList.topEmployers")).toBeInTheDocument();
-    expect(screen.getByText("companyList.findYourNext")).toBeInTheDocument();
-    expect(screen.getByText("companyList.employer")).toBeInTheDocument();
+    expect(screen.getByText(/companyList.findYourNext/)).toBeInTheDocument();
+    expect(screen.getByText(/companyList.employer/)).toBeInTheDocument();
     expect(
       screen.getByText("companyList.browseTopCompanies")
     ).toBeInTheDocument();

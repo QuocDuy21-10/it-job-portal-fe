@@ -19,6 +19,7 @@ import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import provinces from "@/shared/data/provinces.json";
+import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
 
 export default function CompaniesPage() {
   const { t } = useI18n();
@@ -168,6 +169,8 @@ export default function CompaniesPage() {
           </Button>
         </Access>
       </div>
+
+      <DesktopWarningBanner />
 
       {/* Filters Card */}
       <div className="admin-card p-4">

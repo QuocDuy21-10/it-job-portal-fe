@@ -157,14 +157,12 @@ export default function ProfileSidebar({
     <TooltipProvider>
       <aside
         className={cn(
-          "flex flex-col fixed inset-y-0 left-0",
+          "hidden md:flex flex-col fixed inset-y-0 left-0",
           "border-r border-gray-200 bg-white dark:border-border dark:bg-card",
           "pt-16 transition-all duration-300 z-20",
           "shadow-sm",
           // Responsive width
-          isExpanded ? "w-64" : "w-16",
-          // Mobile: can be hidden/shown
-          isMobile && !isExpanded && "md:flex"
+          isExpanded ? "w-64" : "w-16"
         )}
       >
         {/* Sidebar Header - Toggle Button */}

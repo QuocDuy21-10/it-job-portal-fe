@@ -109,7 +109,7 @@ export default function AwardsSection({
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>

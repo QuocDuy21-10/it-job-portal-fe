@@ -6,6 +6,7 @@ export const vi = {
   search: {
     suggest: {
       clear: "Xóa từ khóa tìm kiếm",
+      noResultTitle: "Không tìm thấy kết quả phù hợp",
       noResult: "Không tìm thấy kỹ năng phù hợp — nhấn Enter để tìm kiếm tự do",
     },
   },
@@ -660,6 +661,8 @@ export const vi = {
       approveOrReject: "Duyệt / Từ chối",
       lock: "Khóa",
       unlock: "Mở khóa",
+      desktopWarningTitle: "Trải nghiệm tốt nhất trên máy tính",
+      desktopWarningDesc: "Trang này chứa các bảng quản trị phức tạp và hiển thị tốt nhất trên màn hình máy tính. Bạn có thể cuộn ngang để xem đầy đủ chi tiết bảng.",
     },
     resources: {
       user: "người dùng",
@@ -1267,6 +1270,8 @@ export const vi = {
     description: "Quản lý các công việc đã ứng tuyển và đã lưu",
     statusLabel: "Trạng thái:",
     viewDetails: "Xem chi tiết",
+    viewFeedback: "Xem phản hồi",
+    viewOffer: "Xem thư mời",
     tabs: {
       applied: "Đã ứng tuyển",
       saved: "Đã lưu",
@@ -1290,6 +1295,7 @@ export const vi = {
     },
   },
   jobsPage: {
+    pageLabel: "trang",
     breadcrumb: "Tìm việc làm",
     heroTitle: "Khám phá cơ hội nghề nghiệp",
     heroDescription: "Tìm kiếm công việc phù hợp với kỹ năng và hoài bão của bạn",

@@ -184,7 +184,7 @@ describe("ChatSurface", () => {
         remainingQuota: 25,
         nextResetTime: Math.ceil(Date.now() / 1000) + 86400,
         limit: 30,
-      },
+      } as any,
     });
 
     expect(

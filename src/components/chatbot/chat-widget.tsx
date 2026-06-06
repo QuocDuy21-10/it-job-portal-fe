@@ -191,7 +191,7 @@ const ChatWidget = () => {
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetContent
             side="bottom"
-            className="h-dvh max-h-dvh overflow-hidden border-0 p-0 sm:max-w-none [&>button]:hidden"
+            className="fixed inset-0 h-full max-h-full w-full overflow-hidden border-0 p-0 sm:max-w-none [&>button]:hidden"
           >
             <SheetHeader className="sr-only">
               <SheetTitle>{t("chatWidget.title")}</SheetTitle>
@@ -199,7 +199,7 @@ const ChatWidget = () => {
             <ChatSurface
               isVisible
               onClose={() => setIsOpen(false)}
-              className="h-dvh w-full rounded-none border-0 shadow-none"
+              className="h-full w-full rounded-none border-0 shadow-none"
             />
           </SheetContent>
         </Sheet>

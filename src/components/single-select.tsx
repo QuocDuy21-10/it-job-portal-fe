@@ -28,6 +28,7 @@ type SingleSelectProps = {
   leftIcon?: React.ReactNode;
   allowClear?: boolean;
   noBorder?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export function SingleSelect({
@@ -41,9 +42,15 @@ export function SingleSelect({
   leftIcon,
   allowClear = true,
   noBorder = false,
+  onOpenChange,
 }: SingleSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 

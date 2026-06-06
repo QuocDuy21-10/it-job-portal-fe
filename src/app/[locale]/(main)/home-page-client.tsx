@@ -236,6 +236,7 @@ export default function Home() {
                 page={jobsPage}
                 totalPages={jobsTotalPages}
                 onPageChange={setJobsPage}
+                labelText={t("jobsPage.pageLabel")}
               />
             </div>
           )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchSuggestInput } from "@/components/ui/search-suggest-input";
@@ -29,6 +30,7 @@ export function JobSearchBox({
   className,
 }: JobSearchBoxProps) {
   const { t, mounted } = useI18n();
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   return (
     <div
@@ -39,7 +41,7 @@ export function JobSearchBox({
     >
       <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
         {/* Job Title Search with Suggestions */}
-        <div className="relative flex-1 w-full sm:pl-4">
+        <div className="relative flex-1 w-full sm:pl-4 z-[70]">
           <label htmlFor="job-search-box" className="sr-only">
             {mounted ? t("home.jobTitleOrKeyword") : "Job title or keyword"}
           </label>
@@ -53,6 +55,7 @@ export function JobSearchBox({
               mounted ? t("home.jobTitleOrKeyword") : "Job Title/Keywords"
             }
             noBorder
+            forceClose={isLocationOpen}
             inputClassName="h-12 w-full bg-transparent pl-12 pr-14 text-foreground placeholder:text-muted-foreground transition-all dark:text-white dark:placeholder:text-white/70"
           />
         </div>
@@ -68,6 +71,7 @@ export function JobSearchBox({
             options={LOCATION_OPTIONS}
             value={locationCode}
             onChange={onLocationCodeChange}
+            onOpenChange={setIsLocationOpen}
             placeholder={mounted ? t("home.location") : "Location"}
             searchPlaceholder="Tìm kiếm tỉnh/thành..."
             noBorder

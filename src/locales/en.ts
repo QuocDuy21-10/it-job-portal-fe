@@ -6,6 +6,7 @@ export const en = {
   search: {
     suggest: {
       clear: "Clear search keyword",
+      noResultTitle: "No results matching",
       noResult: "No matching skill — press Enter to search freely",
     },
   },
@@ -658,6 +659,8 @@ export const en = {
       approveOrReject: "Approve / Reject",
       lock: "Lock",
       unlock: "Unlock",
+      desktopWarningTitle: "Optimal Experience on Desktop",
+      desktopWarningDesc: "This page contains complex management tables and is best viewed on a desktop screen. You can scroll horizontally to view full table details.",
     },
     resources: {
       user: "user",
@@ -1265,6 +1268,8 @@ export const en = {
     description: "Manage the jobs you applied for and saved",
     statusLabel: "Status:",
     viewDetails: "View details",
+    viewFeedback: "View feedback",
+    viewOffer: "View offer",
     tabs: {
       applied: "Applied",
       saved: "Saved",
@@ -1288,6 +1293,7 @@ export const en = {
     },
   },
   jobsPage: {
+    pageLabel: "pages",
     breadcrumb: "Find jobs",
     heroTitle: "Discover career opportunities",
     heroDescription: "Find the role that matches your skills and ambition",

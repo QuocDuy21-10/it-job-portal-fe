@@ -151,14 +151,23 @@ const ChatSurface = ({
   const quotaWarning =
     quota?.remainingQuota === 0 && !isQuotaExhausted ? undefined : quota;
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState("");
   const [activeToolActionId, setActiveToolActionId] = useState<string | null>(
     null
   );
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      if (typeof messagesContainerRef.current.scrollTo === "function") {
+        messagesContainerRef.current.scrollTo({
+          top: messagesContainerRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      } else {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+    }
   }, [messages, isTyping, streamingContent]);
 
   useEffect(() => {
@@ -303,7 +312,10 @@ const ChatSurface = ({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4 pb-6 dark:bg-secondary">
+      <div
+        ref={messagesContainerRef}
+        className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4 pb-6 dark:bg-secondary"
+      >
         {!isAuthenticated ? (
           <div className="flex h-full flex-col items-center justify-center px-6 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
@@ -450,8 +462,6 @@ const ChatSurface = ({
             ))}
 
             {isTyping && !isStreaming && <ChatTypingIndicator />}
-
-            <div ref={messagesEndRef} />
           </>
         )}
       </div>
