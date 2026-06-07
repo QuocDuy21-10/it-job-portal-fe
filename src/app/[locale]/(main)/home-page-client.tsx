@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
-import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
+import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import { Job } from "@/features/job/schemas/job.schema";
-import { Company } from "@/features/company/schemas/company.schema";
+import { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard } from "@/components/job/job-card";
 import { CompanyCard } from "@/components/company/company-card";
@@ -24,12 +24,14 @@ import { SectionContainer } from "@/components/sections/section-container";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 import { Link, useRouter } from "@/i18n/navigation";
 import { JobSearchBox } from "@/components/search/job-search-box";
+import { cn } from "@/lib/utils";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 
 export default function Home() {
@@ -37,6 +39,31 @@ export default function Home() {
   const [selectedLocationCode, setSelectedLocationCode] = useState<string>("");
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
+
+  // Carousel states for mobile dot indicators
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSnap, setCurrentSnap] = useState(0);
+  const [snapsCount, setSnapsCount] = useState(0);
+
+  useEffect(() => {
+    if (!carouselApi) {
+      return;
+    }
+
+    const updateCarouselState = () => {
+      setSnapsCount(carouselApi.scrollSnapList().length);
+      setCurrentSnap(carouselApi.selectedScrollSnap());
+    };
+
+    updateCarouselState();
+    carouselApi.on("select", updateCarouselState);
+    carouselApi.on("reInit", updateCarouselState);
+
+    return () => {
+      carouselApi.off("select", updateCarouselState);
+      carouselApi.off("reInit", updateCarouselState);
+    };
+  }, [carouselApi]);
 
   useEffect(() => {
     setHasToken(!!localStorage.getItem("access_token"));
@@ -69,15 +96,12 @@ export default function Home() {
     data: companiesData,
     isLoading: companiesLoading,
     error: companiesError,
-  } = useGetCompaniesQuery({
-    page: 1,
-    limit: 8,
-  });
+  } = useGetTopHiringCompaniesQuery({ limit: 8 });
 
   const featuredJobsToRender = jobsData?.data?.result ?? [];
   const jobsTotalPages = jobsData?.data?.meta?.pagination?.total_pages ?? 1;
 
-  const topCompaniesToRender = companiesData?.data?.result ?? [];
+  const topCompaniesToRender = companiesData?.data ?? [];
 
   const handleSearch = (submittedQuery?: string) => {
     const params = new URLSearchParams();
@@ -302,6 +326,7 @@ export default function Home() {
         ) : (
           <div className="relative">
             <Carousel
+              setApi={setCarouselApi}
               opts={{
                 align: "start",
                 containScroll: "trimSnaps",
@@ -320,7 +345,7 @@ export default function Home() {
                         ? `company-skeleton-${companyOrIndex}`
                         : companyOrIndex._id
                     }
-                    className="pl-4 md:basis-1/2 xl:basis-1/4"
+                    className="pl-4 basis-[85%] md:basis-1/2 xl:basis-1/4"
                   >
                     {typeof companyOrIndex === "number" ? (
                       <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm dark:bg-transparent">
@@ -340,7 +365,7 @@ export default function Home() {
                         </CardContent>
                       </Card>
                     ) : (
-                      <CompanyCard company={companyOrIndex as Company} />
+                      <CompanyCard company={companyOrIndex as TopHiringCompany} />
                     )}
                   </CarouselItem>
                 ))}
@@ -349,6 +374,25 @@ export default function Home() {
               <CarouselPrevious className="top-companies-carousel__button left-3 hidden md:inline-flex lg:-left-5" />
               <CarouselNext className="top-companies-carousel__button right-3 hidden md:inline-flex lg:-right-5" />
             </Carousel>
+
+            {/* Mobile pagination indicator dots */}
+            {!companiesLoading && snapsCount > 1 && (
+              <div className="mt-6 flex justify-center gap-2 md:hidden">
+                {Array.from({ length: snapsCount }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => carouselApi?.scrollTo(index)}
+                    className={cn(
+                      "h-2.5 w-2.5 rounded-full transition-all duration-300",
+                      currentSnap === index
+                        ? "bg-blue-600 dark:bg-blue-500 scale-110"
+                        : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    )}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, Mail, Sparkles } from "lucide-react";
-import SKILLS_LIST from "@/shared/data/skill-list.json";
+import { useSkillCatalog } from "@/hooks/use-skill-catalog";
 import { MultiSelect } from "@/components/multi-select";
 import { SingleSelect } from "@/components/single-select";
 import { useAuth } from "@/hooks/use-auth";
@@ -23,6 +23,7 @@ import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 export default function EmailSubscriptionPage() {
   const { t } = useI18n();
   const { user } = useAuth();
+  const { skillOptions, isLoading: isLoadingSkillCatalog } = useSkillCatalog();
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [selectedLocationCode, setSelectedLocationCode] = useState<string>("");
 
@@ -167,11 +168,12 @@ export default function EmailSubscriptionPage() {
                   </Tooltip.Portal>
                 </Tooltip.Root>
                 <MultiSelect
-                  options={SKILLS_LIST}
+                  options={skillOptions}
                   value={selectedSkills}
                   onChange={setSelectedSkills}
                   placeholder={t("emailSubscription.skillsPlaceholder")}
                   searchPlaceholder={t("emailSubscription.skillsSearchPlaceholder")}
+                  disabled={isLoadingSkillCatalog}
                 />
               </div>
 

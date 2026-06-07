@@ -57,3 +57,13 @@ export const CompanyEntitySchema = CompanySchema.extend({
 export type Company = z.infer<typeof CompanyEntitySchema>;
 export type CreateCompanyFormData = z.infer<typeof CompanySchema>;
 export type UpdateCompanyFormData = Partial<CreateCompanyFormData>;
+
+export interface TopHiringCompany {
+  _id: string;
+  name: string;
+  logo?: string | null;
+  address: string;
+  website?: string | null;
+  numberOfEmployees?: number;
+  totalOpenJobs: number;
+}

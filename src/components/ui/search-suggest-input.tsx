@@ -5,7 +5,7 @@ import { Search, X, Clock, Code2, Briefcase, Sparkles, ChevronRight } from "luci
 import { Input } from "@/components/ui/input";
 import { useI18n } from "@/hooks/use-i18n";
 import { cn } from "@/lib/utils";
-import SKILLS_LIST from "@/shared/data/skill-list.json";
+import { useSkillCatalog } from "@/hooks/use-skill-catalog";
 
 export interface SearchSuggestInputProps {
   value: string;
@@ -82,6 +82,7 @@ export function SearchSuggestInput({
   forceClose = false,
 }: SearchSuggestInputProps) {
   const { t } = useI18n();
+  const { skillOptions } = useSkillCatalog();
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const [isFocused, setIsFocused] = React.useState(false);
   const [history, setHistory] = React.useState<string[]>([]);
@@ -130,10 +131,10 @@ export function SearchSuggestInput({
   const suggestions = React.useMemo(() => {
     const q = value.trim().toLowerCase();
     if (q.length < 2) return [];
-    return SKILLS_LIST.filter((skill) =>
+    return skillOptions.filter((skill) =>
       skill.label.toLowerCase().includes(q)
     ).slice(0, maxSuggestions);
-  }, [value, maxSuggestions]);
+  }, [value, maxSuggestions, skillOptions]);
 
   // Combined items list for keyboard navigation
   const listItems = React.useMemo(() => {

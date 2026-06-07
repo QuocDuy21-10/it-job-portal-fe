@@ -83,17 +83,10 @@ export default function WorkExperienceSection({
         }
       >
         {experience.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Briefcase className="w-8 h-8 text-primary" />
-            </div>
-            <p className="text-sm font-medium text-foreground mb-1">
+          <div className="py-8 text-center rounded-xl border border-dashed border-border bg-secondary/10">
+            <p className="text-sm text-muted-foreground">
               {t("cv.workExperience.noData")}
             </p>
-            <p className="text-xs text-muted-foreground mb-6 text-center max-w-md">
-              {t("cv.workExperience.noDataDescription")}
-            </p>
-
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

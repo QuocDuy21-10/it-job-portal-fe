@@ -2,13 +2,13 @@ import { Building2, Briefcase } from "lucide-react";
 import { useLocale } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import { Company } from "@/features/company/schemas/company.schema";
+import { type Company, type TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
 
 interface CompanyCardProps {
-  company: Company;
+  company: Company | TopHiringCompany;
   className?: string;
 }
 
@@ -19,8 +19,15 @@ function stripHtmlTags(value: string) {
 export function CompanyCard({ company, className }: CompanyCardProps) {
   const { t } = useI18n();
   const locale = useLocale();
-  const companySummary = stripHtmlTags(company.description || "") || company.address || "-";
-  const openPositions = new Intl.NumberFormat(locale).format(company.totalJobs || 0);
+  const companySummary =
+    stripHtmlTags((company as Company).description || "") ||
+    company.address ||
+    "-";
+  const openPositions = new Intl.NumberFormat(locale).format(
+    (company as TopHiringCompany).totalOpenJobs ??
+    (company as Company).totalJobs ??
+    0
+  );
 
   return (
     <Link href={`/companies/${company._id}`} className={cn("group block h-full", className)}>

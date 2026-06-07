@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Edit2, Mail, Phone, MapPin, Calendar, User as UserIcon, Link as LinkIcon, Briefcase } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Edit2, Mail, Phone, User as UserIcon, Briefcase, Calendar, MapPin } from "lucide-react";
 import CVFormSection from "@/components/sections/cv-form-section";
 import PersonalInfoModal from "../modals/personal-info-modal";
 import { PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
@@ -70,154 +72,108 @@ export default function PersonalInfoSection({
         return null;
     }
   };
-  console.log("avatar", personalInfo.avatar);
-
   return (
     <>
       <CVFormSection
         title={t("cv.personalInfo.title")}
         description={t("cv.personalInfo.description")}
         actionButton={
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium text-sm shadow-md hover:shadow-lg transition-all"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  {t("cv.personalInfo.editButton")}
-                </button>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="gap-2 bg-primary hover:bg-primary/90"
+          >
+            <Edit2 className="w-4 h-4" />
+            {t("cv.personalInfo.editButton")}
+          </Button>
         }
       >
-        <Card className="p-6 bg-gradient-to-br from-card to-secondary/20 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Avatar */}
-            {personalInfo.avatar && (
-              <div className="md:col-span-2 flex justify-center">
-                <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20">
-                  <img
-                    src={`${personalInfo.avatar}`}
-                    
-                    alt={personalInfo.fullName}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+        <Card className="p-6 bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* Left Column: Avatar & Primary Details */}
+            <div className="md:col-span-4 flex flex-col items-center text-center p-4 border-b md:border-b-0 md:border-r border-border/50 gap-4">
+              {/* Avatar */}
+              <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-primary/20 shadow-md group transition-transform duration-300 hover:scale-105">
+                <Image
+                  src={personalInfo.avatar || "/images/avatar-default.jpg"}
+                  alt={personalInfo.fullName || "Avatar"}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 112px, 112px"
+                  priority
+                />
               </div>
-            )}
-            
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-foreground leading-tight">
+                  {personalInfo.fullName || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                </h3>
+                {personalInfo.title ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    {personalInfo.title}
+                  </span>
+                ) : (
+                  <span className="text-xs text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>
+                )}
+              </div>
+            </div>
 
-            {/* Title */}
-            {personalInfo.title && (
-              <div className="md:col-span-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <Briefcase className="w-4 h-4 text-primary" />
-                  {t("cv.personalInfo.title")}
+            {/* Right Column: Other Details */}
+            <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6 pl-0 md:pl-4 self-center">
+              {/* Email */}
+              <div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground mb-1.5">
+                  <Mail className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.email")}
                 </div>
-                <p className="text-base font-semibold text-foreground">
-                  {personalInfo.title}
+                <p className="text-sm text-foreground break-all font-medium">
+                  {personalInfo.email || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
                 </p>
               </div>
-            )}
 
-            {/* Full Name */}
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                <UserIcon className="w-4 h-4 text-primary" />
-                {t("cv.personalInfo.fullName")}
-              </div>
-              <p className="text-base font-semibold text-foreground">
-                {personalInfo.fullName || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
-              </p>
-            </div>
-
-            {/* Email */}
-            <div>
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                <Mail className="w-4 h-4 text-primary" />
-                {t("cv.personalInfo.email")}
-              </div>
-              <p className="text-base text-foreground break-all">
-                {personalInfo.email || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
-              </p>
-            </div>
-
-            {/* Phone */}
-            <div>
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                <Phone className="w-4 h-4 text-primary" />
-                {t("cv.personalInfo.phone")}
-              </div>
-              <p className="text-base text-foreground">
-                {personalInfo.phone || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
-              </p>
-            </div>
-
-            {/* Birthday */}
-            {personalInfo.birthday && (
+              {/* Phone */}
               <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground mb-1.5">
+                  <Phone className="w-4 h-4 text-primary" />
+                  {t("cv.personalInfo.phone")}
+                </div>
+                <p className="text-sm text-foreground font-medium">
+                  {personalInfo.phone || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                </p>
+              </div>
+
+              {/* Birthday */}
+              <div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground mb-1.5">
                   <Calendar className="w-4 h-4 text-primary" />
                   {t("cv.personalInfo.birthday")}
                 </div>
-                <p className="text-base text-foreground">
-                  {formatDate(personalInfo.birthday)}
+                <p className="text-sm text-foreground font-medium">
+                  {formatDate(personalInfo.birthday) || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
                 </p>
               </div>
-            )}
 
-            {/* Gender */}
-            {personalInfo.gender && (
+              {/* Gender */}
               <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <Briefcase className="w-4 h-4 text-primary" />
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground mb-1.5">
+                  <UserIcon className="w-4 h-4 text-primary" />
                   {t("cv.personalInfo.gender")}
                 </div>
-                <p className="text-base text-foreground">
-                  {getGenderLabel(personalInfo.gender)}
+                <p className="text-sm text-foreground font-medium">
+                  {getGenderLabel(personalInfo.gender) || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
                 </p>
               </div>
-            )}
 
-            {/* Address */}
-            {personalInfo.address && (
-              <div className="md:col-span-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+              {/* Address */}
+              <div className="sm:col-span-2">
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground mb-1.5">
                   <MapPin className="w-4 h-4 text-primary" />
                   {t("cv.personalInfo.address")}
                 </div>
-                <p className="text-base text-foreground">
-                  {personalInfo.address}
+                <p className="text-sm text-foreground font-medium">
+                  {personalInfo.address || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
                 </p>
               </div>
-            )}
-
-            {/* Personal Link */}
-            {personalInfo.personalLink && (
-              <div className="md:col-span-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                  <LinkIcon className="w-4 h-4 text-primary" />
-                  {t("cv.personalInfo.personalLink")}
-                </div>
-                <a
-                  href={personalInfo.personalLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-primary hover:text-primary/80 hover:underline break-all"
-                >
-                  {personalInfo.personalLink}
-                </a>
-              </div>
-            )}
-
-            {/* Bio */}
-            {personalInfo.bio && (
-              <div className="md:col-span-2">
-                <div className="text-sm font-medium text-muted-foreground mb-2">
-                  {t("cv.personalInfo.bio")}
-                </div>
-                <p className="text-base text-foreground whitespace-pre-wrap">
-                  {personalInfo.bio}
-                </p>
-              </div>
-            )}
+            </div>
           </div>
         </Card>
       </CVFormSection>

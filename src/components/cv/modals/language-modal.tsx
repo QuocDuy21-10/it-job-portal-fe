@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { LanguageRequestSchema, type LanguageRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
+import ModalHeaderBanner from "./modal-header-banner";
 
 interface LanguageModalProps {
   isOpen: boolean;
@@ -65,19 +66,25 @@ export default function LanguageModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+      <DialogContent className="max-w-md w-[95vw] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
+        <DialogHeader className="sr-only">
+          <DialogTitle>
             {mode === "add" ? t("cv.languages.addTitle") : t("cv.languages.editTitle")}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription>
             {mode === "add"
               ? t("cv.languages.addDescription")
               : t("cv.languages.editDescription")}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 mt-4">
+        <ModalHeaderBanner
+          type="language"
+          title={mode === "add" ? t("cv.languages.addTitle") : t("cv.languages.editTitle")}
+          description={mode === "add" ? t("cv.languages.addDescription") : t("cv.languages.editDescription")}
+        />
+
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
           {/* Language Name */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-1">

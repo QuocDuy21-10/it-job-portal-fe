@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2, Loader2, MapPin, Code } from "lucide-react";
-import SKILLS_LIST from "@/shared/data/skill-list.json";
+import { useSkillCatalog } from "@/hooks/use-skill-catalog";
 import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useI18n } from "@/hooks/use-i18n";
@@ -25,12 +25,13 @@ export function SubscriptionList({
   isDeleting,
 }: SubscriptionListProps) {
   const { t, language } = useI18n();
+  const { skillOptions } = useSkillCatalog();
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const getSkillLabels = (values: string[]): string[] => {
     return values
-      .map((v) => SKILLS_LIST.find((s) => s.value === v)?.label)
+      .map((v) => skillOptions.find((s) => s.value === v)?.label)
       .filter(Boolean) as string[];
   };
 

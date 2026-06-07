@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ProjectRequestSchema, type ProjectRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
+import ModalHeaderBanner from "./modal-header-banner";
 
 interface Project extends ProjectRequest {
   id?: string;
@@ -68,14 +69,23 @@ export default function ProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-foreground">
+      <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
+        <DialogHeader className="sr-only">
+          <DialogTitle>
             {mode === "add" ? t("cv.projects.addTitle") : t("cv.projects.editTitle")}
           </DialogTitle>
+          <DialogDescription>
+            {t("cv.projects.description")}
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleFormSubmit} className="space-y-6">
+        <ModalHeaderBanner
+          type="project"
+          title={mode === "add" ? t("cv.projects.addTitle") : t("cv.projects.editTitle")}
+          description={t("cv.projects.description")}
+        />
+
+        <form onSubmit={handleFormSubmit} className="space-y-6 mt-4">
           {/* Project Name */}
           <Controller
             name="name"

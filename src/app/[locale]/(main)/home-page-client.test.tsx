@@ -51,16 +51,9 @@ jest.mock("@/features/job/redux/job.api", () => ({
 }));
 
 jest.mock("@/features/company/redux/company.api", () => ({
-  useGetCompaniesQuery: jest.fn(() => ({
+  useGetTopHiringCompaniesQuery: jest.fn(() => ({
     data: {
-      data: {
-        meta: {
-          pagination: {
-            total_pages: 1,
-          },
-        },
-        result: [],
-      },
+      data: [],
     },
     error: undefined,
     isLoading: false,
@@ -110,7 +103,10 @@ jest.mock("@/components/company/company-card", () => ({
 }));
 
 jest.mock("@/components/ui/carousel", () => ({
-  Carousel: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Carousel: ({ children, setApi }: { children: React.ReactNode; setApi?: any }) => {
+    // Call setApi in mock if provided to avoid runtime null checks or warnings
+    return <div>{children}</div>;
+  },
   CarouselContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   CarouselItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   CarouselPrevious: () => <button type="button">Previous slide</button>,

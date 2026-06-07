@@ -32,7 +32,7 @@ import { Combobox } from "../combo-box";
 import { RichTextEditor } from "../rich-text-editor";
 import { MultiSelect } from "../multi-select";
 import jobLevels from "@/shared/data/job-level.json";
-import SKILLS_LIST from "@/shared/data/skill-list.json";
+import { useSkillCatalog } from "@/hooks/use-skill-catalog";
 import { SingleSelect } from "../single-select";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
@@ -43,6 +43,7 @@ interface JobFormProps {
 }
 
 export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
+  const { skillOptions, isLoading: isLoadingSkillCatalog } = useSkillCatalog();
   const [companySearch, setCompanySearch] = useState("");
   const debouncedSearch = useDebounce(companySearch, 500);
 
@@ -199,12 +200,12 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                 <FormLabel>Kỹ năng *</FormLabel>
                 <FormControl>
                   <MultiSelect
-                    options={SKILLS_LIST}
+                    options={skillOptions}
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Chọn kỹ năng..."
                     searchPlaceholder="Tìm kiếm kỹ năng..."
-                    disabled={isLoading}
+                    disabled={isLoading || isLoadingSkillCatalog}
                   />
                 </FormControl>
                 <FormMessage />

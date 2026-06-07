@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SkillRequestSchema, type SkillRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
+import ModalHeaderBanner from "./modal-header-banner";
 
 interface SkillModalProps {
   isOpen: boolean;
@@ -65,19 +66,25 @@ export default function SkillModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+      <DialogContent className="max-w-md w-[95vw] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
+        <DialogHeader className="sr-only">
+          <DialogTitle>
             {mode === "add" ? t("cv.skills.addTitle") : t("cv.skills.editTitle")}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription>
             {mode === "add"
               ? t("cv.skills.addDescription")
               : t("cv.skills.editDescription")}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 mt-4">
+        <ModalHeaderBanner
+          type="skill"
+          title={mode === "add" ? t("cv.skills.addTitle") : t("cv.skills.editTitle")}
+          description={mode === "add" ? t("cv.skills.addDescription") : t("cv.skills.editDescription")}
+        />
+
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
           {/* Skill Name */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-1">

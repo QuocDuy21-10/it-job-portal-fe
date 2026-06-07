@@ -8,6 +8,7 @@ import { IBulkDeleteResult } from "@/shared/types/backend";
 import {
   Company,
   CreateCompanyFormData,
+  TopHiringCompany,
   UpdateCompanyFormData,
 } from "../schemas/company.schema";
 
@@ -86,6 +87,22 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Company"],
     }),
+
+    // Get top hiring companies
+    getTopHiringCompanies: builder.query<
+      ApiResponse<TopHiringCompany[]>,
+      { limit?: number } | void
+    >({
+      query: (params) => {
+        const limit = params?.limit;
+        const query = limit ? `?limit=${limit}` : "";
+        return {
+          url: `/companies/top-hiring${query}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Company"],
+    }),
   }),
 });
 
@@ -96,4 +113,5 @@ export const {
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
   useBulkDeleteCompaniesMutation,
+  useGetTopHiringCompaniesQuery,
 } = companyApi;
