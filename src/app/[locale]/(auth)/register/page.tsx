@@ -186,7 +186,7 @@ export default function RegisterPage() {
                 htmlFor="acceptTerms"
                 className="text-sm leading-relaxed cursor-pointer select-none dark:text-gray-300"
               >
-                I agree to DevLink's{" "}
+                I agree to DevLink&apos;s{" "}
                 <Link
                   href="/terms"
                   className="auth-link"

@@ -9,7 +9,6 @@ import {
   Building2,
   Briefcase,
   FileText,
-  Shield,
   type LucideIcon,
 } from "lucide-react";
 import type { ESubject } from "@/lib/casl/ability";
@@ -74,14 +73,5 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
     subject: "Resume",
     description: "Quản lý hồ sơ ứng tuyển",
     descriptionKey: "adminShell.navigation.resumes.description",
-  },
-  {
-    name: "Roles",
-    labelKey: "adminShell.navigation.roles.label",
-    href: "/admin/roles",
-    icon: Shield,
-    subject: "Role",
-    description: "Quản lý vai trò",
-    descriptionKey: "adminShell.navigation.roles.description",
   },
 ];

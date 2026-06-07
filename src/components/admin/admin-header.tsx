@@ -133,7 +133,7 @@ export function AdminHeader({
                   <p className="text-xs text-gray-500">{user?.email}</p>
                   {user?.role && (
                     <Badge variant="secondary" className="w-fit text-xs">
-                      {user.role.name}
+                      {user.role}
                     </Badge>
                   )}
                 </div>

@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/features/user/schemas/user.schema";
-import { useGetRoleQuery } from "@/features/role/redux/role.api";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { cn } from "@/lib/utils";
@@ -232,8 +231,7 @@ function UserTableRow({
   onToggleSelect,
 }: UserTableRowProps) {
   const { t, language } = useI18n();
-  const { data: roleData } = useGetRoleQuery(user.role);
-  const roleName = roleData?.data?.name || t("adminPages.users.table.unknownRole");
+  const roleName = user.role || t("adminPages.users.table.unknownRole");
 
   const formattedDate = user.createdAt
     ? formatLocaleDate(user.createdAt, language, {

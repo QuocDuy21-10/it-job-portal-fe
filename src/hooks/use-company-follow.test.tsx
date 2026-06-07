@@ -52,10 +52,7 @@ function createWrapper(companyFollowed: string[] = [], isAuthenticated = true) {
           email: "user@example.com",
           avatar: null,
           name: "Test User",
-          role: {
-            _id: "role-1",
-            name: "NORMAL USER",
-          },
+          role: "NORMAL USER" as const,
           savedJobIds: [],
           savedJobs: [],
           jobFavorites: [],

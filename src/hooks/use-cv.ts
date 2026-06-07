@@ -34,7 +34,7 @@ export const useCV = (): UseCV => {
   
   const [upsertCVMutation, { isLoading: isUpserting }] = useUpsertCVProfileMutation();
 
-  const cvData = cvProfileData?.data?.data || null;
+  const cvData = cvProfileData?.data || null;
   const isLoading = isLoadingQuery || isUpserting;
 
   /**
@@ -49,12 +49,12 @@ export const useCV = (): UseCV => {
       const result = await refetch();
       
       // Success: data exists (user has CV Profile)
-      if (result.data?.data?.data) {
-        return result.data.data.data;
+      if (result.data?.data) {
+        return result.data.data;
       }
       
       // Success: data is null (user doesn't have CV Profile yet - this is normal)
-      if (result.data?.data?.data === null) {
+      if (result.data?.data === null) {
         return null;
       }
       
@@ -81,8 +81,8 @@ export const useCV = (): UseCV => {
     try {
       const result = await upsertCVMutation({ data, avatar: avatarFile }).unwrap();
       
-      if (result.data?.data) {
-        return result.data.data;
+      if (result.data) {
+        return result.data;
       } else {
         throw new Error(result.message || "Failed to save CV");
       }

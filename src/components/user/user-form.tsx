@@ -25,10 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetRolesQuery } from "@/features/role/redux/role.api";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { Combobox } from "@/components/combo-box";
-import { ROLES } from "@/shared/constants/roles";
+import {
+  ROLES,
+  ROLE_VALUES,
+  type RoleName,
+} from "@/shared/constants/role-values";
 
 type UserFormValues = CreateUserFormData | UpdateUserFormData;
 
@@ -36,7 +39,7 @@ type UserFormInitialData = {
   name?: string;
   email?: string;
   password?: string;
-  role?: string | { _id?: string; name?: string } | null;
+  role?: RoleName | { _id?: string; name?: string } | null;
   company?: {
     _id?: string;
     name?: string;
@@ -44,12 +47,21 @@ type UserFormInitialData = {
   } | null;
 };
 
-const normalizeRoleValue = (role: UserFormInitialData["role"]) => {
-  if (typeof role === "string") {
+const isRoleName = (role?: string): role is RoleName => {
+  return ROLE_VALUES.includes(role as RoleName);
+};
+
+const normalizeRoleValue = (role: UserFormInitialData["role"]): RoleName => {
+  if (typeof role === "string" && isRoleName(role)) {
     return role;
   }
 
-  return role?._id || "";
+  const roleName = typeof role === "object" ? role?.name : undefined;
+  if (isRoleName(roleName)) {
+    return roleName;
+  }
+
+  return ROLES.NORMAL_USER;
 };
 
 const normalizeCompanyValue = (company?: UserFormInitialData["company"]) => {
@@ -82,20 +94,6 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isEditMode = !!initialData;
 
-  const { data: rolesData } = useGetRolesQuery({
-    page: 1,
-    limit: 100,
-  });
-
-  const roles = (rolesData?.data?.result || []) as Array<{
-    _id: string;
-    name: string;
-  }>;
-  const hrRoleId = useMemo(
-    () => roles.find((role: { name: string }) => role.name === ROLES.HR)?._id,
-    [roles]
-  );
-
   const { data: companiesData } = useGetCompaniesQuery({
     page: 1,
     limit: 100,
@@ -114,11 +112,8 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
   );
 
   const schema = useMemo(
-    () =>
-      isEditMode
-        ? updateUserFormSchema(hrRoleId)
-        : createUserFormSchema(hrRoleId),
-    [hrRoleId, isEditMode]
+    () => (isEditMode ? updateUserFormSchema() : createUserFormSchema()),
+    [isEditMode]
   );
 
   const form = useForm<UserFormValues>({
@@ -127,8 +122,8 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
     mode: "onChange",
   });
 
-  const selectedRoleId = form.watch("role");
-  const isHrRoleSelected = !!hrRoleId && selectedRoleId === hrRoleId;
+  const selectedRole = form.watch("role");
+  const isHrRoleSelected = selectedRole === ROLES.HR;
 
   const handleCompanyChange = (companyId: string) => {
     const selectedCompany = companies.find(
@@ -162,7 +157,7 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
   }, [form, normalizedInitialValues]);
 
   useEffect(() => {
-    if (!hrRoleId || selectedRoleId === hrRoleId) {
+    if (selectedRole === ROLES.HR) {
       return;
     }
 
@@ -174,7 +169,7 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
       shouldDirty: true,
       shouldValidate: true,
     });
-  }, [form, hrRoleId, selectedRoleId]);
+  }, [form, selectedRole]);
 
   return (
     <Form {...form}>
@@ -271,9 +266,9 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
                   <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roles.map((role: any) => (
-                    <SelectItem key={role._id} value={role._id}>
-                      {role.name}
+                  {ROLE_VALUES.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
                     </SelectItem>
                   ))}
                 </SelectContent>

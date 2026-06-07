@@ -14,7 +14,6 @@ export type ESubject =
   | "Company"
   | "Resume"
   | "User"
-  | "Role"
   | "CvProfile"
   | "Subscriber"
   | "Chat"

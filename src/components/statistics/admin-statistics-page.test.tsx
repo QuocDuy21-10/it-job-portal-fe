@@ -42,7 +42,7 @@ jest.mock("@/features/statistics/redux/statistics.api", () => ({
   useGetAdminDashboardStatsQuery: jest.fn(),
 }));
 
-const mockUseAppSelector = useAppSelector as jest.Mock;
+const mockUseAppSelector = useAppSelector as unknown as jest.Mock;
 const mockUseGetAdminDashboardStatsQuery =
   useGetAdminDashboardStatsQuery as jest.Mock;
 
@@ -50,9 +50,7 @@ const createState = (roleName?: string, isLoading = false) => ({
   auth: {
     user: roleName
       ? {
-          role: {
-            name: roleName,
-          },
+          role: roleName,
         }
       : null,
     isLoading,

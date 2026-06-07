@@ -9,6 +9,10 @@ export function useFileOperations() {
   const handleUpload = async (file: File, folderType: string) => {
     try {
       const response = await uploadFile({ file, folderType }).unwrap();
+      if (!response.data?.fileName) {
+        throw new Error(response.message || "Upload response missing file name");
+      }
+
       toast.success("Upload file thành công!");
       return response.data.fileName;
     } catch (error: any) {

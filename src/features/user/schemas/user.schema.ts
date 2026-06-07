@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
+import { ROLES, ROLE_VALUES } from "@/shared/constants/role-values";
 
 const UserCompanySchema = z
   .object({
@@ -12,15 +13,16 @@ const UserCompanySchema = z
   })
   .optional();
 
+const UserRoleSchema = z.enum(ROLE_VALUES, {
+  error: "Role must be SUPER ADMIN, HR, or NORMAL USER",
+});
+
 const createUserSchemaBase = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   company: UserCompanySchema,
-  role: mongoIdStringSchema({
-    requiredMessage: "Role is required",
-    invalidMessage: "Role must be a valid MongoDB ObjectId",
-  }),
+  role: UserRoleSchema,
 });
 
 const updateUserSchemaBase = z.object({
@@ -32,20 +34,16 @@ const updateUserSchemaBase = z.object({
     .optional()
     .or(z.literal("")),
   company: UserCompanySchema,
-  role: mongoIdStringSchema({
-    requiredMessage: "Role is required",
-    invalidMessage: "Role must be a valid MongoDB ObjectId",
-  }),
+  role: UserRoleSchema,
 });
 
 const withHrCompanyRequirement = <
   TSchema extends typeof createUserSchemaBase | typeof updateUserSchemaBase
 >(
-  schema: TSchema,
-  hrRoleId?: string
+  schema: TSchema
 ) =>
   schema.superRefine((data, ctx) => {
-    if (!hrRoleId || data.role !== hrRoleId) {
+    if (data.role !== ROLES.HR) {
       return;
     }
 
@@ -60,13 +58,13 @@ const withHrCompanyRequirement = <
 
 // Schema cho Create User
 export const CreateUserSchema = createUserSchemaBase;
-export const createUserFormSchema = (hrRoleId?: string) =>
-  withHrCompanyRequirement(createUserSchemaBase, hrRoleId);
+export const createUserFormSchema = () =>
+  withHrCompanyRequirement(createUserSchemaBase);
 
 // Schema cho Update User (password là optional)
 export const UpdateUserSchema = updateUserSchemaBase;
-export const updateUserFormSchema = (hrRoleId?: string) =>
-  withHrCompanyRequirement(updateUserSchemaBase, hrRoleId);
+export const updateUserFormSchema = () =>
+  withHrCompanyRequirement(updateUserSchemaBase);
 
 // Giữ lại UserSchema cũ để backward compatible
 export const UserSchema = CreateUserSchema;
@@ -75,7 +73,7 @@ export const UserEntitySchema = CreateUserSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
-  role: z.string(),
+  role: UserRoleSchema,
   savedJobs: z.array(z.string()).optional().default([]),
   jobFavorites: z.array(z.string()).optional().default([]),
   companyFollowing: z.array(z.string()).optional().default([]),

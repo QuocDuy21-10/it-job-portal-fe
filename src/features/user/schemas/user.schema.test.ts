@@ -1,14 +1,12 @@
 import { updateUserFormSchema } from "./user.schema";
 
 describe("updateUserFormSchema", () => {
-  const hrRoleId = "507f1f77bcf86cd799439012";
-
-  it("accepts valid MongoId strings for role and company._id", () => {
-    const result = updateUserFormSchema(hrRoleId).safeParse({
+  it("accepts valid enum role strings and company._id", () => {
+    const result = updateUserFormSchema().safeParse({
       name: "Alice Admin",
       email: "alice@example.com",
       password: "",
-      role: hrRoleId,
+      role: "HR",
       company: {
         _id: "507f1f77bcf86cd799439021",
         name: "Acme HR",
@@ -18,26 +16,44 @@ describe("updateUserFormSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("rejects an invalid role MongoId", () => {
-    const result = updateUserFormSchema(hrRoleId).safeParse({
+  it("rejects an unknown role string", () => {
+    const result = updateUserFormSchema().safeParse({
       name: "Alice Admin",
       email: "alice@example.com",
       password: "",
-      role: "role-hr",
+      role: "ADMIN",
     });
 
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      "Role must be a valid MongoDB ObjectId"
+      "Role must be SUPER ADMIN, HR, or NORMAL USER"
     );
   });
 
-  it("rejects an invalid company MongoId when role is HR", () => {
-    const result = updateUserFormSchema(hrRoleId).safeParse({
+  it("requires company._id when role is HR", () => {
+    const result = updateUserFormSchema().safeParse({
       name: "Alice Admin",
       email: "alice@example.com",
       password: "",
-      role: hrRoleId,
+      role: "HR",
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some(
+        (issue) =>
+          issue.path.join(".") === "company._id" &&
+          issue.message === "Company is required for HR role"
+      )
+    ).toBe(true);
+  });
+
+  it("rejects an invalid company MongoId when role is HR", () => {
+    const result = updateUserFormSchema().safeParse({
+      name: "Alice Admin",
+      email: "alice@example.com",
+      password: "",
+      role: "HR",
       company: {
         _id: "company-1",
         name: "Acme HR",

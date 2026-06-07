@@ -1,13 +1,12 @@
+import type { RoleName } from "@/shared/constants/role-values";
+
 export interface IAccount {
   access_token: string;
   user: {
     _id: string;
     email: string;
     name: string;
-    role: {
-      _id: string;
-      name: string;
-    };
+    role: RoleName;
     permissions: {
       _id: string;
       name: string;
@@ -41,10 +40,7 @@ export interface IUser {
   age: number;
   gender: string;
   address: string;
-  role?: {
-    _id: string;
-    name: string;
-  };
+  role?: RoleName;
 
   company?: {
     _id: string;
@@ -123,20 +119,6 @@ export interface IPermission {
   apiPath?: string;
   method?: string;
   module?: string;
-
-  createdBy?: string;
-  isDeleted?: boolean;
-  deletedAt?: boolean | null;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface IRole {
-  _id?: string;
-  name: string;
-  description: string;
-  isActive: boolean;
-  permissions: IPermission[] | string[];
 
   createdBy?: string;
   isDeleted?: boolean;

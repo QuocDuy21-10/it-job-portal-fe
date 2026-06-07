@@ -152,7 +152,7 @@ function VerifyEmailContent() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white dark:bg-gray-800 px-2 text-muted-foreground">
-                Didn't receive the code?
+                Didn&apos;t receive the code?
               </span>
             </div>
           </div>
@@ -188,7 +188,7 @@ function VerifyEmailContent() {
 
             {/* Help text */}
             <p className="text-xs text-center text-muted-foreground">
-              Check your spam folder if you don't see the email
+              Check your spam folder if you don&apos;t see the email
             </p>
           </div>
         </div>

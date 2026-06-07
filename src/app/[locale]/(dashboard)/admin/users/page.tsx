@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGetUsersQuery, useBulkDeleteUsersMutation } from "@/features/user/redux/user.api";
-import { useGetRolesQuery } from "@/features/role/redux/role.api";
 import { useUserOperations } from "@/hooks/use-user";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { SearchBar } from "@/components/ui/search-bar";
@@ -27,6 +26,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { CreateUserFormData, UpdateUserFormData, User } from "@/features/user/schemas/user.schema";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
+import { ROLE_VALUES } from "@/shared/constants/role-values";
 
 export default function UsersPage() {
   const { t } = useI18n();
@@ -59,12 +59,6 @@ export default function UsersPage() {
     filter,
   });
 
-  // Fetch roles for filter dropdown
-  const { data: rolesData } = useGetRolesQuery({
-    page: 1,
-    limit: 100, 
-  });
-
   const {
     isDialogOpen,
     editingUser,
@@ -95,10 +89,6 @@ export default function UsersPage() {
 
   const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
     useTableSelection(users);
-
-  const roles = useMemo(() => {
-    return rolesData?.data?.result || [];
-  }, [rolesData]) as Array<{ _id: string; name: string }>;
 
   const totalItems = usersData?.data?.meta?.pagination?.total || 0;
   const selectedResourceLabel =
@@ -223,9 +213,9 @@ export default function UsersPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("adminPages.users.allRoles")}</SelectItem>
-                {roles.map((role) => (
-                  <SelectItem key={role._id} value={role._id}>
-                    {role.name}
+                {ROLE_VALUES.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
                   </SelectItem>
                 ))}
               </SelectContent>

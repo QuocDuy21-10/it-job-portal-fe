@@ -61,10 +61,7 @@ function createWrapper(savedJobIds: string[] = [], isAuthenticated = true) {
           email: "user@example.com",
           avatar: null,
           name: "Test User",
-          role: {
-            _id: "role-1",
-            name: "NORMAL USER",
-          },
+          role: "NORMAL USER" as const,
           savedJobIds,
           savedJobs: savedJobIds,
           jobFavorites: savedJobIds,

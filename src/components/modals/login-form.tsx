@@ -90,7 +90,7 @@ export function LoginForm({
 
         toast.success(t("authModal.toasts.loginSuccess"));
 
-        const userRole = response.data?.user?.role?.name;
+        const userRole = response.data?.user?.role;
         const redirectUrl = getLocalizedDefaultRoute(userRole, locale);
         onSuccess?.(redirectUrl);
       }
@@ -133,7 +133,7 @@ export function LoginForm({
 
         toast.success(t("authModal.toasts.googleLoginSuccess"));
 
-        const userRole = response.data?.user?.role?.name;
+        const userRole = response.data?.user?.role;
         const redirectUrl = getLocalizedDefaultRoute(userRole, locale);
         onSuccess?.(redirectUrl);
       }

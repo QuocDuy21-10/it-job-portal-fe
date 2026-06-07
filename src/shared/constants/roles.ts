@@ -5,14 +5,9 @@
 
 import { getPathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { ROLES } from "./role-values";
 
-export const ROLES = {
-  SUPER_ADMIN: "SUPER ADMIN",
-  HR: "HR",
-  NORMAL_USER: "NORMAL USER",
-} as const;
-
-export type RoleName = (typeof ROLES)[keyof typeof ROLES];
+export { ROLES, ROLE_VALUES, type RoleName } from "./role-values";
 
 /**
  * Route mặc định cho từng role sau khi đăng nhập

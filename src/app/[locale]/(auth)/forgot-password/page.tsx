@@ -97,7 +97,7 @@ export default function ForgotPasswordPage() {
                 Email Sent Successfully!
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                We've sent password reset instructions to{" "}
+                We&apos;ve sent password reset instructions to{" "}
                 <span className="font-medium text-blue-600 dark:text-blue-400">
                   {submittedEmail}
                 </span>
@@ -194,7 +194,7 @@ export default function ForgotPasswordPage() {
       {/* Footer */}
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="auth-link">
             Sign up
           </Link>

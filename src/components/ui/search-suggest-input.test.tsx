@@ -11,6 +11,14 @@ jest.mock("@/hooks/use-i18n", () => ({
   }),
 }));
 
+jest.mock("@/hooks/use-skill-catalog", () => ({
+  useSkillCatalog: () => ({
+    skillOptions: [],
+    isLoading: false,
+    error: undefined,
+  }),
+}));
+
 describe("SearchSuggestInput", () => {
   const mockOnChange = jest.fn();
   const mockOnSubmit = jest.fn();

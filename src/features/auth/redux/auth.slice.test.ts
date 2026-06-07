@@ -2,6 +2,7 @@ import authReducer, {
   addSavedJobId,
   removeSavedJobId,
   selectSavedJobIds,
+  selectUserRole,
   setUserLoginInfo,
 } from "./auth.slice";
 import type { AuthState, UserInfo } from "../schemas/auth.schema";
@@ -24,10 +25,7 @@ const createUser = (overrides: Partial<UserInfo> = {}): UserInfo => ({
   email: "user@example.com",
   avatar: null,
   name: "Test User",
-  role: {
-    _id: "role-1",
-    name: "NORMAL USER",
-  },
+  role: "NORMAL USER",
   ...overrides,
 });
 
@@ -97,5 +95,16 @@ describe("auth slice saved jobs", () => {
     };
 
     expect(selectSavedJobIds(legacyState)).toEqual(["legacy-job"]);
+  });
+
+  it("selects the role enum string from auth state", () => {
+    const state = {
+      auth: {
+        ...createBaseState(),
+        user: createUser({ role: "HR" }),
+      },
+    };
+
+    expect(selectUserRole(state)).toBe("HR");
   });
 });

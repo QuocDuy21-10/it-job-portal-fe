@@ -19,7 +19,6 @@ import companyReducer from '@/features/company/redux/company.slice';
 import userReducer from '@/features/user/redux/user.slice';
 import jobReducer from '@/features/job/redux/job.slice';
 import resumeReducer from '@/features/resume/redux/resume.slice';
-import roleReducer from '@/features/role/redux/role.slice';
 import chatBotReducer, {
   getActiveChatQuotaStatus,
 } from '@/features/chatbot/redux/chat-bot.slice';
@@ -61,7 +60,6 @@ export const store = configureStore({
     user: userReducer,
     job: jobReducer,
     resume: resumeReducer,
-    role: roleReducer,
     chatBot: persistedChatBotReducer,
     notification: notificationReducer,
   },

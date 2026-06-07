@@ -1,4 +1,4 @@
-import { UserSchema } from "@/features/user/schemas/user.schema";
+import { ROLE_VALUES, type RoleName } from "@/shared/constants/role-values";
 import { z } from "zod";
 
 // REGEX PATTERNS
@@ -58,10 +58,7 @@ export const LoginResponseSchema = z.object({
     avatar: z.string().optional(),
     authProvider: z.string().optional(),
     hasPassword: z.boolean().optional(),
-    role: z.object({
-      _id: z.string(),
-      name: z.string(),
-    }),
+    role: z.enum(ROLE_VALUES),
     savedJobIds: z.array(z.string()).optional(),
     jobFavorites: z.array(z.string()).optional(),
     savedJobs: z.array(z.string()).optional(),
@@ -326,10 +323,7 @@ export const AuthStateSchema = z.object({
       authProvider: z.string().optional(),
       hasPassword: z.boolean().optional(),
       scheduledDeletionAt: z.string().nullable().optional(),
-      role: z.object({
-        _id: z.string(),
-        name: z.string(),
-      }),
+      role: z.enum(ROLE_VALUES),
       savedJobIds: z.array(z.string()).optional(),
       jobFavorites: z.array(z.string()).optional(),
       savedJobs: z.array(z.string()).optional(),
@@ -344,11 +338,6 @@ export const AuthStateSchema = z.object({
 
 export type AuthState = z.infer<typeof AuthStateSchema>;
 
-export interface Role {
-  _id: string;
-  name: string;
-}
-
 export interface UserInfo {
   _id: string;
   email: string;
@@ -357,7 +346,7 @@ export interface UserInfo {
   authProvider?: string;
   hasPassword?: boolean;
   scheduledDeletionAt?: string | null;
-  role: Role;
+  role: RoleName;
   savedJobIds?: string[];
   jobFavorites?: string[];
   savedJobs?: string[];

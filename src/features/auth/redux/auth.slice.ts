@@ -5,7 +5,11 @@ import {
   UserInfo,
   normalizeSavedJobIds,
 } from "../schemas/auth.schema";
-import { isAdminRole, isSuperAdmin } from "@/shared/constants/roles";
+import {
+  isAdminRole,
+  isSuperAdmin,
+} from "@/shared/constants/roles";
+import type { RoleName } from "@/shared/constants/role-values";
 
 const initialState: AuthState = {
   user: null,
@@ -15,8 +19,19 @@ const initialState: AuthState = {
   errorRefreshToken: "",
 };
 
-type AuthUserPayload = Omit<UserInfo, "avatar"> & {
+type AuthUserPayload = Omit<UserInfo, "avatar" | "role"> & {
   avatar?: string | null;
+  role: RoleName | { name?: string };
+};
+
+const normalizeUserRole = (
+  role: RoleName | { name?: string } | null | undefined
+) => {
+  if (typeof role === "string") {
+    return role;
+  }
+
+  return role?.name;
 };
 
 function buildAuthUser(userData: AuthUserPayload) {
@@ -30,10 +45,7 @@ function buildAuthUser(userData: AuthUserPayload) {
     authProvider: userData.authProvider,
     hasPassword: userData.hasPassword,
     scheduledDeletionAt: userData.scheduledDeletionAt,
-    role: {
-      _id: userData.role._id,
-      name: userData.role.name,
-    },
+    role: normalizeUserRole(userData.role) as RoleName,
     savedJobIds,
     savedJobs: savedJobIds,
     jobFavorites: savedJobIds,
@@ -261,12 +273,12 @@ export const selectErrorRefreshToken = (state: { auth: AuthState }) =>
 
 // Selector để lấy role name
 export const selectUserRole = (state: { auth: AuthState }) =>
-  state.auth.user?.role.name;
+  normalizeUserRole(state.auth.user?.role);
 
 // Selector để check role
 export const selectHasRole =
   (roleName: string) => (state: { auth: AuthState }) => {
-    return state.auth.user?.role.name === roleName;
+    return selectUserRole(state) === roleName;
   };
 
 // ✅ Selector để check if user có quyền truy cập admin panel

@@ -104,7 +104,7 @@ function LoginContent() {
 
         toast.success("Welcome back! Login successful.");
 
-        const userRole = response.data?.user?.role?.name;
+        const userRole = response.data?.user?.role;
         const redirectUrl = getRedirectUrl(userRole);
 
         // Đợi redux-persist lưu state vào localStorage trước khi redirect
@@ -153,7 +153,7 @@ function LoginContent() {
 
         toast.success("Google login successful!");
 
-        const userRole = response.data?.user?.role?.name;
+        const userRole = response.data?.user?.role;
         const redirectUrl = getRedirectUrl(userRole);
 
         // Đợi redux-persist lưu state vào localStorage trước khi redirect

@@ -1,12 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { UserForm } from "@/components/user/user-form";
-import { useGetRolesQuery } from "@/features/role/redux/role.api";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
-
-jest.mock("@/features/role/redux/role.api", () => ({
-  useGetRolesQuery: jest.fn(),
-}));
 
 jest.mock("@/features/company/redux/company.api", () => ({
   useGetCompaniesQuery: jest.fn(),
@@ -75,18 +70,7 @@ jest.mock("@/components/combo-box", () => ({
   ),
 }));
 
-const mockUseGetRolesQuery = useGetRolesQuery as jest.Mock;
 const mockUseGetCompaniesQuery = useGetCompaniesQuery as jest.Mock;
-
-const rolesResponse = {
-  data: {
-    result: [
-      { _id: "507f1f77bcf86cd799439011", name: "SUPER ADMIN" },
-      { _id: "507f1f77bcf86cd799439012", name: "HR" },
-      { _id: "507f1f77bcf86cd799439013", name: "NORMAL USER" },
-    ],
-  },
-};
 
 const companiesResponse = {
   data: {
@@ -99,7 +83,6 @@ const companiesResponse = {
 
 describe("UserForm", () => {
   beforeEach(() => {
-    mockUseGetRolesQuery.mockReturnValue({ data: rolesResponse });
     mockUseGetCompaniesQuery.mockReturnValue({ data: companiesResponse });
   });
 
@@ -115,14 +98,14 @@ describe("UserForm", () => {
         initialData={{
           name: "Alice Admin",
           email: "alice@example.com",
-          role: { _id: "507f1f77bcf86cd799439011", name: "SUPER ADMIN" },
+          role: "SUPER ADMIN",
         }}
         onSubmit={handleSubmit}
       />
     );
 
     fireEvent.change(screen.getByLabelText("role-select"), {
-      target: { value: "507f1f77bcf86cd799439012" },
+      target: { value: "HR" },
     });
     fireEvent.change(screen.getByLabelText("company-combobox"), {
       target: { value: "507f1f77bcf86cd799439021" },
@@ -133,7 +116,7 @@ describe("UserForm", () => {
 
     const submittedData = handleSubmit.mock.calls[0][0];
 
-    expect(submittedData.role).toBe("507f1f77bcf86cd799439012");
+    expect(submittedData.role).toBe("HR");
     expect(submittedData.company).toEqual({
       _id: "507f1f77bcf86cd799439021",
       name: "Acme HR",
@@ -149,7 +132,7 @@ describe("UserForm", () => {
         initialData={{
           name: "Henry Recruiter",
           email: "henry@example.com",
-          role: { _id: "507f1f77bcf86cd799439012", name: "HR" },
+          role: "HR",
           company: {
             _id: "507f1f77bcf86cd799439022",
             name: "Beta Corp",
@@ -163,7 +146,7 @@ describe("UserForm", () => {
     expect(screen.getByLabelText("company-combobox")).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("role-select"), {
-      target: { value: "507f1f77bcf86cd799439013" },
+      target: { value: "NORMAL USER" },
     });
 
     await waitFor(() => {
