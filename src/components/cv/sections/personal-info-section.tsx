@@ -26,12 +26,14 @@ interface PersonalInfoSectionProps {
   };
   onUpdate: (field: string, value: string | Date) => void;
   onAvatarChange?: (file: File) => void; // New prop for handling avatar file
+  isEmailReadOnly?: boolean;
 }
 
 export default function PersonalInfoSection({
   personalInfo,
   onUpdate,
   onAvatarChange,
+  isEmailReadOnly,
 }: PersonalInfoSectionProps) {
   const { t, language } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -183,6 +185,7 @@ export default function PersonalInfoSection({
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
         initialData={personalInfo as PersonalInfo}
+        isEmailReadOnly={isEmailReadOnly}
       />
     </>
   );

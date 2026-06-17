@@ -3,6 +3,8 @@ import { ApiResponse } from "@/shared/base/api-response.base";
 import {
   SkillCatalogItem,
   GetSkillCatalogParams,
+  PopularSkill,
+  GetPopularSkillsParams,
 } from "../schemas/skill.schema";
 
 export const skillApi = baseApi.injectEndpoints({
@@ -24,7 +26,24 @@ export const skillApi = baseApi.injectEndpoints({
       },
       keepUnusedDataFor: 86400, // Cache for 1 day
     }),
+    getPopularSkills: builder.query<
+      ApiResponse<PopularSkill[]>,
+      GetPopularSkillsParams | void
+    >({
+      query: (params) => {
+        const searchParams = new URLSearchParams();
+        if (params?.limit)
+          searchParams.append("limit", params.limit.toString());
+        const qs = searchParams.toString();
+        return {
+          url: `/skills/popular${qs ? `?${qs}` : ""}`,
+          method: "GET",
+        };
+      },
+      keepUnusedDataFor: 3600, // Cache for 1 hour
+    }),
   }),
 });
 
-export const { useGetSkillCatalogQuery } = skillApi;
+export const { useGetSkillCatalogQuery, useGetPopularSkillsQuery } = skillApi;
+

@@ -14,6 +14,13 @@ export const PersonalInfoSchema = z.object({
   bio: z.string().max(500, "Bio không được quá 500 ký tự").optional(),
 });
 
+export const CVProfilePersonalInfoSchema = PersonalInfoSchema.extend({
+  title: z.string().max(100, "Tiêu đề không được quá 100 ký tự").optional(),
+  phone: z.string().max(15, "Số điện thoại không hợp lệ").optional(),
+  birthday: z.union([z.date(), z.string()]).optional(),
+  gender: z.union([z.enum(["male", "female", "other"]), z.literal("")]).optional(),
+});
+
 // Education Schema (for Request - with id for upsert)
 export const EducationRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
@@ -135,9 +142,9 @@ export const UpsertCVProfileRequestSchema = z.object({
 
 // CV Profile Entity Schema (Response)
 export const CVProfileSchema = z.object({
-  _id: z.string(),
+  _id: z.string().optional(),
   userId: z.string(),
-  personalInfo: PersonalInfoSchema,
+  personalInfo: CVProfilePersonalInfoSchema,
   education: z.array(EducationSchema).optional().default([]),
   experience: z.array(ExperienceSchema).optional().default([]),
   skills: z.array(SkillSchema).optional().default([]),
@@ -146,6 +153,7 @@ export const CVProfileSchema = z.object({
   certificates: z.array(CertificateSchema).optional().default([]),
   awards: z.array(AwardSchema).optional().default([]),
   isActive: z.boolean().optional(),
+  isDraft: z.boolean().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   lastUpdated: z.string().optional(),

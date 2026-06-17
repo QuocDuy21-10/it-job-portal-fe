@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, Lock, Trash2, User, Mail, Eye, EyeOff, KeyRound } from "lucide-react";
+import { AlertCircle, Lock, Trash2, User, Mail, Eye, EyeOff, KeyRound, Settings } from "lucide-react";
 import {
   useChangePasswordMutation,
   useGetMeQuery,
@@ -158,13 +158,19 @@ export default function SettingsPage({
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          {t("settingsPage.title")}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("settingsPage.description")}
-        </p>
+      {/* Card Header */}
+      <div className="bg-card border border-border/50 rounded-2xl p-6 flex items-center gap-4 shadow-sm">
+        <div className="p-3.5 rounded-xl bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
+          <Settings className="w-8 h-8 text-primary-foreground" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t("settingsPage.title")}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {t("settingsPage.description")}
+          </p>
+        </div>
       </div>
 
       {/* Account Information */}

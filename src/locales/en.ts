@@ -910,6 +910,7 @@ export const en = {
       avatarFormat: "Format: JPG, PNG (Max 5MB)",
       cancelButton: "Cancel",
       saveButton: "Save Changes",
+      emailReadOnlyHint: "Email is synced from your account",
     },
     progress: {
       title: "Profile Completion",
@@ -921,6 +922,8 @@ export const en = {
       languages: "Languages",
       notEnough: "Complete at least {percent}% of your profile to preview and download CV",
       previewDownload: "Preview & Download",
+      checklistTitle: "COMPLETED ITEMS:",
+      tip: "Building a complete profile increases your chances of getting noticed by top employers by up to 3x.",
     },
     education: {
       title: "Education",

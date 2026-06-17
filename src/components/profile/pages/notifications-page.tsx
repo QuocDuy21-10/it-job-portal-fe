@@ -80,16 +80,22 @@ export default function NotificationsPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-            {t("notificationsPage.title")}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t("notificationsPage.description")}
-          </p>
+      {/* Card Header */}
+      <div className="bg-card border border-border/50 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-4">
+          <div className="p-3.5 rounded-xl bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
+            <Bell className="w-8 h-8 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("notificationsPage.title")}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              {t("notificationsPage.description")}
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start md:self-auto">
           {isFetching && !isLoading && (
             <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

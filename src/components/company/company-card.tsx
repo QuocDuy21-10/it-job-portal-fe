@@ -1,5 +1,6 @@
 import { Building2, Briefcase } from "lucide-react";
 import { useLocale } from "next-intl";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { type Company, type TopHiringCompany } from "@/features/company/schemas/company.schema";
@@ -36,10 +37,12 @@ export function CompanyCard({ company, className }: CompanyCardProps) {
           <div className="flex flex-col items-center gap-5">
             <div className="flex h-24 w-24 items-center justify-center rounded-[24px] border border-border/60 bg-background shadow-sm dark:border-white/10 dark:bg-background/40">
               {company.logo ? (
-                <img
+                <Image
                   src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
                   alt={`${company.name} logo`}
-                  className="h-14 w-14 object-contain"
+                  width={56}
+                  height={56}
+                  className="object-contain"
                 />
               ) : (
                 <Building2 className="h-10 w-10 text-muted-foreground" />

@@ -190,10 +190,12 @@ export function Header() {
                         className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-primary/20 bg-secondary overflow-hidden focus:outline-none focus-visible:outline-none hover:shadow-md transition-all duration-300 hover:scale-105 data-[state=open]:ring-2 data-[state=open]:ring-primary/20"
                         aria-label="User menu"
                       >
-                        <img
+                        <Image
                           src={user?.avatar || '/images/avatar-default.jpg'}
                           alt={user?.name || user?.email || "avatar"}
-                          className="w-10 h-10 object-cover rounded-full"
+                          width={40}
+                          height={40}
+                          className="object-cover rounded-full"
                         />
                       </button>
                   </DropdownMenuTrigger>
@@ -345,10 +347,12 @@ export function Header() {
                   className="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden flex-shrink-0 focus:outline-none hover:shadow-md transition-all duration-300 hover:scale-105"
                   aria-label="User account"
                 >
-                  <img
+                  <Image
                     src={user?.avatar || '/images/avatar-default.jpg'}
                     alt={user?.name || user?.email || "avatar"}
-                    className="w-10 h-10 object-cover"
+                    width={40}
+                    height={40}
+                    className="object-cover"
                   />
                 </button>
               </>
@@ -448,14 +452,18 @@ export function Header() {
               <span className="font-medium">
                 {i18nMounted ? t("nav.language") : "Language"}
               </span>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as "en" | "vi")}
-                className="px-3 py-1.5 border border-border dark:border-white/10 rounded-lg bg-card text-foreground text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              >
-                <option value="en">🇬🇧 English</option>
-                <option value="vi">🇻🇳 Tiếng Việt</option>
-              </select>
+              {isMounted ? (
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as "en" | "vi")}
+                  className="px-3 py-1.5 border border-border dark:border-white/10 rounded-lg bg-card text-foreground text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                >
+                  <option value="en">English</option>
+                  <option value="vi">Tiếng Việt</option>
+                </select>
+              ) : (
+                <div className="h-[38px] w-[112px] bg-muted/20 animate-pulse rounded-lg" />
+              )}
             </div>
           </div>
         </nav>
@@ -525,10 +533,12 @@ export function Header() {
           <div className="p-6 border-b dark:border-white/10 bg-muted/10">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full border-2 border-primary/20 overflow-hidden flex-shrink-0">
-                <img
+                <Image
                   src={user?.avatar || '/images/avatar-default.jpg'}
                   alt={user?.name || user?.email || "avatar"}
-                  className="w-full h-full object-cover"
+                  width={56}
+                  height={56}
+                  className="object-cover"
                 />
               </div>
               <div className="min-w-0 flex-1">

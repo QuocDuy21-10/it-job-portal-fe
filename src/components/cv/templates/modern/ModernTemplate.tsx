@@ -18,17 +18,11 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
       <div className="w-[35%] bg-[#E9ECEC] p-6 rounded-l-lg">
         {/* Header with Avatar */}
         <div className="text-center mb-6">
-          {cvData.personalInfo.avatar ? (
-            <img
-              src={cvData.personalInfo.avatar}
-              alt={cvData.personalInfo.fullName}
-              className="w-24 h-24 rounded-full object-cover mx-auto mb-3 border-2 border-gray-300"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center mx-auto mb-3">
-              <span className="text-xs text-gray-500">Ảnh</span>
-            </div>
-          )}
+          <img
+            src={cvData.personalInfo.avatar || "/images/avatar-default.jpg"}
+            alt={cvData.personalInfo.fullName || "Avatar"}
+            className="w-24 h-24 rounded-full object-cover mx-auto mb-3 border-2 border-gray-300"
+          />
           <h1 className="text-xl font-bold text-[#2F4F4F] mb-1">
             {cvData.personalInfo.fullName || "Họ và Tên"}
           </h1>

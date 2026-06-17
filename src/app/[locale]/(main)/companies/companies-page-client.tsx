@@ -2,7 +2,7 @@
 
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Search, X, Building2, MapPin, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -97,6 +97,26 @@ export default function CompanyListPage({
     router.replace(targetUrl, { scroll: false });
   }, [currentUrl, router, targetUrl]);
 
+  const companiesRef = useRef<HTMLDivElement>(null);
+  const isFirstMount = useRef(true);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (companiesRef.current) {
+      const elementPosition =
+        companiesRef.current.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - 84; // 64px header + 20px buffer
+      window.scrollTo({
+        top: offsetPosition >= 0 ? offsetPosition : 0,
+        behavior: "smooth",
+      });
+    }
+  }, [currentSearchState.page, currentSearchState.q]);
+
   const applySearch = useCallback(
     (value?: string) => {
       const nextSearchValue = (value ?? searchInput).trim();
@@ -146,7 +166,6 @@ export default function CompanyListPage({
         page,
       };
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
 
@@ -216,7 +235,7 @@ export default function CompanyListPage({
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div ref={companiesRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Companies Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

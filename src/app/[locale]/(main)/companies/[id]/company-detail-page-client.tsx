@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -29,13 +29,23 @@ export default function CompanyDetailPageClient({
     <div className="space-y-6">
       <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
         <div className="flex flex-col gap-4 sm:flex-row">
-          <div className="flex-1">
+          <div className="relative flex-1">
             <Input
               placeholder={t("companyDetailPage.filters.searchPlaceholder")}
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              className="h-11 w-full border-slate-300 transition-colors focus:border-blue-500 focus:ring-blue-500 dark:border-slate-700"
+              className="h-11 w-full pr-10 border-slate-300 transition-colors focus:border-blue-500 focus:ring-blue-500 dark:border-slate-700"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                aria-label={t("companyList.clearSearch")}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
           <select
             value={selectedLocationCode}

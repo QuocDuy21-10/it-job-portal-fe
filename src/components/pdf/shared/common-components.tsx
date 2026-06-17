@@ -90,13 +90,7 @@ export const CVHeader: React.FC<CVHeaderProps> = ({ personalInfo }) => {
     <View style={classicStyles.header}>
       {/* Avatar Section */}
       <View style={classicStyles.avatarContainer}>
-        {avatar ? (
-          <Image src={avatar} style={classicStyles.avatar} />
-        ) : (
-          <View style={classicStyles.avatarPlaceholder}>
-            <Text style={classicStyles.avatarPlaceholderText}>Ảnh</Text>
-          </View>
-        )}
+        <Image src={avatar || "/images/avatar-default.jpg"} style={classicStyles.avatar} />
       </View>
 
       {/* Personal Info Section */}

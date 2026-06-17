@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { useI18n } from "@/hooks/use-i18n";
 import { cn } from "@/lib/utils";
 import { useSkillCatalog } from "@/hooks/use-skill-catalog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { usePopularSkills } from "@/hooks/use-popular-skills";
 
 export interface SearchSuggestInputProps {
   value: string;
@@ -22,14 +24,6 @@ export interface SearchSuggestInputProps {
   forceClose?: boolean;
 }
 
-const POPULAR_SKILLS = [
-  { label: "React.JS", value: "REACT.JS" },
-  { label: "Next.JS", value: "NEXT.JS" },
-  { label: "JavaScript", value: "JAVASCRIPT" },
-  { label: "Python", value: "PYTHON" },
-  { label: "Figma", value: "FIGMA" },
-  { label: "Docker", value: "DOCKER" }
-];
 
 const CATEGORY_KEYWORDS = new Set([
   "frontend", "backend", "fullstack", "devops", "ui/ux design", 
@@ -83,6 +77,7 @@ export function SearchSuggestInput({
 }: SearchSuggestInputProps) {
   const { t } = useI18n();
   const { skillOptions } = useSkillCatalog();
+  const { popularSkills, isLoading: isLoadingPopular } = usePopularSkills(10);
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const [isFocused, setIsFocused] = React.useState(false);
   const [history, setHistory] = React.useState<string[]>([]);
@@ -469,19 +464,29 @@ export function SearchSuggestInput({
                   <span>Popular Skills</span>
                 </div>
                 <div className="flex flex-wrap gap-2 px-1">
-                  {POPULAR_SKILLS.map((skill) => (
-                    <button
-                      key={skill.value}
-                      type="button"
-                      onMouseDown={(event) => {
-                        event.preventDefault();
-                        selectSuggestion(skill.label);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary text-foreground hover:bg-primary/15 hover:text-primary border border-border/80 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
-                    >
-                      {skill.label}
-                    </button>
-                  ))}
+                  {isLoadingPopular ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton key={i} className="h-7 w-20 rounded-full" />
+                    ))
+                  ) : popularSkills.length > 0 ? (
+                    popularSkills.map((skill) => (
+                      <button
+                        key={skill.value}
+                        type="button"
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          selectSuggestion(skill.label);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary text-foreground hover:bg-primary/15 hover:text-primary border border-border/80 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+                      >
+                        {skill.label}
+                      </button>
+                    ))
+                  ) : (
+                    <span className="text-xs text-muted-foreground/60 px-1">
+                      No popular skills found
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

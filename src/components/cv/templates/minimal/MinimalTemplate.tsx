@@ -15,40 +15,47 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
   return (
     <div className="bg-white text-gray-800 p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
       {/* Header */}
-      <header className="mb-6 pb-4 border-b border-gray-300">
-        <h1 className="text-3xl font-light tracking-wide text-gray-800">
-          {cvData.personalInfo.fullName || "Họ và Tên"}
-        </h1>
-        {cvData.personalInfo.title && (
-          <p className="text-base text-gray-600 mt-1">{cvData.personalInfo.title}</p>
-        )}
-        <div className="flex flex-wrap gap-3 mt-3 text-xs text-gray-600">
-          {cvData.personalInfo.phone && <span>{cvData.personalInfo.phone}</span>}
-          {cvData.personalInfo.email && <span>{cvData.personalInfo.email}</span>}
-          {cvData.personalInfo.address && <span>{cvData.personalInfo.address}</span>}
-          {cvData.personalInfo.birthday && (
-            <span>{formatDateDisplay(cvData.personalInfo.birthday)}</span>
+      <header className="mb-6 pb-4 border-b border-gray-300 flex justify-between items-start gap-6">
+        <div className="flex-1">
+          <h1 className="text-3xl font-light tracking-wide text-gray-800">
+            {cvData.personalInfo.fullName || "Họ và Tên"}
+          </h1>
+          {cvData.personalInfo.title && (
+            <p className="text-base text-gray-600 mt-1">{cvData.personalInfo.title}</p>
           )}
-          {cvData.personalInfo.gender && (
-            <span>
-              {cvData.personalInfo.gender === "male"
-                ? "Nam"
-                : cvData.personalInfo.gender === "female"
-                ? "Nữ"
-                : "Khác"}
-            </span>
-          )}
-          {cvData.personalInfo.personalLink && (
-            <a
-              href={cvData.personalInfo.personalLink}
-              className="text-blue-600 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {cvData.personalInfo.personalLink}
-            </a>
-          )}
+          <div className="flex flex-wrap gap-3 mt-3 text-xs text-gray-600">
+            {cvData.personalInfo.phone && <span>{cvData.personalInfo.phone}</span>}
+            {cvData.personalInfo.email && <span>{cvData.personalInfo.email}</span>}
+            {cvData.personalInfo.address && <span>{cvData.personalInfo.address}</span>}
+            {cvData.personalInfo.birthday && (
+              <span>{formatDateDisplay(cvData.personalInfo.birthday)}</span>
+            )}
+            {cvData.personalInfo.gender && (
+              <span>
+                {cvData.personalInfo.gender === "male"
+                  ? "Nam"
+                  : cvData.personalInfo.gender === "female"
+                  ? "Nữ"
+                  : "Khác"}
+              </span>
+            )}
+            {cvData.personalInfo.personalLink && (
+              <a
+                href={cvData.personalInfo.personalLink}
+                className="text-blue-600 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {cvData.personalInfo.personalLink}
+              </a>
+            )}
+          </div>
         </div>
+        <img
+          src={cvData.personalInfo.avatar || "/images/avatar-default.jpg"}
+          alt={cvData.personalInfo.fullName || "Avatar"}
+          className="w-20 h-20 rounded-full object-cover border border-gray-200 flex-shrink-0"
+        />
       </header>
 
       {/* Bio */}

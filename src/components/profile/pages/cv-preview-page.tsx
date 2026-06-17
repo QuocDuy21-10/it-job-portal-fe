@@ -11,6 +11,8 @@ import { useRouter } from "@/i18n/navigation";
 import DownloadPDFButton from "@/components/pdf/download-pdf-button";
 import PDFPreview from "@/components/pdf/pdf-preview";
 import { ClassicTemplate, ModernTemplate, MinimalTemplate } from "@/components/cv/templates";
+import { cn } from "@/lib/utils";
+
 
 export default function CVPreviewPage() {
   const router = useRouter();
@@ -35,7 +37,7 @@ export default function CVPreviewPage() {
             avatar: result.personalInfo.avatar || "",
             title: result.personalInfo.title || "",
             fullName: result.personalInfo.fullName,
-            phone: result.personalInfo.phone,
+            phone: result.personalInfo.phone || "",
             email: result.personalInfo.email,
             birthday: result.personalInfo.birthday ? new Date(result.personalInfo.birthday) : undefined,
             gender: result.personalInfo.gender as "male" | "female" | "other" | undefined,
@@ -100,7 +102,7 @@ export default function CVPreviewPage() {
     };
 
     loadCVData();
-  }, []);
+  }, [fetchMyCVProfile]);
 
   if (isLoading) {
     return (
@@ -134,9 +136,8 @@ export default function CVPreviewPage() {
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => router.push("/profile?tab=create-cv")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-foreground font-medium hover:text-primary transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               {t("cvPreviewPage.backToEdit")}
@@ -145,7 +146,6 @@ export default function CVPreviewPage() {
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
-                size="sm"
                 onClick={() => setShowPDFPreview(!showPDFPreview)}
                 className="flex items-center gap-2"
               >
@@ -172,40 +172,52 @@ export default function CVPreviewPage() {
         </div>
       </div>
 
-      {/* Template Selector & Preview Toggle */}
-      <div className="bg-secondary/50 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="text-sm font-medium">{t("cvPreviewPage.templateLabel")}</span>
-            <div className="flex gap-2">
-              <Button
-                variant={selectedTemplate === "classic" ? "default" : "outline"}
-                size="sm"
+      {/* CV Preview & Controls */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 space-y-6">
+        {/* Template Selector Card */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6 bg-card border border-border/80 rounded-xl px-5 py-2 shadow-sm">
+            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              {t("cvPreviewPage.templateLabel")}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
                 onClick={() => setSelectedTemplate("classic")}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-semibold rounded-lg transition-all cursor-pointer",
+                  selectedTemplate === "classic"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
               >
                 {t("cvPreviewPage.templateClassic")}
-              </Button>
-              <Button
-                variant={selectedTemplate === "modern" ? "default" : "outline"}
-                size="sm"
+              </button>
+              <button
                 onClick={() => setSelectedTemplate("modern")}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-semibold rounded-lg transition-all cursor-pointer",
+                  selectedTemplate === "modern"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
               >
                 {t("cvPreviewPage.templateModern")}
-              </Button>
-              <Button
-                variant={selectedTemplate === "minimal" ? "default" : "outline"}
-                size="sm"
+              </button>
+              <button
                 onClick={() => setSelectedTemplate("minimal")}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-semibold rounded-lg transition-all cursor-pointer",
+                  selectedTemplate === "minimal"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
               >
                 {t("cvPreviewPage.templateMinimal")}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* CV Preview */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {showPDFPreview ? (
           <Card className="p-4 md:p-6 bg-white dark:bg-card border border-border shadow-lg">
             <PDFPreview cvData={cvData} template={selectedTemplate as "classic" | "modern" | "minimal"} />

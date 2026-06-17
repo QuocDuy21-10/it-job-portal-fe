@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { Document, Page, Text, View } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image } from "@react-pdf/renderer";
 import { ICVProfile } from "@/shared/types/cv";
 import { minimalStyles } from "@/components/pdf/styles/minimal-styles";
 import { formatDateForDisplay } from "@/lib/pdf/helpers";
@@ -35,24 +35,30 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
       <Page size="A4" style={minimalStyles.page}>
         {/* Header */}
         <View style={minimalStyles.header}>
-          <Text style={minimalStyles.name}>{personalInfo.fullName || "Họ và Tên"}</Text>
-          {personalInfo.title && (
-            <Text style={minimalStyles.title}>{personalInfo.title}</Text>
-          )}
-          <View style={minimalStyles.contactRow}>
-            {personalInfo.phone && (
-              <Text style={minimalStyles.contactItem}>{personalInfo.phone}</Text>
+          <View style={minimalStyles.headerInfo}>
+            <Text style={minimalStyles.name}>{personalInfo.fullName || "Họ và Tên"}</Text>
+            {personalInfo.title && (
+              <Text style={minimalStyles.title}>{personalInfo.title}</Text>
             )}
-            {personalInfo.email && (
-              <Text style={minimalStyles.contactItem}>{personalInfo.email}</Text>
-            )}
-            {personalInfo.address && (
-              <Text style={minimalStyles.contactItem}>{personalInfo.address}</Text>
-            )}
-            {personalInfo.personalLink && (
-              <Text style={minimalStyles.contactItem}>{personalInfo.personalLink}</Text>
-            )}
+            <View style={minimalStyles.contactRow}>
+              {personalInfo.phone && (
+                <Text style={minimalStyles.contactItem}>{personalInfo.phone}</Text>
+              )}
+              {personalInfo.email && (
+                <Text style={minimalStyles.contactItem}>{personalInfo.email}</Text>
+              )}
+              {personalInfo.address && (
+                <Text style={minimalStyles.contactItem}>{personalInfo.address}</Text>
+              )}
+              {personalInfo.personalLink && (
+                <Text style={minimalStyles.contactItem}>{personalInfo.personalLink}</Text>
+              )}
+            </View>
           </View>
+          <Image
+            src={getProxiedImageUrl(personalInfo.avatar || "/images/avatar-default.jpg")}
+            style={minimalStyles.avatar}
+          />
         </View>
 
         {/* Bio */}

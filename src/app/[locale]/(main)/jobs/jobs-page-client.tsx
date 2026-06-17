@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useJobList } from "@/hooks/use-job-list";
 import { SimplePagination } from "@/components/simple-pagination";
@@ -208,6 +208,34 @@ function JobsPageContent({
 
     router.replace(targetUrl, { scroll: false });
   }, [currentUrl, router, targetUrl]);
+
+  const listingsRef = useRef<HTMLDivElement>(null);
+  const isFirstMount = useRef(true);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (listingsRef.current) {
+      const elementPosition =
+        listingsRef.current.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - 84; // 64px header + 20px buffer
+      window.scrollTo({
+        top: offsetPosition >= 0 ? offsetPosition : 0,
+        behavior: "smooth",
+      });
+    }
+  }, [
+    currentSearchState.page,
+    currentSearchState.q,
+    currentSearchState.locationCode,
+    currentSearchState.type,
+    currentSearchState.experience,
+    currentSearchState.salary,
+    currentSearchState.sort,
+  ]);
 
   const clearAllFilters = () => {
     resetAllFilters();
@@ -637,7 +665,7 @@ function JobsPageContent({
             </div>
 
             {/* Right List Column */}
-            <div className="col-span-1 lg:col-span-3 space-y-6">
+            <div ref={listingsRef} className="col-span-1 lg:col-span-3 space-y-6">
               <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <h2 className="text-lg font-medium text-foreground">
                   <span className="font-bold">{totalItems.toLocaleString()}</span>{" "}
@@ -729,10 +757,7 @@ function JobsPageContent({
                 <SimplePagination
                   page={currentPage}
                   totalPages={totalPages}
-                  onPageChange={(page) => {
-                    setPage(page);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onPageChange={setPage}
                   isLoading={isLoading}
                   labelText={t("jobsPage.pageLabel")}
                 />

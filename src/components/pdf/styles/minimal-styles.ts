@@ -17,9 +17,22 @@ export const minimalStyles = StyleSheet.create({
 
   // === HEADER ===
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 16,
     paddingBottom: 12,
     borderBottom: "1 solid #CCCCCC",
+  },
+  headerInfo: {
+    flex: 1,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    objectFit: "cover",
+    marginLeft: 16,
   },
   name: {
     fontSize: 20,

@@ -16,6 +16,7 @@ interface PersonalInfoModalProps {
   onClose: () => void;
   onSubmit: (data: PersonalInfo, avatarFile?: File) => void;
   initialData?: PersonalInfo;
+  isEmailReadOnly?: boolean;
 }
 
 export default function PersonalInfoModal({
@@ -23,6 +24,7 @@ export default function PersonalInfoModal({
   onClose,
   onSubmit,
   initialData,
+  isEmailReadOnly,
 }: PersonalInfoModalProps) {
   const { t } = useI18n();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -213,15 +215,23 @@ export default function PersonalInfoModal({
                     <label className="text-sm font-semibold text-foreground flex items-center gap-1 mb-1.5">
                       {t("cv.personalInfo.email")}
                       <span className="text-destructive">*</span>
+                    
                     </label>
                     <input
                       {...field}
                       type="email"
                       placeholder={t("cv.personalInfo.emailPlaceholder")}
+                      readOnly={isEmailReadOnly}
+                      disabled={isEmailReadOnly}
                       className={`w-full px-3 py-2 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm ${
+                        isEmailReadOnly
+                          ? "bg-muted/50 cursor-not-allowed opacity-70 focus:ring-0 focus:border-border"
+                          : ""
+                      } ${
                         errors.email ? "border-destructive" : "border-border"
                       }`}
                     />
+                    
                     {errors.email && (
                       <p className="text-xs text-destructive flex items-center gap-1 mt-1">
                         <AlertCircle className="w-3.5 h-3.5" />

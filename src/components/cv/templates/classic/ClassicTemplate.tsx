@@ -25,13 +25,11 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
       {/* Header */}
       <div className="border-b-2 border-black pb-4">
         <div className="flex items-start gap-6">
-          {cvData.personalInfo.avatar && (
-            <img
-              src={cvData.personalInfo.avatar}
-              alt={cvData.personalInfo.fullName}
-              className="w-28 h-28 rounded-full object-cover border-2 border-gray-300"
-            />
-          )}
+          <img
+            src={cvData.personalInfo.avatar || "/images/avatar-default.jpg"}
+            alt={cvData.personalInfo.fullName || "Avatar"}
+            className="w-28 h-28 rounded-full object-cover border-2 border-gray-300"
+          />
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight">
               {cvData.personalInfo.fullName || "Họ và Tên"}

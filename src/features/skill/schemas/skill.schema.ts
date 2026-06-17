@@ -14,3 +14,15 @@ export interface GetSkillCatalogParams {
   search?: string;
   limit?: number;
 }
+
+export const PopularSkillSchema = z.object({
+  skill: z.string(),
+  count: z.number(),
+});
+
+export type PopularSkill = z.infer<typeof PopularSkillSchema>;
+
+export interface GetPopularSkillsParams {
+  limit?: number;
+}
+

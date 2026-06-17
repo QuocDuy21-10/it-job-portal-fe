@@ -46,4 +46,5 @@ export const cvProfileApi = baseApi.injectEndpoints({
 export const {
   useUpsertCVProfileMutation,
   useGetMyCVProfileQuery,
+  useLazyGetMyCVProfileQuery,
 } = cvProfileApi;

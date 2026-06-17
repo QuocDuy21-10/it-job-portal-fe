@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Building2, Globe, Heart, Users } from "lucide-react";
+import Image from "next/image";
 import parse from "html-react-parser";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
@@ -28,10 +29,12 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
             <div className="flex gap-6 flex-1">
               <div className="w-28 h-28 rounded-xl bg-white shadow-xl flex items-center justify-center flex-shrink-0 p-2 hover:shadow-2xl transition-shadow">
                 {company?.logo ? (
-                <img
+                <Image
                   src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
                   alt={`${company?.name} logo`}
-                  className="h-full w-full object-contain rounded-lg"
+                  width={96}
+                  height={96}
+                  className="object-contain rounded-lg"
                 />
               ) : (
                 <Building2 className="h-12 w-12 text-slate-400" /> 

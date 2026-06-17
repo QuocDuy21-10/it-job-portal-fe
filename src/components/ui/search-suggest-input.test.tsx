@@ -19,6 +19,19 @@ jest.mock("@/hooks/use-skill-catalog", () => ({
   }),
 }));
 
+jest.mock("@/hooks/use-popular-skills", () => ({
+  usePopularSkills: () => ({
+    popularSkills: [
+      { label: "React.JS", value: "React.JS" },
+      { label: "Next.JS", value: "Next.JS" },
+    ],
+    isLoading: false,
+    error: undefined,
+  }),
+}));
+
+
+
 describe("SearchSuggestInput", () => {
   const mockOnChange = jest.fn();
   const mockOnSubmit = jest.fn();

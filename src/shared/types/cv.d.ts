@@ -60,13 +60,14 @@ export interface ICVProfile {
     description?: string;
   }>;
   isActive?: boolean;
+  isDraft?: boolean;
   lastUpdated?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 
-interface CVData {
+export interface CVData {
   _id?: string;
   userId?: string;
   personalInfo: {
@@ -128,6 +129,7 @@ interface CVData {
     description?: string;
   }>;
   isActive?: boolean;
+  isDraft?: boolean;
   lastUpdated?: string;
   createdAt?: string;
   updatedAt?: string;

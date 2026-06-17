@@ -34,7 +34,7 @@ const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
   // Use proxied URL to avoid CORS issues
   const personalInfoWithProxiedAvatar = {
     ...personalInfo,
-    avatar: getProxiedImageUrl(personalInfo.avatar),
+    avatar: getProxiedImageUrl(personalInfo.avatar || "/images/avatar-default.jpg"),
   };
 
   return (

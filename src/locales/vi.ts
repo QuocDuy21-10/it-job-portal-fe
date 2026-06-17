@@ -912,6 +912,7 @@ export const vi = {
       avatarFormat: "Định dạng: JPG, PNG (Max 5MB)",
       cancelButton: "Hủy",
       saveButton: "Lưu thay đổi",
+      emailReadOnlyHint: "Email được đồng bộ từ tài khoản của bạn",
     },
     progress: {
       title: "Hoàn thiện hồ sơ",
@@ -923,6 +924,8 @@ export const vi = {
       languages: "Ngôn ngữ",
       notEnough: "Cần hoàn thành ít nhất {percent}% hồ sơ để xem trước và tải xuống CV",
       previewDownload: "Xem trước & Tải xuống",
+      checklistTitle: "HOÀN THÀNH CÁC MỤC:",
+      tip: "Hoàn thiện hồ sơ giúp tăng cơ hội được các nhà tuyển dụng hàng đầu chú ý lên gấp 3 lần.",
     },
     education: {
       title: "Học vấn",

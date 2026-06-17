@@ -15,6 +15,11 @@ export function getProxiedImageUrl(imageUrl?: string): string | undefined {
     return imageUrl;
   }
 
+  // If it's a relative URL, return as is
+  if (imageUrl.startsWith("/")) {
+    return imageUrl;
+  }
+
   // If it's a relative URL or backend URL, proxy it
   try {
     const url = new URL(imageUrl, window.location.origin);

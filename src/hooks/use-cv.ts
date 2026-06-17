@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { 
   useUpsertCVProfileMutation, 
-  useGetMyCVProfileQuery 
+  useLazyGetMyCVProfileQuery 
 } from "@/features/cv-profile/redux/cv-profile.api";
 import { 
   UpsertCVProfileRequest, 
@@ -15,7 +15,7 @@ interface UseCV {
   upsertCV: (data: UpsertCVProfileRequest, avatarFile?: File) => Promise<CVProfile | null>;
   fetchMyCVProfile: () => Promise<CVProfile | null>;
   clearError: () => void;
-  refetch: () => void;
+  refetch: () => Promise<CVProfile | null>;
 }
 
 /**
@@ -25,42 +25,29 @@ interface UseCV {
 export const useCV = (): UseCV => {
   const [error, setError] = useState<string | null>(null);
 
-  // RTK Query hooks
-  const { 
-    data: cvProfileData, 
-    isLoading: isLoadingQuery,
-    refetch 
-  } = useGetMyCVProfileQuery();
+  const [
+    triggerGetMyCVProfile,
+    { data: cvProfileData, isLoading: isLoadingQuery, isFetching: isFetchingQuery },
+  ] = useLazyGetMyCVProfileQuery();
   
   const [upsertCVMutation, { isLoading: isUpserting }] = useUpsertCVProfileMutation();
 
   const cvData = cvProfileData?.data || null;
-  const isLoading = isLoadingQuery || isUpserting;
+  const isLoading = isLoadingQuery || isFetchingQuery || isUpserting;
 
   /**
    * Fetch current user's CV Profile
    * GET /cv-profiles/me
-   * Returns 200 OK with data: null if user doesn't have CV Profile yet
+   * Returns saved profiles and backend-initialized drafts in the same data shape.
    */
   const fetchMyCVProfile = useCallback(async (): Promise<CVProfile | null> => {
     setError(null);
 
     try {
-      const result = await refetch();
+      const result = await triggerGetMyCVProfile(undefined, false).unwrap();
       
-      // Success: data exists (user has CV Profile)
-      if (result.data?.data) {
-        return result.data.data;
-      }
-      
-      // Success: data is null (user doesn't have CV Profile yet - this is normal)
-      if (result.data?.data === null) {
-        return null;
-      }
-      
-      // Error occurred
-      if (result.error) {
-        throw result.error;
+      if (result.data) {
+        return result.data;
       }
       
       return null;
@@ -69,7 +56,7 @@ export const useCV = (): UseCV => {
       setError(errorMessage);
       return null;
     }
-  }, [refetch]);
+  }, [triggerGetMyCVProfile]);
 
   /**
    * Upsert CV Profile (Create or Update)
@@ -104,6 +91,6 @@ export const useCV = (): UseCV => {
     upsertCV,
     fetchMyCVProfile,
     clearError,
-    refetch,
+    refetch: fetchMyCVProfile,
   };
 };

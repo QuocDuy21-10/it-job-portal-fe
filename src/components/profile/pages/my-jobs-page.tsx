@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Briefcase, Heart, MapPin, Calendar, ExternalLink, Building2, DollarSign } from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
@@ -114,13 +115,19 @@ export default function MyJobsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          {t("myJobsPage.title")}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("myJobsPage.description")}
-        </p>
+      {/* Card Header */}
+      <div className="bg-card border border-border/50 rounded-2xl p-6 flex items-center gap-4 shadow-sm">
+        <div className="p-3.5 rounded-xl bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
+          <Briefcase className="w-8 h-8 text-primary-foreground" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t("myJobsPage.title")}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {t("myJobsPage.description")}
+          </p>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -196,9 +203,11 @@ export default function MyJobsPage() {
                         {/* Company Logo */}
                         <div className="w-12 h-12 rounded-lg bg-slate-50 dark:bg-muted border border-border flex items-center justify-center overflow-hidden flex-shrink-0">
                           {logoUrl ? (
-                            <img
+                            <Image
                               alt={jobData.companyName}
-                              className="w-10 h-10 object-contain"
+                              width={40}
+                              height={40}
+                              className="object-contain"
                               src={logoUrl}
                             />
                           ) : (

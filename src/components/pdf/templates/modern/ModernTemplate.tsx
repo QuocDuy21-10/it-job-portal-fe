@@ -39,7 +39,7 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
   } = cvData;
 
   // Use proxied URL to avoid CORS issues
-  const avatarUrl = getProxiedImageUrl(personalInfo.avatar);
+  const avatarUrl = getProxiedImageUrl(personalInfo.avatar || "/images/avatar-default.jpg");
 
   return (
     <Document>
@@ -48,13 +48,7 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
         <View style={modernStyles.sidebar}>
           {/* Header with Avatar */}
           <View style={modernStyles.sidebarHeader}>
-            {avatarUrl ? (
-              <Image src={avatarUrl} style={modernStyles.sidebarAvatar} />
-            ) : (
-              <View style={modernStyles.sidebarAvatarPlaceholder}>
-                <Text style={{ fontSize: 10, color: "#999999" }}>Avatar</Text>
-              </View>
-            )}
+            <Image src={avatarUrl} style={modernStyles.sidebarAvatar} />
             <Text style={modernStyles.sidebarName}>
               {personalInfo.fullName || "Họ và Tên"}
             </Text>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -91,10 +92,12 @@ const JobCard = ({
       {/* Header: Logo + Job Title */}
       <div className="flex gap-3 items-start mb-2">
         {job.company?.logo ? (
-          <img
+          <Image
             src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`} 
             alt={job.company.name || "Company logo"}
-            className="w-10 h-10 rounded-md object-cover border border-gray-200 dark:border-gray-600 flex-shrink-0"
+            width={40}
+            height={40}
+            className="rounded-md object-cover border border-gray-200 dark:border-gray-600 flex-shrink-0"
           />
         ) : (
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 dark:bg-secondary">
