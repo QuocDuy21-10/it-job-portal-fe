@@ -131,6 +131,37 @@ const buildJobStructuredData = (job: Job, locale: AppLocale) => {
   };
 };
 
+const buildJobBreadcrumbsStructuredData = (job: Job, locale: AppLocale) => {
+  const homeUrl = getLocalizedUrl("/", locale);
+  const jobsUrl = getLocalizedUrl("/jobs", locale);
+  const jobUrl = getLocalizedUrl(`/jobs/${job._id}`, locale);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": homeUrl,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Jobs",
+        "item": jobsUrl,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": job.name,
+        "item": jobUrl,
+      },
+    ],
+  };
+};
+
 export async function generateMetadata({
   params,
 }: JobDetailPageProps): Promise<Metadata> {
@@ -154,6 +185,7 @@ export async function generateMetadata({
     title,
     description,
     keywords: meta("keywords"),
+    ogImage: getCompanyLogoUrl(job.company.logo),
   });
 }
 
@@ -182,6 +214,12 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: serializeJsonLd(buildJobStructuredData(job, locale)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildJobBreadcrumbsStructuredData(job, locale)),
         }}
       />
 

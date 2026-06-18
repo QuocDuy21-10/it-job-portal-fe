@@ -111,6 +111,7 @@ type BuildLocalizedPageMetadataOptions = {
   title: string;
   description: string;
   keywords?: Metadata["keywords"];
+  ogImage?: string | null;
 };
 
 export const buildLocalizedPageMetadata = ({
@@ -119,7 +120,13 @@ export const buildLocalizedPageMetadata = ({
   title,
   description,
   keywords,
+  ogImage,
 }: BuildLocalizedPageMetadataOptions): Metadata => {
+  const fallbackOgImage = getAbsoluteUrl("/images/logo.png");
+  const ogImages = ogImage
+    ? [{ url: ogImage }]
+    : [{ url: fallbackOgImage, width: 1200, height: 630, alt: title }];
+
   return {
     title,
     description,
@@ -135,11 +142,13 @@ export const buildLocalizedPageMetadata = ({
       url: getLocalizedUrl(pathname, locale),
       title,
       description,
+      images: ogImages,
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
+      images: ogImage ? [ogImage] : [fallbackOgImage],
     },
   };
 };

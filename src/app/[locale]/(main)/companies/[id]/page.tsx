@@ -95,6 +95,37 @@ const buildCompanyStructuredData = (company: Company, locale: AppLocale) => {
   };
 };
 
+const buildCompanyBreadcrumbsStructuredData = (company: Company, locale: AppLocale) => {
+  const homeUrl = getLocalizedUrl("/", locale);
+  const companiesUrl = getLocalizedUrl("/companies", locale);
+  const companyUrl = getLocalizedUrl(`/companies/${company._id}`, locale);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": homeUrl,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Companies",
+        "item": companiesUrl,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": company.name,
+        "item": companyUrl,
+      },
+    ],
+  };
+};
+
 export async function generateMetadata({
   params,
 }: CompanyDetailPageProps): Promise<Metadata> {
@@ -119,6 +150,7 @@ export async function generateMetadata({
     title,
     description,
     keywords: meta("keywords"),
+    ogImage: getCompanyLogoUrl(company.logo),
   });
 }
 
@@ -148,6 +180,12 @@ export default async function CompanyDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: serializeJsonLd(buildCompanyStructuredData(company, locale)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildCompanyBreadcrumbsStructuredData(company, locale)),
         }}
       />
 
