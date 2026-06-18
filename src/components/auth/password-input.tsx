@@ -5,6 +5,7 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -16,6 +17,7 @@ interface PasswordInputProps
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ label, error, showIcon = true, className, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
+    const { t } = useI18n();
 
     return (
       <div className="space-y-2">
@@ -45,7 +47,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             tabIndex={-1}
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={showPassword ? t("authModal.passwordInput.hidePassword") : t("authModal.passwordInput.showPassword")}
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />

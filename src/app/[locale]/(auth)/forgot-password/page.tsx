@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState, useMemo } from "react";
 import { Mail, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,14 +10,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
   ForgotPasswordFormData,
-  ForgotPasswordSchema,
+  createForgotPasswordSchema,
 } from "@/features/auth/schemas/auth.schema";
 import { authApi } from "@/features/auth/redux/auth.api";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { AuthHeader } from "@/components/auth/auth-header";
 import { AuthCard } from "@/components/auth/auth-card";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
 
 export default function ForgotPasswordPage() {
+  const { t } = useI18n();
+  const forgotPasswordSchema = useMemo(() => createForgotPasswordSchema(t), [t]);
+  
   const [isSuccess, setIsSuccess] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
   const [submittedEmail, setSubmittedEmail] = useState("");
@@ -28,7 +32,7 @@ export default function ForgotPasswordPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordFormData>({
-    resolver: zodResolver(ForgotPasswordSchema),
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
@@ -58,7 +62,7 @@ export default function ForgotPasswordPage() {
 
       if (response.statusCode === 201) {
         setIsSuccess(true);
-        toast.success("Đã gửi email hướng dẫn đặt lại mật khẩu!", {
+        toast.success(t("authModal.forgotPassword.toasts.sendSuccess"), {
           duration: 5000,
         });
 
@@ -70,21 +74,19 @@ export default function ForgotPasswordPage() {
       
       // Vẫn hiển thị success message để bảo mật (không tiết lộ email có tồn tại hay không)
       setIsSuccess(true);
-      toast.success(
-        "Nếu email tồn tại trong hệ thống, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu."
-      );
+      toast.success(t("authModal.forgotPassword.toasts.sendFallback"));
     }
   };
 
   return (
     <AuthLayout
-      title="Reset Your Password"
-      description="Don't worry! It happens. Enter your email and we'll send you instructions to reset your password."
+      title={t("authModal.forgotPassword.titlePage")}
+      description={t("authModal.forgotPassword.descriptionPage")}
     >
       <AuthHeader />
       <AuthCard
-        title="Reset Password"
-        description="We'll send a reset link to your email"
+        title={t("authModal.forgotPassword.titleCard")}
+        description={t("authModal.forgotPassword.descriptionCard")}
       >
 
         {isSuccess ? (
@@ -94,21 +96,18 @@ export default function ForgotPasswordPage() {
                 <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Email Sent Successfully!
+                {t("authModal.forgotPassword.successTitle")}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                We&apos;ve sent password reset instructions to{" "}
-                <span className="font-medium text-blue-600 dark:text-blue-400">
-                  {submittedEmail}
-                </span>
+                {t("authModal.forgotPassword.successDescription", { email: submittedEmail })}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500">
-                Please check your inbox (and spam folder).
+                {t("authModal.forgotPassword.successHelp")}
               </p>
 
               {cooldownTime > 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
-                  Resend available in {cooldownTime}s
+                  {t("authModal.forgotPassword.cooldownText", { time: cooldownTime })}
                 </p>
               )}
             </div>
@@ -121,13 +120,13 @@ export default function ForgotPasswordPage() {
                 onClick={() => setIsSuccess(false)}
                 disabled={cooldownTime > 0}
               >
-                {cooldownTime > 0 ? `Wait ${cooldownTime}s` : "Resend Email"}
+                {cooldownTime > 0 ? t("authModal.forgotPassword.waitCooldownBtn", { time: cooldownTime }) : t("authModal.forgotPassword.resendBtn")}
               </Button>
 
               <Link href="/login" className="block">
                 <Button variant="ghost" className="w-full">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Login
+                  {t("authModal.forgotPassword.backToLogin")}
                 </Button>
               </Link>
             </div>
@@ -137,7 +136,7 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="dark:text-gray-200">
-                  Email Address
+                  {t("authModal.login.fields.email.label")}
                 </Label>
                 <div className="relative">
                   <Mail
@@ -147,7 +146,7 @@ export default function ForgotPasswordPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t("authModal.login.fields.email.placeholder")}
                     className="pl-10 auth-input"
                     {...register("email")}
                     disabled={isLoading}
@@ -168,12 +167,12 @@ export default function ForgotPasswordPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending...
+                    {t("authModal.forgotPassword.sendingBtn")}
                   </>
                 ) : cooldownTime > 0 ? (
-                  `Wait ${cooldownTime}s`
+                  t("authModal.forgotPassword.waitCooldownBtn", { time: cooldownTime })
                 ) : (
-                  "Send Instructions"
+                  t("authModal.forgotPassword.submitBtn")
                 )}
               </Button>
             </form>
@@ -184,7 +183,7 @@ export default function ForgotPasswordPage() {
                 className="text-sm auth-link flex items-center gap-1"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to login
+                {t("authModal.forgotPassword.backToLogin")}
               </Link>
             </div>
           </div>
@@ -194,9 +193,9 @@ export default function ForgotPasswordPage() {
       {/* Footer */}
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Don&apos;t have an account?{" "}
+          {t("authModal.login.footer.noAccount")}{" "}
           <Link href="/register" className="auth-link">
-            Sign up
+            {t("authModal.tabs.signup")}
           </Link>
         </p>
       </div>

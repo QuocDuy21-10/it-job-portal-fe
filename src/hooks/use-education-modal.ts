@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { EducationRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Education extends EducationRequest {
   id: string;
@@ -21,6 +22,7 @@ export function useEducationModal(
   onAdd: (education: Education) => void,
   onUpdate: (id: string, field: string, value: string) => void
 ): UseEducationModalReturn {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [currentEducation, setCurrentEducation] = useState<Education | undefined>(undefined);
@@ -49,8 +51,8 @@ export function useEducationModal(
         ...data,
       };
       onAdd(newEducation);
-      toast.success("Thêm học vấn thành công", {
-        description: `Đã thêm: ${data.school} - ${data.degree}`,
+      toast.success(t("cv.toasts.educationAddSuccess"), {
+        description: t("cv.toasts.educationAdded", { school: data.school, degree: data.degree }),
         duration: 2000,
       });
     } else if (mode === "edit" && currentEducation) {
@@ -60,8 +62,8 @@ export function useEducationModal(
       onUpdate(currentEducation.id, "startDate", data.startDate);
       onUpdate(currentEducation.id, "endDate", data.endDate || "");
       onUpdate(currentEducation.id, "description", data.description || "");
-      toast.success("Cập nhật học vấn thành công", {
-        description: `Đã cập nhật: ${data.school}`,
+      toast.success(t("cv.toasts.educationEditSuccess"), {
+        description: t("cv.toasts.educationUpdated", { school: data.school }),
         duration: 2000,
       });
     }

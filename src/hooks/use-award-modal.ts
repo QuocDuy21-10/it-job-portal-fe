@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { AwardRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Award extends AwardRequest {
   id: string;
@@ -21,6 +22,7 @@ export function useAwardModal(
   onAdd: (award: Award) => void,
   onUpdate: (id: string, field: string, value: string) => void
 ): UseAwardModalReturn {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [currentAward, setCurrentAward] = useState<Award | undefined>(undefined);
@@ -49,16 +51,16 @@ export function useAwardModal(
         ...data,
       };
       onAdd(newAward);
-      toast.success("Thêm giải thưởng thành công", {
-        description: `Đã thêm: ${data.name}`,
+      toast.success(t("cv.toasts.awardAddSuccess"), {
+        description: t("cv.toasts.awardAdded", { name: data.name }),
         duration: 2000,
       });
     } else if (mode === "edit" && currentAward) {
       onUpdate(currentAward.id, "name", data.name);
       onUpdate(currentAward.id, "date", data.date);
       onUpdate(currentAward.id, "description", data.description || "");
-      toast.success("Cập nhật giải thưởng thành công", {
-        description: `Đã cập nhật: ${data.name}`,
+      toast.success(t("cv.toasts.awardEditSuccess"), {
+        description: t("cv.toasts.awardUpdated", { name: data.name }),
         duration: 2000,
       });
     }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import Link from "next/link";
+import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
   ResetPasswordFormData,
-  ResetPasswordSchema,
+  createResetPasswordSchema,
 } from "@/features/auth/schemas/auth.schema";
 import { authApi } from "@/features/auth/redux/auth.api";
 import {
@@ -19,10 +18,15 @@ import {
   AuthCard,
   PasswordInput,
 } from "@/components/auth";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
 
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
+  const resetPasswordSchema = useMemo(() => createResetPasswordSchema(t), [t]);
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
@@ -34,7 +38,7 @@ function ResetPasswordForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<ResetPasswordFormData>({
-    resolver: zodResolver(ResetPasswordSchema),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       newPassword: "",
       confirmPassword: "",
@@ -46,10 +50,10 @@ function ResetPasswordForm() {
   // Check token and email on component mount
   useEffect(() => {
     if (!token || !email) {
-      toast.error("Invalid password reset link");
+      toast.error(t("authModal.resetPassword.toasts.invalidLink"));
       router.push("/forgot-password");
     }
-  }, [token, email, router]);
+  }, [token, email, router, t]);
 
   // Countdown để redirect sau khi thành công
   useEffect(() => {
@@ -65,7 +69,7 @@ function ResetPasswordForm() {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token || !email) {
-      toast.error("Thiếu thông tin xác thực");
+      toast.error(t("authModal.resetPassword.toasts.missingInfo"));
       return;
     }
 
@@ -78,20 +82,20 @@ function ResetPasswordForm() {
 
       if (response.statusCode === 201) {
         setIsSuccess(true);
-        toast.success("Password reset successful!");
+        toast.success(t("authModal.resetPassword.toasts.success"));
       }
     } catch (error: any) {
       console.error("Reset password error:", error);
 
       const errorMessage =
-        error?.data?.message || "Password reset failed";
+        error?.data?.message || t("authModal.resetPassword.toasts.genericFailed");
 
       if (
         errorMessage.includes("expired") ||
         errorMessage.includes("invalid") ||
         errorMessage.includes("hết hạn")
       ) {
-        toast.error("Password reset link has expired or is invalid");
+        toast.error(t("authModal.resetPassword.toasts.expiredLink"));
         setTimeout(() => {
           router.push("/forgot-password");
         }, 2000);
@@ -104,13 +108,13 @@ function ResetPasswordForm() {
   return (
     <AuthLayout>
       <AuthHeader
-        title="Reset Password"
-        description="Create a new password for your account"
+        title={t("authModal.resetPassword.titlePage")}
+        description={t("authModal.resetPassword.descriptionPage")}
       />
 
       <AuthCard
-        title="New Password"
-        description="Please enter your new password and confirm it"
+        title={t("authModal.resetPassword.titleCard")}
+        description={t("authModal.resetPassword.descriptionCard")}
       >
 
         {isSuccess ? (
@@ -120,18 +124,18 @@ function ResetPasswordForm() {
                 <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Password Reset Successful!
+                {t("authModal.resetPassword.successTitle")}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Your password has been updated successfully.
+                {t("authModal.resetPassword.successDescription")}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500">
-                Redirecting to login page in {countdown}s...
+                {t("authModal.resetPassword.redirectingText", { time: countdown })}
               </p>
 
               <Link href="/login" className="mt-6 w-full block">
                 <Button className="w-full auth-button-primary h-11">
-                  Go to Login Page
+                  {t("authModal.resetPassword.goLoginBtn")}
                 </Button>
               </Link>
             </div>
@@ -142,7 +146,7 @@ function ResetPasswordForm() {
               {/* New Password */}
               <PasswordInput
                 id="newPassword"
-                label="New Password"
+                label={t("authModal.resetPassword.titleCard")}
                 placeholder="••••••••"
                 error={errors.newPassword?.message}
                 disabled={isLoading}
@@ -152,7 +156,7 @@ function ResetPasswordForm() {
               {/* Confirm Password */}
               <PasswordInput
                 id="confirmPassword"
-                label="Confirm Password"
+                label={t("authModal.register.fields.confirmPassword.label")}
                 placeholder="••••••••"
                 error={errors.confirmPassword?.message}
                 disabled={isLoading}
@@ -162,7 +166,7 @@ function ResetPasswordForm() {
               {/* Password Requirements */}
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3">
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.
+                  {t("authModal.resetPassword.requirements")}
                 </p>
               </div>
 
@@ -175,10 +179,10 @@ function ResetPasswordForm() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    {t("authModal.register.actions.submitting")}
                   </>
                 ) : (
-                  "Reset Password"
+                  t("authModal.resetPassword.submitBtn")
                 )}
               </Button>
             </form>
@@ -188,7 +192,7 @@ function ResetPasswordForm() {
                 href="/login"
                 className="text-sm auth-link"
               >
-                Back to login
+                {t("authModal.forgotPassword.backToLogin")}
               </Link>
             </div>
           </div>

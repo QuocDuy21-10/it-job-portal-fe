@@ -35,6 +35,12 @@ jest.mock("@/contexts/auth-modal-context", () => ({
   }),
 }));
 
+jest.mock("@/hooks/use-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
 jest.mock("@/features/user/redux/user.api", () => ({
   useFollowCompanyMutation: () => [mockFollowCompany, { isLoading: false }],
   useUnfollowCompanyMutation: () => [mockUnfollowCompany, { isLoading: false }],
@@ -240,7 +246,7 @@ describe("useCompanyFollow", () => {
 
     expect(mockUnfollowCompany).toHaveBeenCalledWith("company-1");
     expect(result.current.isFollowing).toBe(false);
-    expect(mockToastSuccess).toHaveBeenCalledWith("Đã bỏ theo dõi công ty", {
+    expect(mockToastSuccess).toHaveBeenCalledWith("followButton.toasts.unfollowSuccess", {
       duration: 1000,
     });
   });

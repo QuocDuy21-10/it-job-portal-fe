@@ -20,6 +20,7 @@ import { IMessage, ISendMessageRequest } from "@/shared/types/chat";
 import { API_BASE_URL } from "@/shared/constants/constant";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 const STREAM_ENDPOINT = `${API_BASE_URL}/chat/message/stream`;
 
@@ -28,12 +29,11 @@ type StreamSendResult =
   | { status: "handled_error" }
   | { status: "fallback" };
 
-const DEFAULT_STREAM_ERROR_MESSAGE =
-  "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.";
-
 const getResponseErrorMessage = async (
-  response: Response
+  response: Response,
+  t: (key: string) => string
 ): Promise<string> => {
+  const defaultStreamErrorMessage = t("chatWidget.errors.systemBusy");
   const contentType = response.headers.get("content-type") || "";
 
   try {
@@ -46,7 +46,7 @@ const getResponseErrorMessage = async (
       const message = payload.message ?? payload.error;
 
       if (Array.isArray(message)) {
-        return message[0] || DEFAULT_STREAM_ERROR_MESSAGE;
+        return message[0] || defaultStreamErrorMessage;
       }
 
       if (typeof message === "string" && message.trim()) {
@@ -55,9 +55,9 @@ const getResponseErrorMessage = async (
     }
 
     const text = await response.text();
-    return text.trim() || DEFAULT_STREAM_ERROR_MESSAGE;
+    return text.trim() || defaultStreamErrorMessage;
   } catch {
-    return DEFAULT_STREAM_ERROR_MESSAGE;
+    return defaultStreamErrorMessage;
   }
 };
 
@@ -77,6 +77,7 @@ const buildStreamRequestBody = (
 
 export const useStreamChat = () => {
   const dispatch = useAppDispatch();
+  const { t } = useI18n();
   const abortControllerRef = useRef<AbortController | null>(null);
   const streamingMessageIdRef = useRef<string | null>(null);
   const { streamingMessageId } = useAppSelector((state) => state.chatBot);
@@ -229,7 +230,7 @@ export const useStreamChat = () => {
             return { status: "fallback" };
           }
 
-          toast.error(await getResponseErrorMessage(response));
+          toast.error(await getResponseErrorMessage(response, t));
           return { status: "handled_error" };
         }
 

@@ -41,19 +41,17 @@ interface SendMessageOptions {
   jobId?: string;
 }
 
-const DEFAULT_CHAT_ERROR_MESSAGE =
-  "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.";
-
-const getErrorMessage = (error: any): string => {
+const getErrorMessage = (error: any, t: (key: string) => string): string => {
+  const defaultErrorMessage = t("chatWidget.errors.systemBusy");
   const message = error?.data?.message ?? error?.data?.error ?? error?.message;
 
   if (Array.isArray(message)) {
-    return message[0] || DEFAULT_CHAT_ERROR_MESSAGE;
+    return message[0] || defaultErrorMessage;
   }
 
   return typeof message === "string" && message.trim()
     ? message
-    : DEFAULT_CHAT_ERROR_MESSAGE;
+    : defaultErrorMessage;
 };
 
 const getErrorQuota = (error: any) =>
@@ -155,7 +153,7 @@ export const useChat = () => {
       }
     } catch (error: any) {
       console.error("Failed to load chat history:", error);
-      toast.error("Không thể tải lịch sử chat");
+      toast.error(t("chatWidget.errors.loadHistory"));
     }
   }, [isAuthenticated, getChatHistoryTrigger, dispatch]);
 
@@ -163,11 +161,11 @@ export const useChat = () => {
     async (content: string, options?: SendMessageOptions) => {
       if (!content.trim()) return;
       if (!isAuthenticated) {
-        toast.error("Vui lòng đăng nhập để sử dụng AI Chat");
+        toast.error(t("chatWidget.errors.loginRequired"));
         return;
       }
       if (content.length > 1000) {
-        toast.error("Tin nhắn không được vượt quá 1000 ký tự");
+        toast.error(t("chatWidget.errors.maxLength"));
         return;
       }
 
@@ -216,7 +214,7 @@ export const useChat = () => {
       } catch (error: any) {
         console.error("Failed to send message:", error);
 
-        const errorMessageText = getErrorMessage(error);
+        const errorMessageText = getErrorMessage(error, t);
         const errorQuota = getErrorQuota(error);
         const errorMessage: IMessage = {
           id: uuidv4(),
@@ -248,10 +246,10 @@ export const useChat = () => {
     try {
       await clearChatHistoryMutation().unwrap();
       dispatch(clearMessages());
-      toast.success("Đã xóa lịch sử chat");
+      toast.success(t("chatWidget.toasts.clearHistorySuccess"));
     } catch (error: any) {
       console.error("Failed to clear chat:", error);
-      toast.error("Không thể xóa lịch sử chat");
+      toast.error(t("chatWidget.errors.clearHistory"));
     }
   }, [isAuthenticated, clearChatHistoryMutation, dispatch]);
 

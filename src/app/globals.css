@@ -394,7 +394,16 @@
   }
 
   .top-companies-carousel__button {
-    @apply h-12 w-12 rounded-full border border-border/70 bg-background/95 shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-background hover:shadow-xl disabled:opacity-40;
+    @apply h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-40;
+    border: 1px solid hsl(var(--primary)) !important;
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
+  .top-companies-carousel__button:hover {
+    background-color: hsl(var(--primary) / 0.9) !important;
+    border-color: hsl(var(--primary) / 0.9) !important;
+    color: hsl(var(--primary-foreground)) !important;
   }
 
   .home-hero-surface {
@@ -685,13 +694,6 @@
   }
 
   .dark .top-companies-carousel__button {
-    border-color: hsl(var(--home-border-strong) / 0.9);
-    background-color: hsl(var(--home-panel-elevated) / 0.92);
-    color: hsl(var(--foreground));
     box-shadow: 0 20px 40px hsl(228 46% 6% / 0.35);
-  }
-
-  .dark .top-companies-carousel__button:hover {
-    background-color: hsl(var(--home-panel));
   }
 }

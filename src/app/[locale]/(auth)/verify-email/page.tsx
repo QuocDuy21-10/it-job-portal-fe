@@ -15,7 +15,8 @@ import { OTPInput } from "@/components/auth/otp-input";
 import { CountdownTimer } from "@/components/auth/countdown-timer";
 import { VerificationAlert } from "@/components/auth/verification-alert";
 import { useVerification } from "@/hooks/use-verification";
-import Link from "next/link";
+import { useI18n } from "@/hooks/use-i18n";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 function VerifyEmailContent() {
@@ -23,6 +24,7 @@ function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const autoVerifyRef = useRef(false);
+  const { t } = useI18n();
 
   const {
     otp,
@@ -36,7 +38,7 @@ function VerifyEmailContent() {
   } = useVerification({
     email: email || "",
     onSuccess: () => {
-      toast.success("Xác thực thành công!");
+      toast.success(t("authModal.verifyEmail.toasts.verifySuccess"));
       // Chuyển về trang login sau khi verify thành công
       setTimeout(() => {
         router.push("/login?verified=true");
@@ -76,32 +78,36 @@ function VerifyEmailContent() {
     );
   }
 
+  const descString = t("authModal.verifyEmail.descriptionCardWithEmail", { email: "##EMAIL##" });
+  const renderDescription = () => {
+    const parts = descString.split("##EMAIL##");
+    if (parts.length < 2) return t("authModal.verifyEmail.descriptionCardWithEmail", { email });
+    const [prefix, suffix] = parts;
+    return (
+      <>
+        {prefix}
+        <span className="font-semibold text-primary">{email}</span>
+        {suffix}
+      </>
+    );
+  };
+
   return (
     <AuthLayout>
       <AuthHeader
-        title="Verify Your Email"
-        description="We've sent a verification code to your email"
+        title={t("authModal.verifyEmail.titlePage")}
+        description={t("authModal.verifyEmail.descriptionPage")}
       />
 
       <AuthCard
-        title="Enter Verification Code"
-        description={
-          email ? (
-            <>
-              Please check your email{" "}
-              <span className="font-semibold text-primary">{email}</span> for
-              the 6-digit code
-            </>
-          ) : (
-            "Please enter the 6-digit code we sent to your email"
-          )
-        }
+        title={t("authModal.verifyEmail.titleCard")}
+        description={renderDescription()}
       >
         <div className="space-y-6">
           {/* Alert Info */}
           <VerificationAlert
             type="info"
-            message="The verification code will expire in 5 minutes. Please enter it below to activate your account."
+            message={t("authModal.verifyEmail.alertInfo")}
           />
 
           {/* OTP Input */}
@@ -135,12 +141,12 @@ function VerifyEmailContent() {
             {isVerifying ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Verifying...
+                {t("authModal.verifyEmail.verifyingBtn")}
               </>
             ) : (
               <>
                 <Mail className="mr-2 h-4 w-4" />
-                Verify Email
+                {t("authModal.verifyEmail.verifyBtn")}
               </>
             )}
           </Button>
@@ -152,7 +158,7 @@ function VerifyEmailContent() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white dark:bg-gray-800 px-2 text-muted-foreground">
-                Didn&apos;t receive the code?
+                {t("authModal.verifyEmail.dividerText")}
               </span>
             </div>
           </div>
@@ -171,24 +177,24 @@ function VerifyEmailContent() {
               {isResending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
+                  {t("authModal.verifyEmail.resendingBtn")}
                 </>
               ) : canResend ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Resend Code
+                  {t("authModal.verifyEmail.resendBtn")}
                 </>
               ) : (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Resend in {resendCountdown}s
+                  {t("authModal.verifyEmail.resendCooldownBtn", { time: resendCountdown })}
                 </>
               )}
             </Button>
 
             {/* Help text */}
             <p className="text-xs text-center text-muted-foreground">
-              Check your spam folder if you don&apos;t see the email
+              {t("authModal.verifyEmail.spamHint")}
             </p>
           </div>
         </div>
@@ -202,13 +208,13 @@ function VerifyEmailContent() {
             className="w-full text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Register
+            {t("authModal.verifyEmail.backToRegister")}
           </Button>
         </Link>
 
         <AuthFooter
-          message="Already verified?"
-          link={{ text: "Sign in", href: "/login" }}
+          message={t("authModal.verifyEmail.alreadyVerified")}
+          link={{ text: t("authModal.tabs.signin"), href: "/login" }}
           showLegalLinks={false}
         />
       </div>

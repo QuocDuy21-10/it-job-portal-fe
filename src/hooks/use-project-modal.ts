@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProjectRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Project extends ProjectRequest {
   id: string;
@@ -21,6 +22,7 @@ export function useProjectModal(
   onAdd: (project: Project) => void,
   onUpdate: (id: string, field: string, value: string) => void
 ): UseProjectModalReturn {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [currentProject, setCurrentProject] = useState<Project | undefined>(undefined);
@@ -49,8 +51,8 @@ export function useProjectModal(
         ...data,
       };
       onAdd(newProject);
-      toast.success("Thêm dự án thành công", {
-        description: `Đã thêm: ${data.name}`,
+      toast.success(t("cv.toasts.projectAddSuccess"), {
+        description: t("cv.toasts.projectAdded", { name: data.name }),
         duration: 2000,
       });
     } else if (mode === "edit" && currentProject) {
@@ -58,8 +60,8 @@ export function useProjectModal(
       onUpdate(currentProject.id, "position", data.position);
       onUpdate(currentProject.id, "description", data.description);
       onUpdate(currentProject.id, "link", data.link || "");
-      toast.success("Cập nhật dự án thành công", {
-        description: `Đã cập nhật: ${data.name}`,
+      toast.success(t("cv.toasts.projectEditSuccess"), {
+        description: t("cv.toasts.projectUpdated", { name: data.name }),
         duration: 2000,
       });
     }

@@ -1,9 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { GoogleLogin } from "@react-oauth/google";
+
+import { useI18n } from "@/hooks/use-i18n";
 
 interface SocialAuthButtonsProps {
   onGoogleSuccess: (credentialResponse: any) => void;
@@ -24,10 +27,18 @@ export function SocialAuthButtons({
   isFacebookLoading = false,
   isDisabled = false,
   showDivider = true,
-  dividerText = "Or continue with",
+  dividerText,
 }: SocialAuthButtonsProps) {
+  const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { t } = useI18n();
+  const displayDividerText = dividerText || t("authModal.login.socialDivider");
+  const isDarkMode = mounted && resolvedTheme === "dark";
   const googleTheme = isDarkMode ? "filled_black" : "outline";
   const googleContainerClassName = isDarkMode
     ? "w-full overflow-hidden rounded-md border border-border/70 bg-card shadow-sm"
@@ -42,7 +53,7 @@ export function SocialAuthButtons({
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="bg-background px-4 text-muted-foreground">
-              {dividerText}
+              {displayDividerText}
             </span>
           </div>
         </div>

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDeleteFileMutation, useUploadFileMutation } from "@/features/file/redux/file.api";
+import { useI18n } from "@/hooks/use-i18n";
 
 export function useFileOperations() {
+  const { t } = useI18n();
   const [uploadFile, { isLoading: isUploading }] = useUploadFileMutation();
   const [deleteFile] = useDeleteFileMutation();
 
@@ -13,12 +15,12 @@ export function useFileOperations() {
         throw new Error(response.message || "Upload response missing file name");
       }
 
-      toast.success("Upload file thành công!");
+      toast.success(t("fileUpload.toasts.success"));
       return response.data.fileName;
     } catch (error: any) {
       console.error("Upload file error:", error);
       const errorMessage =
-        error?.data?.message || "Upload file thất bại. Vui lòng thử lại.";
+        error?.data?.message || t("fileUpload.toasts.error");
       toast.error(errorMessage);
       return null;
     }

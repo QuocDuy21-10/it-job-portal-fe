@@ -2,6 +2,8 @@ export const vi = {
     common: {
     cancel: "Huỷ",
     view: "Xem",
+    collapse: "Thu gọn",
+    showMore: "Xem thêm",
   },
   search: {
     suggest: {
@@ -18,6 +20,17 @@ export const vi = {
     followTooltip: "Nhấn để nhận thông báo khi có việc làm mới",
     unfollowTooltip: "Nhấn để bỏ theo dõi công ty này",
     loginTooltip: "Đăng nhập để theo dõi công ty này",
+    followAlertTooltip: "Theo dõi để nhận thông báo việc làm mới",
+    toasts: {
+      unfollowSuccess: "Đã bỏ theo dõi công ty",
+      followSuccess: "Đã theo dõi công ty",
+      error: "Đã xảy ra lỗi.",
+    },
+    overview: {
+      employeesPlaceholder: "500+ nhân viên",
+      headquarters: "Trụ sở",
+      hcmCity: "TP. Hồ Chí Minh",
+    },
   },
   breadcrumb: {
     home: "Trang chủ",
@@ -391,6 +404,16 @@ export const vi = {
       expiredError:
         "Gợi ý này đã hết hạn. Hãy hỏi lại nếu bạn vẫn muốn lưu công việc này.",
     },
+    toasts: {
+      clearHistorySuccess: "Đã xóa lịch sử chat",
+    },
+    errors: {
+      systemBusy: "Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.",
+      loadHistory: "Không thể tải lịch sử chat",
+      loginRequired: "Vui lòng đăng nhập để sử dụng AI Chat",
+      maxLength: "Tin nhắn không được vượt quá 1000 ký tự",
+      clearHistory: "Không thể xóa lịch sử chat",
+    },
   },
   jobDetailPage: {
     actions: {
@@ -434,14 +457,20 @@ export const vi = {
       signup: "Đăng ký",
     },
     login: {
+      titlePage: "Chào mừng trở lại DevLink",
+      descriptionPage: "Đăng nhập để truy cập tài khoản và tiếp tục hành trình tìm kiếm việc làm của bạn. Tìm kiếm những cơ hội phù hợp với kỹ năng và định hướng của bạn.",
+      verificationAlert: {
+        title: "Xác thực email thành công!",
+        message: "Email của bạn đã được xác thực thành công. Bây giờ bạn đã có thể đăng nhập.",
+      },
       fields: {
         email: {
-          label: "Email",
+          label: "Địa chỉ Email",
           placeholder: "example@email.com",
         },
         password: {
           label: "Mật khẩu",
-          placeholder: "Nhập mật khẩu",
+          placeholder: "Nhập mật khẩu của bạn",
         },
       },
       forgotPassword: "Quên mật khẩu?",
@@ -454,15 +483,22 @@ export const vi = {
         noAccount: "Chưa có tài khoản?",
         signUpNow: "Đăng ký ngay",
       },
+      toasts: {
+        verifiedSuccess: "Xác thực email thành công! Bạn có thể đăng nhập ngay bây giờ.",
+        facebookLoginComingSoon: "Đăng nhập bằng Facebook sẽ sớm ra mắt.",
+      },
     },
     register: {
+      titlePage: "Tham gia DevLink ngay hôm nay",
+      descriptionPage: "Tạo tài khoản và mở khóa hàng ngàn cơ hội việc làm. Bắt đầu hành trình sự nghiệp của bạn cùng chúng tôi.",
+      socialDivider: "Hoặc đăng ký bằng",
       fields: {
         name: {
           label: "Họ và tên",
           placeholder: "Nguyễn Văn A",
         },
         email: {
-          label: "Email",
+          label: "Địa chỉ Email",
           placeholder: "example@email.com",
         },
         password: {
@@ -471,7 +507,7 @@ export const vi = {
         },
         confirmPassword: {
           label: "Xác nhận mật khẩu",
-          placeholder: "Nhập lại mật khẩu",
+          placeholder: "Nhập lại mật khẩu của bạn",
         },
         acceptTerms: {
           prefix: "Tôi đồng ý với",
@@ -487,6 +523,13 @@ export const vi = {
       footer: {
         alreadyHaveAccount: "Đã có tài khoản?",
         signInNow: "Đăng nhập ngay",
+      },
+      toasts: {
+        success: "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+        failed: "Đăng ký thất bại",
+        googleSignupComingSoon: "Đăng ký bằng Google sẽ sớm ra mắt.",
+        googleSignupFailed: "Đăng ký bằng Google thất bại.",
+        facebookSignupComingSoon: "Đăng ký bằng Facebook sẽ sớm ra mắt.",
       },
     },
     toasts: {
@@ -538,6 +581,78 @@ export const vi = {
       acceptTerms: {
         required: "Bạn phải chấp nhận điều khoản sử dụng",
       },
+    },
+    forgotPassword: {
+      titlePage: "Đặt lại mật khẩu của bạn",
+      descriptionPage: "Đừng lo lắng! Điều đó thỉnh thoảng vẫn xảy ra. Hãy nhập email của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu.",
+      titleCard: "Đặt lại mật khẩu",
+      descriptionCard: "Chúng tôi sẽ gửi liên kết đặt lại vào email của bạn",
+      successTitle: "Gửi email thành công!",
+      successDescription: "Chúng tôi đã gửi hướng dẫn đặt lại mật khẩu đến {email}",
+      successHelp: "Vui lòng kiểm tra hộp thư đến (và cả thư mục spam).",
+      cooldownText: "Gửi lại sau {time}s",
+      resendBtn: "Gửi lại email",
+      waitCooldownBtn: "Chờ {time}s",
+      backToLogin: "Quay lại Đăng nhập",
+      submitBtn: "Gửi hướng dẫn",
+      sendingBtn: "Đang gửi...",
+      toasts: {
+        sendSuccess: "Đã gửi email hướng dẫn đặt lại mật khẩu!",
+        sendFallback: "Nếu email tồn tại trong hệ thống, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu.",
+      },
+    },
+    resetPassword: {
+      titlePage: "Đặt lại mật khẩu",
+      descriptionPage: "Tạo mật khẩu mới cho tài khoản của bạn",
+      titleCard: "Mật khẩu mới",
+      descriptionCard: "Vui lòng nhập mật khẩu mới và xác nhận lại",
+      successTitle: "Đặt lại mật khẩu thành công!",
+      successDescription: "Mật khẩu của bạn đã được cập nhật thành công.",
+      redirectingText: "Đang chuyển hướng đến trang đăng nhập sau {time}s...",
+      goLoginBtn: "Đi đến trang đăng nhập",
+      requirements: "Mật khẩu phải dài ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.",
+      submitBtn: "Đặt lại mật khẩu",
+      toasts: {
+        invalidLink: "Liên kết đặt lại mật khẩu không hợp lệ",
+        missingInfo: "Thiếu thông tin xác thực",
+        success: "Đặt lại mật khẩu thành công!",
+        expiredLink: "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ",
+        genericFailed: "Đặt lại mật khẩu thất bại",
+      },
+    },
+    verifyEmail: {
+      titlePage: "Xác thực Email của bạn",
+      descriptionPage: "Chúng tôi đã gửi một mã xác thực đến email của bạn",
+      titleCard: "Nhập mã xác thực",
+      alreadyVerified: "Đã xác thực?",
+      descriptionCardWithEmail: "Vui lòng kiểm tra email {email} để nhận mã xác thực gồm 6 chữ số",
+      descriptionCardDefault: "Vui lòng nhập mã xác thực gồm 6 chữ số được gửi đến email của bạn",
+      alertInfo: "Mã xác thực sẽ hết hạn trong 5 phút. Vui lòng nhập mã dưới đây để kích hoạt tài khoản.",
+      verifyBtn: "Xác thực Email",
+      verifyingBtn: "Đang xác thực...",
+      dividerText: "Bạn chưa nhận được mã?",
+      resendBtn: "Gửi lại mã",
+      resendingBtn: "Đang gửi...",
+      resendCooldownBtn: "Gửi lại sau {time}s",
+      spamHint: "Kiểm tra thư mục spam nếu bạn không thấy email",
+      backToRegister: "Quay lại Đăng ký",
+      toasts: {
+        verifySuccess: "Xác thực thành công!",
+        resendSuccess: "Đã gửi lại mã xác thực thành công",
+      },
+      errors: {
+        incompleteOtp: "Vui lòng nhập đầy đủ 6 chữ số",
+        invalidOtp: "Mã xác thực không đúng hoặc đã hết hạn",
+        resendFailed: "Không thể gửi lại mã. Vui lòng thử lại sau",
+      },
+    },
+    passwordInput: {
+      showPassword: "Hiển thị mật khẩu",
+      hidePassword: "Ẩn mật khẩu",
+    },
+    footer: {
+      legalPrefix: "Bằng cách tiếp tục, bạn đồng ý với",
+      legalAnd: "và",
     },
   },
   applyModal: {
@@ -872,6 +987,8 @@ export const vi = {
     privacyPolicy: "Chính sách bảo mật",
     termsOfService: "Điều khoản dịch vụ",
     copyright: "© {year} DevLink. Bảo lưu mọi quyền.",
+    adminCopyright: "© {year} IT Dev Link Admin. Bảo lưu mọi quyền.",
+    hrCopyright: "© {year} IT Dev Link. Bảo lưu mọi quyền.",
   },
   cv: {
     personalInfo: {
@@ -1096,6 +1213,34 @@ export const vi = {
       descriptionPlaceholder: "Mô tả giải thưởng hoặc thành tích",
       saveLabel: "Thêm",
       updateLabel: "Cập nhật",
+    },
+    toasts: {
+      projectAddSuccess: "Thêm dự án thành công",
+      projectAdded: "Đã thêm: {name}",
+      projectEditSuccess: "Cập nhật dự án thành công",
+      projectUpdated: "Đã cập nhật: {name}",
+
+      languageLimitError: "Giới hạn ngôn ngữ",
+      languageLimitDesc: "Bạn chỉ có thể thêm tối đa 5 ngôn ngữ",
+      languageAddSuccess: "Thêm ngôn ngữ thành công",
+      languageAdded: "Đã thêm: {name}",
+      languageEditSuccess: "Cập nhật ngôn ngữ thành công",
+      languageUpdated: "Đã cập nhật: {name}",
+
+      educationAddSuccess: "Thêm học vấn thành công",
+      educationAdded: "Đã thêm: {school} - {degree}",
+      educationEditSuccess: "Cập nhật học vấn thành công",
+      educationUpdated: "Đã cập nhật: {school}",
+
+      certificateAddSuccess: "Thêm chứng chỉ thành công",
+      certificateAdded: "Đã thêm: {name}",
+      certificateEditSuccess: "Cập nhật chứng chỉ thành công",
+      certificateUpdated: "Đã cập nhật: {name}",
+
+      awardAddSuccess: "Thêm giải thưởng thành công",
+      awardAdded: "Đã thêm: {name}",
+      awardEditSuccess: "Cập nhật giải thưởng thành công",
+      awardUpdated: "Đã cập nhật: {name}",
     },
   },
   cvPage: {
@@ -1457,6 +1602,41 @@ export const vi = {
       confirmTextPrefix: "Nhập",
       confirmTextSuffix: "để xác nhận",
       passwordPlaceholder: "Nhập mật khẩu của bạn",
+    },
+  },
+  authLayout: {
+    loaderText: "Đang kiểm tra...",
+    defaultTitle: "Chào mừng đến với DevLink",
+    defaultDescription: "Cổng thông tin cơ hội nghề nghiệp của bạn. Kết nối với các nhà tuyển dụng hàng đầu và tìm công việc mơ ước của bạn.",
+    feature1: "Hơn 1000+ công ty đang tuyển dụng",
+    feature2: "Danh sách công việc đã được xác thực",
+    feature3: "Quy trình ứng tuyển dễ dàng",
+    feature4: "Cơ hội phát triển sự nghiệp",
+  },
+  notificationBell: {
+    title: "Thông báo",
+    markAllAsRead: "Đọc tất cả",
+    loadError: "Không thể tải thông báo",
+    retry: "Thử lại",
+    empty: "Không có thông báo",
+    viewAll: "Xem tất cả",
+  },
+  errorPage: {
+    title: "Có lỗi xảy ra",
+    description: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+    retry: "Thử lại",
+    goHome: "Về trang chủ",
+    devDetails: "Chi tiết lỗi (Dev only)",
+  },
+  middleware: {
+    forbidden: "Bạn không có quyền thực hiện hành động này",
+    serverError: "Lỗi server. Vui lòng thử lại sau",
+    networkError: "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
+  },
+  fileUpload: {
+    toasts: {
+      success: "Upload file thành công!",
+      error: "Upload file thất bại. Vui lòng thử lại.",
     },
   },
 };

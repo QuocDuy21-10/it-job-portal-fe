@@ -15,6 +15,7 @@ import {
   type RoleName,
 } from "@/shared/constants/roles";
 import type { AppLocale } from "@/i18n/routing";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function AuthLayout({
   children,
@@ -26,6 +27,7 @@ export default function AuthLayout({
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isLoading = useAppSelector(selectIsLoading);
   const userRole = useAppSelector(selectUserRole);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -43,7 +45,7 @@ export default function AuthLayout({
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-sm text-muted-foreground">
-            Đang kiểm tra...
+            {t("authLayout.loaderText")}
           </p>
         </div>
       </div>

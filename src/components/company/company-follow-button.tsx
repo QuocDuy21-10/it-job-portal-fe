@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/hooks/use-i18n";
 
 type CompanyFollowButtonProps = {
   companyId: string;
@@ -12,6 +13,7 @@ type CompanyFollowButtonProps = {
 export default function CompanyFollowButton({
   companyId,
 }: CompanyFollowButtonProps) {
+  const { t } = useI18n();
   const { isFollowing, isHydrated, toggleFollowCompany } =
     useCompanyFollow(companyId);
 
@@ -34,7 +36,7 @@ export default function CompanyFollowButton({
             : "fill-transparent text-blue-700"
         )}
       />
-      {isFollowing ? "Đang theo dõi" : "Theo dõi công ty"}
+      {isFollowing ? t("followButton.following") : t("followButton.followAria")}
     </Button>
   );
 }

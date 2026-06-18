@@ -14,6 +14,7 @@ import { setLogoutAction } from "@/features/auth/redux/auth.slice";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import { getPathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { useI18n } from "@/hooks/use-i18n";
 
 export default function AdminLayout({
   children,
@@ -22,6 +23,7 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const locale = useLocale() as AppLocale;
+  const { t } = useI18n();
   const dispatch = useAppDispatch();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
   
@@ -84,7 +86,7 @@ export default function AdminLayout({
           <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
               <p className="text-center text-sm text-gray-500 dark:text-gray-400" suppressHydrationWarning>
-                © {new Date().getFullYear()} IT Dev Link Admin. All rights reserved.
+                {t("footer.adminCopyright", { year: new Date().getFullYear() })}
               </p>
             </div>
           </footer>

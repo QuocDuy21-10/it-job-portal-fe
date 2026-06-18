@@ -6,12 +6,14 @@ import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface CompanyHeaderProps {
   company: any;
 }
 
 export default function CompanyHeader({ company }: CompanyHeaderProps) {
+  const { t } = useI18n();
   const { isFollowing, isHydrated, toggleFollowCompany } = useCompanyFollow(
     company?._id || ""
   );
@@ -63,7 +65,7 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                       </Tooltip.Trigger>
                       <Tooltip.Portal>
                         <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                          Truy cập website công ty
+                          {t("companyDetailPage.contact.websiteTooltip")}
                           <Tooltip.Arrow className="fill-slate-900" />
                         </Tooltip.Content>
                       </Tooltip.Portal>
@@ -73,12 +75,12 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                     <Tooltip.Trigger asChild>
                       <div className="flex items-center gap-2 text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/20 transition-all">
                         <Users className="w-5 h-5" />
-                        <span className="font-medium">{company?.numberOfEmployees ? `${company.numberOfEmployees} nhân viên` : "Chưa cập nhật"}</span>
+                        <span className="font-medium">{company?.numberOfEmployees ? t("companyDetailPage.employeesCount", { count: company.numberOfEmployees }) : t("companyDetailPage.notUpdated")}</span>
                       </div>
                     </Tooltip.Trigger>
                     <Tooltip.Portal>
                       <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                        Quy mô công ty
+                        {t("companyDetailPage.sizeLabel")}
                         <Tooltip.Arrow className="fill-slate-900" />
                       </Tooltip.Content>
                     </Tooltip.Portal>
@@ -108,12 +110,12 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                         : "fill-transparent text-blue-700"
                     )}
                   />
-                  {isFollowing ? "Đang theo dõi" : "Theo dõi công ty"}
+                  {isFollowing ? t("followButton.following") : t("followButton.followAria")}
                 </Button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
                 <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                  {isFollowing ? "Bỏ theo dõi công ty" : "Theo dõi để nhận thông báo việc làm mới"}
+                  {isFollowing ? t("followButton.unfollowAria") : t("followButton.followAlertTooltip")}
                   <Tooltip.Arrow className="fill-slate-900" />
                 </Tooltip.Content>
               </Tooltip.Portal>

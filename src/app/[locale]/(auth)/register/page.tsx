@@ -57,51 +57,51 @@ export default function RegisterPage() {
     try {
       const response = await signUp(data).unwrap();
       if (response.statusCode === 201) {
-        toast.success("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+        toast.success(t("authModal.register.toasts.success"));
 
         // Chuyển sang trang verify email (email only)
         router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
     } catch (error: any) {
       console.error("Register error:", error);
-      const errorMessage = error?.data?.message || error.message || "Đăng ký thất bại";
-      toast.error(`Đăng ký thất bại: ${errorMessage}`);
+      const errorMessage = error?.data?.message || error.message || t("authModal.register.toasts.failed");
+      toast.error(`${t("authModal.register.toasts.failed")}: ${errorMessage}`);
     }
   };
 
   const handleGoogleSignup = (credentialResponse: any) => {
     setSocialLoading("google");
-    toast.warning("Google signup coming soon.");
+    toast.warning(t("authModal.register.toasts.googleSignupComingSoon"));
     setSocialLoading(null);
   };
 
   const handleGoogleError = () => {
-    toast.error("Google signup failed.");
+    toast.error(t("authModal.register.toasts.googleSignupFailed"));
     setSocialLoading(null);
   };
 
   const handleFacebookSignup = () => {
     setSocialLoading("facebook");
-    toast.warning("Facebook signup coming soon.");
+    toast.warning(t("authModal.register.toasts.facebookSignupComingSoon"));
     setSocialLoading(null);
   };
 
   return (
     <AuthLayout
-      title="Join DevLink Today"
-      description="Create your account and unlock access to thousands of job opportunities. Start your career journey with us."
+      title={t("authModal.register.titlePage")}
+      description={t("authModal.register.descriptionPage")}
     >
       <AuthHeader
       />
       <AuthCard
-        title="Sign Up"
-        description="Fill in your details to get started"
+        title={t("authModal.tabs.signup")}
+        description={t("authModal.description.signin")}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Full Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="dark:text-gray-200">
-              Full Name
+              {t("authModal.register.fields.name.label")}
             </Label>
             <div className="relative">
               <User
@@ -111,7 +111,7 @@ export default function RegisterPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder={t("authModal.register.fields.name.placeholder")}
                 className="pl-10 auth-input"
                 {...register("name")}
                 disabled={isLoading}
@@ -127,7 +127,7 @@ export default function RegisterPage() {
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email" className="dark:text-gray-200">
-              Email Address
+              {t("authModal.register.fields.email.label")}
             </Label>
             <div className="relative">
               <Mail
@@ -137,7 +137,7 @@ export default function RegisterPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("authModal.register.fields.email.placeholder")}
                 className="pl-10 auth-input"
                 {...register("email")}
                 disabled={isLoading}
@@ -153,8 +153,8 @@ export default function RegisterPage() {
           {/* Password */}
           <PasswordInput
             id="password"
-            label="Password"
-            placeholder="At least 6 characters"
+            label={t("authModal.register.fields.password.label")}
+            placeholder={t("authModal.register.fields.password.placeholder")}
             error={errors.password?.message}
             disabled={isLoading}
             {...register("password")}
@@ -163,8 +163,8 @@ export default function RegisterPage() {
           {/* Confirm Password */}
           <PasswordInput
             id="confirmPassword"
-            label="Confirm Password"
-            placeholder="Re-enter your password"
+            label={t("authModal.register.fields.confirmPassword.label")}
+            placeholder={t("authModal.register.fields.confirmPassword.placeholder")}
             error={errors.confirmPassword?.message}
             disabled={isLoading}
             {...register("confirmPassword")}
@@ -186,21 +186,21 @@ export default function RegisterPage() {
                 htmlFor="acceptTerms"
                 className="text-sm leading-relaxed cursor-pointer select-none dark:text-gray-300"
               >
-                I agree to DevLink&apos;s{" "}
+                {t("authModal.register.fields.acceptTerms.prefix")}{" "}
                 <Link
                   href="/terms"
                   className="auth-link"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Terms of Service
+                  {t("authModal.register.fields.acceptTerms.terms")}
                 </Link>{" "}
-                and{" "}
+                {t("authModal.register.fields.acceptTerms.and")}{" "}
                 <Link
                   href="/privacy"
                   className="auth-link"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Privacy Policy
+                  {t("authModal.register.fields.acceptTerms.privacy")}
                 </Link>
               </Label>
             </div>
@@ -220,10 +220,10 @@ export default function RegisterPage() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating account...
+                {t("authModal.register.actions.submitting")}
               </>
             ) : (
-              "Create Account"
+              t("authModal.register.actions.submit")
             )}
           </Button>
         </form>
@@ -236,14 +236,14 @@ export default function RegisterPage() {
           isGoogleLoading={socialLoading === "google"}
           isFacebookLoading={socialLoading === "facebook"}
           isDisabled={isLoading || socialLoading !== null}
-          dividerText="Or sign up with"
+          dividerText={t("authModal.register.socialDivider")}
         />
       </AuthCard>
 
       {/* Footer */}
       <AuthFooter
-        message="Already have an account?"
-        link={{ text: "Sign in", href: "/login" }}
+        message={t("authModal.register.footer.alreadyHaveAccount")}
+        link={{ text: t("authModal.tabs.signin"), href: "/login" }}
         showLegalLinks={false}
       />
     </AuthLayout>

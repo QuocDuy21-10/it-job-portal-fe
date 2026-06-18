@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { CertificateRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Certificate extends CertificateRequest {
   id: string;
@@ -21,6 +22,7 @@ export function useCertificateModal(
   onAdd: (certificate: Certificate) => void,
   onUpdate: (id: string, field: string, value: string) => void
 ): UseCertificateModalReturn {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [currentCertificate, setCurrentCertificate] = useState<Certificate | undefined>(undefined);
@@ -49,16 +51,16 @@ export function useCertificateModal(
         ...data,
       };
       onAdd(newCertificate);
-      toast.success("Thêm chứng chỉ thành công", {
-        description: `Đã thêm: ${data.name}`,
+      toast.success(t("cv.toasts.certificateAddSuccess"), {
+        description: t("cv.toasts.certificateAdded", { name: data.name }),
         duration: 2000,
       });
     } else if (mode === "edit" && currentCertificate) {
       onUpdate(currentCertificate.id, "name", data.name);
       onUpdate(currentCertificate.id, "issuer", data.issuer);
       onUpdate(currentCertificate.id, "date", data.date);
-      toast.success("Cập nhật chứng chỉ thành công", {
-        description: `Đã cập nhật: ${data.name}`,
+      toast.success(t("cv.toasts.certificateEditSuccess"), {
+        description: t("cv.toasts.certificateUpdated", { name: data.name }),
         duration: 2000,
       });
     }

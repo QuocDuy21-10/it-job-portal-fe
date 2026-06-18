@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
+import { useAuth } from "@/hooks/use-auth";
 
 /**
  * AuthInitializer Component
@@ -11,12 +12,14 @@ import { useGetMeQuery } from "@/features/auth/redux/auth.api";
  * cho tất cả routes: (main), (dashboard), (auth)
  */
 export function AuthInitializer() {
+  const { isRehydrated } = useAuth();
+  
   // Only fetch user data if token exists - prevent infinite 401 loop
   const hasToken =
-    typeof window !== "undefined" && localStorage.getItem("access_token");
+    typeof window !== "undefined" && !!localStorage.getItem("access_token");
 
   useGetMeQuery(undefined, {
-    skip: !hasToken, // Skip query if no token
+    skip: !isRehydrated || !hasToken, // Skip query if no token or not rehydrated yet
   });
 
   return null;

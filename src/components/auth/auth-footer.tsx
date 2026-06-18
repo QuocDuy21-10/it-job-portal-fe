@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface AuthFooterLink {
   text: string;
@@ -17,6 +20,8 @@ interface AuthFooterProps {
  * Displays navigation links and legal information
  */
 export function AuthFooter({ message, link, showLegalLinks = true }: AuthFooterProps) {
+  const { t } = useI18n();
+
   return (
     <>
       {/* Navigation Link */}
@@ -35,19 +40,19 @@ export function AuthFooter({ message, link, showLegalLinks = true }: AuthFooterP
       {/* Legal Links */}
       {showLegalLinks && (
         <p className="text-center text-xs text-gray-500 dark:text-gray-500 mt-6 leading-relaxed">
-          By continuing, you agree to DevLink&apos;s{" "}
+          {t("authModal.footer.legalPrefix")}{" "}
           <Link
             href="/terms"
             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors hover:underline underline-offset-2"
           >
-            Terms of Service
+            {t("authModal.register.fields.acceptTerms.terms")}
           </Link>{" "}
-          and{" "}
+          {t("authModal.footer.legalAnd")}{" "}
           <Link
             href="/privacy"
             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors hover:underline underline-offset-2"
           >
-            Privacy Policy
+            {t("authModal.register.fields.acceptTerms.privacy")}
           </Link>
         </p>
       )}

@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useVerifyEmailMutation, useResendCodeMutation } from "@/features/auth/redux/auth.api";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface UseVerificationProps {
   email: string;
@@ -15,6 +16,7 @@ export function useVerification({
   onError,
   resendCooldown = 60,
 }: UseVerificationProps) {
+  const { t } = useI18n();
   const [otp, setOtp] = useState("");
   const [canResend, setCanResend] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(resendCooldown);
@@ -47,7 +49,7 @@ export function useVerification({
       const verificationCode = code || otp;
       
       if (!verificationCode || verificationCode.length !== 6) {
-        onError?.("Vui lòng nhập đầy đủ 6 chữ số");
+        onError?.(t("authModal.verifyEmail.errors.incompleteOtp"));
         return;
       }
 
@@ -60,7 +62,7 @@ export function useVerification({
 
       try {
         if (!email) {
-          onError?.("Email không hợp lệ");
+          onError?.(t("authModal.validation.email.invalid"));
           return;
         }
 
@@ -76,21 +78,21 @@ export function useVerification({
         const errorMessage =
           error?.data?.message ||
           error?.message ||
-          "Mã xác thực không đúng hoặc đã hết hạn";
+          t("authModal.verifyEmail.errors.invalidOtp");
         onError?.(errorMessage);
         setOtp(""); // Clear OTP on error
       } finally {
         isVerifyingRef.current = false;
       }
     },
-    [otp, email, verifyEmail, onSuccess, onError]
+    [otp, email, verifyEmail, onSuccess, onError, t]
   );
 
   // Resend OTP
   const handleResend = useCallback(async () => {
     if (!canResend || isResending) return;
     if (!email) {
-      toast.error("Email không hợp lệ");
+      toast.error(t("authModal.validation.email.invalid"));
       return;
     }
 
@@ -98,7 +100,7 @@ export function useVerification({
       const response = await resendCode({ email }).unwrap();
 
       if (response.statusCode === 201) {
-        toast.success(response.data?.message || "Đã gửi lại mã xác thực");
+        toast.success(response.data?.message || t("authModal.verifyEmail.toasts.resendSuccess"));
         resetCountdown();
         setOtp(""); // Clear OTP
       }
@@ -106,10 +108,10 @@ export function useVerification({
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Không thể gửi lại mã. Vui lòng thử lại sau";
+        t("authModal.verifyEmail.errors.resendFailed");
       toast.error(errorMessage);
     }
-  }, [canResend, isResending, email, resendCode, resetCountdown]);
+  }, [canResend, isResending, email, resendCode, resetCountdown, t]);
 
   return {
     otp,

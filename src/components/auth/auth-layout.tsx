@@ -1,6 +1,9 @@
+"use client";
+
 import { ReactNode } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -10,9 +13,20 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ 
   children, 
-  title = "Welcome to DevLink",
-  description = "Your gateway to career opportunities. Connect with top employers and find your dream job."
+  title,
+  description
 }: AuthLayoutProps) {
+  const { t } = useI18n();
+  const displayTitle = title || t("authLayout.defaultTitle");
+  const displayDescription = description || t("authLayout.defaultDescription");
+
+  const features = [
+    t("authLayout.feature1"),
+    t("authLayout.feature2"),
+    t("authLayout.feature3"),
+    t("authLayout.feature4"),
+  ];
+
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Gradient Background with Logo & Description */}
@@ -33,22 +47,17 @@ export function AuthLayout({
           <div className="mb-8">
             <div className="space-y-4">
               <h2 className="text-4xl font-bold leading-tight">
-                {title}
+                {displayTitle}
               </h2>
               <p className="text-lg text-blue-100 leading-relaxed max-w-md">
-                {description}
+                {displayDescription}
               </p>
             </div>
           </div>
 
           {/* Features */}
           <div className="mt-12 space-y-4">
-            {[
-              "1000+ Companies hiring",
-              "Verified job listings",
-              "Easy application process",
-              "Career growth opportunities"
-            ].map((feature, index) => (
+            {features.map((feature, index) => (
               <div key={index} className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                 <span className="text-blue-100">{feature}</span>

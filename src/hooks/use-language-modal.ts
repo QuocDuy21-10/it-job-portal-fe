@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { LanguageRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Language extends LanguageRequest {
   id: string;
@@ -21,14 +22,15 @@ export function useLanguageModal(
   onAdd: (language: Language) => void,
   onUpdate: (id: string, field: string, value: string) => void
 ): UseLanguageModalReturn {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [currentLanguage, setCurrentLanguage] = useState<Language | undefined>(undefined);
 
   const openAddModal = () => {
     if (languages.length >= 5) {
-      toast.error("Giới hạn ngôn ngữ", {
-        description: "Bạn chỉ có thể thêm tối đa 5 ngôn ngữ",
+      toast.error(t("cv.toasts.languageLimitError"), {
+        description: t("cv.toasts.languageLimitDesc"),
         duration: 3000,
       });
       return;
@@ -56,15 +58,15 @@ export function useLanguageModal(
         ...data,
       };
       onAdd(newLanguage);
-      toast.success("Thêm ngôn ngữ thành công", {
-        description: `Đã thêm: ${data.name}`,
+      toast.success(t("cv.toasts.languageAddSuccess"), {
+        description: t("cv.toasts.languageAdded", { name: data.name }),
         duration: 2000,
       });
     } else if (mode === "edit" && currentLanguage) {
       onUpdate(currentLanguage.id, "name", data.name);
       onUpdate(currentLanguage.id, "proficiency", data.proficiency);
-      toast.success("Cập nhật ngôn ngữ thành công", {
-        description: `Đã cập nhật: ${data.name}`,
+      toast.success(t("cv.toasts.languageEditSuccess"), {
+        description: t("cv.toasts.languageUpdated", { name: data.name }),
         duration: 2000,
       });
     }

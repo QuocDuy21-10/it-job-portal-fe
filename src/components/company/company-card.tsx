@@ -32,7 +32,7 @@ export function CompanyCard({ company, className }: CompanyCardProps) {
 
   return (
     <Link href={`/companies/${company._id}`} className={cn("group block h-full", className)}>
-      <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/20 group-hover:shadow-xl dark:bg-transparent">
+      <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-xl dark:bg-transparent">
         <CardContent className="flex h-full min-h-[320px] flex-col items-center justify-between gap-6 p-8 text-center">
           <div className="flex flex-col items-center gap-5">
             <div className="flex h-24 w-24 items-center justify-center rounded-[24px] border border-border/60 bg-background shadow-sm dark:border-white/10 dark:bg-background/40">

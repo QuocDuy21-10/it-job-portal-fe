@@ -51,10 +51,10 @@ function LoginContent() {
   useEffect(() => {
     if (searchParams?.get("verified") === "true" && !hasShownToast.current) {
       setShowVerifiedMessage(true);
-      toast.success("Email verified successfully! You can now sign in.");
+      toast.success(t("authModal.login.toasts.verifiedSuccess"));
       hasShownToast.current = true;
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   /**
    * Helper function to determine redirect route after login
@@ -102,7 +102,7 @@ function LoginContent() {
           );
         }
 
-        toast.success("Welcome back! Login successful.");
+        toast.success(t("authModal.toasts.loginSuccess"));
 
         const userRole = response.data?.user?.role;
         const redirectUrl = getRedirectUrl(userRole);
@@ -117,7 +117,7 @@ function LoginContent() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Login failed. Please try again.";
+        t("authModal.toasts.loginFailedFallback");
       toast.error(errorMessage);
     }
   };
@@ -127,10 +127,10 @@ function LoginContent() {
       setSocialLoading("google");
 
       if (!credentialResponse.credential) {
-        toast.error("Failed to receive Google credentials");
+        toast.error(t("authModal.toasts.googleCredentialMissing"));
         setSocialLoading(null);
         return;
-      };
+      }
 
       const response = await googleLogin({
         idToken: credentialResponse.credential,
@@ -151,7 +151,7 @@ function LoginContent() {
           );
         }
 
-        toast.success("Google login successful!");
+        toast.success(t("authModal.toasts.googleLoginSuccess"));
 
         const userRole = response.data?.user?.role;
         const redirectUrl = getRedirectUrl(userRole);
@@ -166,7 +166,7 @@ function LoginContent() {
       const errorMessage =
         error?.data?.message ||
         error?.message ||
-        "Google login failed. Please try again.";
+        t("authModal.toasts.googleLoginFailed");
       toast.error(errorMessage);
     } finally {
       setSocialLoading(null);
@@ -174,35 +174,34 @@ function LoginContent() {
   };
 
   const handleGoogleError = () => {
-    toast.error("Google login failed. Please try again.");
+    toast.error(t("authModal.toasts.googleLoginFailed"));
     setSocialLoading(null);
   };
 
   const handleFacebookLogin = () => {
     setSocialLoading("facebook");
-    toast.warning("Facebook login coming soon.");
+    toast.warning(t("authModal.login.toasts.facebookLoginComingSoon"));
     setSocialLoading(null);
   };
 
   return (
     <AuthLayout
-      title="Welcome Back to DevLink"
-      description="Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations."
+      title={t("authModal.login.titlePage")}
+      description={t("authModal.login.descriptionPage")}
     >
-      <AuthHeader
-      />
+      <AuthHeader />
 
       <AuthCard
-        title="Sign In"
-        description="Enter your credentials to access your account"
+        title={t("authModal.tabs.signin")}
+        description={t("authModal.description.signin")}
       >
         {/* Success message after email verification */}
         {showVerifiedMessage && (
           <div className="mb-5">
             <VerificationAlert
               type="success"
-              title="Email Verified!"
-              message="Your email has been successfully verified. You can now sign in to your account."
+              title={t("authModal.login.verificationAlert.title")}
+              message={t("authModal.login.verificationAlert.message")}
             />
           </div>
         )}
@@ -211,7 +210,7 @@ function LoginContent() {
           {/* Email Input */}
           <div className="space-y-2">
             <Label htmlFor="email" className="dark:text-gray-200">
-              Email Address
+              {t("authModal.login.fields.email.label")}
             </Label>
             <div className="relative">
               <Mail
@@ -221,7 +220,7 @@ function LoginContent() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("authModal.login.fields.email.placeholder")}
                 className="pl-10 auth-input"
                 {...register("email")}
                 disabled={isLoading}
@@ -238,19 +237,19 @@ function LoginContent() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password" className="dark:text-gray-200">
-                Password
+                {t("authModal.login.fields.password.label")}
               </Label>
               <Link
                 href="/forgot-password"
                 className="text-sm auth-link"
               >
-                Forgot password?
+                {t("authModal.login.forgotPassword")}
               </Link>
             </div>
             <PasswordInput
               id="password"
               label=""
-              placeholder="Enter your password"
+              placeholder={t("authModal.login.fields.password.placeholder")}
               error={errors.password?.message}
               disabled={isLoading}
               {...register("password")}
@@ -266,10 +265,10 @@ function LoginContent() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
+                {t("authModal.login.actions.submitting")}
               </>
             ) : (
-              "Sign In"
+              t("authModal.login.actions.submit")
             )}
           </Button>
         </form>
@@ -287,8 +286,8 @@ function LoginContent() {
 
       {/* Footer */}
       <AuthFooter
-        message="Don't have an account?"
-        link={{ text: "Sign up", href: "/register" }}
+        message={t("authModal.login.footer.noAccount")}
+        link={{ text: t("authModal.tabs.signup"), href: "/register" }}
       />
     </AuthLayout>
   );

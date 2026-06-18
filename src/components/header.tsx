@@ -32,7 +32,8 @@ export function Header() {
   const [isMounted, setIsMounted] = useState(false);
   const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isRehydrated } = useAuth();
+  const hasToken = typeof window !== "undefined" && !!localStorage.getItem("access_token");
   const pathname = usePathname();
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -179,7 +180,17 @@ export function Header() {
               ></span>
             </Link>
             {/* Auth Buttons */}
-            {isMounted && isAuthenticated && user ? (
+            {!isMounted ? (
+              <div className="flex items-center gap-2">
+                <div className="h-9 w-20 rounded-lg bg-secondary/60 animate-pulse" />
+                <div className="h-9 w-20 rounded-lg bg-secondary/60 animate-pulse" />
+              </div>
+            ) : hasToken && (!isRehydrated || (isAuthenticated && !user)) ? (
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-secondary animate-pulse" />
+                <div className="h-10 w-10 rounded-full bg-secondary animate-pulse border-2 border-primary/20" />
+              </div>
+            ) : isAuthenticated && user ? (
               <>
                 <NotificationBell />
                 <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen} modal={false}>
@@ -339,7 +350,14 @@ export function Header() {
 
           {/* Mobile Header Right Section: Notification & User Avatar */}
           <div className="flex md:hidden items-center gap-2">
-            {isMounted && isAuthenticated && user ? (
+            {!isMounted ? (
+              null
+            ) : hasToken && (!isRehydrated || (isAuthenticated && !user)) ? (
+              <div className="flex items-center gap-2">
+                <div className="h-10 w-10 rounded-full bg-secondary animate-pulse" />
+                <div className="w-10 h-10 rounded-full bg-secondary animate-pulse border-2 border-primary/20" />
+              </div>
+            ) : isAuthenticated && user ? (
               <>
                 <NotificationBell />
                 <button
@@ -470,7 +488,22 @@ export function Header() {
 
         {/* Footer actions */}
         <div className="p-4 border-t dark:border-white/10 bg-muted/30">
-          {isMounted && isAuthenticated && user ? (
+          {!isMounted ? (
+            <div className="flex flex-col gap-3">
+              <Button asChild size="lg" className="w-full shadow-sm">
+                <Link href="/register" onClick={() => setLeftDrawerOpen(false)}>
+                  {i18nMounted ? t("nav.signUp") : "Sign Up"}
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="w-full">
+                <Link href="/login" onClick={() => setLeftDrawerOpen(false)}>
+                  {i18nMounted ? t("nav.signIn") : "Sign In"}
+                </Link>
+              </Button>
+            </div>
+          ) : hasToken && (!isRehydrated || (isAuthenticated && !user)) ? (
+            <div className="h-[106px] w-full bg-secondary/50 animate-pulse rounded-lg" />
+          ) : isAuthenticated && user ? (
             <Button
               variant="outline"
               className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30 hover:border-destructive transition-all"

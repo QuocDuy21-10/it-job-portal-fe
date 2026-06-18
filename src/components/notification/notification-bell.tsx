@@ -17,10 +17,12 @@ import { Notification } from "@/features/notification/schemas/notification.schem
 import { useAuth } from "@/hooks/use-auth";
 import { NotificationItem } from "@/components/notification/notification-item";
 import { Link, useRouter } from "@/i18n/navigation";
+import { useI18n } from "@/hooks/use-i18n";
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { t } = useI18n();
   const { isAuthenticated } = useAuth();
   const { unreadCount, markAsRead, markAllAsRead } = useNotification();
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery(
@@ -56,7 +58,7 @@ export function NotificationBell() {
       <PopoverContent align="end" className="w-[calc(100vw-1rem)] max-w-sm p-0 sm:w-80">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h4 className="font-semibold text-sm">Thông báo</h4>
+          <h4 className="font-semibold text-sm">{t("notificationBell.title")}</h4>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -65,7 +67,7 @@ export function NotificationBell() {
               onClick={() => markAllAsRead()}
             >
               <Check className="h-3 w-3 mr-1" />
-              Đọc tất cả
+              {t("notificationBell.markAllAsRead")}
             </Button>
           )}
         </div>
@@ -88,10 +90,10 @@ export function NotificationBell() {
           ) : isError ? (
             <div className="p-4 text-center space-y-2">
               <p className="text-sm text-muted-foreground">
-                Không thể tải thông báo
+                {t("notificationBell.loadError")}
               </p>
               <Button size="sm" variant="outline" onClick={() => refetch()}>
-                Thử lại
+                {t("notificationBell.retry")}
               </Button>
             </div>
           ) : notifications.length > 0 ? (
@@ -110,7 +112,7 @@ export function NotificationBell() {
             <div className="py-8 text-center">
               <Bell className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">
-                Không có thông báo
+                {t("notificationBell.empty")}
               </p>
             </div>
           )}
@@ -123,7 +125,7 @@ export function NotificationBell() {
             onClick={() => setOpen(false)}
             className="text-xs text-primary hover:underline font-medium"
           >
-            Xem tất cả
+            {t("notificationBell.viewAll")}
           </Link>
         </div>
       </PopoverContent>

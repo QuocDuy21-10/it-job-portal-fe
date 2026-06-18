@@ -263,7 +263,7 @@ export function JobCard({
     return (
       <Card
         className={cn(
-          "listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary/20 hover:shadow-md hover:-translate-y-[2px]",
+          "listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary hover:shadow-md hover:-translate-y-[2px]",
           className
         )}
       >
@@ -329,7 +329,7 @@ export function JobCard({
       <Tooltip.Provider delayDuration={300}>
         <Card
           className={cn(
-            "listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary/20 hover:shadow-md hover:-translate-y-[2px]",
+            "listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary hover:shadow-md hover:-translate-y-[2px]",
             className
           )}
         >
@@ -536,7 +536,7 @@ export function JobCard({
   return (
     <Card
       className={cn(
-        "listing-panel-surface listing-subtle-border group relative transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:-translate-y-[2px]",
+        "listing-panel-surface listing-subtle-border group relative transition-all duration-300 hover:shadow-lg hover:border-primary hover:-translate-y-[2px]",
         className
       )}
     >

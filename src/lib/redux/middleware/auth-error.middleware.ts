@@ -1,6 +1,32 @@
 import { Middleware } from "@reduxjs/toolkit";
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import { toast } from "sonner";
+import { en } from "@/locales/en";
+import { vi } from "@/locales/vi";
+
+const getLocaleFromPath = () => {
+  if (typeof window !== "undefined") {
+    const parts = window.location.pathname.split("/");
+    const locale = parts[1];
+    if (locale === "vi" || locale === "en") return locale;
+  }
+  return "vi"; // default
+};
+
+const getTranslation = (key: string): string => {
+  const locale = getLocaleFromPath();
+  const messages = { en, vi };
+  const keys = key.split(".");
+  let current: any = messages[locale];
+  for (const k of keys) {
+    if (current && typeof current === "object" && k in current) {
+      current = current[k];
+    } else {
+      return key;
+    }
+  }
+  return typeof current === "string" ? current : key;
+};
 
 
 export const authErrorMiddleware: Middleware =
@@ -16,7 +42,7 @@ export const authErrorMiddleware: Middleware =
         console.log("🚫 [Middleware] 403 Forbidden - User lacks permission");
         
         toast.error(
-          message || "Bạn không có quyền thực hiện hành động này"
+          message || getTranslation("middleware.forbidden")
         );
 
         // Optional: Có thể dispatch action để log analytics
@@ -31,7 +57,7 @@ export const authErrorMiddleware: Middleware =
         console.error("💥 [Middleware] 500 Internal Server Error");
         
         toast.error(
-          message || "Lỗi server. Vui lòng thử lại sau"
+          message || getTranslation("middleware.serverError")
         );
 
         // Optional: Có thể gửi error report về monitoring service
@@ -42,7 +68,7 @@ export const authErrorMiddleware: Middleware =
         console.error("📡 [Middleware] Network Error");
         
         toast.error(
-          "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
+          getTranslation("middleware.networkError"),
         );
       }
 

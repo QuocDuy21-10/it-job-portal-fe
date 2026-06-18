@@ -2,6 +2,8 @@ export const en = {
   common: {
     cancel: "Cancel",
     view: "View",
+    collapse: "Collapse",
+    showMore: "Show more",
   },
   search: {
     suggest: {
@@ -18,6 +20,17 @@ export const en = {
     followTooltip: "Click to get notified when new jobs are posted",
     unfollowTooltip: "Click to unfollow this company",
     loginTooltip: "Log in to follow this company",
+    followAlertTooltip: "Follow to receive notifications about new job openings",
+    toasts: {
+      unfollowSuccess: "Successfully unfollowed company",
+      followSuccess: "Successfully followed company",
+      error: "An error occurred.",
+    },
+    overview: {
+      employeesPlaceholder: "500+ employees",
+      headquarters: "Headquarters",
+      hcmCity: "Ho Chi Minh City",
+    },
   },
   breadcrumb: {
     home: "Home",
@@ -389,6 +402,16 @@ export const en = {
       expiredError:
         "This suggestion has expired. Please ask again if you still want to save it.",
     },
+    toasts: {
+      clearHistorySuccess: "Chat history cleared successfully",
+    },
+    errors: {
+      systemBusy: "Sorry, system is busy. Please try again later.",
+      loadHistory: "Unable to load chat history",
+      loginRequired: "Please sign in to use AI Chat",
+      maxLength: "Message cannot exceed 1000 characters",
+      clearHistory: "Unable to clear chat history",
+    },
   },
   jobDetailPage: {
     actions: {
@@ -432,10 +455,16 @@ export const en = {
       signup: "Sign up",
     },
     login: {
+      titlePage: "Welcome Back to DevLink",
+      descriptionPage: "Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations.",
+      verificationAlert: {
+        title: "Email Verified!",
+        message: "Your email has been successfully verified. You can now sign in to your account.",
+      },
       fields: {
         email: {
-          label: "Email",
-          placeholder: "example@email.com",
+          label: "Email Address",
+          placeholder: "you@example.com",
         },
         password: {
           label: "Password",
@@ -452,23 +481,30 @@ export const en = {
         noAccount: "Don't have an account?",
         signUpNow: "Sign up now",
       },
+      toasts: {
+        verifiedSuccess: "Email verified successfully! You can now sign in.",
+        facebookLoginComingSoon: "Facebook login coming soon.",
+      },
     },
     register: {
+      titlePage: "Join DevLink Today",
+      descriptionPage: "Create your account and unlock access to thousands of job opportunities. Start your career journey with us.",
+      socialDivider: "Or sign up with",
       fields: {
         name: {
-          label: "Full name",
+          label: "Full Name",
           placeholder: "John Doe",
         },
         email: {
-          label: "Email",
-          placeholder: "example@email.com",
+          label: "Email Address",
+          placeholder: "you@example.com",
         },
         password: {
           label: "Password",
-          placeholder: "At least 8 characters",
+          placeholder: "At least 6 characters",
         },
         confirmPassword: {
-          label: "Confirm password",
+          label: "Confirm Password",
           placeholder: "Re-enter your password",
         },
         acceptTerms: {
@@ -479,12 +515,19 @@ export const en = {
         },
       },
       actions: {
-        submit: "Create account",
-        submitting: "Processing...",
+        submit: "Create Account",
+        submitting: "Creating account...",
       },
       footer: {
         alreadyHaveAccount: "Already have an account?",
         signInNow: "Sign in now",
+      },
+      toasts: {
+        success: "Registration successful! Please check your email to verify your account.",
+        failed: "Registration failed",
+        googleSignupComingSoon: "Google signup coming soon.",
+        googleSignupFailed: "Google signup failed.",
+        facebookSignupComingSoon: "Facebook signup coming soon.",
       },
     },
     toasts: {
@@ -536,6 +579,78 @@ export const en = {
       acceptTerms: {
         required: "You must accept the terms of service",
       },
+    },
+    forgotPassword: {
+      titlePage: "Reset Your Password",
+      descriptionPage: "Don't worry! It happens. Enter your email and we'll send you instructions to reset your password.",
+      titleCard: "Reset Password",
+      descriptionCard: "We'll send a reset link to your email",
+      successTitle: "Email Sent Successfully!",
+      successDescription: "We've sent password reset instructions to {email}",
+      successHelp: "Please check your inbox (and spam folder).",
+      cooldownText: "Resend available in {time}s",
+      resendBtn: "Resend Email",
+      waitCooldownBtn: "Wait {time}s",
+      backToLogin: "Back to Login",
+      submitBtn: "Send Instructions",
+      sendingBtn: "Sending...",
+      toasts: {
+        sendSuccess: "Sent password reset instructions!",
+        sendFallback: "If the email exists, you will receive instructions shortly.",
+      },
+    },
+    resetPassword: {
+      titlePage: "Reset Password",
+      descriptionPage: "Create a new password for your account",
+      titleCard: "New Password",
+      descriptionCard: "Please enter your new password and confirm it",
+      successTitle: "Password Reset Successful!",
+      successDescription: "Your password has been updated successfully.",
+      redirectingText: "Redirecting to login page in {time}s...",
+      goLoginBtn: "Go to Login Page",
+      requirements: "Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.",
+      submitBtn: "Reset Password",
+      toasts: {
+        invalidLink: "Invalid password reset link",
+        missingInfo: "Missing verification information",
+        success: "Password reset successful!",
+        expiredLink: "Password reset link has expired or is invalid",
+        genericFailed: "Password reset failed",
+      },
+    },
+    verifyEmail: {
+      titlePage: "Verify Your Email",
+      descriptionPage: "We've sent a verification code to your email",
+      titleCard: "Enter Verification Code",
+      alreadyVerified: "Already verified?",
+      descriptionCardWithEmail: "Please check your email {email} for the 6-digit code",
+      descriptionCardDefault: "Please enter the 6-digit code we sent to your email",
+      alertInfo: "The verification code will expire in 5 minutes. Please enter it below to activate your account.",
+      verifyBtn: "Verify Email",
+      verifyingBtn: "Verifying...",
+      dividerText: "Didn't receive the code?",
+      resendBtn: "Resend Code",
+      resendingBtn: "Sending...",
+      resendCooldownBtn: "Resend in {time}s",
+      spamHint: "Check your spam folder if you don't see the email",
+      backToRegister: "Back to Register",
+      toasts: {
+        verifySuccess: "Verification successful!",
+        resendSuccess: "Verification code resent successfully",
+      },
+      errors: {
+        incompleteOtp: "Please enter all 6 digits",
+        invalidOtp: "Verification code is incorrect or expired",
+        resendFailed: "Failed to resend code. Please try again later.",
+      },
+    },
+    passwordInput: {
+      showPassword: "Show password",
+      hidePassword: "Hide password",
+    },
+    footer: {
+      legalPrefix: "By continuing, you agree to DevLink's",
+      legalAnd: "and",
     },
   },
   applyModal: {
@@ -870,6 +985,8 @@ export const en = {
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
     copyright: "© {year} DevLink. All rights reserved.",
+    adminCopyright: "© {year} IT Dev Link Admin. All rights reserved.",
+    hrCopyright: "© {year} IT Dev Link. All rights reserved.",
   },
   cv: {
     personalInfo: {
@@ -1094,6 +1211,34 @@ export const en = {
       descriptionPlaceholder: "Describe the award or achievement",
       saveLabel: "Add",
       updateLabel: "Update",
+    },
+    toasts: {
+      projectAddSuccess: "Project added successfully",
+      projectAdded: "Added: {name}",
+      projectEditSuccess: "Project updated successfully",
+      projectUpdated: "Updated: {name}",
+
+      languageLimitError: "Language limit reached",
+      languageLimitDesc: "You can only add up to 5 languages",
+      languageAddSuccess: "Language added successfully",
+      languageAdded: "Added: {name}",
+      languageEditSuccess: "Language updated successfully",
+      languageUpdated: "Updated: {name}",
+
+      educationAddSuccess: "Education added successfully",
+      educationAdded: "Added: {school} - {degree}",
+      educationEditSuccess: "Education updated successfully",
+      educationUpdated: "Updated: {school}",
+
+      certificateAddSuccess: "Certificate added successfully",
+      certificateAdded: "Added: {name}",
+      certificateEditSuccess: "Certificate updated successfully",
+      certificateUpdated: "Updated: {name}",
+
+      awardAddSuccess: "Award added successfully",
+      awardAdded: "Added: {name}",
+      awardEditSuccess: "Award updated successfully",
+      awardUpdated: "Updated: {name}",
     },
   },
   cvPage: {
@@ -1455,6 +1600,41 @@ export const en = {
       confirmTextPrefix: "Type",
       confirmTextSuffix: "to confirm",
       passwordPlaceholder: "Enter your password",
+    },
+  },
+  authLayout: {
+    loaderText: "Checking access...",
+    defaultTitle: "Welcome to DevLink",
+    defaultDescription: "Your gateway to career opportunities. Connect with top employers and find your dream job.",
+    feature1: "1000+ Companies hiring",
+    feature2: "Verified job listings",
+    feature3: "Easy application process",
+    feature4: "Career growth opportunities",
+  },
+  notificationBell: {
+    title: "Notifications",
+    markAllAsRead: "Mark all as read",
+    loadError: "Unable to load notifications",
+    retry: "Try again",
+    empty: "No notifications",
+    viewAll: "View all",
+  },
+  errorPage: {
+    title: "Something went wrong",
+    description: "An unexpected error occurred. Please try again.",
+    retry: "Try again",
+    goHome: "Go to Home",
+    devDetails: "Error details (Dev only)",
+  },
+  middleware: {
+    forbidden: "You do not have permission to perform this action",
+    serverError: "Server error. Please try again later",
+    networkError: "Cannot connect to server. Please check your network connection",
+  },
+  fileUpload: {
+    toasts: {
+      success: "File uploaded successfully!",
+      error: "File upload failed. Please try again.",
     },
   },
 };
