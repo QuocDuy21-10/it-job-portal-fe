@@ -121,6 +121,13 @@ src/
 
 ---
 
+## 🔗 Backend Repository
+
+This project requires the corresponding backend API service to function fully. You can find the backend repository at the following link:
+* **Backend Repository**: [<u><font color="blue">DevLink Backend</font></u>](https://github.com/QuocDuy21-10/it-job-portal-be)
+
+---
+
 ## ⚙️ Installation & Configuration
 
 ### 1. Clone the project
