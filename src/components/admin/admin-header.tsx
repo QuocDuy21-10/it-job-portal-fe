@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Menu } from "lucide-react";
+import { LogOut, Menu, User, KeyRound } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/notification/notification-bell";
@@ -28,17 +28,6 @@ interface AdminHeaderProps {
   assistantTrigger?: ReactNode;
 }
 
-/**
- * AdminHeader Component
- * Header bar cho Admin Dashboard
- * 
- * Features:
- * - User profile dropdown với avatar
- * - Search functionality (optional)
- * - Notifications badge
- * - Mobile menu toggle
- * - Responsive design
- */
 export function AdminHeader({
   onMobileMenuToggle,
   onLogout,
@@ -48,15 +37,7 @@ export function AdminHeader({
   const user = useAppSelector(selectUser);
   const { t } = useI18n();
 
-  // Get user initials for avatar fallback
-  const getUserInitials = () => {
-    if (!user?.name) return "AD";
-    const names = user.name.split(" ");
-    if (names.length >= 2) {
-      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
-    }
-    return user.name.substring(0, 2).toUpperCase();
-  };
+
 
   return (
     <header
@@ -68,17 +49,7 @@ export function AdminHeader({
       )}
     >
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-        <Link href="/" className="flex items-center">
-          <Image
-            src="/images/logo.png"
-            alt="DevLink"
-            width={120}
-            height={36}
-            className="h-16 w-auto"
-            priority
-          />
-        </Link>
-        <div className="flex items-center gap-4 flex-1">
+        <div className="flex items-center gap-2 lg:gap-0 flex-1">
           {/* Mobile Menu Toggle */}
           <Button
             variant="ghost"
@@ -89,6 +60,17 @@ export function AdminHeader({
           >
             <Menu className="h-5 w-5" />
           </Button>
+
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/logo.png"
+              alt="DevLink"
+              width={120}
+              height={36}
+              className="h-16 w-auto"
+              priority
+            />
+          </Link>
         </div>
 
         {/* Right Section - Notifications & User Menu */}
@@ -105,15 +87,13 @@ export function AdminHeader({
                 variant="ghost"
                 className="flex h-auto items-center gap-2 px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-secondary"
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={user?.avatar || undefined}
-                    alt={user?.name || t("adminShell.userFallback")}
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs">
-                    {getUserInitials()}
-                  </AvatarFallback>
-                </Avatar>
+                <Image
+                  src={user?.avatar || "/images/avatar-default.jpg"}
+                  alt={user?.name || t("adminShell.userFallback")}
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 rounded-full object-cover"
+                />
                 <div className="hidden md:flex flex-col items-start">
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {user?.name || t("adminShell.userFallback")}
@@ -139,10 +119,22 @@ export function AdminHeader({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/admin/personal-info" className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>{t("adminShell.personalInfo")}</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/change-password" className="cursor-pointer">
+                  <KeyRound className="mr-2 h-4 w-4" />
+                  <span>{t("adminShell.changePassword")}</span>
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={onLogout}
-                className="text-red-600 focus:text-red-700 focus:bg-red-50 dark:focus:bg-red-950/30"
+                className="text-red-600 focus:text-red-700 focus:bg-red-50 dark:focus:bg-red-950/30 cursor-pointer"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>{t("adminShell.logout")}</span>

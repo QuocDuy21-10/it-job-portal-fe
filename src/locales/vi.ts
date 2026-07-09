@@ -269,6 +269,8 @@ export const vi = {
     loggingOut: "Đang đăng xuất...",
     userFallback: "Quản trị viên",
     emailFallback: "admin@example.com",
+    personalInfo: "Thông tin cá nhân",
+    changePassword: "Đổi mật khẩu",
     navigation: {
       dashboard: {
         label: "Bảng điều khiển",
@@ -747,6 +749,38 @@ export const vi = {
     },
   },
   adminPages: {
+    personalInfo: {
+      title: "Thông tin cá nhân",
+      description: "Cập nhật thông tin cá nhân và tài khoản của bạn",
+      nameLabel: "Họ và tên",
+      emailLabel: "Địa chỉ Email",
+      submit: "Cập nhật thông tin",
+      submitting: "Đang lưu...",
+      toasts: {
+        success: "Cập nhật thông tin cá nhân thành công!",
+        error: "Cập nhật thông tin cá nhân thất bại.",
+      }
+    },
+    changePassword: {
+      title: "Đổi mật khẩu",
+      description: "Đảm bảo tài khoản của bạn được bảo mật bằng mật khẩu mạnh",
+      currentPasswordLabel: "Mật khẩu hiện tại",
+      currentPasswordPlaceholder: "Nhập mật khẩu hiện tại",
+      newPasswordLabel: "Mật khẩu mới",
+      newPasswordPlaceholder: "Nhập mật khẩu mới",
+      confirmPasswordLabel: "Xác nhận mật khẩu mới",
+      confirmPasswordPlaceholder: "Nhập lại mật khẩu mới",
+      requirementsTitle: "Yêu cầu mật khẩu:",
+      reqMinChars: "Ít nhất 8 ký tự",
+      reqCase: "Bao gồm chữ hoa và chữ thường",
+      reqNumber: "Có ít nhất một số (0-9)",
+      submit: "Cập nhật mật khẩu",
+      submitting: "Đang cập nhật...",
+      toasts: {
+        success: "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.",
+        error: "Đổi mật khẩu thất bại.",
+      }
+    },
     dashboard: {
       metaTitle: "Bảng điều khiển quản trị | IT Dev Link",
       metaDescription: "Quản lý và theo dõi thống kê tuyển dụng trên toàn nền tảng",

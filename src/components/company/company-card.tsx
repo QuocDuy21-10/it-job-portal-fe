@@ -43,6 +43,7 @@ export function CompanyCard({ company, className }: CompanyCardProps) {
                   width={56}
                   height={56}
                   className="object-contain"
+                  style={{ width: "auto", height: "auto" }}
                 />
               ) : (
                 <Building2 className="h-10 w-10 text-muted-foreground" />

@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import * as Tooltip from "@radix-ui/react-tooltip";
+
 import jobTypes from "@/shared/data/job-type.json";
 import jobLevels from "@/shared/data/job-level.json";
 import { Job } from "@/features/job/schemas/job.schema";
@@ -254,13 +254,10 @@ function JobsPageContent({
   // Mobile Filter Drawer States & Queries
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
-  const activeFiltersCount = React.useMemo(() => {
-    let count = 0;
-    if (jobType !== "all") count++;
-    if (experience !== "all") count++;
-    if (salaryRange !== "all") count++;
-    return count;
-  }, [jobType, experience, salaryRange]);
+  let activeFiltersCount = 0;
+  if (jobType !== "all") activeFiltersCount++;
+  if (experience !== "all") activeFiltersCount++;
+  if (salaryRange !== "all") activeFiltersCount++;
 
   const { data: draftJobsData } = useGetJobsQuery(
     buildJobListQueryArgs({
@@ -291,8 +288,7 @@ function JobsPageContent({
   }, [applyFilters]);
 
   return (
-    <Tooltip.Provider>
-      <div className="listing-page-surface min-h-screen">
+    <div className="listing-page-surface min-h-screen">
         {/* Header with blue background */}
         <div className="home-hero-surface relative z-40 text-foreground">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
@@ -767,7 +763,6 @@ function JobsPageContent({
         </div>
       </div>
     </div>
-  </Tooltip.Provider>
   );
 }
 

@@ -35,9 +35,8 @@ const ChatWidget = () => {
   const { t } = useI18n();
   const user = useAppSelector(selectUser);
   const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // === Drag State ===
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
@@ -58,6 +57,7 @@ const ChatWidget = () => {
   }, [position]);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleViewportChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
@@ -172,7 +172,7 @@ const ChatWidget = () => {
     return { left, top, position: "fixed" };
   }, [position]);
 
-  if (!isMobile && !position) {
+  if (!isMounted || (!isMobile && !position)) {
     return null;
   }
 

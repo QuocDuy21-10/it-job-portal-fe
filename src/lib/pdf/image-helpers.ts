@@ -24,11 +24,24 @@ export function getProxiedImageUrl(imageUrl?: string): string | undefined {
   try {
     const url = new URL(imageUrl, window.location.origin);
     
+    // Resolve the backend API host safely to prevent crashes from invalid environment variables
+    let isBackendUrl = url.host === "localhost:8081";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!isBackendUrl && apiUrl) {
+      try {
+        const backendHost = apiUrl.startsWith("http")
+          ? new URL(apiUrl).host
+          : apiUrl.replace(/^https?:\/\//, "").split("/")[0];
+        if (backendHost) {
+          isBackendUrl = url.host === backendHost;
+        }
+      } catch {
+        // Ignore API URL parsing errors to prevent breaking external URLs
+      }
+    }
+
     // If it's from the backend API, proxy it
-    if (
-      url.host === "localhost:8081" ||
-      url.host === new URL(process.env.NEXT_PUBLIC_API_URL || "").host
-    ) {
+    if (isBackendUrl) {
       return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
     }
 

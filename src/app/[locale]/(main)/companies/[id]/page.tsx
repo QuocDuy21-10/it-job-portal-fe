@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { fetchPublicCompanyById } from "@/lib/utils/public-content";
+import { fetchPublicCompanyById, fetchPublicJobs } from "@/lib/utils/public-content";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import {
   buildLocalizedPageMetadata,
@@ -158,8 +158,12 @@ export default async function CompanyDetailPage({
   params,
 }: CompanyDetailPageProps) {
   const { locale, id } = await resolveCompanyDetailParams(params);
-  const [company, t] = await Promise.all([
+  const [company, initialJobs, t] = await Promise.all([
     fetchPublicCompanyById(id),
+    fetchPublicJobs({
+      filter: `isActive=true&company._id=${id}`,
+      limit: 20,
+    }),
     getTranslations({ locale }),
   ]);
 
@@ -322,6 +326,7 @@ export default async function CompanyDetailPage({
                 <CompanyDetailPageClient
                   companyId={company._id}
                   jobPathPrefix={jobsPath}
+                  initialJobs={initialJobs}
                 />
               </section>
             </div>

@@ -10,20 +10,30 @@ import { useI18n } from "@/hooks/use-i18n";
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  rightLabel?: React.ReactNode;
   error?: string;
   showIcon?: boolean;
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ label, error, showIcon = true, className, ...props }, ref) => {
+  ({ label, rightLabel, error, showIcon = true, className, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const { t } = useI18n();
 
     return (
       <div className="space-y-2">
-        <Label htmlFor={props.id} className="dark:text-gray-200">
-          {label}
-        </Label>
+        {(label || rightLabel) && (
+          <div className="flex items-center justify-between">
+            {label ? (
+              <Label htmlFor={props.id} className="text-sm font-medium text-foreground dark:text-gray-200">
+                {label}
+              </Label>
+            ) : (
+              <div />
+            )}
+            {rightLabel}
+          </div>
+        )}
         <div className="relative">
           {showIcon && (
             <Lock
@@ -36,7 +46,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             type={showPassword ? "text" : "password"}
             className={cn(
               showIcon && "pl-10",
-              "pr-10 transition-all",
+              "pr-10 transition-all rounded-xl h-11",
               error && "border-destructive focus-visible:border-destructive",
               className
             )}

@@ -254,7 +254,6 @@ function UserTableRow({
     <TableRow
       className={cn(
         "border-gray-200 dark:border-gray-800",
-        "hover:bg-gray-50 dark:hover:bg-gray-900/30",
         "transition-colors duration-200"
       )}
       data-state={isSelected ? "selected" : undefined}

@@ -12,7 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth";
 import { SocialAuthButtons } from "@/components/auth";
-import { AuthModalTab } from "@/contexts/auth-modal-context";
+import { AuthModalTab, useAuthModal } from "@/contexts/auth-modal-context";
+import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
@@ -48,6 +49,7 @@ export function LoginForm({
   isModal = false,
   onTabChange,
 }: LoginFormProps) {
+  const { closeModal } = useAuthModal();
   const [socialLoading, setSocialLoading] = useState<"google" | null>(null);
   const dispatch = useAppDispatch();
   const locale = useLocale() as AppLocale;
@@ -172,7 +174,10 @@ export function LoginForm({
             placeholder={t("authModal.login.fields.email.placeholder")}
             autoComplete="email"
             {...register("email")}
-            className={errors.email ? "border-destructive focus-visible:ring-destructive" : ""}
+            className={cn(
+              "rounded-xl h-11 transition-all",
+              errors.email ? "border-destructive focus-visible:ring-destructive" : ""
+            )}
           />
           {errors.email && (
             <p className="text-xs text-destructive flex items-center gap-1 animate-in fade-in slide-in-from-top-1 duration-200">
@@ -186,6 +191,19 @@ export function LoginForm({
           <PasswordInput
             id="password"
             label={t("authModal.login.fields.password.label")}
+            rightLabel={
+              <Link
+                href="/forgot-password"
+                className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                onClick={() => {
+                  if (isModal) {
+                    closeModal();
+                  }
+                }}
+              >
+                {t("authModal.login.forgotPassword")}
+              </Link>
+            }
             placeholder={t("authModal.login.fields.password.placeholder")}
             autoComplete="current-password"
             error={errors.password?.message}
@@ -193,22 +211,10 @@ export function LoginForm({
           />
         </div>
 
-        {/* Forgot Password Link */}
-        {!isModal && (
-          <div className="flex items-center justify-end">
-            <Link
-              href="/forgot-password"
-              className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              {t("authModal.login.forgotPassword")}
-            </Link>
-          </div>
-        )}
-
         {/* Submit Button */}
         <Button
           type="submit"
-          className="w-full h-11 font-medium"
+          className="w-full h-11 font-semibold rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] mt-2"
           disabled={isLoading || isGoogleLoading}
         >
           {isLoading ? (
@@ -232,12 +238,12 @@ export function LoginForm({
       </div>
 
       {isModal && (
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground pt-1">
           {t("authModal.login.footer.noAccount")}{" "}
           <button
             type="button"
             onClick={() => onTabChange?.("signup")}
-            className="font-medium text-primary hover:text-primary/80 transition-colors"
+            className="font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             {t("authModal.login.footer.signUpNow")}
           </button>

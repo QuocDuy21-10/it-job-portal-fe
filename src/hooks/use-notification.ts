@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useRef } from "react";
-import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { useSocketEvent } from "@/lib/socket/use-socket";
 import {
   useGetUnreadCountQuery,
   useMarkAsReadMutation,
@@ -17,11 +15,8 @@ import {
   decrementUnreadCount,
   resetUnreadCount,
 } from "@/features/notification/redux/notification.slice";
-import { baseApi } from "@/lib/redux/api";
 import { Notification } from "@/features/notification/schemas/notification.schema";
 import { useAuth } from "./use-auth";
-import { useI18n } from "./use-i18n";
-import { useRouter } from "@/i18n/navigation";
 
 export function getNotificationLink(notification: Notification): string {
   switch (notification.type) {
@@ -39,8 +34,6 @@ export function getNotificationLink(notification: Notification): string {
 
 export function useNotification() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { t } = useI18n();
   const { isAuthenticated } = useAuth();
   const unreadCount = useAppSelector(selectUnreadCount);
   const markingReadIdsRef = useRef(new Set<string>());
@@ -61,30 +54,6 @@ export function useNotification() {
       dispatch(setUnreadCount(unreadCountFromServer));
     }
   }, [unreadCountFromServer, dispatch]);
-
-  // Listen for real-time notifications
-  const handleNewNotification = useCallback(
-    (notification: Notification) => {
-      dispatch(incrementUnreadCount());
-      dispatch(
-        baseApi.util.invalidateTags([
-          { type: "Notification", id: "LIST" },
-          { type: "Notification", id: "UNREAD_COUNT" },
-        ])
-      );
-
-      toast.info(notification.title, {
-        description: notification.message,
-        action: {
-          label: t("common.view"),
-          onClick: () => router.push(getNotificationLink(notification)),
-        },
-      });
-    },
-    [dispatch, router, t]
-  );
-
-  useSocketEvent<Notification>("notification:new", handleNewNotification);
 
   const markAsRead = useCallback(
     async (id: string) => {

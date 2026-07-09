@@ -209,6 +209,7 @@ export default function MyJobsPage() {
                               height={40}
                               className="object-contain"
                               src={logoUrl}
+                              style={{ width: "auto", height: "auto" }}
                             />
                           ) : (
                             <Building2 className="w-6 h-6 text-muted-foreground/50" />

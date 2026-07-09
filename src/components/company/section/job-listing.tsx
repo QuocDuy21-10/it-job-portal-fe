@@ -1,10 +1,13 @@
 "use client";
 
+import { memo } from "react";
 import { Briefcase } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard } from "@/components/job/job-card";
+import type { PaginatedResult } from "@/shared/types/pagination";
+import type { Job } from "@/features/job/schemas/job.schema";
 
 interface JobListingProps {
   companyId?: string;
@@ -12,14 +15,15 @@ interface JobListingProps {
   searchQuery: string;
   selectedLocation: string;
   jobPathPrefix?: string;
+  initialJobs?: PaginatedResult<Job> | null;
 }
 
-
-export default function JobListing({
+function JobListing({
   companyId,
   searchQuery,
   selectedLocation,
   jobPathPrefix,
+  initialJobs,
 }: JobListingProps) {
   const { t } = useI18n();
 
@@ -37,10 +41,20 @@ export default function JobListing({
     filter += `locationCode=${selectedLocation}`;
   }
 
-  const { data, isLoading, error } = useGetJobsQuery({ filter, limit: 20 });
-  const jobs = data?.data?.result || [];
+  // Skip query if it is default initial state and server-side data is available
+  const isDefaultFilter = !searchQuery && !selectedLocation;
+  const { data, isLoading, error } = useGetJobsQuery(
+    { filter, limit: 20 },
+    { skip: isDefaultFilter && !!initialJobs }
+  );
 
-  if (isLoading) {
+  const jobs = isDefaultFilter && initialJobs 
+    ? (initialJobs.result || []) 
+    : (data?.data?.result || []);
+
+  const showLoading = isDefaultFilter && initialJobs ? false : isLoading;
+
+  if (showLoading) {
     return (
       <Card className="border-slate-200 bg-white p-12 text-center dark:border-border dark:bg-card">
         <div className="flex flex-col items-center gap-3">
@@ -93,3 +107,6 @@ export default function JobListing({
     </div>
   );
 }
+
+export default memo(JobListing);
+

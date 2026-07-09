@@ -284,12 +284,12 @@ export function Header() {
               </>
             ) : (
               <>
-                <Button asChild variant="outline" size="sm">
+                <Button asChild size="sm">
                   <Link href="/login">
                     {i18nMounted ? t("nav.signIn") : "Sign In"}
                   </Link>
                 </Button>
-                <Button asChild size="sm">
+                <Button asChild variant="outline" size="sm">
                   <Link href="/register">
                     {i18nMounted ? t("nav.signUp") : "Sign Up"}
                   </Link>
@@ -375,8 +375,11 @@ export function Header() {
                 </button>
               </>
             ) : (
-              // If not authenticated, keep right side empty (auth options will be in the Left Drawer)
-              null
+              <Button asChild size="sm">
+                <Link href="/login">
+                  {i18nMounted ? t("nav.signIn") : "Sign In"}
+                </Link>
+              </Button>
             )}
           </div>
         </nav>
@@ -491,13 +494,13 @@ export function Header() {
           {!isMounted ? (
             <div className="flex flex-col gap-3">
               <Button asChild size="lg" className="w-full shadow-sm">
-                <Link href="/register" onClick={() => setLeftDrawerOpen(false)}>
-                  {i18nMounted ? t("nav.signUp") : "Sign Up"}
+                <Link href="/login" onClick={() => setLeftDrawerOpen(false)}>
+                  {i18nMounted ? t("nav.signIn") : "Sign In"}
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="w-full">
-                <Link href="/login" onClick={() => setLeftDrawerOpen(false)}>
-                  {i18nMounted ? t("nav.signIn") : "Sign In"}
+                <Link href="/register" onClick={() => setLeftDrawerOpen(false)}>
+                  {i18nMounted ? t("nav.signUp") : "Sign Up"}
                 </Link>
               </Button>
             </div>
@@ -520,13 +523,13 @@ export function Header() {
           ) : (
             <div className="flex flex-col gap-3">
               <Button asChild size="lg" className="w-full shadow-sm">
-                <Link href="/register" onClick={() => setLeftDrawerOpen(false)}>
-                  {i18nMounted ? t("nav.signUp") : "Sign Up"}
+                <Link href="/login" onClick={() => setLeftDrawerOpen(false)}>
+                  {i18nMounted ? t("nav.signIn") : "Sign In"}
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="w-full">
-                <Link href="/login" onClick={() => setLeftDrawerOpen(false)}>
-                  {i18nMounted ? t("nav.signIn") : "Sign In"}
+                <Link href="/register" onClick={() => setLeftDrawerOpen(false)}>
+                  {i18nMounted ? t("nav.signUp") : "Sign Up"}
                 </Link>
               </Button>
             </div>

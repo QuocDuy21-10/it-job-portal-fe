@@ -318,7 +318,7 @@
   }
 
   .admin-table-row {
-    @apply border-b border-gray-200 transition-colors hover:bg-gray-50 dark:border-border dark:hover:bg-secondary/50;
+    @apply border-b border-gray-200 transition-colors dark:border-border;
   }
 
   .admin-table-cell {
@@ -695,5 +695,66 @@
 
   .dark .top-companies-carousel__button {
     box-shadow: 0 20px 40px hsl(228 46% 6% / 0.35);
+  }
+
+  /* Chatbot loading/thinking indicator custom styles */
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(229, 231, 235, 0.3) 25%,
+      rgba(229, 231, 235, 0.6) 37%,
+      rgba(229, 231, 235, 0.3) 63%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease infinite;
+  }
+
+  .dark .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(63, 63, 70, 0.3) 25%,
+      rgba(63, 63, 70, 0.6) 37%,
+      rgba(63, 63, 70, 0.3) 63%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Chatbot inline cursor animation during active streaming */
+  .chat-streaming-active p:last-child::after,
+  .chat-streaming-active li:last-child::after,
+  .chat-streaming-active div:last-child::after {
+    content: "▋";
+    display: inline-block;
+    margin-left: 0.25rem;
+    vertical-align: baseline;
+    animation: cursor-blink 1s step-end infinite;
+    color: hsl(var(--muted-foreground));
+  }
+
+  @keyframes cursor-blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
   }
 }

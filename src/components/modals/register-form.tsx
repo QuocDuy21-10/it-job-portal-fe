@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PasswordInput } from "@/components/auth";
 import { AuthModalTab } from "@/contexts/auth-modal-context";
+import { cn } from "@/lib/utils";
 import { useRegisterMutation } from "@/features/auth/redux/auth.api";
 import {
   RegisterFormData,
@@ -98,7 +99,10 @@ export function RegisterForm({
           placeholder={t("authModal.register.fields.name.placeholder")}
           autoComplete="name"
           {...register("name")}
-          className={errors.name ? "border-destructive focus-visible:ring-destructive" : ""}
+          className={cn(
+            "rounded-xl h-11 transition-all",
+            errors.name ? "border-destructive focus-visible:ring-destructive" : ""
+          )}
         />
         {errors.name && (
           <p className="text-xs text-destructive animate-in fade-in slide-in-from-top-1 duration-200">
@@ -122,7 +126,10 @@ export function RegisterForm({
           placeholder={t("authModal.register.fields.email.placeholder")}
           autoComplete="email"
           {...register("email")}
-          className={errors.email ? "border-destructive focus-visible:ring-destructive" : ""}
+          className={cn(
+            "rounded-xl h-11 transition-all",
+            errors.email ? "border-destructive focus-visible:ring-destructive" : ""
+          )}
         />
         {errors.email && (
           <p className="text-xs text-destructive animate-in fade-in slide-in-from-top-1 duration-200">
@@ -203,7 +210,7 @@ export function RegisterForm({
       {/* Submit Button */}
       <Button 
         type="submit" 
-        className="w-full h-11 font-medium mt-2" 
+        className="w-full h-11 font-semibold rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] mt-2" 
         disabled={isLoading}
       >
         {isLoading ? (
@@ -217,12 +224,12 @@ export function RegisterForm({
       </Button>
 
       {isModal && (
-        <p className="text-center text-sm text-muted-foreground pt-2">
+        <p className="text-center text-sm text-muted-foreground pt-1">
           {t("authModal.register.footer.alreadyHaveAccount")}{" "}
           <button
             type="button"
             onClick={() => onTabChange?.("signin")}
-            className="font-medium text-primary hover:text-primary/80 transition-colors"
+            className="font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             {t("authModal.register.footer.signInNow")}
           </button>

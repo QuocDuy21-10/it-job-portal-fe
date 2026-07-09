@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import parse from "html-react-parser";
+import Image from "next/image";
 import { TYPOGRAPHY, EFFECTS } from "@/shared/constants/design";
 import { useI18n } from "@/hooks/use-i18n";
 import { SimplePagination } from "@/components/simple-pagination";
@@ -29,6 +29,10 @@ type CompaniesPageClientProps = {
   initialData: PaginatedResult<Company> | null;
   initialSearchState: CompanyListSearchState;
 };
+
+function stripHtmlTags(value: string) {
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
 
 const truncateDescription = (text: string, lines = 2) => {
   const lineArray = text.split("\n");
@@ -119,11 +123,7 @@ export default function CompanyListPage({
 
   const applySearch = useCallback(
     (value?: string) => {
-      const nextSearchValue = (value ?? searchInput).trim();
-
-      if (nextSearchValue !== searchInput) {
-        setSearchInput(nextSearchValue);
-      }
+      const nextSearchValue = (value || "").trim();
 
       setCurrentSearchState((state) => {
         if (state.q === nextSearchValue && state.page === 1) {
@@ -137,7 +137,7 @@ export default function CompanyListPage({
         };
       });
     },
-    [searchInput]
+    []
   );
 
   const clearSearch = useCallback(() => {
@@ -201,7 +201,7 @@ export default function CompanyListPage({
                     }
 
                     event.preventDefault();
-                    applySearch();
+                    applySearch(searchInput);
                   }}
                   className="company-list-search-input h-12 w-full rounded-full border-0 bg-transparent pl-12 pr-12 text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:border-transparent sm:h-14 sm:pr-16"
                 />
@@ -217,7 +217,7 @@ export default function CompanyListPage({
               </div>
               <Button
                 type="button"
-                onClick={() => applySearch()}
+                onClick={() => applySearch(searchInput)}
                 disabled={isLoading}
                 className="company-list-search-button bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-full px-8 text-base font-semibold sm:h-14 sm:min-w-[116px]"
               >
@@ -278,9 +278,11 @@ export default function CompanyListPage({
                     <div className="flex items-start justify-between mb-6">
                       <div className="w-16 h-16 rounded-lg bg-secondary/85 flex items-center justify-center p-2 border border-slate-100 shadow-sm transition-shadow duration-300 group-hover:shadow-md dark:border-white/10 dark:bg-white/[0.04]">
                         {company.logo ? (
-                          <img
+                          <Image
                             src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
-                            alt={company.name}
+                            alt={`${company.name} logo`}
+                            width={64}
+                            height={64}
                             className="h-full w-full object-contain rounded"
                           />
                         ) : (
@@ -305,9 +307,9 @@ export default function CompanyListPage({
                       </div>
                     )}
 
-                    <div className="listing-muted-text line-clamp-2 text-sm leading-relaxed">
-                      {parse(truncateDescription(company.description || "", 2))}
-                    </div>
+                    <p className="listing-muted-text line-clamp-2 text-sm leading-relaxed">
+                      {truncateDescription(stripHtmlTags(company.description || ""), 2)}
+                    </p>
                   </div>
 
                   <div className="listing-subtle-border mt-auto pt-6 border-t flex items-center justify-between">

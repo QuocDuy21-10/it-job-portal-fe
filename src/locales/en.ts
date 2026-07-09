@@ -268,6 +268,8 @@ export const en = {
     loggingOut: "Signing out...",
     userFallback: "Admin",
     emailFallback: "admin@example.com",
+    personalInfo: "Personal Information",
+    changePassword: "Change Password",
     navigation: {
       dashboard: {
         label: "Dashboard",
@@ -745,6 +747,38 @@ export const en = {
     },
   },
   adminPages: {
+    personalInfo: {
+      title: "Personal Information",
+      description: "Update your personal and account information",
+      nameLabel: "Full Name",
+      emailLabel: "Email Address",
+      submit: "Update Information",
+      submitting: "Saving...",
+      toasts: {
+        success: "Personal information updated successfully!",
+        error: "Failed to update personal information.",
+      }
+    },
+    changePassword: {
+      title: "Change Password",
+      description: "Ensure your account is secured with a strong password",
+      currentPasswordLabel: "Current Password",
+      currentPasswordPlaceholder: "Enter your current password",
+      newPasswordLabel: "New Password",
+      newPasswordPlaceholder: "Enter your new password",
+      confirmPasswordLabel: "Confirm New Password",
+      confirmPasswordPlaceholder: "Confirm your new password",
+      requirementsTitle: "Password requirements:",
+      reqMinChars: "At least 8 characters",
+      reqCase: "Includes uppercase and lowercase letters",
+      reqNumber: "Has at least one number (0-9)",
+      submit: "Update Password",
+      submitting: "Updating...",
+      toasts: {
+        success: "Password updated successfully! Please log in again.",
+        error: "Failed to update password.",
+      }
+    },
     dashboard: {
       metaTitle: "Admin Dashboard | IT Dev Link",
       metaDescription: "Manage and monitor recruitment statistics across the platform",

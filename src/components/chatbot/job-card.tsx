@@ -98,6 +98,7 @@ const JobCard = ({
             width={40}
             height={40}
             className="rounded-md object-cover border border-gray-200 dark:border-gray-600 flex-shrink-0"
+            style={{ width: "auto", height: "auto" }}
           />
         ) : (
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 dark:bg-secondary">

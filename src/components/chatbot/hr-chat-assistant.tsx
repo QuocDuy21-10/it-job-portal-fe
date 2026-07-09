@@ -22,11 +22,11 @@ const HrChatAssistant = ({
   onOpenChange,
 }: HrChatAssistantProps) => {
   const { t } = useI18n();
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleViewportChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
@@ -36,6 +36,10 @@ const HrChatAssistant = ({
 
     return () => window.removeEventListener("resize", handleViewportChange);
   }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <>

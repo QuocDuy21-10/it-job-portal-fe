@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import { Job } from "@/features/job/schemas/job.schema";
@@ -34,9 +33,28 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 
-export default function Home() {
+type HomeSearchBoxProps = {
+  onSearch: (query: string, locationCode: string) => void;
+};
+
+function HomeSearchBox({ onSearch }: HomeSearchBoxProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocationCode, setSelectedLocationCode] = useState<string>("");
+
+  return (
+    <JobSearchBox
+      searchQuery={searchQuery}
+      onSearchQueryChange={setSearchQuery}
+      locationCode={selectedLocationCode}
+      onLocationCodeChange={setSelectedLocationCode}
+      onSearch={(submittedQuery) =>
+        onSearch(submittedQuery ?? searchQuery, selectedLocationCode)
+      }
+    />
+  );
+}
+
+export default function Home() {
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
 
@@ -66,24 +84,24 @@ export default function Home() {
   }, [carouselApi]);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("access_token"));
+    try {
+      setHasToken(!!localStorage.getItem("access_token"));
+    } catch {
+      setHasToken(false);
+    }
   }, []);
 
-  const { t, mounted: i18nMounted } = useI18n();
+  const { t } = useI18n();
 
   // Pagination states
   const [jobsPage, setJobsPage] = useState(1);
-
-  // Only fetch user data if token exists - prevent infinite 401 loop
-  useGetMeQuery(undefined, {
-    skip: !hasToken, // Skip query if no token
-  });
 
   const ITEMS_PER_PAGE = 6; // 6 items per page for cleaner layout
 
   const {
     data: jobsData,
-    isLoading: jobsLoading,
+    isLoading: jobsInitialLoading,
+    isFetching: jobsFetching,
     error: jobsError,
   } = useGetJobsQuery({
     page: jobsPage,
@@ -91,6 +109,8 @@ export default function Home() {
     filter: "isActive=true",
     sort: "sort=-createdAt",
   });
+
+  const jobsLoading = jobsInitialLoading || jobsFetching;
 
   const {
     data: companiesData,
@@ -103,13 +123,11 @@ export default function Home() {
 
   const topCompaniesToRender = companiesData?.data ?? [];
 
-  const handleSearch = (submittedQuery?: string) => {
+  const handleSearch = (query: string, locationCode: string) => {
     const params = new URLSearchParams();
 
-    const nextSearchQuery = submittedQuery ?? searchQuery;
-
-    if (nextSearchQuery) params.set("q", nextSearchQuery);
-    if (selectedLocationCode) params.set("locationCode", selectedLocationCode);
+    if (query) params.set("q", query);
+    if (locationCode) params.set("locationCode", locationCode);
     const nextPath = params.size ? `/jobs?${params.toString()}` : "/jobs";
     router.push(nextPath);
   };
@@ -125,52 +143,41 @@ export default function Home() {
             {/* Heading */}
             <div className="space-y-4">
                <h1 className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}>
-                {i18nMounted ? t("home.findYour") : "Find Your "}
+                {t("home.findYour")}
                 <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
-                  {i18nMounted ? t("home.dreamJob") : "Dream IT Job"}
+                  {t("home.dreamJob")}
                 </span>
               </h1>
              <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
-                {i18nMounted
-                  ? t("home.discoverOpportunities")
-                  : "Discover thousands of IT opportunities from leading tech companies worldwide."}
-                {" "}
-                {i18nMounted
-                  ? t("home.startCareerJourney")
-                  : "Start your career journey today."}
+                {t("home.discoverOpportunities")} {t("home.startCareerJourney")}
               </p>
             </div>
 
             {/* Search Box */}
-            <JobSearchBox
-              searchQuery={searchQuery}
-              onSearchQueryChange={setSearchQuery}
-              locationCode={selectedLocationCode}
-              onLocationCodeChange={setSelectedLocationCode}
-              onSearch={handleSearch}
-              className="animate-in fade-in slide-in-from-bottom-6 duration-1000"
-            />
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+              <HomeSearchBox onSearch={handleSearch} />
+            </div>
 
             {/* Stats */}
             <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
               <div className="text-center">
                 <div className="text-2xl font-bold text-foreground sm:text-3xl">20k+</div>
                 <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                  {i18nMounted ? t("home.activeJobs") : "Open Roles"}
+                  {t("home.activeJobs")}
                 </div>
               </div>
               <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
               <div className="text-center">
                 <div className="text-2xl font-bold text-foreground sm:text-3xl">5k+</div>
                 <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                  {i18nMounted ? t("home.companies") : "Companies"}
+                  {t("home.companies")}
                 </div>
               </div>
               <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
               <div className="text-center">
                 <div className="text-2xl font-bold text-foreground sm:text-3xl">100k+</div>
                 <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                  {i18nMounted ? t("home.jobSeekers") : "Candidates"}
+                  {t("home.jobSeekers")}
                 </div>
               </div>
             </div>
@@ -181,13 +188,9 @@ export default function Home() {
       {/* Featured Jobs Section */}
       <SectionContainer className="home-section-base">
         <SectionHeader
-          title={i18nMounted ? t("home.featuredJobs") : "Featured Jobs for You"}
-          description={
-            i18nMounted
-              ? t("home.featuredJobsDescription")
-              : "Hand-picked opportunities from top companies around the world."
-          }
-          actionLabel={i18nMounted ? t("home.viewAll") : "See All"}
+          title={t("home.featuredJobs")}
+          description={t("home.featuredJobsDescription")}
+          actionLabel={t("home.viewAll")}
           actionHref="/jobs"
         />
 
@@ -229,17 +232,13 @@ export default function Home() {
             ) : jobsError ? (
               <div className="col-span-3 text-center py-8">
                 <p className="home-muted-text text-muted-foreground">
-                  {i18nMounted
-                    ? t("home.loadJobsError")
-                    : "Failed to load jobs. Please try again later."}
+                  {t("home.loadJobsError")}
                 </p>
               </div>
             ) : featuredJobsToRender.length === 0 ? (
               <div className="col-span-3 text-center py-8">
                 <p className="home-muted-text text-muted-foreground">
-                  {i18nMounted
-                    ? t("home.noJobs")
-                    : "No jobs available at the moment."}
+                  {t("home.noJobs")}
                 </p>
               </div>
             ) : (
@@ -272,8 +271,7 @@ export default function Home() {
               className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
               <Link href="/jobs">
-                {i18nMounted ? t("home.viewAllJobs") : "View All Jobs"}{" "}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {t("home.viewAllJobs")} <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -284,14 +282,10 @@ export default function Home() {
         <div className="mb-8 flex items-end justify-between gap-4">
           <div className="space-y-2">
             <h2 className={TYPOGRAPHY.h2}>
-              {i18nMounted
-                ? t("home.topCompaniesHiringNow") || "Top IT Companies Hiring Now"
-                : "Top IT Companies Hiring Now"}
+              {t("home.topCompaniesHiringNow") || "Top IT Companies Hiring Now"}
             </h2>
             <p className="home-muted-text max-w-2xl text-base text-muted-foreground">
-              {i18nMounted
-                ? t("home.topCompaniesDescription")
-                : "Join teams at leading IT organizations"}
+              {t("home.topCompaniesDescription")}
             </p>
           </div>
 
@@ -301,7 +295,7 @@ export default function Home() {
             className="hidden sm:inline-flex dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
           >
             <Link href="/companies">
-              {i18nMounted ? t("home.viewAllCompanies") : "View All Companies"}
+              {t("home.viewAllCompanies")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
@@ -310,17 +304,13 @@ export default function Home() {
         {companiesError ? (
           <div className="py-8 text-center">
             <p className="home-muted-text text-muted-foreground">
-              {i18nMounted
-                ? t("home.errorLoadingCompanies")
-                : "Error loading companies"}
+              {t("home.errorLoadingCompanies")}
             </p>
           </div>
         ) : topCompaniesToRender.length === 0 && !companiesLoading ? (
           <div className="py-8 text-center">
             <p className="home-muted-text text-muted-foreground">
-              {i18nMounted
-                ? t("home.noCompanies")
-                : "No companies available at the moment."}
+              {t("home.noCompanies")}
             </p>
           </div>
         ) : (
@@ -403,7 +393,7 @@ export default function Home() {
             className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
           >
             <Link href="/companies">
-              {i18nMounted ? t("home.viewAllCompanies") : "View All Companies"}
+              {t("home.viewAllCompanies")}
             </Link>
           </Button>
         </div>
@@ -413,12 +403,10 @@ export default function Home() {
       <SectionContainer className="home-section-base">
         <div className="text-center mb-12">
           <h2 className={TYPOGRAPHY.h2}>
-            {i18nMounted ? t("home.howItWorks") : "How It Works"}
+            {t("home.howItWorks")}
           </h2>
           <p className="home-muted-text mt-3 text-lg text-muted-foreground">
-            {i18nMounted
-              ? t("home.howItWorksDescription")
-              : "Get hired in three simple steps"}
+            {t("home.howItWorksDescription")}
           </p>
         </div>
 
@@ -432,12 +420,10 @@ export default function Home() {
                 </div>
               </div>
               <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-                {i18nMounted ? t("home.searchJobs") : "Create Profile"}
+                {t("home.searchJobs")}
               </h3>
               <p className="home-muted-text leading-relaxed text-muted-foreground">
-                {i18nMounted
-                  ? t("home.searchJobsDescription")
-                  : "Build your professional profile and showcase your skills to top IT companies"}
+                {t("home.searchJobsDescription")}
               </p>
             </div>
 
@@ -453,12 +439,10 @@ export default function Home() {
                 </div>
               </div>
               <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-                {i18nMounted ? t("home.applyWithEase") : "Apply with One Click"}
+                {t("home.applyWithEase")}
               </h3>
               <p className="home-muted-text leading-relaxed text-muted-foreground">
-                {i18nMounted
-                  ? t("home.applyWithEaseDescription")
-                  : "Submit your application instantly with your saved profile — no lengthy forms"}
+                {t("home.applyWithEaseDescription")}
               </p>
             </div>
 
@@ -474,12 +458,10 @@ export default function Home() {
                 </div>
               </div>
               <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-                {i18nMounted ? t("home.getHired") : "Get Hired"}
+                {t("home.getHired")}
               </h3>
               <p className="home-muted-text leading-relaxed text-muted-foreground">
-                {i18nMounted
-                  ? t("home.getHiredDescription")
-                  : "Connect with top employers and land your dream IT job faster than ever"}
+                {t("home.getHiredDescription")}
               </p>
             </div>
           </div>
@@ -494,14 +476,10 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-              {i18nMounted
-                ? t("home.readyToGetStarted")
-                : "Ready to Level Up Your Career?"}
+              {t("home.readyToGetStarted")}
             </h2>
             <p className="text-lg leading-relaxed text-blue-50 dark:text-white/80 sm:text-xl">
-              {i18nMounted
-                ? t("home.readyToGetStartedDescription")
-                : "Join thousands of IT professionals who have found their dream careers through DevLink"}
+              {t("home.readyToGetStartedDescription")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -512,7 +490,7 @@ export default function Home() {
               >
                 <Link href="/jobs">
                   <Search className="mr-2 h-5 w-5" />
-                  {i18nMounted ? t("home.browseJobs") : "Get Started"}
+                  {t("home.browseJobs")}
                 </Link>
               </Button>
             </div>

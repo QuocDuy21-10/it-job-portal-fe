@@ -77,7 +77,7 @@ export default function ResumesPage() {
     page: currentPage,
     limit: pageSize,
     filter,
-    sort: sort === "default" ? "" : sort,
+    sort: sort === "default" ? "" : `sort=${sort}`,
   });
 
   // Custom hook chứa tất cả CRUD operations
@@ -193,17 +193,17 @@ export default function ResumesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header with Orange Theme */}
-      <div className="admin-page-header bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border-l-4 border-orange-500">
+      {/* Page Header */}
+      <div className="admin-page-header">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+          <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
             <FileText className="h-6 w-6 text-orange-600 dark:text-orange-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="admin-page-title">
               {t("adminPages.resumes.title")}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="admin-page-description">
               {t("adminPages.resumes.description")}
             </p>
           </div>
@@ -295,6 +295,7 @@ export default function ResumesPage() {
                 setSelectedScore("all");
                 setSort("default");
                 setCurrentPage(1);
+                clear();
               }}
               className="w-full"
             >

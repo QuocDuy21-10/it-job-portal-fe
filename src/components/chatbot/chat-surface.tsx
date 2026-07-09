@@ -22,6 +22,7 @@ import {
   ChatQuotaWarning,
 } from "@/components/chatbot/chat-quota-meter";
 import ChatTypingIndicator from "@/components/chatbot/chat-typing-indicator";
+import ChatThinkingIndicator from "@/components/chatbot/chat-thinking-indicator";
 import JobCard from "@/components/chatbot/job-card";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { selectUser } from "@/features/auth/redux/auth.slice";
@@ -393,18 +394,21 @@ const ChatSurface = ({
                   )}
                 >
                   {message.role === "assistant" ? (
-                    <div className="prose prose-sm max-w-none break-words dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={markdownComponents}
-                      >
-                        {message.id === streamingMessageId
-                          ? streamingContent ||
-                            t("chatWidget.messages.streamingPlaceholder")
-                          : message.content}
-                      </ReactMarkdown>
-                      {message.id === streamingMessageId && (
-                        <span className="ml-0.5 inline-block h-4 w-1.5 align-text-bottom animate-pulse bg-gray-400 dark:bg-gray-300" />
+                    <div className={cn(
+                      "prose prose-sm max-w-none break-words dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5",
+                      message.id === streamingMessageId && streamingContent && "chat-streaming-active"
+                    )}>
+                      {message.id === streamingMessageId && !streamingContent ? (
+                        <ChatThinkingIndicator />
+                      ) : (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={markdownComponents}
+                        >
+                          {message.id === streamingMessageId
+                            ? streamingContent
+                            : message.content}
+                        </ReactMarkdown>
                       )}
                     </div>
                   ) : (

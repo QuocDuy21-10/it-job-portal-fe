@@ -37,6 +37,10 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
+jest.mock("next-intl", () => ({
+  useLocale: () => "en",
+}));
+
 jest.mock("@/hooks/use-i18n", () => ({
   useI18n: () => ({
     t: (key: string) => mockTranslate(mockMessages, key),

@@ -37,6 +37,7 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                   width={96}
                   height={96}
                   className="object-contain rounded-lg"
+                  style={{ width: "auto", height: "auto" }}
                 />
               ) : (
                 <Building2 className="h-12 w-12 text-slate-400" /> 

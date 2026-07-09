@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { GoogleLogin } from "@react-oauth/google";
-
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { useI18n } from "@/hooks/use-i18n";
 
 interface SocialAuthButtonsProps {
@@ -31,6 +31,7 @@ export function SocialAuthButtons({
 }: SocialAuthButtonsProps) {
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
+  const isMobile = useMediaQuery("(max-width: 480px)");
 
   useEffect(() => {
     setMounted(true);
@@ -43,6 +44,10 @@ export function SocialAuthButtons({
   const googleContainerClassName = isDarkMode
     ? "w-full overflow-hidden rounded-md border border-border/70 bg-card shadow-sm"
     : "w-full overflow-hidden rounded-md";
+
+  // Google identity services button only officially supports width in pixels up to 400px.
+  // We use 300px on mobile viewports to prevent overflow and 380px on desktop.
+  const googleWidth = isMobile ? "290" : "380";
 
   return (
     <>
@@ -74,13 +79,13 @@ export function SocialAuthButtons({
           ) : (
             <div className="w-full flex items-center justify-center">
               <GoogleLogin
-                key={googleTheme}
+                key={`${googleTheme}-${googleWidth}`}
                 onSuccess={onGoogleSuccess}
                 onError={onGoogleError}
                 containerProps={{
                   className: googleContainerClassName,
                 }}
-                width="450"
+                width={googleWidth}
                 shape="rectangular"
                 size="large"
                 theme={googleTheme}

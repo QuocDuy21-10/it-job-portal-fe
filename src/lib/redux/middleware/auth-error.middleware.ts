@@ -42,11 +42,10 @@ export const authErrorMiddleware: Middleware =
         console.log("🚫 [Middleware] 403 Forbidden - User lacks permission");
         
         toast.error(
-          message || getTranslation("middleware.forbidden")
+          message || getTranslation("middleware.forbidden"),
+          { id: `forbidden-error-${message || ""}` }
         );
 
-        // Optional: Có thể dispatch action để log analytics
-        // store.dispatch(logPermissionDenied({ endpoint: action.meta?.arg }));
       }
 
       if (status === 404) {
@@ -57,7 +56,8 @@ export const authErrorMiddleware: Middleware =
         console.error("💥 [Middleware] 500 Internal Server Error");
         
         toast.error(
-          message || getTranslation("middleware.serverError")
+          message || getTranslation("middleware.serverError"),
+          { id: `server-error-${message || ""}` }
         );
 
         // Optional: Có thể gửi error report về monitoring service
@@ -69,6 +69,7 @@ export const authErrorMiddleware: Middleware =
         
         toast.error(
           getTranslation("middleware.networkError"),
+          { id: "network-error" }
         );
       }
 

@@ -5,6 +5,7 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { notFound } from "next/navigation";
 import { AuthInitializer } from "@/components/auth-initializer";
 import { ClientLayout } from "@/components/client-layout";
+import { NotificationInitializer } from "@/components/notification/notification-initializer";
 import { AuthModal } from "@/components/modals/auth-modal";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
@@ -78,6 +79,7 @@ export default async function LocaleLayout({
         <AuthModalProvider>
           <SocketProvider>
             <AuthInitializer />
+            <NotificationInitializer />
             <ClientLayout />
             <div className="flex-1">{children}</div>
             <AuthModal />

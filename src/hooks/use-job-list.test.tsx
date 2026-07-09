@@ -196,4 +196,30 @@ describe("useJobList", () => {
     expect(result.current.currentPage).toBe(1);
     expect(result.current.isDraftDirty).toBe(false);
   });
+
+  it("updates applied and draft search state when initialSearchState changes", () => {
+    let initialSearchState = createInitialSearchState({ q: "initial" });
+    const { result, rerender } = renderHook(
+      (props) => useJobList(props),
+      {
+        initialProps: {
+          initialData: createInitialData(),
+          initialSearchState,
+        },
+      }
+    );
+
+    expect(result.current.searchQuery).toBe("initial");
+    expect(result.current.searchInput).toBe("initial");
+
+    // Simulate URL changes (e.g., Back/Forward button) resulting in a new initialSearchState
+    initialSearchState = createInitialSearchState({ q: "new-query" });
+    rerender({
+      initialData: createInitialData(),
+      initialSearchState,
+    });
+
+    expect(result.current.searchQuery).toBe("new-query");
+    expect(result.current.searchInput).toBe("new-query");
+  });
 });
