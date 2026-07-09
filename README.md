@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/images/logo.png" alt="DevLink Logo" width="120" height="120" />
+  <img src="public/images/logo.png" alt="DevLink Logo" width="220" height="220" />
 </p>
 
 <h1 align="center">DevLink Frontend</h1>
