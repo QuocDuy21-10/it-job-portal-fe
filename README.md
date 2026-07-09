@@ -1,4 +1,4 @@
-# 🌐 DevLink Frontend
+# <img src="public/images/logo.png" alt="DevLink Logo" width="32" height="32" align="center" /> DevLink Frontend
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
