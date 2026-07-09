@@ -1,4 +1,4 @@
-# my-job-portal-fe
+# DevLink - Frontend
 
 A job portal web application. Job seekers can search and apply for jobs, build CVs, and follow companies. Employers and admins manage listings, users, and permissions via an admin dashboard.
 

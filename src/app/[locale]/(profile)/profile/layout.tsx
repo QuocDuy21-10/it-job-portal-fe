@@ -28,13 +28,15 @@ export default function ProfileLayout({
           className={cn(
             "flex flex-col flex-1 transition-all duration-300 min-w-0",
             sidebarExpanded ? "md:pl-64" : "md:pl-16",
-            "pl-0"
+            "pl-0",
           )}
         >
           {scheduledDeletionAt && (
             <div className="pt-16 px-6">
               <div className="max-w-4xl mx-auto mt-4">
-                <PendingDeletionBanner scheduledDeletionAt={scheduledDeletionAt} />
+                <PendingDeletionBanner
+                  scheduledDeletionAt={scheduledDeletionAt}
+                />
               </div>
             </div>
           )}
