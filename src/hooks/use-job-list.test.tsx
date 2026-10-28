@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
-import { useGetJobsQuery } from "@/features/job/redux/job.api";
+import { useSearchJobsQuery } from "@/features/job/redux/job.api";
 import { useJobList } from "@/hooks/use-job-list";
-import type { Job } from "@/features/job/schemas/job.schema";
+import type { JobSearchItem } from "@/features/job/schemas/job-search.schema";
 import {
   DEFAULT_JOB_LIST_SORT,
   type JobListSearchState,
@@ -9,12 +9,12 @@ import {
 import type { PaginatedResult } from "@/shared/types/pagination";
 
 jest.mock("@/features/job/redux/job.api", () => ({
-  useGetJobsQuery: jest.fn(),
+  useSearchJobsQuery: jest.fn(),
 }));
 
-const mockUseGetJobsQuery = useGetJobsQuery as jest.Mock;
+const mockUseSearchJobsQuery = useSearchJobsQuery as jest.Mock;
 
-const createInitialData = (): PaginatedResult<Job> => ({
+const createInitialData = (): PaginatedResult<JobSearchItem> => ({
   result: [],
   meta: {
     pagination: {
@@ -36,13 +36,14 @@ const createInitialSearchState = (
   q: "",
   salary: "all",
   sort: "-createdAt",
+  source: "all",
   type: "all",
   ...overrides,
 });
 
 describe("useJobList", () => {
   beforeEach(() => {
-    mockUseGetJobsQuery.mockReturnValue({
+    mockUseSearchJobsQuery.mockReturnValue({
       data: {
         data: createInitialData(),
       },
@@ -71,13 +72,11 @@ describe("useJobList", () => {
     expect(result.current.searchQuery).toBe("");
     expect(result.current.currentPage).toBe(2);
     expect(result.current.isDraftDirty).toBe(true);
-    expect(mockUseGetJobsQuery).toHaveBeenLastCalledWith(
+    expect(mockUseSearchJobsQuery).toHaveBeenLastCalledWith(
       {
-        filter: "isActive=true",
-        keyword: undefined,
         limit: 10,
         page: 2,
-        sort: "sort=-createdAt",
+        sort: "newest",
       },
       { skip: true }
     );
@@ -106,13 +105,14 @@ describe("useJobList", () => {
     expect(result.current.jobType).toBe("Full-time");
     expect(result.current.currentPage).toBe(1);
     expect(result.current.isDraftDirty).toBe(false);
-    expect(mockUseGetJobsQuery).toHaveBeenLastCalledWith(
+    expect(mockUseSearchJobsQuery).toHaveBeenLastCalledWith(
       {
-        filter: "isActive=true&locationCode=ha-noi&formOfWork=Full-time",
+        formOfWork: "Full-time",
         keyword: "react",
         limit: 10,
+        locationCode: "ha-noi",
         page: 1,
-        sort: "sort=-createdAt",
+        sort: "newest",
       },
       { skip: false }
     );
@@ -221,5 +221,40 @@ describe("useJobList", () => {
 
     expect(result.current.searchQuery).toBe("new-query");
     expect(result.current.searchInput).toBe("new-query");
+  });
+
+  it("switches source immediately and resets to page 1", () => {
+    const { result } = renderHook(() =>
+      useJobList({
+        initialData: createInitialData(),
+        initialSearchState: createInitialSearchState(),
+      })
+    );
+
+    act(() => {
+      result.current.setSource("external");
+    });
+
+    expect(result.current.source).toBe("external");
+    expect(result.current.currentPage).toBe(1);
+    expect(mockUseSearchJobsQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ source: "external", page: 1 }),
+      expect.objectContaining({ skip: false })
+    );
+  });
+
+  it("resets source to all on resetAllFilters", () => {
+    const { result } = renderHook(() =>
+      useJobList({
+        initialData: createInitialData(),
+        initialSearchState: createInitialSearchState({ source: "internal" }),
+      })
+    );
+
+    act(() => {
+      result.current.resetAllFilters();
+    });
+
+    expect(result.current.source).toBe("all");
   });
 });

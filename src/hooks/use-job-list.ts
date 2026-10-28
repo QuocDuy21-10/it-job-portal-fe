@@ -1,16 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
-import { useGetJobsQuery } from "@/features/job/redux/job.api";
-import type { Job } from "@/features/job/schemas/job.schema";
+import { useSearchJobsQuery } from "@/features/job/redux/job.api";
+import type {
+  JobSearchItem,
+  JobSearchSource,
+} from "@/features/job/schemas/job-search.schema";
 import {
   DEFAULT_JOB_LIST_SORT,
   areJobListSearchStatesEqual,
-  buildJobListQueryArgs,
+  buildJobSearchParams,
   type JobListSearchState,
 } from "@/lib/utils/public-listing";
 import type { PaginatedResult } from "@/shared/types/pagination";
 
 type UseJobListProps = {
-  initialData?: PaginatedResult<Job> | null;
+  initialData?: PaginatedResult<JobSearchItem> | null;
   initialSearchState: JobListSearchState;
 };
 
@@ -185,6 +188,7 @@ export function useJobList({
         q: EMPTY_DRAFT_STATE.q,
         salary: EMPTY_DRAFT_STATE.salary,
         sort: DEFAULT_JOB_LIST_SORT,
+        source: "all",
         type: EMPTY_DRAFT_STATE.type,
       };
 
@@ -267,6 +271,21 @@ export function useJobList({
     });
   }, []);
 
+  // Tabs apply immediately, unlike the draft-based filter selects.
+  const setSource = useCallback((source: JobSearchSource) => {
+    setCurrentSearchState((currentState) => {
+      if (currentState.source === source && currentState.page === 1) {
+        return currentState;
+      }
+
+      return {
+        ...currentState,
+        page: 1,
+        source,
+      };
+    });
+  }, []);
+
   const shouldUseInitialData =
     Boolean(initialData) &&
     areJobListSearchStatesEqual(currentSearchState, initialSearchState);
@@ -275,7 +294,7 @@ export function useJobList({
     data: jobsData,
     isLoading,
     isFetching,
-  } = useGetJobsQuery(buildJobListQueryArgs(currentSearchState), {
+  } = useSearchJobsQuery(buildJobSearchParams(currentSearchState), {
     skip: shouldUseInitialData,
   });
 
@@ -310,6 +329,8 @@ export function useJobList({
     salaryRange: currentSearchState.salary,
     sortBy: currentSearchState.sort,
     setSortBy,
+    source: currentSearchState.source,
+    setSource,
 
     setPage,
     setLimit,
