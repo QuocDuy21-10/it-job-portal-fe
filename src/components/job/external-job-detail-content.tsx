@@ -30,6 +30,12 @@ const EXTERNAL_LINK_PROPS = {
   rel: "noopener noreferrer nofollow",
 } as const;
 
+// Sources that aggregate many employers; their notice names the site, not the company.
+const AGGREGATOR_SOURCE_NAMES: Record<string, string> = {
+  topdev: "TopDev",
+  itviec: "ITviec",
+};
+
 const BREADCRUMB_LINK_CLASS =
   "text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400";
 
@@ -51,6 +57,7 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
     ? getTranslatedLabel(job.level, JOB_LEVEL_LABEL_KEYS, t)
     : null;
   const postedLabel = timeAgo(job.postedAt, language);
+  const aggregatorName = AGGREGATOR_SOURCE_NAMES[job.sourceKey];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
@@ -149,8 +156,8 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
           <div className="flex items-center gap-3">
             <Info className="h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
             <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-              {job.sourceKey === "topdev"
-                ? t("externalJobPage.sourceNoticeTopDev")
+              {aggregatorName
+                ? t("externalJobPage.sourceNoticeAggregator", { sourceName: aggregatorName })
                 : t("externalJobPage.sourceNotice", { companyName: job.companyName })}
             </p>
           </div>

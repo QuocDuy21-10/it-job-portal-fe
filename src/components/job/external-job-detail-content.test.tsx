@@ -11,7 +11,8 @@ jest.mock("next/image", () => ({
 jest.mock("@/hooks/use-i18n", () => ({
   useI18n: () => ({
     language: "en",
-    t: (key: string) => key,
+    t: (key: string, params?: Record<string, string>) =>
+      params?.sourceName ? `${key}:${params.sourceName}` : key,
   }),
 }));
 
@@ -53,10 +54,15 @@ describe("ExternalJobDetailContent", () => {
     expect(screen.getByText("externalJobPage.sourceNotice")).toBeInTheDocument();
   });
 
-  it("uses the TopDev notice for TopDev listings", () => {
-    render(<ExternalJobDetailContent job={{ ...job, sourceKey: "topdev" }} />);
+  it.each([
+    ["topdev", "TopDev"],
+    ["itviec", "ITviec"],
+  ])("names the aggregator in the notice for %s listings", (sourceKey, sourceName) => {
+    render(<ExternalJobDetailContent job={{ ...job, sourceKey }} />);
 
-    expect(screen.getByText("externalJobPage.sourceNoticeTopDev")).toBeInTheDocument();
+    expect(
+      screen.getByText(`externalJobPage.sourceNoticeAggregator:${sourceName}`)
+    ).toBeInTheDocument();
   });
 
   it("hides the apply link and shows a notice for closed jobs", () => {
