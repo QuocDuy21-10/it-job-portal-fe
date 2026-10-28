@@ -53,6 +53,12 @@ describe("ExternalJobDetailContent", () => {
     expect(screen.getByText("externalJobPage.sourceNotice")).toBeInTheDocument();
   });
 
+  it("uses the TopDev notice for TopDev listings", () => {
+    render(<ExternalJobDetailContent job={{ ...job, sourceKey: "topdev" }} />);
+
+    expect(screen.getByText("externalJobPage.sourceNoticeTopDev")).toBeInTheDocument();
+  });
+
   it("hides the apply link and shows a notice for closed jobs", () => {
     render(<ExternalJobDetailContent job={{ ...job, status: "CLOSED" }} />);
 

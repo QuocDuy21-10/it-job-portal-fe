@@ -149,7 +149,9 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
           <div className="flex items-center gap-3">
             <Info className="h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
             <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-              {t("externalJobPage.sourceNotice", { companyName: job.companyName })}
+              {job.sourceKey === "topdev"
+                ? t("externalJobPage.sourceNoticeTopDev")
+                : t("externalJobPage.sourceNotice", { companyName: job.companyName })}
             </p>
           </div>
         </Card>
