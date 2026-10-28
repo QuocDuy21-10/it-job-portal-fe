@@ -1557,6 +1557,22 @@ export const en = {
       companyFallback: "Company",
     },
   },
+  externalJobPage: {
+    sourceBadge: "External source",
+    sourceNotice:
+      "This listing comes from {companyName}''s careers site. DevLink does not accept applications for it — you apply on the original site.",
+    applyAtSource: "Apply on original site",
+    viewOriginal: "View original listing",
+    closedNotice: "This position is no longer open.",
+    description: "Job description",
+    level: "Level",
+    workplace: "Workplace",
+    remote: "Remote",
+    onsite: "On-site",
+    location: "Location",
+    skills: "Skills",
+    postedAt: "Posted",
+  },
   settingsPage: {
     title: "Account settings",
     description: "Manage your account information and security settings",

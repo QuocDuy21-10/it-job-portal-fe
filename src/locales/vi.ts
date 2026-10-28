@@ -1559,6 +1559,22 @@ export const vi = {
       companyFallback: "Công ty",
     },
   },
+  externalJobPage: {
+    sourceBadge: "Nguồn ngoài",
+    sourceNotice:
+      "Tin này được tổng hợp từ trang tuyển dụng của {companyName}. DevLink không nhận hồ sơ cho vị trí này — bạn sẽ ứng tuyển trực tiếp trên trang gốc.",
+    applyAtSource: "Ứng tuyển tại trang gốc",
+    viewOriginal: "Xem tin gốc",
+    closedNotice: "Vị trí này đã ngừng tuyển.",
+    description: "Mô tả công việc",
+    level: "Cấp bậc",
+    workplace: "Hình thức",
+    remote: "Remote",
+    onsite: "Tại văn phòng",
+    location: "Địa điểm",
+    skills: "Kỹ năng",
+    postedAt: "Ngày đăng",
+  },
   settingsPage: {
     title: "Cài đặt tài khoản",
     description: "Quản lý thông tin tài khoản và cài đặt bảo mật",
