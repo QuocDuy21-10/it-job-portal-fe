@@ -58,6 +58,7 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
     : null;
   const postedLabel = timeAgo(job.postedAt, language);
   const aggregatorName = AGGREGATOR_SOURCE_NAMES[job.sourceKey];
+  const hasDescription = job.descriptionHtml.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
@@ -168,10 +169,29 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
             <h2 className="mb-4 text-xl font-semibold text-foreground">
               {t("externalJobPage.description")}
             </h2>
-            {/* descriptionHtml is sanitized by the backend at ingest time. */}
-            <div className="prose max-w-none dark:prose-invert">
-              {parse(job.descriptionHtml)}
-            </div>
+            {hasDescription ? (
+              // descriptionHtml is sanitized by the backend at ingest time.
+              <div className="prose max-w-none dark:prose-invert">
+                {parse(job.descriptionHtml)}
+              </div>
+            ) : (
+              // LINK_ONLY sources: DevLink may not republish the text.
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  {t("externalJobPage.fullContentAtSource")}
+                </p>
+                {canViewOriginal && (
+                  <a
+                    href={job.sourceUrl}
+                    {...EXTERNAL_LINK_PROPS}
+                    className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+                  >
+                    {t("externalJobPage.viewOriginal")}
+                    <ArrowUpRight className="ml-1 h-4 w-4" aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            )}
           </Card>
 
           <Card className="h-fit border-slate-200 bg-white p-6 dark:border-border dark:bg-card">
@@ -181,7 +201,9 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
               )}
               <InfoRow
                 label={t("externalJobPage.workplace")}
-                value={t(job.isRemote ? "externalJobPage.remote" : "externalJobPage.onsite")}
+                value={t(
+                  job.isRemote ? "externalJobPage.remote" : "externalJobPage.workplaceUnknown"
+                )}
               />
               <InfoRow label={t("externalJobPage.location")} value={job.location} />
               {job.salaryText && (
