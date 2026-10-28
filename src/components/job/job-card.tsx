@@ -18,7 +18,7 @@ import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 
 type Translate = ReturnType<typeof useI18n>["t"];
 
-const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
+export const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
   Internship: "jobsPage.jobTypeOptions.internship",
   "Part-time": "jobsPage.jobTypeOptions.partTime",
   "Full-time": "jobsPage.jobTypeOptions.fullTime",
@@ -28,7 +28,7 @@ const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
   Other: "jobsPage.jobTypeOptions.other",
 };
 
-const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
+export const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
   Internship: "jobsPage.jobLevelOptions.internship",
   Junior: "jobsPage.jobLevelOptions.junior",
   Mid: "jobsPage.jobLevelOptions.mid",
@@ -37,12 +37,12 @@ const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
   Manager: "jobsPage.jobLevelOptions.manager",
 };
 
-const JOB_STATUS_LABEL_KEYS: Record<Exclude<JobStatusVariant, null>, string> = {
+export const JOB_STATUS_LABEL_KEYS: Record<Exclude<JobStatusVariant, null>, string> = {
   new: "jobsPage.jobCard.statusNew",
   closing: "jobsPage.jobCard.statusClosing",
 };
 
-function getTranslatedLabel(
+export function getTranslatedLabel(
   value: string,
   keyMap: Record<string, string>,
   t: Translate
@@ -62,7 +62,7 @@ interface JobCardProps {
 }
 
 // Sub-components                                                     
-const FavoriteButton = ({
+export const FavoriteButton = ({
   isSaved,
   onClick,
   disabled,
@@ -117,7 +117,7 @@ const FavoriteButton = ({
   );
 };
 
-const StatusIndicator = ({
+export const StatusIndicator = ({
   variant,
   label,
   size = "default",
@@ -152,7 +152,7 @@ const StatusIndicator = ({
   );
 };
 
-const CompanyLogo = ({
+export const CompanyLogo = ({
   logo,
   name,
   size = "md",
@@ -205,7 +205,7 @@ const CompanyLogo = ({
   );
 };
 
-const SkillTags = ({
+export const SkillTags = ({
   skills,
   max = 3,
 }: {
