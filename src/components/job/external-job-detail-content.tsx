@@ -175,6 +175,9 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
                 value={t(job.isRemote ? "externalJobPage.remote" : "externalJobPage.onsite")}
               />
               <InfoRow label={t("externalJobPage.location")} value={job.location} />
+              {job.salaryText && (
+                <InfoRow label={t("externalJobPage.salary")} value={job.salaryText} />
+              )}
               <InfoRow label={t("externalJobPage.postedAt")} value={postedLabel} />
             </dl>
             {job.skills.length > 0 && (

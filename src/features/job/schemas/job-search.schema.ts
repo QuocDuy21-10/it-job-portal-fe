@@ -13,6 +13,7 @@ export type JobSearchItem = {
   location: string;
   locationCode?: string;
   salary?: number;
+  salaryText?: string;
   level?: string;
   formOfWork?: string;
   isRemote: boolean;
@@ -33,6 +34,7 @@ export type ExternalJobDetail = {
   isRemote: boolean;
   skills: string[];
   level?: string;
+  salaryText?: string;
   descriptionHtml: string;
   postedAt: string;
   sourceUrl: string;

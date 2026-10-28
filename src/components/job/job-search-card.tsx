@@ -58,6 +58,9 @@ export function JobSearchCard({ item }: { item: JobSearchItem }) {
     ? getTranslatedLabel(item.level, JOB_LEVEL_LABEL_KEYS, t)
     : null;
   const hasSalary = typeof item.salary === "number";
+  const salaryLabel = hasSalary
+    ? formatVndCurrency(item.salary as number, language)
+    : item.salaryText;
 
   return (
     <Card className="listing-panel-surface listing-subtle-border group transition-all duration-300 hover:border-primary hover:shadow-md hover:-translate-y-[2px]">
@@ -131,14 +134,12 @@ export function JobSearchCard({ item }: { item: JobSearchItem }) {
               <div
                 className={cn(
                   "font-bold px-2.5 py-1 rounded-md sm:px-0 sm:py-0 sm:mb-2",
-                  hasSalary
+                  salaryLabel
                     ? "text-lg text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/40 sm:bg-transparent sm:dark:bg-transparent sm:text-2xl sm:text-emerald-600 sm:dark:text-emerald-400"
                     : "text-base text-muted-foreground bg-muted/40 sm:bg-transparent"
                 )}
               >
-                {hasSalary
-                  ? formatVndCurrency(item.salary as number, language)
-                  : t("jobsPage.salaryNotDisclosed")}
+                {salaryLabel ?? t("jobsPage.salaryNotDisclosed")}
               </div>
 
               <div className="flex gap-2 w-full justify-end">

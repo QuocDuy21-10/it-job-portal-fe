@@ -1570,6 +1570,7 @@ export const en = {
     remote: "Remote",
     onsite: "On-site",
     location: "Location",
+    salary: "Salary",
     skills: "Skills",
     postedAt: "Posted",
   },

@@ -75,4 +75,17 @@ describe("ExternalJobDetailContent", () => {
       screen.queryByRole("link", { name: "externalJobPage.viewOriginal" })
     ).not.toBeInTheDocument();
   });
+
+  it("shows the salary row when salary text is provided", () => {
+    render(<ExternalJobDetailContent job={{ ...job, salaryText: "20.000.000 – 30.000.000 VND" }} />);
+
+    expect(screen.getByText("externalJobPage.salary")).toBeInTheDocument();
+    expect(screen.getByText("20.000.000 – 30.000.000 VND")).toBeInTheDocument();
+  });
+
+  it("hides the salary row when there is no salary text", () => {
+    render(<ExternalJobDetailContent job={job} />);
+
+    expect(screen.queryByText("externalJobPage.salary")).not.toBeInTheDocument();
+  });
 });

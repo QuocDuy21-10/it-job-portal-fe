@@ -113,6 +113,13 @@ describe("JobSearchCard", () => {
     expect(screen.getByText("jobsPage.jobCard.viewDetails")).toBeInTheDocument();
   });
 
+  it("shows the salary text of an external job when provided", () => {
+    render(<JobSearchCard item={{ ...externalItem, salaryText: "Negotiable" }} />);
+
+    expect(screen.getByText("Negotiable")).toBeInTheDocument();
+    expect(screen.queryByText("jobsPage.salaryNotDisclosed")).not.toBeInTheDocument();
+  });
+
   it("shows the closing-soon status from endDate for internal jobs", () => {
     render(
       <JobSearchCard

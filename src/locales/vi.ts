@@ -1572,6 +1572,7 @@ export const vi = {
     remote: "Remote",
     onsite: "Tại văn phòng",
     location: "Địa điểm",
+    salary: "Mức lương",
     skills: "Kỹ năng",
     postedAt: "Ngày đăng",
   },
