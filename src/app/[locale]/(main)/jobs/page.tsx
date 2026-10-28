@@ -4,9 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import JobsPageClient from "./jobs-page-client";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { fetchPublicJobs } from "@/lib/utils/public-content";
+import { fetchPublicJobSearch } from "@/lib/utils/public-content";
 import {
-  buildJobListQueryArgs,
+  buildJobSearchParams,
   getJobListCanonicalPath,
   parseJobListSearchParams,
 } from "@/lib/utils/public-listing";
@@ -61,8 +61,8 @@ export default async function JobsPage({
   }
 
   const initialSearchState = parseJobListSearchParams(resolvedSearchParams);
-  const initialData = await fetchPublicJobs(
-    buildJobListQueryArgs(initialSearchState)
+  const initialData = await fetchPublicJobSearch(
+    buildJobSearchParams(initialSearchState)
   );
 
   return (

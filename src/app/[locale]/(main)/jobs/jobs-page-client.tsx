@@ -33,19 +33,23 @@ import {
 
 import jobTypes from "@/shared/data/job-type.json";
 import jobLevels from "@/shared/data/job-level.json";
-import { Job } from "@/features/job/schemas/job.schema";
+import type {
+  JobSearchItem,
+  JobSearchSource,
+} from "@/features/job/schemas/job-search.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import { JobCard as JobCardComponent } from "@/components/job/job-card";
+import { JobSearchCard } from "@/components/job/job-search-card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DEFAULT_JOB_LIST_SORT,
   buildJobListUrlSearchParams,
   buildPathWithSearchParams,
-  buildJobListQueryArgs,
+  buildJobSearchParams,
   type JobListSearchState,
 } from "@/lib/utils/public-listing";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import { JobSearchBox } from "@/components/search/job-search-box";
-import { useGetJobsQuery } from "@/features/job/redux/job.api";
+import { useSearchJobsQuery } from "@/features/job/redux/job.api";
 import { cn } from "@/lib/utils";
 import {
   Drawer,
@@ -103,6 +107,12 @@ const SALARY_RANGE_OPTIONS = [
   { value: "50000000-999999999", labelKey: "jobsPage.salaryRanges.above50m" },
 ] as const;
 
+const SOURCE_TABS: Array<{ value: JobSearchSource; labelKey: string }> = [
+  { value: "all", labelKey: "jobsPage.sourceTabs.all" },
+  { value: "internal", labelKey: "jobsPage.sourceTabs.internal" },
+  { value: "external", labelKey: "jobsPage.sourceTabs.external" },
+];
+
 function getTranslatedLabel(
   value: string,
   keyMap: Record<string, string>,
@@ -114,7 +124,7 @@ function getTranslatedLabel(
 }
 
 type JobsPageClientProps = {
-  initialData: PaginatedResult<Job> | null;
+  initialData: PaginatedResult<JobSearchItem> | null;
   initialSearchState: JobListSearchState;
 };
 
@@ -152,6 +162,8 @@ function JobsPageContent({
     applyFilters,
     resetAllFilters,
     isDraftDirty,
+    source,
+    setSource,
   } = useJobList({
     initialData,
     initialSearchState,
@@ -235,6 +247,7 @@ function JobsPageContent({
     currentSearchState.experience,
     currentSearchState.salary,
     currentSearchState.sort,
+    currentSearchState.source,
   ]);
 
   const clearAllFilters = () => {
@@ -247,8 +260,13 @@ function JobsPageContent({
       jobType !== "all" ||
       experience !== "all" ||
       salaryRange !== "all" ||
-      sortBy !== DEFAULT_JOB_LIST_SORT
+      sortBy !== DEFAULT_JOB_LIST_SORT ||
+      source !== "all"
   );
+  // External jobs have no salary/form-of-work data, so these filters drop them.
+  const showExternalFilterHint =
+    source !== "internal" &&
+    (salaryRange !== "all" || (jobType !== "all" && jobType !== "Remote"));
   const hasResettableState = hasAppliedFilters || isDraftDirty;
 
   // Mobile Filter Drawer States & Queries
@@ -259,8 +277,8 @@ function JobsPageContent({
   if (experience !== "all") activeFiltersCount++;
   if (salaryRange !== "all") activeFiltersCount++;
 
-  const { data: draftJobsData } = useGetJobsQuery(
-    buildJobListQueryArgs({
+  const { data: draftJobsData } = useSearchJobsQuery(
+    buildJobSearchParams({
       ...currentSearchState,
       q: searchInput,
       locationCode: locationInput,
@@ -693,6 +711,28 @@ function JobsPageContent({
                 </div>
               </div>
 
+            <Tabs
+              value={source}
+              onValueChange={(value) => setSource(value as JobSearchSource)}
+            >
+              <TabsList className="h-10 w-full sm:w-auto">
+                {SOURCE_TABS.map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="flex-1 sm:flex-initial sm:px-5"
+                  >
+                    {t(tab.labelKey)}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+            {showExternalFilterHint && (
+              <p className="listing-muted-text text-sm">
+                {t("jobsPage.externalFilterHint")}
+              </p>
+            )}
+
             {isLoading ? (
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -736,13 +776,13 @@ function JobsPageContent({
               </Card>
             ) : (
               <div className="space-y-4">
-                {jobs.map((job: Job, index: number) => (
+                {jobs.map((item: JobSearchItem, index: number) => (
                   <div
-                    key={job._id}
+                    key={item.id}
                     className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <JobCardComponent job={job} variant="detailed" />
+                    <JobSearchCard item={item} />
                   </div>
                 ))}
               </div>
