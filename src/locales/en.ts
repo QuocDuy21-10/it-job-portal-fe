@@ -1561,8 +1561,8 @@ export const en = {
     sourceBadge: "External source",
     sourceNotice:
       "This listing comes from {companyName}''s careers site. DevLink does not accept applications for it — you apply on the original site.",
-    sourceNoticeTopDev:
-      "This listing comes from TopDev. DevLink does not accept applications for it — you apply on the original site.",
+    sourceNoticeAggregator:
+      "This listing comes from {sourceName}. DevLink does not accept applications for it — you apply on the original site.",
     applyAtSource: "Apply on original site",
     viewOriginal: "View original listing",
     closedNotice: "This position is no longer open.",

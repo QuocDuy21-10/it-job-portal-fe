@@ -1563,8 +1563,8 @@ export const vi = {
     sourceBadge: "Nguồn ngoài",
     sourceNotice:
       "Tin này được tổng hợp từ trang tuyển dụng của {companyName}. DevLink không nhận hồ sơ cho vị trí này — bạn sẽ ứng tuyển trực tiếp trên trang gốc.",
-    sourceNoticeTopDev:
-      "Tin này được tổng hợp từ TopDev. DevLink không nhận hồ sơ cho vị trí này — bạn sẽ ứng tuyển trực tiếp trên trang gốc.",
+    sourceNoticeAggregator:
+      "Tin này được tổng hợp từ {sourceName}. DevLink không nhận hồ sơ cho vị trí này — bạn sẽ ứng tuyển trực tiếp trên trang gốc.",
     applyAtSource: "Ứng tuyển tại trang gốc",
     viewOriginal: "Xem tin gốc",
     closedNotice: "Vị trí này đã ngừng tuyển.",
