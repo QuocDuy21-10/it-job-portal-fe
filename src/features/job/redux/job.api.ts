@@ -11,6 +11,11 @@ import {
   UpdateJobFormData,
   ApproveJobFormData,
 } from "../schemas/job.schema";
+import type {
+  ExternalJobDetail,
+  JobSearchItem,
+  JobSearchParams,
+} from "../schemas/job-search.schema";
 
 export const jobApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -27,6 +32,25 @@ export const jobApi = baseApi.injectEndpoints({
         };
       },
       providesTags: ["Job"],
+    }),
+
+    searchJobs: builder.query<
+      ApiResponse<PaginatedResult<JobSearchItem>>,
+      JobSearchParams
+    >({
+      query: (params) => ({
+        url: "/job-search",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["Job"],
+    }),
+
+    getExternalJob: builder.query<ApiResponse<ExternalJobDetail>, string>({
+      query: (id) => ({
+        url: `/job-search/external/${encodeURIComponent(id)}`,
+        method: "GET",
+      }),
     }),
 
     // Get company by id
@@ -100,6 +124,8 @@ export const jobApi = baseApi.injectEndpoints({
 export const {
   useGetJobsQuery,
   useGetJobQuery,
+  useSearchJobsQuery,
+  useGetExternalJobQuery,
   useCreateJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,

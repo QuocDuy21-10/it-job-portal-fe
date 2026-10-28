@@ -1,4 +1,8 @@
-import type { Job } from "@/features/job/schemas/job.schema";
+type JobStatusInput = {
+  endDate?: string | Date | null;
+  isActive?: boolean;
+  createdAt?: string | Date | null;
+};
 
 export type JobStatusVariant = "new" | "closing" | null;
 
@@ -10,7 +14,7 @@ export interface JobStatus {
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-export function getJobStatus(job: Job): JobStatus | null {
+export function getJobStatus(job: JobStatusInput): JobStatus | null {
   const now = Date.now();
 
   // "Closing Soon" takes priority — more actionable for the user

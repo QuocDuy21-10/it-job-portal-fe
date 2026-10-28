@@ -1538,7 +1538,17 @@ export const en = {
       salaryHighToLow: "Highest salary",
       salaryLowToHigh: "Lowest salary",
     },
+    sourceTabs: {
+      all: "All",
+      internal: "DevLink",
+      external: "Other sources",
+    },
+    externalBadge: "External",
+    salaryNotDisclosed: "Not disclosed",
+    externalFilterHint:
+      "External listings have no salary or work-type data, so they are hidden when you filter by those.",
     jobCard: {
+      viewDetails: "View details",
       saveJob: "Save job",
       applyNow: "Apply now",
       removeSavedJob: "Remove saved job",
@@ -1546,6 +1556,22 @@ export const en = {
       statusClosing: "Closing soon",
       companyFallback: "Company",
     },
+  },
+  externalJobPage: {
+    sourceBadge: "External source",
+    sourceNotice:
+      "This listing comes from {companyName}''s careers site. DevLink does not accept applications for it — you apply on the original site.",
+    applyAtSource: "Apply on original site",
+    viewOriginal: "View original listing",
+    closedNotice: "This position is no longer open.",
+    description: "Job description",
+    level: "Level",
+    workplace: "Workplace",
+    remote: "Remote",
+    onsite: "On-site",
+    location: "Location",
+    skills: "Skills",
+    postedAt: "Posted",
   },
   settingsPage: {
     title: "Account settings",

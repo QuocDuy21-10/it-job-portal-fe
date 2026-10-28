@@ -1,5 +1,11 @@
 import type { PaginatedQueryParams } from "@/shared/types/pagination";
 import { resolveLocationCode } from "@/shared/data/location-catalog";
+import {
+  JOB_SEARCH_SOURCES,
+  type JobSearchParams,
+  type JobSearchSort,
+  type JobSearchSource,
+} from "@/features/job/schemas/job-search.schema";
 
 export const DEFAULT_JOB_LIST_PAGE_SIZE = 10;
 export const DEFAULT_COMPANY_LIST_PAGE_SIZE = 9;
@@ -41,6 +47,13 @@ const JOB_SORT_VALUES = [
   "salary",
 ] as const;
 
+const JOB_SEARCH_SORT_BY_LIST_SORT: Record<string, JobSearchSort> = {
+  "-createdAt": "newest",
+  createdAt: "oldest",
+  "-salary": "salary_desc",
+  salary: "salary_asc",
+};
+
 type SearchParamsSource =
   | URLSearchParams
   | Record<string, string | string[] | undefined>;
@@ -53,6 +66,7 @@ export type JobListSearchState = {
   q: string;
   salary: string;
   sort: string;
+  source: JobSearchSource;
   type: string;
 };
 
@@ -139,6 +153,11 @@ export const parseJobListSearchParams = (
       JOB_SORT_VALUES,
       DEFAULT_JOB_LIST_SORT
     ),
+    source: normalizeEnumParam(
+      getSingleSearchParam(searchParams, "source"),
+      JOB_SEARCH_SOURCES,
+      "all"
+    ) as JobSearchSource,
     type: normalizeEnumParam(
       getSingleSearchParam(searchParams, "type"),
       JOB_TYPE_VALUES,
@@ -160,46 +179,60 @@ export const parseCompanyListSearchParams = (
   };
 };
 
-export const buildJobListFilter = (searchState: JobListSearchState) => {
-  const filters = ["isActive=true"];
+export const buildJobSearchParams = (
+  searchState: JobListSearchState
+): JobSearchParams => {
+  const params: JobSearchParams = {
+    page: searchState.page,
+    limit: searchState.limit,
+    sort: JOB_SEARCH_SORT_BY_LIST_SORT[searchState.sort] ?? "newest",
+  };
+
+  if (searchState.q) {
+    params.keyword = searchState.q;
+  }
 
   if (searchState.locationCode) {
-    filters.push(`locationCode=${encodeURIComponent(searchState.locationCode)}`);
+    params.locationCode = searchState.locationCode;
   }
 
   if (searchState.type !== "all") {
-    filters.push(`formOfWork=${searchState.type}`);
+    params.formOfWork = searchState.type;
   }
 
   if (searchState.experience !== "all") {
-    filters.push(`level=${searchState.experience}`);
+    params.level = searchState.experience;
   }
 
   if (searchState.salary !== "all") {
     const [minSalary, maxSalary] = searchState.salary.split("-");
 
     if (minSalary) {
-      filters.push(`salary>=${minSalary}`);
+      params.salaryMin = Number(minSalary);
     }
 
     if (maxSalary) {
-      filters.push(`salary<=${maxSalary}`);
+      params.salaryMax = Number(maxSalary);
     }
   }
 
-  return filters.join("&");
+  if (searchState.source !== "all") {
+    params.source = searchState.source;
+  }
+
+  return params;
 };
 
-export const buildJobListQueryArgs = (
-  searchState: JobListSearchState
-): PaginatedQueryParams => {
-  return {
-    filter: buildJobListFilter(searchState),
-    keyword: searchState.q || undefined,
-    limit: searchState.limit,
-    page: searchState.page,
-    sort: `sort=${searchState.sort}`,
-  };
+export const toJobSearchQueryString = (params: JobSearchParams) => {
+  const query = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) {
+      query.set(key, String(value));
+    }
+  }
+
+  return query.toString();
 };
 
 export const buildCompanyListQueryArgs = (
@@ -239,6 +272,10 @@ export const buildJobListUrlSearchParams = (searchState: JobListSearchState) => 
 
   if (searchState.sort !== DEFAULT_JOB_LIST_SORT) {
     params.set("sort", searchState.sort);
+  }
+
+  if (searchState.source !== "all") {
+    params.set("source", searchState.source);
   }
 
   if (searchState.page > 1) {
@@ -288,6 +325,7 @@ export const getJobListCanonicalPath = (searchState: JobListSearchState) => {
     searchState.type === "all" &&
     searchState.experience === "all" &&
     searchState.salary === "all" &&
+    searchState.source === "all" &&
     searchState.sort === DEFAULT_JOB_LIST_SORT &&
     searchState.limit === DEFAULT_JOB_LIST_PAGE_SIZE;
 
@@ -335,6 +373,7 @@ export const areJobListSearchStatesEqual = (
     left.q === right.q &&
     left.salary === right.salary &&
     left.sort === right.sort &&
+    left.source === right.source &&
     left.type === right.type
   );
 };

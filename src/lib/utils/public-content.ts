@@ -1,6 +1,12 @@
 import { cache } from "react";
 import type { Company } from "@/features/company/schemas/company.schema";
 import type { Job } from "@/features/job/schemas/job.schema";
+import type {
+  ExternalJobDetail,
+  JobSearchItem,
+  JobSearchParams,
+} from "@/features/job/schemas/job-search.schema";
+import { toJobSearchQueryString } from "@/lib/utils/public-listing";
 import type { ApiResponse } from "@/shared/base/api-response.base";
 import { API_BASE_URL } from "@/shared/constants/constant";
 import type { PaginatedQueryParams, PaginatedResult } from "@/shared/types/pagination";
@@ -72,3 +78,19 @@ export const fetchPublicJobs = (params: PaginatedQueryParams) => {
 export const fetchPublicCompanies = (params: PaginatedQueryParams) => {
   return fetchPublicCompaniesByQuery(buildPublicListQuery(params));
 };
+
+const fetchPublicJobSearchByQuery = cache((query: string) => {
+  return fetchPublicEntity<PaginatedResult<JobSearchItem>>(
+    `/job-search?${query}`
+  );
+});
+
+export const fetchPublicJobSearch = (params: JobSearchParams) => {
+  return fetchPublicJobSearchByQuery(toJobSearchQueryString(params));
+};
+
+export const fetchPublicExternalJobById = cache((id: string) => {
+  return fetchPublicEntity<ExternalJobDetail>(
+    `/job-search/external/${encodeURIComponent(id)}`
+  );
+});
