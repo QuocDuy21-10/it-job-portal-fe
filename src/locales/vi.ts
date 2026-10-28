@@ -1540,7 +1540,17 @@ export const vi = {
       salaryHighToLow: "Lương cao nhất",
       salaryLowToHigh: "Lương thấp nhất",
     },
+    sourceTabs: {
+      all: "Tất cả",
+      internal: "DevLink",
+      external: "Nguồn khác",
+    },
+    externalBadge: "Nguồn ngoài",
+    salaryNotDisclosed: "Không công bố",
+    externalFilterHint:
+      "Tin từ nguồn ngoài không có thông tin lương và hình thức làm việc nên không xuất hiện khi lọc theo các tiêu chí này.",
     jobCard: {
+      viewDetails: "Xem chi tiết",
       applyNow: "Ứng tuyển ngay",
       saveJob: "Lưu việc làm",
       removeSavedJob: "Bỏ lưu việc làm",

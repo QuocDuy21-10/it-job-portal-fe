@@ -1538,7 +1538,17 @@ export const en = {
       salaryHighToLow: "Highest salary",
       salaryLowToHigh: "Lowest salary",
     },
+    sourceTabs: {
+      all: "All",
+      internal: "DevLink",
+      external: "Other sources",
+    },
+    externalBadge: "External",
+    salaryNotDisclosed: "Not disclosed",
+    externalFilterHint:
+      "External listings have no salary or work-type data, so they are hidden when you filter by those.",
     jobCard: {
+      viewDetails: "View details",
       saveJob: "Save job",
       applyNow: "Apply now",
       removeSavedJob: "Remove saved job",
