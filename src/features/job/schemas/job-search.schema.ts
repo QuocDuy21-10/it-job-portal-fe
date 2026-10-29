@@ -40,6 +40,8 @@ export type ExternalJobDetail = {
   sourceUrl: string;
   applyUrl: string;
   status: "ACTIVE" | "CLOSED";
+  // Optional so the page keeps working against a backend that predates it.
+  displayPolicy?: "LINK_ONLY" | "FULL";
 };
 
 export type JobSearchParams = {

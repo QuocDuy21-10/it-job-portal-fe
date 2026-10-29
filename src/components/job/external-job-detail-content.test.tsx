@@ -100,4 +100,31 @@ describe("ExternalJobDetailContent", () => {
 
     expect(screen.queryByText("externalJobPage.salary")).not.toBeInTheDocument();
   });
+
+  it("does not claim on-site work when the source gives no remote flag", () => {
+    render(<ExternalJobDetailContent job={job} />);
+
+    expect(screen.getByText("externalJobPage.workplaceUnknown")).toBeInTheDocument();
+    expect(screen.queryByText("externalJobPage.onsite")).not.toBeInTheDocument();
+  });
+
+  it("shows Remote when the job is remote", () => {
+    render(<ExternalJobDetailContent job={{ ...job, isRemote: true }} />);
+
+    expect(screen.getByText("externalJobPage.remote")).toBeInTheDocument();
+  });
+
+  it("points to the original posting when the description is withheld", () => {
+    render(
+      <ExternalJobDetailContent
+        job={{ ...job, descriptionHtml: "", displayPolicy: "LINK_ONLY" }}
+      />
+    );
+
+    expect(screen.getByText("externalJobPage.fullContentAtSource")).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("link", { name: "externalJobPage.viewOriginal" })
+    ).toHaveLength(2);
+    expect(screen.queryByText("Build reliable services")).not.toBeInTheDocument();
+  });
 });
