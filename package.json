@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "@casl/ability": "^6.8.0",
@@ -95,7 +98,10 @@
     "eslint-config-next": "^13.5.1",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "mermaid": "^11.17.2",
     "postcss": "^8.4.30",
-    "ts-jest": "^29.4.6"
+    "ts-jest": "^29.4.6",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
   }
 }

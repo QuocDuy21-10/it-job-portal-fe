@@ -11,6 +11,8 @@ Trang này giải thích từng lệnh npm trong dự án làm gì thật sự, 
 | `npm run start` | `next start` | Chạy bản đã build; phải `npm run build` trước |
 | `npm run lint` | `eslint .` | Kiểm tra quy tắc mã nguồn |
 | `npm test` | `jest` | Chạy kiểm thử |
+| `npm run docs:dev` | `vitepress dev docs` | Khởi động máy chủ tài liệu cục bộ tại `http://localhost:5173` |
+| `npm run docs:build` | `vitepress build docs` | Biên dịch website tài liệu tĩnh ra thư mục `docs/.vitepress/dist` |
 | `npx tsc --noEmit` | trình biên dịch TypeScript, không xuất file | Kiểm tra kiểu nhanh, không cần build |
 
 Dự án không định nghĩa script riêng cho `tsc`; đó là lệnh `npx` gọi trực tiếp.

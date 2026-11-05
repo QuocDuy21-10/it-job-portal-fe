@@ -2,6 +2,16 @@
 
 DevLink là nền tảng tìm việc và tuyển dụng dành cho cộng đồng IT. Đây là tài liệu của phần giao diện web (frontend), viết theo hướng "tài liệu như mã nguồn": nằm cùng repository, mỗi khẳng định kỹ thuật đều được kiểm tra từ code và có liên kết tới file tương ứng. Tài liệu này không mô tả cơ sở dữ liệu; phần đó thuộc backend `it-job-portal-be`.
 
+## Hai lớp hiển thị tài liệu
+
+Tài liệu DevLink hỗ trợ song song 2 cách đọc:
+1. **Đọc trực tiếp trên GitHub**: Xem trực tiếp các file `.md` trong thư mục `docs/`. GitHub tự động render bảng biểu, callout và sơ đồ Mermaid.
+2. **Duyệt qua Documentation Website (VitePress)**: Website tài liệu với sidebar phân cấp, tìm kiếm full-text, dark mode và mục lục bên phải:
+   ```bash
+   npm run docs:dev    # Chạy web tài liệu cục bộ tại http://localhost:5173
+   npm run docs:build  # Biên dịch website tĩnh ra docs/.vitepress/dist
+   ```
+
 ## Bạn là ai? Đọc gì trước?
 
 | Bạn muốn | Đọc theo thứ tự |
@@ -11,6 +21,7 @@ DevLink là nền tảng tìm việc và tuyển dụng dành cho cộng đồng
 | Đọc code lần đầu | [Tổng quan kiến trúc](02-architecture/overview.md), [Các lớp của frontend](02-architecture/frontend-layers.md), [Cấu trúc thư mục](02-architecture/folder-structure.md), [Routing và layout](02-architecture/routing-and-layouts.md) |
 | Hiểu đăng nhập và phân quyền | [Xác thực](02-architecture/authentication.md), [Phân quyền](02-architecture/authorization.md) |
 | Biết dùng công nghệ gì | [Tổng quan tech stack](03-tech-stack/overview.md), [Các quyết định công nghệ](03-tech-stack/technology-decisions.md) |
+| Muốn đóng góp/viết tài liệu | [Quy tắc viết tài liệu](00-start-here/writing-guide.md) |
 | Gặp lỗi khi chạy | [Khắc phục sự cố](01-getting-started/troubleshooting.md) |
 
 ## Mục lục
@@ -25,6 +36,7 @@ DevLink là nền tảng tìm việc và tuyển dụng dành cho cộng đồng
 | [Vai trò người dùng](00-start-here/user-roles.md) | Khách, ứng viên, HR, quản trị viên |
 | [Bảng thuật ngữ](00-start-here/glossary.md) | Giải thích từ ngữ nghiệp vụ và kỹ thuật |
 | [Ảnh giao diện](00-start-here/screenshots.md) | Ảnh chụp màn hình có chú thích |
+| [Quy tắc viết tài liệu](00-start-here/writing-guide.md) | Chuẩn 5 phần, "giải thích trước — kỹ thuật sau", Mermaid, Bảng và UI screenshots |
 
 ### 01. Cài đặt và chạy
 
