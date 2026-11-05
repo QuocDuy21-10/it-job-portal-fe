@@ -3,7 +3,12 @@
 # dependencies
 /node_modules
 .vscode
-/docs
+/docs/*
+!/docs/README.md
+!/docs/00-start-here/
+!/docs/01-getting-started/
+!/docs/02-architecture/
+!/docs/03-tech-stack/
 /docs2
 /.pnp
 .pnp.*

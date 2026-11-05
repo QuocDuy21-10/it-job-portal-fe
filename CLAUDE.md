@@ -1,6 +1,6 @@
 # DevLink - Frontend
 
-A job portal web application. Job seekers can search and apply for jobs, build CVs, and follow companies. Employers and admins manage listings, users, and permissions via an admin dashboard.
+A job portal web application. Job seekers can search and apply for jobs, build CVs, and follow companies. HR users and admins manage listings, companies, resumes, and (admins only) users via an admin dashboard. Per-role UI abilities are fixed in `src/lib/casl/ability.ts`; there is no roles/permissions screen.
 
 ## Tech Stack
 
@@ -12,17 +12,21 @@ A job portal web application. Job seekers can search and apply for jobs, build C
 - **Auth**: JWT (access + refresh token), Google OAuth
 - **PDF**: @react-pdf/renderer (CV export), with `/api/proxy-image` route for CORS
 - **Testing**: Jest + React Testing Library (jsdom)
-- **i18n**: Custom i18n provider (`src/locales/`, `useI18n` hook)
+- **i18n**: `next-intl` (`src/i18n/`, `src/middleware.ts`) wrapped by the `useI18n` hook; translations are `src/locales/en.ts` and `src/locales/vi.ts`. `en` is the default locale with no URL prefix, `vi` is prefixed (`/vi/...`)
 
 ## Project Structure
 
 ```
 src/
-├── app/                        # Next.js App Router pages
-│   ├── (auth)/                 # Login, register, password reset, email verification (guest-only)
-│   ├── (main)/                 # Public pages: home, jobs, companies, profile
-│   ├── (dashboard)/admin/      # Protected admin pages: users, jobs, companies, roles, permissions
-│   └── api/proxy-image/        # Image proxy (used by PDF renderer)
+├── app/                        # Next.js App Router
+│   ├── [locale]/               # All pages live under the locale segment
+│   │   ├── (auth)/             # Login, register, password reset, email verification (guest-only)
+│   │   ├── (main)/             # Public pages: home, jobs (incl. jobs/external/[id]), companies
+│   │   ├── (profile)/profile/  # Candidate profile and CV preview
+│   │   ├── (dashboard)/admin/  # Admin pages: users, jobs, companies, resumes, change-password, personal-info
+│   │   ├── (hr-dashboard)/hr/  # HR statistics dashboard
+│   │   └── account/            # Cancel account deletion
+│   └── api/proxy-image/        # Image proxy (used by PDF renderer), outside [locale]
 ├── components/                 # React components
 │   ├── ui/                     # Shadcn/Radix UI wrappers (Button, Dialog, Form, etc.)
 │   ├── admin/                  # Admin dashboard components
@@ -37,11 +41,12 @@ src/
 │   ├── axios/                  # Axios instance + RTK Query base adapter
 │   └── utils/                  # Shared utilities
 ├── contexts/                   # Auth modal context, i18n provider
+├── i18n/                       # next-intl routing, request config, navigation
 ├── shared/                     # Types, constants, config, static data
-└── locales/                    # Translation JSON files
+└── locales/                    # Translation files (en.ts, vi.ts)
 ```
 
-**Route protection**: `ProtectedRoute` guards admin routes; `GuestGuard` guards auth routes.  
+**Route protection**: `AdminRoute` (SUPER ADMIN or HR) guards `(dashboard)`, `HrRoute` (HR only) guards `(hr-dashboard)`, and `(auth)/layout.tsx` redirects signed-in users. `ProtectedRoute` and `GuestGuard` exist but are not used anywhere. `/profile` has no frontend guard. These guards only steer the UI; the backend enforces access.  
 **Path alias**: `@/*` → `src/*`
 
 ## Common Commands
@@ -55,6 +60,8 @@ npx tsc --noEmit   # Type-check without building
 ```
 
 ## Detailed Documentation
+
+Tracked, code-verified documentation lives in `docs/README.md` and `docs/00-start-here` to `docs/03-tech-stack` (overview, setup, architecture, tech stack). The older files listed below are local, untracked notes and may be out of date; when they disagree with the code, trust the code.
 
 Before working on a specific task, decide which docs (if any) are relevant and read them first. You may also present the list to the user for approval before reading.
 
