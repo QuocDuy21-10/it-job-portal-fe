@@ -1,0 +1,72 @@
+# Sơ đồ luồng dữ liệu
+
+Hai sơ đồ dưới đây theo dõi hai luồng dữ liệu quan trọng nhất: trang danh sách việc làm nhận dữ liệu từ server rồi lọc ở trình duyệt, và một request bị 401 được làm mới phiên rồi gửi lại. Các sơ đồ đã được đơn giản hóa để dễ đọc; phần giải thích đầy đủ nằm ở [Giao tiếp API](../api-communication.md) và [Xác thực](../authentication.md).
+
+## Luồng 1: tìm kiếm việc làm
+
+```mermaid
+sequenceDiagram
+    actor U as Người dùng
+    participant S as Server Component<br/>jobs/page.tsx
+    participant B as Backend
+    participant C as Client<br/>JobsPageClient
+    participant H as useJobList
+    participant Q as RTK Query + Axios
+
+    U->>S: Mở /jobs?q=...
+    S->>B: GET /job-search (fetch, cache 300 giây)
+    B-->>S: Danh sách phân trang
+    S-->>C: HTML + initialData
+    C->>H: Khởi tạo với initialData
+    Note over H: Bộ lọc còn trùng trạng thái ban đầu<br/>nên bỏ qua truy vấn
+    U->>C: Đổi bộ lọc, bấm áp dụng
+    C->>H: applyFilters
+    H->>Q: useSearchJobsQuery(params)
+    Q->>B: GET /job-search (kèm token nếu có)
+    B-->>Q: ApiResponse chứa dữ liệu phân trang
+    Q-->>H: data
+    H-->>C: jobs, tổng số trang
+    C-->>U: Cập nhật danh sách
+```
+
+*Hình 1: Lần tải đầu tiên do server cấp dữ liệu, các lần lọc sau do RTK Query xử lý. Trang này lấy dữ liệu từ endpoint `/job-search` của backend; đây là địa chỉ API, không phải địa chỉ trang.*
+
+## Luồng 2: request bị 401 và làm mới phiên
+
+```mermaid
+sequenceDiagram
+    participant C as Thành phần
+    participant A as axiosInstance
+    participant M as Mutex
+    participant B as Backend
+
+    C->>A: Gọi API (đọc access_token từ localStorage)
+    A->>B: Request kèm Authorization
+    B-->>A: 401
+    Note over A: Bỏ qua nếu là login, register,<br/>đã có x-no-retry, đang đăng xuất<br/>hoặc không còn token
+    A->>M: handleRefreshToken
+    M->>B: GET /auth/refresh (axios trần, kèm cookie)
+    alt Có access_token mới
+        B-->>M: access_token
+        M-->>A: Lưu vào localStorage
+        A->>B: Gửi lại request, đánh dấu x-no-retry
+        B-->>A: Kết quả
+        A-->>C: Dữ liệu
+    else Thất bại
+        B-->>M: Lỗi
+        M-->>A: null
+        Note over A: Xóa access_token
+        A-->>C: Từ chối request ban đầu
+    end
+```
+
+*Hình 2: Nhánh "Thất bại" chỉ chắc chắn xóa token và từ chối request. Chuỗi thông báo hết phiên và chuyển về trang đăng nhập có trong code nhưng đường kích hoạt từ interceptor cần được kiểm chứng khi chạy thật, xem mục "Điểm cần lưu ý" của [Xác thực](../authentication.md).*
+
+## Source code liên quan
+
+- [`src/app/[locale]/(main)/jobs/page.tsx`](../../../src/app/[locale]/(main)/jobs/page.tsx): Server Component lấy dữ liệu ban đầu
+- [`src/app/[locale]/(main)/jobs/jobs-page-client.tsx`](../../../src/app/[locale]/(main)/jobs/jobs-page-client.tsx): Client Component
+- [`src/hooks/use-job-list.ts`](../../../src/hooks/use-job-list.ts): quyết định dùng dữ liệu server hay truy vấn
+- [`src/features/job/redux/job.api.ts`](../../../src/features/job/redux/job.api.ts): endpoint `searchJobs`
+- [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): `fetchPublicJobSearch`
+- [`src/lib/axios/axios-instance.ts`](../../../src/lib/axios/axios-instance.ts): interceptor và làm mới token

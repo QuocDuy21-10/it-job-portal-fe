@@ -16,6 +16,8 @@
 
 **DevLink** is a modern, premium recruitment platform frontend designed specifically for developers and IT professionals. Built on [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/), [<u><font color="blue">React 18</font></u>](https://react.dev/), and [<u><font color="blue">TypeScript</font></u>](https://www.typescriptlang.org/), it features role-based routing, internationalization support, advanced state hydration, real-time messaging, interactive CV builders with PDF exports, and highly polished dashboard interfaces for candidates, recruiters, and administrators.
 
+> 📚 **Documentation**: architecture, tech stack, setup and troubleshooting live in [`docs/`](docs/README.md). Start there if you are new to the project.
+
 ---
 
 ## 📌 Features Overview
@@ -32,12 +34,12 @@
 * **Recruiter Dashboard**: High-level statistics, response rates, and application trends.
 * **Company Profiles**: Keep company branding, office locations, and details updated.
 * **Job Management**: Create, edit, publish, and close job postings.
-* **Application Pipeline**: Track applicant statuses, review resumes, and manage applicant communication.
+* **Application Pipeline**: Track applicant statuses and review resumes.
 
 ### 👑 System Admin Dashboard
-* **User & Roles Management**: Fine-grained access control over candidates, HRs, and admins.
-* **System Operations**: Complete visibility and management of all job postings, company registrations, and resumes.
-* **Permissions & Capabilities**: Customize CASL rules, roles, and administrative permissions.
+* **User Management**: List, edit, lock, and delete users across the three roles (`SUPER ADMIN`, `HR`, `NORMAL USER`).
+* **System Operations**: Complete visibility and management of all job postings (including approval), company registrations, and resumes.
+* **Role-based Capabilities**: Per-role UI abilities are defined in code (`src/lib/casl/ability.ts`); there is no screen for editing roles or permissions.
 * **Insights & Charts**: Beautiful dashboard analysis utilizing Recharts to track platform growth, active users, and application metrics.
 
 ---
@@ -99,10 +101,12 @@ DevLink is organized around a highly modular, **feature-based** directory struct
 src/
 ├── app/                        # Next.js App Router (Locale segmented: src/app/[locale])
 │   ├── (auth)/                 # Guest-only: Login, register, password reset, verification
-│   ├── (main)/                 # Public: Home page, search jobs, companies list
+│   ├── (main)/                 # Public: Home page, jobs (internal + external), companies
 │   ├── (profile)/              # Candidate profile, application history, and preferences
-│   ├── (dashboard)/            # Admin/HR dashboards (role-protected navigation)
-│   └── api/proxy-image/        # Image CORS proxy for PDF/Canvas rendering
+│   ├── (dashboard)/            # Admin area (`/admin/*`), guarded by AdminRoute (SUPER ADMIN or HR)
+│   ├── (hr-dashboard)/         # HR statistics dashboard (`/hr/dashboard`), guarded by HrRoute
+│   ├── account/                # Cancel account deletion by token
+│   └── api/proxy-image/        # Image CORS proxy for PDF/Canvas rendering (outside [locale])
 ├── components/
 │   ├── ui/                     # Primitives styled with shadcn/ui and Tailwind CSS
 │   ├── admin/                  # Domain-specific components (Jobs, Companies, Admin panels)
@@ -110,12 +114,13 @@ src/
 ├── features/                   # Core application features (redux slices, APIs, Zod schemas)
 ├── hooks/                      # Custom hooks wrapping Redux actions and queries
 ├── lib/                        # Axios instance, Redux setup, and CASL abilities configuration
-├── locales/                    # Translation JSON catalogs (English 'en' & Vietnamese 'vi')
+├── i18n/                       # next-intl routing, request config, navigation
+├── locales/                    # Translation catalogs as TypeScript (en.ts, vi.ts)
 └── shared/                     # Global types, static configurations, and helper constants
 ```
 
 ### Key Implementation Principles
-* **Route Protection**: Automated guards (`ProtectedRoute`, `GuestGuard`, `AdminRoute`) enforce role access.
+* **Route Protection**: `AdminRoute` and `HrRoute` guard the admin and HR areas, and the `(auth)` layout redirects signed-in users away. `ProtectedRoute` and `GuestGuard` exist but are not used. `/profile` has no frontend guard. These guards only steer the UI; the backend enforces access.
 * **Centralized API**: RTK Query interfaces with `src/lib/redux/api.ts` to coordinate caching, tags, and invalidations.
 * **Strict Permissions**: The client-side utilizes CASL rules to toggle interactive components conditionally based on user role permissions.
 
@@ -144,19 +149,18 @@ nvm use
 
 ### 3. Install dependencies
 ```bash
-npm install
+npm ci
 ```
 
 ### 4. Setup environment variables
 Create a `.env.local` file in the root directory:
 ```env
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-oauth-client-id
-NEXT_PUBLIC_API_URL=http://localhost:8081/api/v1
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 > [!NOTE]
-> The primary API base url used for standard data requests is configured globally inside `src/shared/constants/constant.ts`.
+> The backend address is **hard-coded** to `http://localhost:8081/api/v1` in `src/shared/constants/constant.ts` and is not read from an environment variable. `NEXT_PUBLIC_API_URL` only extends the image-proxy allow-list (give it a bare host such as `https://api.example.com`, without a path). Without `NEXT_PUBLIC_GOOGLE_CLIENT_ID` the `/login` page fails to render. See [environment variables](docs/01-getting-started/environment-variables.md).
 
 ---
 
