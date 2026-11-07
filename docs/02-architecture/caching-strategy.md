@@ -1,127 +1,79 @@
-# Chiến lược cache trong DevLink
+# Chiến lược cache
 
-Tài liệu này giải thích toàn diện chiến lược lưu trữ tạm thời (caching) của DevLink Frontend. Hệ thống kết hợp 3 lớp cache độc lập nhằm mang lại trải nghiệm tải trang tức thì cho ứng viên, đồng thời giảm thiểu áp lực truy vấn lên máy chủ backend.
+Dữ liệu trong DevLink được giữ lại ở ba chỗ khác nhau: cache của Next.js trên server, cache của RTK Query trong bộ nhớ trình duyệt, và vùng lưu trữ cục bộ của trình duyệt qua Redux Persist. Trang này chỉ rõ chỗ nào giữ dữ liệu gì và bao lâu, để bạn hiểu vì sao đôi khi dữ liệu hiển thị chưa mới.
 
----
+## Vì sao cần nhiều lớp cache
 
-## 1. Tại sao DevLink cần cache? (Giải thích trước)
+Mỗi lớp giải quyết một việc khác nhau:
 
-### Bài toán thực tế
-Trên nền tảng tuyển dụng IT như DevLink, hành vi phổ biến nhất của ứng viên là:
-- Tìm kiếm từ khóa, đổi qua lại giữa các trang danh sách việc làm.
-- Xem chi tiết một công việc, sau đó bấm nút **Back** để quay lại danh sách kết quả trước đó.
-- Chuyển tab giữa "Việc làm đề xuất", "Việc làm đã lưu" và "Công ty nổi bật".
+- Trang công khai cần có dữ liệu ngay khi render trên server, và nhiều người xem cùng một nội dung, nên phản hồi được giữ lại trên server.
+- Người dùng qua lại giữa các màn hình trong cùng một phiên, nên trình duyệt giữ kết quả đã tải để không gọi lại backend.
+- Người dùng tải lại trang vẫn cần thấy trạng thái đăng nhập và hạn mức chat, nên một phần state được lưu vào `localStorage`.
 
-Nếu mọi thao tác lướt việc làm đều gửi HTTP request trực tiếp về backend MongoDB:
-1. **Trải nghiệm ứng viên bị đứt quãng**: Mỗi lần chuyển trang phải đợi 200–500ms (hoặc lâu hơn nếu mạng yếu), kèm theo hiện tượng nhấp nháy màn hình (layout shift / skeleton flicker).
-2. **Backend quá tải không cần thiết**: Hàng ngàn ứng viên cùng xem một số lượng tin tuyển dụng giống nhau, khiến cơ sở dữ liệu phải thực hiện lại cùng một truy vấn `db.jobs.find(...)` hàng triệu lần mỗi ngày.
-
-### Lợi ích mang lại cho người dùng
-- **Tốc độ phản hồi tức thì (< 50ms)**: Khi quay lại trang danh sách hoặc chuyển đổi bộ lọc đã xem, giao diện render ngay lập tức từ bộ nhớ RAM trình duyệt.
-- **Tối ưu SEO Core Web Vitals**: Lớp cache server giúp chỉ số TTFB (Time to First Byte) và LCP (Largest Contentful Paint) của các trang tin việc làm công khai luôn đạt điểm xanh Google Lighthouse.
-- **Tiết kiệm dữ liệu di động**: Tránh tải lại dữ liệu trùng lặp khi ứng viên dùng mạng 4G/5G.
-
-### Rủi ro và đánh đổi (Trade-offs & Stale Data)
 > [!WARNING]
-> Đánh đổi lớn nhất của việc sử dụng cache là **nguy cơ hiển thị dữ liệu cũ (Stale Data)**:
-> - **Kịch bản**: Một nhà tuyển dụng vừa bấm "Đóng tin tuyển dụng" trên dashboard admin.
-> - **Hệ quả**: Một ứng viên đang duyệt trang danh sách việc làm bên ngoài có thể vẫn thấy tin tuyển dụng này hiển thị thêm tối đa **5 phút** (do thời gian `revalidate: 300` của Server Cache) trước khi hệ thống cập nhật bản mới.
-> - **Giải pháp xử lý**: Khi ứng viên bấm "Nộp đơn" vào một việc làm đã đóng, API backend sẽ từ chối nộp đơn với mã lỗi 400 rõ ràng và frontend lập tức làm mới dữ liệu tại chỗ.
+> Đánh đổi của cache là dữ liệu có thể cũ. Trang công khai có thể hiển thị bản cũ trong khoảng 5 phút sau khi dữ liệu đổi. Frontend chưa có cơ chế làm mới theo yêu cầu: `src` không gọi `revalidateTag` hay `revalidatePath`.
 
----
-
-## 2. Sơ đồ luồng 3 lớp Cache (Trực quan hóa)
-
-Dữ liệu di chuyển qua 3 lớp phòng thủ trước khi một request thực sự chạm tới backend server:
+## Hai đường đi của dữ liệu
 
 ```mermaid
 flowchart TD
-    User([Ứng viên tương tác giao diện]) --> CheckBrowserMemory{Lớp 2: RTK Query Cache\n(Bộ nhớ RAM trình duyệt)}
-
-    CheckBrowserMemory -- "Còn trong cache (< 60s)" --> RenderInstant[Hiển thị kết quả ngay lập tức < 10ms]
-    
-    CheckBrowserMemory -- "Hết hạn hoặc chưa có" --> CheckServerCache{Lớp 1: Next.js Cache\n(Server CDN / Edge)}
-    
-    CheckServerCache -- "Hit revalidate (còn hạn 300s)" --> ReturnCachedServer[Server trả về HTML/Data có sẵn < 80ms]
-    CheckServerCache -- "Miss / Quá 300s" --> CallBE[Gửi request tới Backend API / MongoDB]
-    
-    CallBE --> UpdateServerCache[Cập nhật lại Server Cache]
-    UpdateServerCache --> ReturnFresh[Trả về trình duyệt & nạp vào RTK Query RAM]
-    ReturnFresh --> RenderFinal[Hiển thị trên màn hình]
-
-    subgraph Browser_Storage["Lớp 3: Lưu trữ bền vững (LocalStorage)"]
-        ReduxPersist["Redux Persist\n(Lưu phiên đăng nhập & hạn mức Chatbot)"]
-    end
-    User -. Đóng trình duyệt & mở lại .-> ReduxPersist
-    ReduxPersist -. Khôi phục phiên .-> CheckBrowserMemory
+    Server["Trang công khai render trên server"] --> NextCache{"Cache Next.js còn hạn 300 giây?"}
+    NextCache -- "Còn" --> ServerData["Dùng dữ liệu đã lưu"]
+    NextCache -- "Hết hạn hoặc chưa có" --> BE["Backend API"]
+    Browser["Component trên trình duyệt"] --> RTK{"RTK Query đã có kết quả?"}
+    RTK -- "Có" --> BrowserData["Dùng kết quả trong bộ nhớ"]
+    RTK -- "Chưa có hoặc đã bị invalidate" --> Axios["Axios gọi thẳng backend"]
+    Axios --> BE
+    Persist["Redux Persist trong localStorage"] -. "Khôi phục auth và quota khi tải lại trang" .-> Browser
 ```
 
----
+Sơ đồ cho thấy hai đường độc lập: request từ trình duyệt không đi qua cache Next.js, và cache RTK Query không dùng chung với server.
 
-## 3. Chi tiết kỹ thuật 3 tầng Cache
+## Ba lớp cache
 
-| Tầng cache | Vị trí lưu trữ | Công nghệ triển khai | Dữ liệu quản lý | Thời gian sống (TTL) | Cơ chế làm mới (Invalidation) |
-| --- | --- | --- | --- | --- | --- |
-| **Lớp 1** | Server Next.js | `fetch` + `cache()` React | Dữ liệu việc làm, công ty công khai (`fetchPublic*`) | 300 giây (5 phút) | Tự động revalidate sau 300s hoặc on-demand |
-| **Lớp 2** | Bộ nhớ RAM trình duyệt | RTK Query (`baseApi`) | API responses danh sách việc làm, hồ sơ cá nhân, danh mục | 60 giây mặc định (1h - 1d cho danh mục) | Tự làm mới khi có action tạo/sửa/xóa qua `invalidatesTags` |
-| **Lớp 3** | LocalStorage trình duyệt | Redux Persist | Thông tin user, trạng thái auth, quota AI chatbot | Lưu vĩnh viễn đến khi logout / hết hạn | Xóa khi người dùng đăng xuất hoặc token hết hạn |
-
-### 3.1. Lớp 1 — Cache phía Server (Next.js Data Cache & React `cache()`)
-Triển khai tại `src/lib/utils/public-content.ts`:
-- Sử dụng tùy chọn `next: { revalidate: 300 }` để lưu phản hồi của các trang public.
-- Kết hợp với hàm `cache()` của React: Khi trang vừa gọi `generateMetadata()` vừa render `Page()` cho cùng một Job ID, chỉ phát sinh đúng **1 lời gọi mạng duy nhất** trong chu kỳ render.
-
-```typescript
-// src/lib/utils/public-content.ts
-export const fetchPublicJobById = cache(async (id: string) => {
-  return fetchPublicEntity<Job>(`/api/v1/jobs/${id}`, {
-    next: { revalidate: 300, tags: [`job-${id}`] }
-  });
-});
-```
-
-### 3.2. Lớp 2 — Cache bộ nhớ trình duyệt (RTK Query In-Memory)
-Triển khai tại `src/lib/redux/api.ts`:
-- Định nghĩa các cache tags: `Auth`, `User`, `Company`, `Job`, `Resume`, `CVProfile`, `Subscriber`, `Statistics`, `Notification`, `Skill`.
-- **Tự động đồng bộ (Auto Invalidation)**: Khi người dùng thực hiện một hành động sửa đổi (Mutation), RTK Query tự động xóa cache liên quan và fetch lại dữ liệu mới nhất trong nền mà không làm giật màn hình:
-
-| Thao tác ghi (Mutation) | Thẻ bị mất hiệu lực (Invalidated Tags) | Ảnh hưởng hiển thị |
+| Lớp | Giữ gì | Thời gian sống |
 | --- | --- | --- |
-| `createJob` / `updateJob` | `['Job']` | Danh sách tin tuyển dụng tự động nạp lại |
-| `applyJob` (nộp CV) | `['Resume']` | Danh sách lịch sử nộp hồ sơ cập nhật ngay |
-| `updateProfile` | `['User', 'CVProfile']` | Avatar, thông tin cá nhân trên header tự đổi |
+| Cache phía server (Next.js `fetch` và `cache()` của React) | Phản hồi của các lời gọi `fetchPublic*` | 300 giây (`revalidate`); `cache()` chỉ gộp lời gọi trùng trong một lần render |
+| RTK Query (trình duyệt) | Kết quả các endpoint, gắn thẻ để làm mới | Mặc định 60 giây sau khi không còn component nào dùng; mất khi tải lại trang |
+| Redux Persist (trình duyệt) | Một phần state của `auth` và `chatBot` | Lưu lâu dài trong `localStorage` |
 
-### 3.3. Lớp 3 — Cache bền vững (Redux Persist)
-Triển khai tại `src/lib/redux/store.ts`:
-- Chỉ cho phép lưu giữ những trạng thái tối thiểu để tránh phình dung lượng bộ nhớ:
-  - `auth`: Giữ `user` và cờ `isAuthenticated` để tránh nhấp nháy trạng thái khi người dùng F5 tải lại trang.
-  - `chatBot`: Giữ `quota` (hạn mức câu hỏi còn lại), đã đi qua bộ biến đổi lọc hạn mức hết hạn.
-- Cache dữ liệu API của RTK Query **không lưu vào LocalStorage** để đảm bảo sau khi mở tab mới, người dùng luôn nhận dữ liệu đồng bộ nhất.
+### Lớp 1: cache phía server
 
----
+`fetchPublicEntity` trong `src/lib/utils/public-content.ts` gọi `fetch` với `next: { revalidate: 300 }`. Dữ liệu việc làm hoặc công ty mà trang công khai thấy ban đầu có thể cũ khoảng 5 phút. Khi lời gọi lỗi hoặc backend trả mã không thành công, hàm trả về `null` thay vì ném lỗi, và trang xử lý như không có dữ liệu.
 
-## 4. Cache tài nguyên tĩnh (Proxy Ảnh)
+Các hàm như `fetchPublicJobById` được bọc thêm `cache()` của React, để cùng một lần render, `generateMetadata` và component trang gọi cùng một địa chỉ mà chỉ phát sinh một lời gọi.
 
-Tại route `src/app/api/proxy-image/route.ts`:
-Ảnh avatar công ty và logo tuyển dụng được phục vụ qua proxy với header:
-```http
-Cache-Control: public, max-age=31536000, immutable
-```
-> [!NOTE]
-> Header `immutable` báo hiệu cho trình duyệt biết file ảnh này sẽ không bao giờ thay đổi nội dung trong suốt 1 năm, giúp loại bỏ hoàn toàn các request xác thực `304 Not Modified`.
+### Lớp 2: cache RTK Query
 
----
+`baseApi` khai báo các thẻ: `Auth`, `User`, `Company`, `Job`, `Resume`, `CVProfile`, `Subscriber`, `Statistics`, `Notification`, `Skill`. Endpoint đọc dữ liệu dùng `providesTags`; endpoint ghi dùng `invalidatesTags`. Ví dụ `createJob` làm mất hiệu lực thẻ `Job`, nên mọi truy vấn việc làm đang được giữ sẽ tự tải lại.
 
-## 5. Source code và Tài liệu liên quan
+Code không đặt thời gian giữ riêng cho từng endpoint, ngoại trừ hai endpoint danh mục kỹ năng trong `skill.api.ts` (1 giờ và 1 ngày). Code cũng không gọi `setupListeners`, nên RTK Query không tự tải lại khi cửa sổ lấy lại tiêu điểm hoặc có mạng trở lại.
 
-### Mã nguồn triển khai
-- [`src/lib/utils/public-content.ts`](../../src/lib/utils/public-content.ts): Cấu hình `revalidate: 300` và React `cache()`
-- [`src/lib/redux/api.ts`](../../src/lib/redux/api.ts): Khai báo danh sách thẻ cache RTK Query
-- [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): Ví dụ sử dụng `providesTags` và `invalidatesTags`
-- [`src/lib/redux/store.ts`](../../src/lib/redux/store.ts): Cấu hình Redux Persist whitelist
-- [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): Thiết lập HTTP cache headers cho proxy ảnh
+Ở trang danh sách việc làm, hook `useJobList` bỏ qua RTK Query khi bộ lọc còn trùng với trạng thái ban đầu và dùng luôn dữ liệu từ server. Chỉ khi người dùng đổi bộ lọc hoặc trang thì mới có lời gọi RTK Query.
 
-### Chủ đề kế tiếp
-- [Quản lý State trong DevLink](state-management.md)
-- [Giao tiếp API & Xử lý Token](api-communication.md)
-- [Chiến lược Rendering và SEO](rendering-and-seo.md)
+### Lớp 3: Redux Persist
+
+Store chỉ lưu lại hai phần:
+
+| Slice | Trường được lưu |
+| --- | --- |
+| `auth` | `user`, `isAuthenticated` |
+| `chatBot` | `quota`, đã qua bộ biến đổi `getActiveChatQuotaStatus` để bỏ hạn mức đã hết hạn |
+
+Cache RTK Query không được lưu lại, nên sau khi tải lại trang mọi truy vấn sẽ chạy lại. Token truy cập không nằm trong phần Redux Persist mà được lưu riêng, xem [Xác thực](authentication.md).
+
+## Cache ảnh của proxy
+
+Route `/api/proxy-image` trả ảnh với `Cache-Control: public, max-age=31536000, immutable`, nghĩa là trình duyệt giữ ảnh tới một năm. Nếu ảnh trên backend đổi nhưng địa chỉ giữ nguyên, bản trong cache của trình duyệt có thể không đổi theo.
+
+## Source code liên quan
+
+- [`src/lib/utils/public-content.ts`](../../src/lib/utils/public-content.ts): `revalidate` 300 giây và `cache()`
+- [`src/lib/redux/api.ts`](../../src/lib/redux/api.ts): danh sách thẻ cache RTK Query
+- [`src/features/skill/redux/skill.api.ts`](../../src/features/skill/redux/skill.api.ts): endpoint đặt `keepUnusedDataFor` riêng
+- [`src/lib/redux/store.ts`](../../src/lib/redux/store.ts): cấu hình Redux Persist
+- [`src/hooks/use-job-list.ts`](../../src/hooks/use-job-list.ts): bỏ qua truy vấn khi dùng dữ liệu từ server
+- [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): ví dụ `providesTags` và `invalidatesTags`
+- [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): header cache của ảnh
+
+Đọc tiếp: [Quản lý state](state-management.md), [Giao tiếp API](api-communication.md), [Rendering và SEO](rendering-and-seo.md).
