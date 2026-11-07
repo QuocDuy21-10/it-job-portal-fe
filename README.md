@@ -19,94 +19,94 @@
   <a href="https://github.com/QuocDuy21-10/it-job-portal-fe/actions/workflows/docs.yml"><img src="https://github.com/QuocDuy21-10/it-job-portal-fe/actions/workflows/docs.yml/badge.svg" alt="Docs deploy status" /></a>
 </p>
 
-**DevLink** is a modern, premium recruitment platform frontend designed specifically for developers and IT professionals. Built on [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/), [<u><font color="blue">React 18</font></u>](https://react.dev/), and [<u><font color="blue">TypeScript</font></u>](https://www.typescriptlang.org/), it features role-based routing, internationalization support, advanced state hydration, real-time messaging, interactive CV builders with PDF exports, and highly polished dashboard interfaces for candidates, recruiters, and administrators.
+**DevLink** là frontend của một nền tảng tuyển dụng hiện đại, cao cấp, được thiết kế dành riêng cho lập trình viên và các chuyên gia IT. Được xây dựng trên [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/), [<u><font color="blue">React 18</font></u>](https://react.dev/) và [<u><font color="blue">TypeScript</font></u>](https://www.typescriptlang.org/), dự án có định tuyến theo vai trò, hỗ trợ đa ngôn ngữ, hydrate trạng thái nâng cao, nhắn tin thời gian thực, trình tạo CV tương tác với tính năng xuất PDF, cùng các giao diện dashboard được trau chuốt cho ứng viên, nhà tuyển dụng và quản trị viên.
 
-> 📚 **Documentation website**: **https://quocduy21-10.github.io/it-job-portal-fe/** (search, dark mode, diagrams). The same Markdown is readable on GitHub from [`docs/`](docs/README.md).
+> 📚 **Website tài liệu**: **https://quocduy21-10.github.io/it-job-portal-fe/** (tìm kiếm, chế độ tối, sơ đồ). Nội dung Markdown tương tự có thể đọc trực tiếp trên GitHub tại [`docs/`](docs/README.md).
 
-| Start here | Go deeper |
+| Bắt đầu tại đây | Tìm hiểu sâu hơn |
 | :-- | :-- |
-| [Introduction](docs/00-start-here/introduction.md) | [Architecture](docs/02-architecture/overview.md) |
-| [Run locally](docs/01-getting-started/run-locally.md) | [Features](docs/04-features/README.md) |
-| [Environment variables](docs/01-getting-started/environment-variables.md) | [Business flows](docs/05-business-flows/README.md) |
+| [Giới thiệu](docs/00-start-here/introduction.md) | [Kiến trúc](docs/02-architecture/overview.md) |
+| [Chạy cục bộ](docs/01-getting-started/run-locally.md) | [Tính năng](docs/04-features/README.md) |
+| [Biến môi trường](docs/01-getting-started/environment-variables.md) | [Luồng nghiệp vụ](docs/05-business-flows/README.md) |
 
 ---
 
-## 📌 Features Overview
+## 📌 Tổng quan tính năng
 
-### 👤 Candidate Experience
-* **Authentication**: Credentials login/register + Google OAuth.
-* **Job & Company Search**: Browse, filter, paginate, save jobs, and follow companies.
-* **Seamless Applications**: Direct, modal-driven job applications with CV attachment.
-* **CV Builder**: Build and structure professional CV templates (Modern, Classic, Minimal) and export directly as PDF.
-* **AI Career Chatbot**: Instant career-related feedback, resume suggestions, and job matching help.
-* **Profile & Subscriptions**: Manage personal data, account preferences, email alerts, and deletion request flows.
+### 👤 Trải nghiệm ứng viên
+* **Xác thực**: Đăng nhập/đăng ký bằng tài khoản + Google OAuth.
+* **Tìm kiếm việc làm & công ty**: Duyệt, lọc, phân trang, lưu việc làm và theo dõi công ty.
+* **Ứng tuyển liền mạch**: Ứng tuyển trực tiếp qua modal, đính kèm CV.
+* **Trình tạo CV**: Xây dựng và cấu trúc CV chuyên nghiệp với các mẫu (Modern, Classic, Minimal) và xuất trực tiếp ra PDF.
+* **Chatbot tư vấn nghề nghiệp bằng AI**: Phản hồi tức thì về nghề nghiệp, gợi ý chỉnh sửa CV và hỗ trợ tìm việc phù hợp.
+* **Hồ sơ & đăng ký nhận tin**: Quản lý dữ liệu cá nhân, tùy chọn tài khoản, thông báo qua email và quy trình yêu cầu xóa tài khoản.
 
-### 🏢 Recruiter (HR) Hub
-* **Recruiter Dashboard**: High-level statistics, response rates, and application trends.
-* **Company Profiles**: Keep company branding, office locations, and details updated.
-* **Job Management**: Create, edit, publish, and close job postings.
-* **Application Pipeline**: Track applicant statuses and review resumes.
+### 🏢 Trung tâm nhà tuyển dụng (HR)
+* **Dashboard nhà tuyển dụng**: Thống kê tổng quan, tỷ lệ phản hồi và xu hướng ứng tuyển.
+* **Hồ sơ công ty**: Cập nhật thương hiệu, địa điểm văn phòng và thông tin chi tiết của công ty.
+* **Quản lý việc làm**: Tạo, chỉnh sửa, đăng và đóng tin tuyển dụng.
+* **Quy trình ứng tuyển**: Theo dõi trạng thái ứng viên và xem xét hồ sơ.
 
-### 👑 System Admin Dashboard
-* **User Management**: List, edit, lock, and delete users across the three roles (`SUPER ADMIN`, `HR`, `NORMAL USER`).
-* **System Operations**: Complete visibility and management of all job postings (including approval), company registrations, and resumes.
-* **Role-based Capabilities**: Per-role UI abilities are defined in code (`src/lib/casl/ability.ts`); there is no screen for editing roles or permissions.
-* **Insights & Charts**: Beautiful dashboard analysis utilizing Recharts to track platform growth, active users, and application metrics.
+### 👑 Dashboard quản trị hệ thống
+* **Quản lý người dùng**: Liệt kê, chỉnh sửa, khóa và xóa người dùng thuộc ba vai trò (`SUPER ADMIN`, `HR`, `NORMAL USER`).
+* **Vận hành hệ thống**: Toàn quyền xem và quản lý mọi tin tuyển dụng (bao gồm duyệt tin), đăng ký công ty và hồ sơ ứng tuyển.
+* **Quyền hạn theo vai trò**: Quyền của giao diện cho từng vai trò được định nghĩa trong mã nguồn (`src/lib/casl/ability.ts`); không có màn hình để chỉnh sửa vai trò hay quyền.
+* **Thống kê & biểu đồ**: Phân tích dashboard trực quan sử dụng Recharts để theo dõi mức tăng trưởng nền tảng, người dùng hoạt động và các chỉ số ứng tuyển.
 
 ---
 
-## 📸 Screenshots
+## 📸 Ảnh chụp màn hình
 
-To view all interface mockups, browse the [public/images/screenshots/](public/images/screenshots/) directory.
+Để xem toàn bộ ảnh giao diện, hãy duyệt thư mục [public/images/screenshots/](public/images/screenshots/).
 
-### 🌐 Guest Experience & Landing Page
+### 🌐 Trải nghiệm khách & Trang chủ
 
-| Home - Hero Section | Home - Top Companies | Home - Categories |
+| Trang chủ - Hero | Trang chủ - Công ty hàng đầu | Trang chủ - Danh mục |
 | :---: | :---: | :---: |
 | ![Hero Section](public/images/screenshots/home_1_page.png) | ![Top Companies](public/images/screenshots/home_2_page.png) | ![Categories](public/images/screenshots/home_3_page.png) |
 
-| Home - Stats & Process | Home - Testimonials / Footer |
+| Trang chủ - Thống kê & Quy trình | Trang chủ - Đánh giá / Footer |
 | :---: | :---: |
 | ![Stats & Process](public/images/screenshots/home_4_page.png) | ![Testimonials & Footer](public/images/screenshots/home_5_page.png) |
 
-### 🔑 Authentication
-| Login Page | Register Page |
+### 🔑 Xác thực
+| Trang đăng nhập | Trang đăng ký |
 | :---: | :---: |
 | ![Login Page](public/images/screenshots/login_page.png) | ![Register Page](public/images/screenshots/register_page.png) |
 
-### 👤 Candidate Features
-| Job Search & Filtering | CV Builder |
+### 👤 Tính năng dành cho ứng viên
+| Tìm kiếm & lọc việc làm | Trình tạo CV |
 | :---: | :---: |
 | ![Job List](public/images/screenshots/job_list_page.png) | ![CV Builder](public/images/screenshots/create_cv_page.png) |
-| **Job Details & Application** | **CV Live Preview** |
+| **Chi tiết việc làm & Ứng tuyển** | **Xem trước CV trực tiếp** |
 | ![Job Detail](public/images/screenshots/job_detail_page.png) | ![CV Review](public/images/screenshots/review_cv_page.png) |
 
-### 👑 Administration Dashboard
-| Admin Overview Analytics | User Management |
+### 👑 Dashboard quản trị
+| Thống kê tổng quan quản trị | Quản lý người dùng |
 | :---: | :---: |
 | ![Admin Dashboard](public/images/screenshots/administration/admin_dashboard_1_page.png) | ![User Management](public/images/screenshots/administration/user_manage_page.png) |
-| **Company Management** | **CV / Resume Management** |
+| **Quản lý công ty** | **Quản lý CV / hồ sơ ứng tuyển** |
 | ![Company Management](public/images/screenshots/administration/company_manage_page.png) | ![CV Management](public/images/screenshots/administration/cv_manage_page.png) |
 
-## 🛠️ Technology Stack
+## 🛠️ Công nghệ sử dụng
 
-| Layer | Technologies |
+| Tầng | Công nghệ |
 | --- | --- |
 | **Framework** | [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/) (App Router, Turbopack), [<u><font color="blue">React 18</font></u>](https://react.dev/), [<u><font color="blue">TypeScript 5</font></u>](https://www.typescriptlang.org/) |
-| **State Management** | [<u><font color="blue">Redux Toolkit</font></u>](https://redux-toolkit.js.org/), [<u><font color="blue">Redux Persist</font></u>](https://github.com/rt2xx/redux-persist) (auth hydration), [<u><font color="blue">RTK Query</font></u>](https://redux-toolkit.js.org/rtk-query/overview) |
-| **Authorization** | [<u><font color="blue">@casl/ability</font></u>](https://casl.js.org/) & [<u><font color="blue">@casl/react</font></u>](https://casl.js.org/) (configured in `src/lib/casl/`) - handling authorization and access control on the frontend, allowing you to hide/show or disable UI elements (like buttons, menus, links) based on user permissions |
-| **HTTP Client** | [<u><font color="blue">Axios</font></u>](https://axios-http.com/) (with automatic token refresh interceptor & async-mutex guard) |
-| **Styling & UI** | [<u><font color="blue">Tailwind CSS 3</font></u>](https://tailwindcss.com/), [<u><font color="blue">Radix UI</font></u>](https://www.radix-ui.com/) primitives, [<u><font color="blue">shadcn/ui</font></u>](https://ui.shadcn.com/) components, [<u><font color="blue">Lucide Icons</font></u>](https://lucide.dev/) |
-| **Forms & Validation** | [<u><font color="blue">React Hook Form</font></u>](https://react-hook-form.com/), [<u><font color="blue">Zod</font></u>](https://zod.dev/) schemas |
-| **Document Export** | [<u><font color="blue">@react-pdf/renderer</font></u>](https://react-pdf.org/) for template-driven CV generation |
-| **Testing Suite** | [<u><font color="blue">Jest</font></u>](https://jestjs.io/), [<u><font color="blue">React Testing Library</font></u>](https://testing-library.com/docs/react-testing-library/intro/), [<u><font color="blue">JSDOM</font></u>](https://github.com/jsdom/jsdom) |
-| **i18n / Localization** | [<u><font color="blue">next-intl</font></u>](https://next-intl-docs.vercel.app/) localization + Custom client `I18nProvider` |
+| **Quản lý state** | [<u><font color="blue">Redux Toolkit</font></u>](https://redux-toolkit.js.org/), [<u><font color="blue">Redux Persist</font></u>](https://github.com/rt2xx/redux-persist) (hydrate xác thực), [<u><font color="blue">RTK Query</font></u>](https://redux-toolkit.js.org/rtk-query/overview) |
+| **Phân quyền** | [<u><font color="blue">@casl/ability</font></u>](https://casl.js.org/) & [<u><font color="blue">@casl/react</font></u>](https://casl.js.org/) (cấu hình trong `src/lib/casl/`) - xử lý phân quyền và kiểm soát truy cập ở frontend, cho phép ẩn/hiện hoặc vô hiệu hóa các thành phần UI (như nút, menu, liên kết) dựa trên quyền của người dùng |
+| **HTTP Client** | [<u><font color="blue">Axios</font></u>](https://axios-http.com/) (với interceptor tự động làm mới token & async-mutex guard) |
+| **Styling & UI** | [<u><font color="blue">Tailwind CSS 3</font></u>](https://tailwindcss.com/), các primitive của [<u><font color="blue">Radix UI</font></u>](https://www.radix-ui.com/), component [<u><font color="blue">shadcn/ui</font></u>](https://ui.shadcn.com/), [<u><font color="blue">Lucide Icons</font></u>](https://lucide.dev/) |
+| **Form & Validation** | [<u><font color="blue">React Hook Form</font></u>](https://react-hook-form.com/), schema [<u><font color="blue">Zod</font></u>](https://zod.dev/) |
+| **Xuất tài liệu** | [<u><font color="blue">@react-pdf/renderer</font></u>](https://react-pdf.org/) để tạo CV dựa trên template |
+| **Bộ kiểm thử** | [<u><font color="blue">Jest</font></u>](https://jestjs.io/), [<u><font color="blue">React Testing Library</font></u>](https://testing-library.com/docs/react-testing-library/intro/), [<u><font color="blue">JSDOM</font></u>](https://github.com/jsdom/jsdom) |
+| **i18n / Bản địa hóa** | [<u><font color="blue">next-intl</font></u>](https://next-intl-docs.vercel.app/) + `I18nProvider` tùy chỉnh phía client |
 
 ---
 
-## 🏗️ Architecture Design
+## 🏗️ Thiết kế kiến trúc
 
-DevLink is organized around a highly modular, **feature-based** directory structure.
+DevLink được tổ chức theo cấu trúc thư mục **theo tính năng (feature-based)**, có tính module hóa cao.
 
 ```mermaid
 flowchart LR
@@ -122,95 +122,95 @@ flowchart LR
 
 ```text
 src/
-├── app/                        # Next.js App Router (Locale segmented: src/app/[locale])
-│   ├── (auth)/                 # Guest-only: Login, register, password reset, verification
-│   ├── (main)/                 # Public: Home page, jobs (internal + external), companies
-│   ├── (profile)/              # Candidate profile, application history, and preferences
-│   ├── (dashboard)/            # Admin area (`/admin/*`), guarded by AdminRoute (SUPER ADMIN or HR)
-│   ├── (hr-dashboard)/         # HR statistics dashboard (`/hr/dashboard`), guarded by HrRoute
-│   ├── account/                # Cancel account deletion by token
-│   └── api/proxy-image/        # Image CORS proxy for PDF/Canvas rendering (outside [locale])
+├── app/                        # Next.js App Router (chia theo locale: src/app/[locale])
+│   ├── (auth)/                 # Chỉ dành cho khách: đăng nhập, đăng ký, đặt lại mật khẩu, xác minh
+│   ├── (main)/                 # Công khai: trang chủ, việc làm (nội bộ + bên ngoài), công ty
+│   ├── (profile)/              # Hồ sơ ứng viên, lịch sử ứng tuyển và tùy chọn
+│   ├── (dashboard)/            # Khu vực admin (`/admin/*`), được bảo vệ bởi AdminRoute (SUPER ADMIN hoặc HR)
+│   ├── (hr-dashboard)/         # Dashboard thống kê HR (`/hr/dashboard`), được bảo vệ bởi HrRoute
+│   ├── account/                # Hủy yêu cầu xóa tài khoản bằng token
+│   └── api/proxy-image/        # Proxy CORS cho ảnh dùng trong PDF/Canvas (nằm ngoài [locale])
 ├── components/
-│   ├── ui/                     # Primitives styled with shadcn/ui and Tailwind CSS
-│   ├── admin/                  # Domain-specific components (Jobs, Companies, Admin panels)
-│   └── cv/                     # CV Builder interfaces & @react-pdf styling sheets
-├── features/                   # Core application features (redux slices, APIs, Zod schemas)
-├── hooks/                      # Custom hooks wrapping Redux actions and queries
-├── lib/                        # Axios instance, Redux setup, and CASL abilities configuration
-├── i18n/                       # next-intl routing, request config, navigation
-├── locales/                    # Translation catalogs as TypeScript (en.ts, vi.ts)
-└── shared/                     # Global types, static configurations, and helper constants
+│   ├── ui/                     # Các primitive được style bằng shadcn/ui và Tailwind CSS
+│   ├── admin/                  # Component theo nghiệp vụ (Việc làm, Công ty, bảng điều khiển Admin)
+│   └── cv/                     # Giao diện trình tạo CV & stylesheet @react-pdf
+├── features/                   # Các tính năng cốt lõi (redux slice, API, schema Zod)
+├── hooks/                      # Custom hook bao bọc Redux action và query
+├── lib/                        # Axios instance, cấu hình Redux và cấu hình quyền CASL
+├── i18n/                       # Định tuyến next-intl, cấu hình request, điều hướng
+├── locales/                    # Bộ bản dịch dạng TypeScript (en.ts, vi.ts)
+└── shared/                     # Kiểu dùng chung, cấu hình tĩnh và hằng số tiện ích
 ```
 
-### Key Implementation Principles
-* **Route Protection**: `AdminRoute` and `HrRoute` guard the admin and HR areas, and the `(auth)` layout redirects signed-in users away. `ProtectedRoute` and `GuestGuard` exist but are not used. `/profile` has no frontend guard. These guards only steer the UI; the backend enforces access.
-* **Centralized API**: RTK Query interfaces with `src/lib/redux/api.ts` to coordinate caching, tags, and invalidations.
-* **Strict Permissions**: The client-side utilizes CASL rules to toggle interactive components conditionally based on user role permissions.
+### Nguyên tắc triển khai chính
+* **Bảo vệ route**: `AdminRoute` và `HrRoute` bảo vệ khu vực admin và HR, còn layout `(auth)` chuyển hướng người dùng đã đăng nhập đi nơi khác. `ProtectedRoute` và `GuestGuard` có tồn tại nhưng không được sử dụng. `/profile` không có guard ở frontend. Các guard này chỉ điều hướng giao diện; backend mới là nơi thực thi quyền truy cập.
+* **API tập trung**: RTK Query làm việc với `src/lib/redux/api.ts` để điều phối cache, tag và invalidation.
+* **Phân quyền chặt chẽ**: Phía client dùng các quy tắc CASL để bật/tắt có điều kiện các thành phần tương tác dựa trên quyền của vai trò người dùng.
 
 ---
 
-## 🔗 Backend Repository
+## 🔗 Repository Backend
 
-This project requires the corresponding backend API service to function fully. You can find the backend repository at the following link:
-* **Backend Repository**: [<u><font color="blue">DevLink Backend</font></u>](https://github.com/QuocDuy21-10/it-job-portal-be)
+Dự án này cần dịch vụ backend API tương ứng để hoạt động đầy đủ. Bạn có thể tìm repository backend tại liên kết sau:
+* **Repository Backend**: [<u><font color="blue">DevLink Backend</font></u>](https://github.com/QuocDuy21-10/it-job-portal-be)
 
 ---
 
-## ⚙️ Installation & Configuration
+## ⚙️ Cài đặt & Cấu hình
 
-### 1. Clone the project
+### 1. Clone dự án
 ```bash
 git clone <repository-url>
 cd my-job-portal-fe
 ```
 
-### 2. Node version management
-Ensure you are using the supported Node.js version specified in `.nvmrc`:
+### 2. Quản lý phiên bản Node
+Đảm bảo bạn đang dùng phiên bản Node.js được hỗ trợ, khai báo trong `.nvmrc`:
 ```bash
 nvm use
 ```
 
-### 3. Install dependencies
+### 3. Cài đặt dependencies
 ```bash
 npm ci
 ```
 
-### 4. Setup environment variables
-Create a `.env.local` file in the root directory:
+### 4. Thiết lập biến môi trường
+Tạo file `.env.local` ở thư mục gốc:
 ```env
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-oauth-client-id
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 > [!NOTE]
-> The backend address is **hard-coded** to `http://localhost:8081/api/v1` in `src/shared/constants/constant.ts` and is not read from an environment variable. `NEXT_PUBLIC_API_URL` only extends the image-proxy allow-list (give it a bare host such as `https://api.example.com`, without a path). Without `NEXT_PUBLIC_GOOGLE_CLIENT_ID` the `/login` page fails to render. See [environment variables](docs/01-getting-started/environment-variables.md).
+> Địa chỉ backend được **hard-code** là `http://localhost:8081/api/v1` trong `src/shared/constants/constant.ts` và không được đọc từ biến môi trường. `NEXT_PUBLIC_API_URL` chỉ mở rộng danh sách cho phép (allow-list) của image proxy (hãy dùng host thuần như `https://api.example.com`, không kèm đường dẫn). Nếu thiếu `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, trang `/login` sẽ không render được. Xem [biến môi trường](docs/01-getting-started/environment-variables.md).
 
 ---
 
-## 🚀 Available Commands
+## 🚀 Các lệnh có sẵn
 
-Run these scripts during development and deployment:
+Chạy các script sau trong quá trình phát triển và triển khai:
 
-| Command | Description |
+| Lệnh | Mô tả |
 | --- | --- |
-| `npm run dev` | Starts the local dev server using the high-performance **Turbopack** engine |
-| `npm run build` | Compiles the Next.js application, running type-checks and production bundle optimizations |
-| `npm run start` | Launches the production-built bundle locally |
-| `npm run lint` | Inspects codebase styles and syntax rules with ESLint |
-| `npm test` | Runs unit, page, and feature integration test suites under Jest |
-| `npx tsc --noEmit` | Validates TypeScript syntax compiles correctly across the codebase |
+| `npm run dev` | Khởi động dev server cục bộ bằng engine **Turbopack** hiệu năng cao |
+| `npm run build` | Biên dịch ứng dụng Next.js, chạy kiểm tra kiểu và tối ưu bundle production |
+| `npm run start` | Chạy bản build production ở môi trường cục bộ |
+| `npm run lint` | Kiểm tra quy tắc style và cú pháp của mã nguồn bằng ESLint |
+| `npm test` | Chạy các bộ test unit, page và tích hợp tính năng bằng Jest |
+| `npx tsc --noEmit` | Kiểm tra TypeScript biên dịch hợp lệ trên toàn bộ mã nguồn |
 
 ---
 
-## 🧪 Testing Scope
+## 🧪 Phạm vi kiểm thử
 
-We use Jest alongside React Testing Library to keep code reliable. Coverage includes:
-* **Redux / RTK Query**: Verifying state transitions, async queries, and error mutations.
-* **Component Testing**: Interactive dialog transitions, company profiles, job applications, search filters, and card components.
-* **Utility Verification**: Testing image/PDF CORS proxies, i18n translation switches, and route resolvers.
+Chúng tôi dùng Jest cùng React Testing Library để giữ mã nguồn đáng tin cậy. Phạm vi bao gồm:
+* **Redux / RTK Query**: Kiểm tra chuyển đổi state, query bất đồng bộ và mutation lỗi.
+* **Kiểm thử component**: Chuyển đổi dialog tương tác, hồ sơ công ty, ứng tuyển việc làm, bộ lọc tìm kiếm và các card.
+* **Kiểm tra tiện ích**: Kiểm thử proxy CORS cho ảnh/PDF, chuyển đổi bản dịch i18n và bộ phân giải route.
 
 ---
 
-## 👨‍💻 Author & Contributions
+## 👨‍💻 Tác giả & Đóng góp
 
-* **Author**: QuocDuy21-10 (Quoc Duy)
+* **Tác giả**: QuocDuy21-10 (Quốc Duy)
