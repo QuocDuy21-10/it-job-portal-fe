@@ -14,6 +14,10 @@ Trang này liệt kê những gì người dùng làm được trên DevLink, nh
 | Đổi ngôn ngữ, đổi giao diện sáng tối | Thanh trên cùng | Tiếng Anh và tiếng Việt |
 | Hỏi chatbot | Nút chat nổi | Có ở các trang công khai và hồ sơ |
 
+![Danh sách việc làm với bộ lọc bên trái](../../public/images/screenshots/job_list_page.png)
+
+*Danh sách việc làm. Bộ lọc hình thức, cấp bậc và mức lương nằm bên trái.*
+
 ### Việc làm tổng hợp từ nguồn khác
 
 Ngoài tin do công ty đăng trên DevLink, danh sách còn có tin được tổng hợp từ website khác. Với loại tin này:
@@ -39,7 +43,9 @@ Ngoài tin do công ty đăng trên DevLink, danh sách còn có tin được t�
 | Đặt mật khẩu, xóa tài khoản | `/profile?tab=settings` |
 | Hủy yêu cầu xóa tài khoản | `/account/cancel-deletion` |
 
+::: warning Xóa tài khoản không xảy ra ngay
 Yêu cầu xóa tài khoản không xóa ngay: giao diện cho biết tài khoản bị xóa vĩnh viễn sau 30 ngày và có thể hủy trong thời gian đó.
+:::
 
 ## Dành cho nhà tuyển dụng (HR)
 
@@ -52,7 +58,9 @@ Yêu cầu xóa tài khoản không xóa ngay: giao diện cho biết tài kho�
 | Xem thống kê tổng quan | `/admin` |
 | Đổi mật khẩu, thông tin cá nhân | `/admin/change-password`, `/admin/personal-info` |
 
+::: tip HR không quản lý người dùng
 HR không có mục quản lý người dùng. Chi tiết quyền ở [Vai trò người dùng](user-roles.md).
+:::
 
 ## Dành cho quản trị viên
 

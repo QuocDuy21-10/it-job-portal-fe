@@ -4,7 +4,15 @@ Nhóm này mô tả từng tính năng của DevLink theo nghiệp vụ: tính n
 
 ## Cách đọc
 
-Đọc theo hành trình của người dùng: đăng nhập, tìm việc, ứng tuyển, rồi tạo CV và hỏi trợ lý. Mỗi trang theo cùng một khung: vì sao cần, giao diện, luồng, API, kiểm tra dữ liệu, lỗi, test, source code. Chỗ nào code lệch backend hoặc có hành vi cần chạy thử, trang ghi rõ thay vì làm như đã chắc chắn.
+Đọc theo hành trình của người dùng: đăng nhập, tìm việc, ứng tuyển, rồi tạo CV và hỏi trợ lý. Mỗi trang theo cùng một khung: vì sao cần, giao diện, luồng, API, kiểm tra dữ liệu, lỗi, test, source code.
+
+::: warning Chỗ chưa chắc chắn
+Chỗ nào code lệch backend hoặc có hành vi cần chạy thử, trang ghi rõ thay vì làm như đã chắc chắn.
+:::
+
+![Chi tiết một việc làm](../../public/images/screenshots/job_detail_page.png)
+
+*Chi tiết việc làm: thông tin tóm tắt, nút ứng tuyển và lưu tin, kỹ năng yêu cầu và khung thông tin công ty.*
 
 ## Đã có
 

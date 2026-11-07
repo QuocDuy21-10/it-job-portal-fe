@@ -2,6 +2,10 @@
 
 DevLink là một website tuyển dụng dành cho ngành công nghệ thông tin. Người tìm việc dùng nó để tìm việc làm, nộp hồ sơ và tạo CV; nhà tuyển dụng dùng nó để đăng tin và xem hồ sơ ứng tuyển; quản trị viên dùng nó để quản lý hệ thống. Tài liệu này bắt đầu từ phần giao diện người dùng (frontend) của DevLink.
 
+![Trang chủ DevLink: ô tìm việc theo từ khóa và địa điểm](../../public/images/screenshots/home_1_page.png)
+
+*Trang chủ với ô tìm kiếm theo từ khóa và địa điểm.*
+
 ## DevLink giải quyết điều gì?
 
 Tìm việc trong ngành IT thường phải lục qua nhiều trang web và nộp hồ sơ ở nhiều nơi. DevLink gom các bước đó vào một chỗ:
@@ -24,6 +28,10 @@ Tìm việc trong ngành IT thường phải lục qua nhiều trang web và n�
 Chi tiết quyền của từng nhóm ở [Vai trò người dùng](user-roles.md).
 
 ## Đọc tiếp ở đâu?
+
+::: tip Gợi ý
+Chỉ muốn nhìn giao diện thì mở [Ảnh giao diện](screenshots.md). Muốn chạy thử trên máy thì bắt đầu từ [Yêu cầu trước khi cài đặt](../01-getting-started/prerequisites.md).
+:::
 
 | Bạn muốn | Đọc |
 | --- | --- |
