@@ -56,12 +56,13 @@ Mỗi tài liệu kỹ thuật hoặc nghiệp vụ đều phải tuân thủ th
 > *"RTK Query cache trong dự án được cấu hình trong `api.ts`. Thẻ cache gồm `Job`, `User`. Khi gọi `createJob` thì trigger `invalidatesTags: ['Job']`. Thời gian giữ mặc định 60s."*
 
 #### ✅ Cách viết chuyên nghiệp, lôi cuốn:
-> *"**Tại sao DevLink cần chiến lược cache việc làm?**  
-> Khi ứng viên duyệt danh sách tuyển dụng, hàng ngàn lượt tải trang diễn ra mỗi phút. Nếu mỗi lần chuyển trang đều truy vấn trực tiếp vào MongoDB, cơ sở dữ liệu sẽ nhanh chóng quá tải và tốc độ tải trang sẽ tụt xuống trên 1 giây.  
+> *"**Vì sao đổi lại bộ lọc vừa xem không phải tải lại từ đầu?**  
+> Ứng viên thường đổi qua lại giữa vài bộ lọc. RTK Query giữ kết quả đã tải trong bộ nhớ trình duyệt, nên có thể dùng lại thay vì gọi backend thêm lần nữa. Kết quả không còn component nào dùng được giữ mặc định 60 giây.  
 > 
-> Nhờ lớp cache RTK Query trên trình duyệt, kết quả danh sách công việc được lưu tạm trong 60 giây. Ứng viên khi bấm 'Quay lại' hoặc chuyển tab sẽ thấy kết quả hiển thị ngay tức thì (< 50ms).  
-> 
-> **Rủi ro dữ liệu cũ:** Nếu một nhà tuyển dụng vừa đóng đơn ứng tuyển cách đây 10 giây, ứng viên vẫn có thể thấy việc làm đó hiển thị cho tới khi cache 60s hết hạn hoặc họ bấm F5 làm mới trang."*
+> **Đánh đổi:** dữ liệu có thể chưa mới. Thao tác tạo, sửa, xóa trong cùng phiên sẽ làm các truy vấn liên quan tải lại qua `invalidatesTags`, còn thay đổi do người khác thực hiện thì không tự cập nhật."*
+
+> [!WARNING]
+> **Giải thích hay nhưng phải đúng.** Không đưa con số chưa đo, lợi ích hoặc lý do không có căn cứ, và không viết code mẫu khác code thật. Không có căn cứ thì ghi "Chưa có ghi chép về lý do".
 
 ---
 
@@ -81,8 +82,8 @@ sequenceDiagram
     participant BE as DevLink Backend
 
     Candidate->>FE: Bấm "Nộp đơn ứng tuyển"
-    FE->>BE: POST /api/v1/resumes (Kèm File CV)
-    BE-->>FE: 201 Created (Hồ sơ đã lưu)
+    FE->>BE: POST /resumes/upload-cv (kèm file CV)
+    BE-->>FE: Hồ sơ đã lưu
     FE->>FE: Invalidate Tag ['Resume']
     FE-->>Candidate: Hiển thị Toast thông báo thành công
 ```
@@ -90,17 +91,17 @@ sequenceDiagram
 ### 3.2. Ảnh chụp giao diện thực tế (Screenshots)
 - Áp dụng cho: Hướng dẫn người dùng, flow nộp hồ sơ, thao tác tạo CV, trang quản trị Admin.
 - Ảnh chụp từ màn hình thật của sản phẩm, không dùng mockup ảo.
-- Lưu ảnh trong thư mục `docs/assets/images/ui/`.
-- Đặt tên file bằng tiếng Anh theo cú pháp kebab-case: `job-application-modal.png`, `admin-user-list.png`.
+- Tham chiếu trực tiếp ảnh trong `public/images/screenshots/`, không sao chép sang `docs/`.
+- Ảnh mới đặt tên theo cách đang dùng trong thư mục đó, ví dụ `job_list_page.png`.
 
 ### 3.3. Bảng biểu (Tables) cho dữ liệu có cấu trúc
 Bất kỳ thông tin nào có dạng danh sách thuộc tính đều phải chuyển thành bảng:
 
 | Tên trường (Field) | Kiểu dữ liệu | Bắt buộc | Ý nghĩa nghiệp vụ |
 | --- | --- | :---: | --- |
-| `title` | `string` | Có | Chức danh tuyển dụng hiển thị cho ứng viên |
-| `salary.min` | `number` | Không | Mức lương khởi điểm (đơn vị: VND) |
-| `status` | `'ACTIVE' \| 'CLOSED'` | Có | Trạng thái hiển thị tin tuyển dụng |
+| `name` | `string` | Có | Tên tin tuyển dụng hiển thị cho ứng viên |
+| `salary` | `number` | Có | Mức lương dạng số |
+| `approvalStatus` | `'PENDING' \| 'APPROVED' \| 'REJECTED'` | Không | Trạng thái duyệt tin |
 
 ---
 
@@ -133,4 +134,5 @@ Trước khi commit một trang tài liệu mới, hãy tự kiểm tra:
 - [ ] Không có ảnh trang trí vô nghĩa; ảnh UI (nếu có) là ảnh chụp thực tế rõ ràng.
 - [ ] Đã thêm liên kết tới file code thực tế trong `src/` và các tài liệu liên quan ở chân trang.
 - [ ] Đã chạy `npm run docs:build` thử nghiệm và không có lỗi biên dịch.
+- [ ] Không có con số chưa đo, lợi ích không có căn cứ hoặc code mẫu khác code thật.
 

@@ -13,6 +13,9 @@ docs/.vitepress/cache
 !/docs/01-getting-started/
 !/docs/02-architecture/
 !/docs/03-tech-stack/
+!/docs/04-features/
+!/docs/05-business-flows/
+!/docs/06-api-and-data/
 !/docs/assets/
 /docs2
 /.pnp
