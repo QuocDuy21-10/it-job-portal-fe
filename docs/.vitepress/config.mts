@@ -1,6 +1,18 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig, type DefaultTheme } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 import path from 'node:path'
+
+type SidebarItem = DefaultTheme.SidebarItem
+
+// Gộp các sidebar theo từng phần thành một cây chung: mỗi phần là một nhóm thu gọn được,
+// nhóm chứa trang đang đọc tự mở. Nhóm đầu của phần là tiêu đề phần, các nhóm sau thành nhóm con.
+function unifySidebar(sections: Record<string, SidebarItem[]>): SidebarItem[] {
+  return Object.values(sections).map(([main, ...rest]) => ({
+    ...main,
+    collapsed: true,
+    items: [...(main.items ?? []), ...rest.map((group) => ({ ...group, collapsed: true }))],
+  }))
+}
 
 const REPO_BLOB_URL = 'https://github.com/QuocDuy21-10/it-job-portal-fe/blob/main'
 
@@ -53,17 +65,27 @@ export default withMermaid(
 
       nav: [
         { text: 'Trang chủ', link: '/' },
-        { text: 'Bắt đầu', link: '/00-start-here/introduction' },
-        { text: 'Cài đặt', link: '/01-getting-started/prerequisites' },
-        { text: 'Kiến trúc', link: '/02-architecture/overview' },
-        { text: 'Tech Stack', link: '/03-tech-stack/overview' },
+        {
+          text: 'Bắt đầu',
+          items: [
+            { text: 'Giới thiệu', link: '/00-start-here/introduction' },
+            { text: 'Cài đặt và chạy', link: '/01-getting-started/prerequisites' },
+            { text: 'Quy tắc viết tài liệu', link: '/00-start-here/writing-guide' },
+          ],
+        },
+        {
+          text: 'Kỹ thuật',
+          items: [
+            { text: 'Kiến trúc', link: '/02-architecture/overview' },
+            { text: 'Tech Stack', link: '/03-tech-stack/overview' },
+            { text: 'API & Dữ liệu', link: '/06-api-and-data/overview' },
+          ],
+        },
         { text: 'Tính năng', link: '/04-features/README' },
         { text: 'Luồng nghiệp vụ', link: '/05-business-flows/README' },
-        { text: 'API & Dữ liệu', link: '/06-api-and-data/overview' },
-        { text: 'Quy tắc viết', link: '/00-start-here/writing-guide' },
       ],
 
-      sidebar: {
+      sidebar: unifySidebar({
         '/00-start-here/': [
           {
             text: '00. Bắt đầu',
@@ -142,24 +164,54 @@ export default withMermaid(
             text: '04. Tính năng',
             items: [
               { text: 'Tổng quan tính năng', link: '/04-features/README' },
-              { text: 'Xác thực', link: '/04-features/authentication' },
-              { text: 'Tìm kiếm việc làm', link: '/04-features/job-search' },
-              { text: 'Việc làm từ nguồn ngoài', link: '/04-features/external-job-aggregation' },
-              { text: 'Ứng tuyển', link: '/04-features/job-application' },
-              { text: 'Tạo CV', link: '/04-features/cv-builder' },
-              { text: 'Xuất CV ra PDF', link: '/04-features/cv-pdf-export' },
-              { text: 'Trợ lý AI', link: '/04-features/ai-career-assistant' },
-              { text: 'Việc làm đã lưu', link: '/04-features/saved-jobs' },
-              { text: 'Danh bạ công ty', link: '/04-features/company-directory' },
-              { text: 'Theo dõi công ty', link: '/04-features/company-following' },
-              { text: 'Theo dõi hồ sơ', link: '/04-features/application-tracking' },
-              { text: 'Đăng ký nhận việc', link: '/04-features/job-subscriptions' },
-              { text: 'Thông báo', link: '/04-features/notifications' },
-              { text: 'Hồ sơ người dùng', link: '/04-features/user-profile' },
-              { text: 'Xóa tài khoản', link: '/04-features/account-deletion' },
-              { text: 'Dashboard HR', link: '/04-features/hr-dashboard' },
-              { text: 'Trang quản trị', link: '/04-features/admin-dashboard' },
-              { text: 'Duyệt tin tuyển dụng', link: '/04-features/job-approval' },
+              {
+                text: 'Tài khoản & hồ sơ',
+                collapsed: false,
+                items: [
+                  { text: 'Xác thực', link: '/04-features/authentication' },
+                  { text: 'Hồ sơ người dùng', link: '/04-features/user-profile' },
+                  { text: 'Xóa tài khoản', link: '/04-features/account-deletion' },
+                  { text: 'Thông báo', link: '/04-features/notifications' },
+                ],
+              },
+              {
+                text: 'Tìm việc & ứng tuyển',
+                collapsed: false,
+                items: [
+                  { text: 'Tìm kiếm việc làm', link: '/04-features/job-search' },
+                  { text: 'Việc làm từ nguồn ngoài', link: '/04-features/external-job-aggregation' },
+                  { text: 'Ứng tuyển', link: '/04-features/job-application' },
+                  { text: 'Theo dõi hồ sơ', link: '/04-features/application-tracking' },
+                  { text: 'Việc làm đã lưu', link: '/04-features/saved-jobs' },
+                  { text: 'Đăng ký nhận việc', link: '/04-features/job-subscriptions' },
+                ],
+              },
+              {
+                text: 'CV & trợ lý',
+                collapsed: false,
+                items: [
+                  { text: 'Tạo CV', link: '/04-features/cv-builder' },
+                  { text: 'Xuất CV ra PDF', link: '/04-features/cv-pdf-export' },
+                  { text: 'Trợ lý AI', link: '/04-features/ai-career-assistant' },
+                ],
+              },
+              {
+                text: 'Công ty',
+                collapsed: false,
+                items: [
+                  { text: 'Danh bạ công ty', link: '/04-features/company-directory' },
+                  { text: 'Theo dõi công ty', link: '/04-features/company-following' },
+                ],
+              },
+              {
+                text: 'Tuyển dụng & quản trị',
+                collapsed: false,
+                items: [
+                  { text: 'Dashboard HR', link: '/04-features/hr-dashboard' },
+                  { text: 'Trang quản trị', link: '/04-features/admin-dashboard' },
+                  { text: 'Duyệt tin tuyển dụng', link: '/04-features/job-approval' },
+                ],
+              },
             ],
           },
         ],
@@ -241,7 +293,7 @@ export default withMermaid(
             ],
           },
         ],
-      },
+      }),
 
       search: {
         provider: 'local',
