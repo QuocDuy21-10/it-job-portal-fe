@@ -363,19 +363,38 @@ Replace the blockquote line starting `> 📚 **Documentation**` with:
 | [Environment variables](docs/01-getting-started/environment-variables.md) | [Business flows](docs/05-business-flows/README.md) |
 ```
 
-- [ ] **Step 3: Check links and Mermaid**
+- [ ] **Step 3: Add an overview diagram**
+
+The README has no Mermaid diagram yet. In `## 🏗️ Architecture Design`, directly after the sentence "DevLink is organized around a highly modular, **feature-based** directory structure.", insert (every node below is stated elsewhere in this README):
+
+````markdown
+```mermaid
+flowchart LR
+    U[Browser] --> P["Pages<br/>src/app/[locale]"]
+    P --> C["Components<br/>ui, admin, cv"]
+    C --> H["Hooks<br/>src/hooks"]
+    H --> F["Features<br/>RTK Query + slices"]
+    F --> A["Axios<br/>token refresh on 401"]
+    A --> B[(Backend API)]
+    G["Route guards<br/>AdminRoute, HrRoute"] -.-> P
+    K["CASL abilities"] -.-> C
+```
+````
+
+- [ ] **Step 4: Check links and diagram**
 
 Run: `for f in $(grep -o '](docs/[^)]*)' README.md | sed 's/](//;s/)//'); do [ -e "$f" ] || echo "MISSING $f"; done`
 Expected: no `MISSING` lines.
-The README's architecture section already holds a diagram; confirm with `grep -n '```mermaid' README.md`. If none, add nothing and report it (the spec's overview diagram is satisfied only if one exists; do not invent a new one without the user).
+Run: `grep -c 'mermaid' README.md`
+Expected: `1` or more. Also paste the diagram into a Mermaid parser (for example `npx -y @mermaid-js/mermaid-cli -i` on a temp file in the scratchpad) or render it through the docs site by temporarily adding it to a docs page, so a syntax error is caught before GitHub shows it broken.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add README.md
 git commit -m "docs: link the documentation website from the README"
 ```
 
-- [ ] **Step 5: Final verification before claiming done**
+- [ ] **Step 6: Final verification before claiming done**
 
 Run: `npm run docs:build && npx tsc --noEmit` and report both results. Tell the user what was not verified: the GitHub Actions run, the live URL, and README rendering on github.com, none of which can be checked until the branch is pushed and Pages is enabled.
