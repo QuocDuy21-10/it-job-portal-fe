@@ -12,6 +12,15 @@ export default withMermaid(
     lastUpdated: true,
     cleanUrls: true,
     ignoreDeadLinks: true,
+    base: '/it-job-portal-fe/',
+    sitemap: { hostname: 'https://quocduy21-10.github.io/it-job-portal-fe/' },
+    head: [
+      ['link', { rel: 'icon', type: 'image/png', href: '/it-job-portal-fe/favicon.png' }],
+      ['meta', { property: 'og:type', content: 'website' }],
+      ['meta', { property: 'og:title', content: 'DevLink Docs' }],
+      ['meta', { property: 'og:description', content: 'Tài liệu Kỹ thuật & Kiến trúc Hệ thống DevLink Frontend' }],
+      ['meta', { property: 'og:image', content: 'https://quocduy21-10.github.io/it-job-portal-fe/hero.png' }],
+    ],
 
     markdown: {
       config(md) {
@@ -34,8 +43,7 @@ export default withMermaid(
       'FE-Plan/**',
       'requirement/**',
       'superpowers/**',
-      '*.md',
-      '!index.md',
+      '!(index).md',
     ],
 
     themeConfig: {

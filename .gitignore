@@ -17,6 +17,7 @@ docs/.vitepress/cache
 !/docs/05-business-flows/
 !/docs/06-api-and-data/
 !/docs/assets/
+!/docs/public/
 /docs2
 /.pnp
 .pnp.*
@@ -25,7 +26,8 @@ docs/.vitepress/cache
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-.github
+.github/*
+!.github/workflows/
 /design-system
 .swc
 .agents
