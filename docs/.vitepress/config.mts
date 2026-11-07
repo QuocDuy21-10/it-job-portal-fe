@@ -15,6 +15,7 @@ export default withMermaid(
     base: '/it-job-portal-fe/',
     sitemap: { hostname: 'https://quocduy21-10.github.io/it-job-portal-fe/' },
     head: [
+      ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' }],
       ['link', { rel: 'icon', type: 'image/png', href: '/it-job-portal-fe/favicon.png' }],
       ['meta', { property: 'og:type', content: 'website' }],
       ['meta', { property: 'og:title', content: 'DevLink Docs' }],
@@ -47,8 +48,8 @@ export default withMermaid(
     ],
 
     themeConfig: {
-      siteTitle: 'DevLink Docs',
-      logo: undefined,
+      siteTitle: 'Docs',
+      logo: '/logo.png',
 
       nav: [
         { text: 'Trang chủ', link: '/' },
@@ -262,6 +263,12 @@ export default withMermaid(
           },
         },
       },
+
+      editLink: {
+        pattern: 'https://github.com/QuocDuy21-10/it-job-portal-fe/edit/main/docs/:path',
+        text: 'Sửa trang này trên GitHub',
+      },
+      lastUpdated: { text: 'Cập nhật lần cuối' },
 
       outline: {
         level: [2, 3],

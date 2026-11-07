@@ -1,0 +1,33 @@
+:root {
+  --vp-font-family-base: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --vp-c-brand-1: #2563eb;
+  --vp-c-brand-2: #3b82f6;
+  --vp-c-brand-3: #1d4ed8;
+  --vp-c-brand-soft: rgba(37, 99, 235, 0.14);
+  --vp-button-brand-bg: #2563eb;
+  --vp-button-brand-hover-bg: #1d4ed8;
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #2563eb 30%, #00bfa5);
+}
+
+.dark {
+  --vp-c-brand-1: #60a5fa;
+  --vp-c-brand-2: #3b82f6;
+  --vp-c-brand-3: #2563eb;
+}
+
+.VPNavBarTitle .logo {
+  height: 28px;
+  width: auto;
+}
+
+.VPHero .image-src {
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.25);
+}
+
+@media (min-width: 960px) {
+  .VPHero .image-src {
+    max-width: 460px;
+  }
+}
