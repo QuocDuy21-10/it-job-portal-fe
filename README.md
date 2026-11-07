@@ -14,9 +14,20 @@
   <a href="https://eslint.org/"><img src="https://img.shields.io/badge/ESLint-Linter-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint" /></a>
 </p>
 
+<p align="center">
+  <a href="https://quocduy21-10.github.io/it-job-portal-fe/"><img src="https://img.shields.io/badge/Docs-Read_the_documentation-2563eb?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation" /></a>
+  <a href="https://github.com/QuocDuy21-10/it-job-portal-fe/actions/workflows/docs.yml"><img src="https://github.com/QuocDuy21-10/it-job-portal-fe/actions/workflows/docs.yml/badge.svg" alt="Docs deploy status" /></a>
+</p>
+
 **DevLink** is a modern, premium recruitment platform frontend designed specifically for developers and IT professionals. Built on [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/), [<u><font color="blue">React 18</font></u>](https://react.dev/), and [<u><font color="blue">TypeScript</font></u>](https://www.typescriptlang.org/), it features role-based routing, internationalization support, advanced state hydration, real-time messaging, interactive CV builders with PDF exports, and highly polished dashboard interfaces for candidates, recruiters, and administrators.
 
-> 📚 **Documentation**: architecture, tech stack, setup and troubleshooting live in [`docs/`](docs/README.md). Start there if you are new to the project.
+> 📚 **Documentation website**: **https://quocduy21-10.github.io/it-job-portal-fe/** (search, dark mode, diagrams). The same Markdown is readable on GitHub from [`docs/`](docs/README.md).
+
+| Start here | Go deeper |
+| :-- | :-- |
+| [Introduction](docs/00-start-here/introduction.md) | [Architecture](docs/02-architecture/overview.md) |
+| [Run locally](docs/01-getting-started/run-locally.md) | [Features](docs/04-features/README.md) |
+| [Environment variables](docs/01-getting-started/environment-variables.md) | [Business flows](docs/05-business-flows/README.md) |
 
 ---
 
@@ -96,6 +107,18 @@ To view all interface mockups, browse the [public/images/screenshots/](public/im
 ## 🏗️ Architecture Design
 
 DevLink is organized around a highly modular, **feature-based** directory structure.
+
+```mermaid
+flowchart LR
+    U[Browser] --> P["Pages<br/>src/app/[locale]"]
+    P --> C["Components<br/>ui, admin, cv"]
+    C --> H["Hooks<br/>src/hooks"]
+    H --> F["Features<br/>RTK Query + slices"]
+    F --> A["Axios<br/>token refresh on 401"]
+    A --> B[(Backend API)]
+    G["Route guards<br/>AdminRoute, HrRoute"] -.-> P
+    K["CASL abilities"] -.-> C
+```
 
 ```text
 src/
