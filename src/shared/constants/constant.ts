@@ -1,2 +1,4 @@
-export const API_BASE_URL = "http://localhost:8081/api/v1";
-export const API_BASE_URL_IMAGE = "http://localhost:8081";
+import { env } from "@/shared/config/env";
+
+export const API_BASE_URL = `${env.API_URL}/api/v1`;
+export const API_BASE_URL_IMAGE = env.API_URL;

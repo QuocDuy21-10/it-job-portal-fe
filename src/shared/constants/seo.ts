@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { routing, type AppLocale } from "@/i18n/routing";
-
-const FALLBACK_SITE_URL = "http://localhost:3000";
+import { env } from "@/shared/config/env";
 
 export const SITE_NAME = "DevLink";
 
@@ -53,12 +52,7 @@ const normalizePath = (pathname: string) => {
   return normalizedPath;
 };
 
-export const getSiteUrl = () => {
-  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  const siteUrl = configuredSiteUrl || FALLBACK_SITE_URL;
-
-  return new URL(siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`);
-};
+export const getSiteUrl = () => new URL(`${env.SITE_URL}/`);
 
 export const getOpenGraphLocale = (locale: AppLocale) => {
   return OPEN_GRAPH_LOCALES[locale];
