@@ -33,4 +33,24 @@ const customJestConfig = {
   watchman: false,
 };
 
-module.exports = createJestConfig(customJestConfig);
+const buildConfig = createJestConfig(customJestConfig);
+
+// sanitize-html pulls in ESM-only htmlparser2 (and friends); let Jest transform just those.
+// The lookahead targets the *last* node_modules segment so nested installs are covered too.
+const ESM_PACKAGES = [
+  "htmlparser2",
+  "domhandler",
+  "domutils",
+  "domelementtype",
+  "dom-serializer",
+  "entities",
+];
+
+module.exports = async () => {
+  const config = await buildConfig();
+  config.transformIgnorePatterns = [
+    `/node_modules/(?!.*/node_modules/)(?!(?:${ESM_PACKAGES.join("|")})/)`,
+    "^.+\\.module\\.(css|sass|scss)$",
+  ];
+  return config;
+};
