@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { env } from "./src/shared/config/env";
+
+const apiUrl = new URL(env.API_URL);
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -9,9 +12,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8081",
+        protocol: apiUrl.protocol === "https:" ? "https" : "http",
+        hostname: apiUrl.hostname,
+        port: apiUrl.port,
         pathname: "/images/**",
       },
       {

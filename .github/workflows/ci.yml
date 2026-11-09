@@ -14,6 +14,9 @@ concurrency:
 
 env:
   NEXT_TELEMETRY_DISABLED: 1
+  # Fake values: production builds require these (see src/shared/config/env.ts).
+  NEXT_PUBLIC_API_URL: https://api.example.com
+  NEXT_PUBLIC_SITE_URL: https://devlink.example.com
 
 jobs:
   quality:
