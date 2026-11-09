@@ -28,6 +28,8 @@ const customJestConfig = {
     "./src/lib/utils/": { lines: 55, branches: 55 },
     "./src/features/auth/": { lines: 40, branches: 35 },
     "./src/features/chatbot/": { lines: 60, branches: 60 },
+    "./src/app/api/": { lines: 98, branches: 92 },
+    "./src/lib/security/": { lines: 98, branches: 88 },
   },
   testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
   watchman: false,
