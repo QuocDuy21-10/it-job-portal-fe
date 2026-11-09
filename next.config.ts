@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { buildSecurityHeaders } from "./src/lib/security/headers";
 import { env } from "./src/shared/config/env";
 
 const apiUrl = new URL(env.API_URL);
@@ -28,16 +29,10 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: [
-          {
-            key: "Cross-Origin-Opener-Policy",
-            value: "same-origin-allow-popups",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "no-referrer-when-downgrade",
-          },
-        ],
+        headers: buildSecurityHeaders({
+          apiUrl: env.API_URL,
+          isProduction: process.env.NODE_ENV === "production",
+        }),
       },
     ];
   },
