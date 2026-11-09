@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import parse from "html-react-parser";
+import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -307,7 +308,7 @@ export default async function CompanyDetailPage({
 
                 <Card className="border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
                   <div className="prose prose-slate max-w-none leading-relaxed text-slate-700 dark:prose-invert dark:text-slate-300">
-                    {parse(company.description)}
+                    {parse(sanitizeRichText(company.description))}
                   </div>
                 </Card>
               </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import parse from "html-react-parser";
+import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import {
   ArrowUpRight,
   Calendar,
@@ -181,9 +182,9 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
               {t("externalJobPage.description")}
             </h2>
             {hasDescription ? (
-              // descriptionHtml is sanitized by the backend at ingest time.
+              // Sanitized again here: the frontend does not trust descriptionHtml even if the backend sanitizes at ingest.
               <div className="prose max-w-none dark:prose-invert">
-                {parse(job.descriptionHtml)}
+                {parse(sanitizeRichText(job.descriptionHtml))}
               </div>
             ) : (
               // LINK_ONLY sources: DevLink may not republish the text.

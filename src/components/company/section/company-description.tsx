@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import parse from "html-react-parser";
+import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,7 +33,9 @@ export default function CompanyDescription({
       </div>
       <Card className="space-y-4 border-slate-200 bg-white p-8 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
         <div className="text-slate-700 dark:text-slate-300 leading-relaxed prose prose-slate dark:prose-invert">
-          {parse(isExpanded ? fullDescription : shortDescription)}
+          {parse(
+            sanitizeRichText(isExpanded ? fullDescription : shortDescription)
+          )}
         </div>
         {fullDescription.length > 500 && (
           <Button

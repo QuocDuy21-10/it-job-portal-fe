@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, Globe, Heart, Users } from "lucide-react";
 import Image from "next/image";
 import parse from "html-react-parser";
+import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useCompanyFollow } from "@/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,10 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                   {company?.name}
                 </h1>
                 <div className="mb-6 text-blue-100 text-lg">
-                  {parse(company?.description?.slice(0, 80) || "")}...
+                  {parse(
+                    sanitizeRichText(company?.description?.slice(0, 80) || "")
+                  )}
+                  ...
                 </div>
                 <div className="flex flex-wrap gap-6 text-sm">
                   {company?.website && (

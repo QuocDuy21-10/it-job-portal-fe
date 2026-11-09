@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import parse from "html-react-parser";
+import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -403,7 +404,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                         {t("jobDetailPage.descriptionTitle")}
                       </h2>
                       <div className="space-y-2 leading-relaxed text-slate-700 dark:text-slate-300">
-                        {parse(job.description || "")}
+                        {parse(sanitizeRichText(job.description || ""))}
                       </div>
                     </div>
                   </div>
