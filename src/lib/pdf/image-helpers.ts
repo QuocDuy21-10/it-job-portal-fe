@@ -3,6 +3,10 @@
  * Handles image URL conversion and data URI generation
  */
 
+import { env } from "@/shared/config/env";
+
+const BACKEND_ORIGIN = new URL(env.API_URL).origin;
+
 /**
  * Convert backend image URL to proxied URL for PDF rendering
  * This solves CORS issues when rendering PDFs
@@ -24,28 +28,12 @@ export function getProxiedImageUrl(imageUrl?: string): string | undefined {
   try {
     const url = new URL(imageUrl, window.location.origin);
 
-    // Resolve the backend API host safely to prevent crashes from invalid environment variables
-    let isBackendUrl = url.host === "localhost:8081";
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (!isBackendUrl && apiUrl) {
-      try {
-        const backendHost = apiUrl.startsWith("http")
-          ? new URL(apiUrl).host
-          : apiUrl.replace(/^https?:\/\//, "").split("/")[0];
-        if (backendHost) {
-          isBackendUrl = url.host === backendHost;
-        }
-      } catch {
-        // Ignore API URL parsing errors to prevent breaking external URLs
-      }
-    }
-
-    // If it's from the backend API, proxy it
-    if (isBackendUrl) {
+    // Backend images are proxied so the PDF renderer is not blocked by CORS.
+    if (url.origin === BACKEND_ORIGIN) {
       return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
     }
 
-    // For external URLs (CDN, etc.), return as is
+    // External URLs (Google avatars, CDNs) are used directly.
     return imageUrl;
   } catch (error) {
     console.error("Invalid image URL:", imageUrl, error);
