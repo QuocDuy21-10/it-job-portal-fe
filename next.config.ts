@@ -6,9 +6,6 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     optimizePackageImports: ["lucide-react"],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -27,15 +24,15 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: [
           {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin-allow-popups', 
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'no-referrer-when-downgrade', 
+            key: "Referrer-Policy",
+            value: "no-referrer-when-downgrade",
           },
         ],
       },
