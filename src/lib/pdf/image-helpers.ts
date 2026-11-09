@@ -29,8 +29,9 @@ export function getProxiedImageUrl(imageUrl?: string): string | undefined {
     const url = new URL(imageUrl, window.location.origin);
 
     // Backend images are proxied so the PDF renderer is not blocked by CORS.
-    if (url.origin === BACKEND_ORIGIN) {
-      return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+    // Proxy by path so the proxy never receives a caller-chosen host.
+    if (url.origin === BACKEND_ORIGIN && url.pathname.startsWith("/images/")) {
+      return `/api/proxy-image?path=${encodeURIComponent(url.pathname)}`;
     }
 
     // External URLs (Google avatars, CDNs) are used directly.

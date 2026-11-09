@@ -16,11 +16,25 @@ describe("getProxiedImageUrl", () => {
     expect(getProxiedImageUrl("/images/avatar.png")).toBe("/images/avatar.png");
   });
 
-  it("proxies URLs on the configured backend origin", () => {
-    const imageUrl = "http://localhost:8081/images/avatar/123.png";
-    expect(getProxiedImageUrl(imageUrl)).toBe(
-      "/api/proxy-image?url=" + encodeURIComponent(imageUrl)
+  it("proxies backend images by path", () => {
+    expect(
+      getProxiedImageUrl("http://localhost:8081/images/avatar/123.png")
+    ).toBe(
+      "/api/proxy-image?path=" + encodeURIComponent("/images/avatar/123.png")
     );
+  });
+
+  it("drops the query string and keeps encoded characters", () => {
+    expect(
+      getProxiedImageUrl("http://localhost:8081/images/my avatar.png?v=2")
+    ).toBe(
+      "/api/proxy-image?path=" + encodeURIComponent("/images/my%20avatar.png")
+    );
+  });
+
+  it("does not proxy backend URLs outside /images/", () => {
+    const url = "http://localhost:8081/api/v1/auth/me";
+    expect(getProxiedImageUrl(url)).toBe(url);
   });
 
   it("honours a different configured backend origin", () => {
@@ -31,7 +45,7 @@ describe("getProxiedImageUrl", () => {
       const { getProxiedImageUrl: proxied } = require("./image-helpers");
       const imageUrl = "https://api.jobportal.local/images/avatar/123.png";
       expect(proxied(imageUrl)).toBe(
-        "/api/proxy-image?url=" + encodeURIComponent(imageUrl)
+        "/api/proxy-image?path=" + encodeURIComponent("/images/avatar/123.png")
       );
       // the old localhost default is no longer special
       expect(proxied("http://localhost:8081/images/a.png")).toBe(
