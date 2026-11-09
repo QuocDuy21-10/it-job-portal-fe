@@ -77,9 +77,10 @@ const ChatTooltip = ({
 
   if (!visible || isChatOpen) return null;
 
-  const tooltipMessage = isAuthenticated && userName
-    ? `Xin chào ${userName}! Tôi có thể gợi ý việc làm phù hợp với bạn 💼`
-    : "Muốn biết kỹ năng nào đang hot nhất? Hỏi tôi nhé! 🚀";
+  const tooltipMessage =
+    isAuthenticated && userName
+      ? `Xin chào ${userName}! Tôi có thể gợi ý việc làm phù hợp với bạn 💼`
+      : "Muốn biết kỹ năng nào đang hot nhất? Hỏi tôi nhé! 🚀";
 
   // Position tooltip above and to the right of the button, clamped to viewport
   const btnCenterX = position.x + BUTTON_SIZE / 2;

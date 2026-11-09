@@ -194,9 +194,13 @@ export const createForgotPasswordSchema = (t: AuthSchemaTranslator) =>
       .max(255, t("authModal.validation.email.max")),
   });
 
-export const ForgotPasswordSchema = createForgotPasswordSchema(defaultAuthSchemaTranslator);
+export const ForgotPasswordSchema = createForgotPasswordSchema(
+  defaultAuthSchemaTranslator
+);
 
-export type ForgotPasswordFormData = z.infer<ReturnType<typeof createForgotPasswordSchema>>;
+export type ForgotPasswordFormData = z.infer<
+  ReturnType<typeof createForgotPasswordSchema>
+>;
 
 // RESET PASSWORD SCHEMA
 export const createResetPasswordSchema = (t: AuthSchemaTranslator) =>
@@ -207,33 +211,30 @@ export const createResetPasswordSchema = (t: AuthSchemaTranslator) =>
         .min(1, t("authModal.validation.password.required"))
         .min(8, t("authModal.validation.password.min"))
         .max(128, t("authModal.validation.password.max"))
-        .regex(
-          PASSWORD_UPPERCASE,
-          t("authModal.validation.password.uppercase")
-        )
-        .regex(
-          PASSWORD_LOWERCASE,
-          t("authModal.validation.password.lowercase")
-        )
+        .regex(PASSWORD_UPPERCASE, t("authModal.validation.password.uppercase"))
+        .regex(PASSWORD_LOWERCASE, t("authModal.validation.password.lowercase"))
         .regex(PASSWORD_DIGIT, t("authModal.validation.password.digit"))
-        .regex(
-          PASSWORD_SPECIAL,
-          t("authModal.validation.password.special")
-        )
+        .regex(PASSWORD_SPECIAL, t("authModal.validation.password.special"))
         .refine((password) => !/\s/.test(password), {
           message: t("authModal.validation.password.whitespace"),
         }),
 
-      confirmPassword: z.string().min(1, t("authModal.validation.confirmPassword.required")),
+      confirmPassword: z
+        .string()
+        .min(1, t("authModal.validation.confirmPassword.required")),
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: t("authModal.validation.confirmPassword.mismatch"),
       path: ["confirmPassword"],
     });
 
-export const ResetPasswordSchema = createResetPasswordSchema(defaultAuthSchemaTranslator);
+export const ResetPasswordSchema = createResetPasswordSchema(
+  defaultAuthSchemaTranslator
+);
 
-export type ResetPasswordFormData = z.infer<ReturnType<typeof createResetPasswordSchema>>;
+export type ResetPasswordFormData = z.infer<
+  ReturnType<typeof createResetPasswordSchema>
+>;
 
 // CHANGE PASSWORD SCHEMA
 export const ChangePasswordSchema = z
@@ -268,7 +269,7 @@ export const ChangePasswordSchema = z
     message: "Mật khẩu xác nhận không khớp",
     path: ["confirmPassword"],
   });
-  
+
 export type ChangePasswordFormData = z.infer<typeof ChangePasswordSchema>;
 
 // SET PASSWORD SCHEMA (for OAuth users without a password)

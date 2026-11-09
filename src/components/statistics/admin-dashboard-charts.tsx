@@ -2,7 +2,13 @@
 
 import { useMemo } from "react";
 import { useI18n } from "@/hooks/use-i18n";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
@@ -19,13 +25,19 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatStatisticNumber, formatStatisticPercent } from "./statistics-helpers";
+import {
+  formatStatisticNumber,
+  formatStatisticPercent,
+} from "./statistics-helpers";
 import { resolveIntlLocale } from "@/lib/utils/locale-formatters";
 
 interface AdminDashboardChartsProps {
   stats: Pick<
     IAdminDashboardStats,
-    "jobTrend" | "applicationTrend" | "topDemandedSkills" | "resumeProcessingHealth"
+    | "jobTrend"
+    | "applicationTrend"
+    | "topDemandedSkills"
+    | "resumeProcessingHealth"
   >;
 }
 
@@ -95,7 +107,9 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
     <div className="grid gap-6 xl:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.admin.charts.jobTrendTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.admin.charts.jobTrendTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.admin.charts.jobTrendDescription")}
           </CardDescription>
@@ -113,12 +127,21 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
                 cursor={false}
                 content={
                   <ChartTooltipContent
-                    labelFormatter={(_, payload) => payload?.[0]?.payload.tooltipLabel}
-                    formatter={(value) => formatStatisticNumber(Number(value), language)}
+                    labelFormatter={(_, payload) =>
+                      payload?.[0]?.payload.tooltipLabel
+                    }
+                    formatter={(value) =>
+                      formatStatisticNumber(Number(value), language)
+                    }
                   />
                 }
               />
-              <Bar dataKey="count" fill="var(--color-count)" radius={10} maxBarSize={48} />
+              <Bar
+                dataKey="count"
+                fill="var(--color-count)"
+                radius={10}
+                maxBarSize={48}
+              />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -126,7 +149,9 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.admin.charts.applicationTrendTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.admin.charts.applicationTrendTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.admin.charts.applicationTrendDescription")}
           </CardDescription>
@@ -138,9 +163,23 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
           >
             <AreaChart accessibilityLayer data={applicationTrendData}>
               <defs>
-                <linearGradient id="admin-application-trend" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="var(--color-count)" stopOpacity={0.05} />
+                <linearGradient
+                  id="admin-application-trend"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-count)"
+                    stopOpacity={0.35}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-count)"
+                    stopOpacity={0.05}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
@@ -151,8 +190,12 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
                 content={
                   <ChartTooltipContent
                     indicator="line"
-                    labelFormatter={(_, payload) => payload?.[0]?.payload.tooltipLabel}
-                    formatter={(value) => formatStatisticNumber(Number(value), language)}
+                    labelFormatter={(_, payload) =>
+                      payload?.[0]?.payload.tooltipLabel
+                    }
+                    formatter={(value) =>
+                      formatStatisticNumber(Number(value), language)
+                    }
                   />
                 }
               />
@@ -170,7 +213,9 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.admin.charts.topSkillsTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.admin.charts.topSkillsTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.admin.charts.topSkillsDescription")}
           </CardDescription>
@@ -179,7 +224,10 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
           {stats.topDemandedSkills.length > 0 ? (
             <div className="space-y-4">
               {stats.topDemandedSkills.map((item, index) => (
-                <div key={`${item.skill}-${index}`} className="flex items-center justify-between gap-4">
+                <div
+                  key={`${item.skill}-${index}`}
+                  className="flex items-center justify-between gap-4"
+                >
                   <div className="min-w-0 space-y-1">
                     <p className="truncate font-medium text-foreground">
                       {item.skill}
@@ -204,7 +252,9 @@ export function AdminDashboardCharts({ stats }: AdminDashboardChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.admin.charts.processingHealthTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.admin.charts.processingHealthTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.admin.charts.processingHealthDescription")}
           </CardDescription>

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useDeleteFileMutation, useUploadFileMutation } from "@/features/file/redux/file.api";
+import {
+  useDeleteFileMutation,
+  useUploadFileMutation,
+} from "@/features/file/redux/file.api";
 import { useI18n } from "@/hooks/use-i18n";
 
 export function useFileOperations() {
@@ -12,15 +15,16 @@ export function useFileOperations() {
     try {
       const response = await uploadFile({ file, folderType }).unwrap();
       if (!response.data?.fileName) {
-        throw new Error(response.message || "Upload response missing file name");
+        throw new Error(
+          response.message || "Upload response missing file name"
+        );
       }
 
       toast.success(t("fileUpload.toasts.success"));
       return response.data.fileName;
     } catch (error: any) {
       console.error("Upload file error:", error);
-      const errorMessage =
-        error?.data?.message || t("fileUpload.toasts.error");
+      const errorMessage = error?.data?.message || t("fileUpload.toasts.error");
       toast.error(errorMessage);
       return null;
     }

@@ -1,6 +1,12 @@
 "use client";
 
-import { Building2, MapPin, Users, ExternalLink, Lightbulb } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Users,
+  ExternalLink,
+  Lightbulb,
+} from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
@@ -48,13 +54,13 @@ export default function CompanyInfo({ company, className }: CompanyInfoProps) {
                   loading="lazy"
                   onError={(e) => {
                     // Fallback to icon if image fails to load
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.parentElement?.classList.add('bg-muted/50');
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.parentElement?.classList.add("bg-muted/50");
                   }}
                 />
               ) : (
-                <Building2 
-                  className="w-10 h-10 text-muted-foreground/50" 
+                <Building2
+                  className="w-10 h-10 text-muted-foreground/50"
                   aria-label="Company logo placeholder"
                 />
               )}
@@ -93,18 +99,18 @@ export default function CompanyInfo({ company, className }: CompanyInfoProps) {
           <Separator />
 
           {/* Action Button */}
-          <Button 
-            asChild 
-           className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
+          <Button
+            asChild
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
             size="lg"
           >
-            <a 
+            <a
               href={`/companies/${company.id}`}
               className="flex items-center justify-center gap-2"
             >
               <span>{t("companyInfo.viewProfile")}</span>
-              <ExternalLink 
-                className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" 
+              <ExternalLink
+                className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 aria-hidden="true"
               />
             </a>
@@ -123,8 +129,7 @@ export default function CompanyInfo({ company, className }: CompanyInfoProps) {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 <span className="font-semibold text-foreground">
                   {t("companyInfo.tip")}
-                </span>
-                {" "}
+                </span>{" "}
                 {t("companyInfo.followTip")}
               </p>
             </div>

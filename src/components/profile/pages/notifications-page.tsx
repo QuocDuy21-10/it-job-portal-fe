@@ -21,10 +21,11 @@ export default function NotificationsPage() {
   const { t } = useI18n();
   const { unreadCount, markAsRead, markAllAsRead } = useNotification();
 
-  const { data, isLoading, isFetching, isError, refetch } = useGetNotificationsQuery({
-    page,
-    limit,
-  });
+  const { data, isLoading, isFetching, isError, refetch } =
+    useGetNotificationsQuery({
+      page,
+      limit,
+    });
 
   const notifications = data?.data?.result ?? [];
   const meta = data?.data?.meta;

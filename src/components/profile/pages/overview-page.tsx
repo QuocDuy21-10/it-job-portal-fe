@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileText, Briefcase, Heart, User, TrendingUp, Building2 } from "lucide-react";
+import {
+  FileText,
+  Briefcase,
+  Heart,
+  User,
+  TrendingUp,
+  Building2,
+} from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import {
@@ -76,8 +83,12 @@ export default function OverviewPage() {
             />
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-foreground">{user?.name || t("profileOverview.userFallbackName")}</h2>
-            <p className="text-muted-foreground mt-1">{user?.email || t("profileOverview.userFallbackEmail")}</p>
+            <h2 className="text-2xl font-bold text-foreground">
+              {user?.name || t("profileOverview.userFallbackName")}
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              {user?.email || t("profileOverview.userFallbackEmail")}
+            </p>
             <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
                 {t("profileOverview.verifiedAccount")}
@@ -122,7 +133,9 @@ export default function OverviewPage() {
       <SectionCard title={t("profileOverview.attachedCvTitle")} icon={FileText}>
         <div className="bg-secondary/30 border border-dashed border-border rounded-lg p-8 text-center hover:bg-secondary/50 transition-colors">
           <FileText className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-          <p className="text-muted-foreground mb-3">{t("profileOverview.noAttachedCv")}</p>
+          <p className="text-muted-foreground mb-3">
+            {t("profileOverview.noAttachedCv")}
+          </p>
           <Link href="/profile?tab=my-cv">
             <button className="text-primary font-medium hover:underline transition-colors">
               {t("profileOverview.manageAttachedCv")} →
@@ -141,7 +154,9 @@ export default function OverviewPage() {
           <Link href="/profile?tab=create-cv">
             <button className="w-full p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/40 rounded-lg text-left transition-all group">
               <FileText className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-medium text-foreground">{t("profileOverview.createCvTitle")}</h3>
+              <h3 className="font-medium text-foreground">
+                {t("profileOverview.createCvTitle")}
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
                 {t("profileOverview.createCvDescription")}
               </p>
@@ -150,7 +165,9 @@ export default function OverviewPage() {
           <Link href="/jobs">
             <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
               <Briefcase className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-medium text-foreground">{t("profileOverview.browseJobsTitle")}</h3>
+              <h3 className="font-medium text-foreground">
+                {t("profileOverview.browseJobsTitle")}
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
                 {t("profileOverview.browseJobsDescription")}
               </p>
@@ -159,7 +176,9 @@ export default function OverviewPage() {
           <Link href="/profile?tab=my-jobs">
             <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
               <Heart className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
-              <h3 className="font-medium text-foreground">{t("profileOverview.savedJobsTitle")}</h3>
+              <h3 className="font-medium text-foreground">
+                {t("profileOverview.savedJobsTitle")}
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
                 {t("profileOverview.savedJobsDescription")}
               </p>

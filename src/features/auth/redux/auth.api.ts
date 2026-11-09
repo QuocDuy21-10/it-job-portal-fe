@@ -36,7 +36,7 @@ export const authApi = baseApi.injectEndpoints({
       query: (userData: RegisterFormData) => ({
         url: "/auth/register",
         method: "POST",
-        data: userData, 
+        data: userData,
       }),
       invalidatesTags: ["Auth"],
     }),
@@ -62,7 +62,7 @@ export const authApi = baseApi.injectEndpoints({
         data,
       }),
     }),
-    
+
     logout: builder.mutation<ApiResponse<any>, void>({
       query: () => ({
         url: "/auth/logout",
@@ -72,15 +72,14 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["Auth", "User", "Company", "Job", "Resume"],
     }),
 
-    refreshToken: builder.mutation<
-      ApiResponse<{ access_token: string }>,
-      void
-    >({
-      query: () => ({
-        url: "/auth/refresh",
-        method: "GET",
-      }),
-    }),
+    refreshToken: builder.mutation<ApiResponse<{ access_token: string }>, void>(
+      {
+        query: () => ({
+          url: "/auth/refresh",
+          method: "GET",
+        }),
+      }
+    ),
 
     googleLogin: builder.mutation<
       ApiResponse<LoginResponse>,

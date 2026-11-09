@@ -158,33 +158,33 @@ export function ResumeForm({
           />
 
           {/* Editable: status only */}
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="PENDING">Pending</SelectItem>
-                    <SelectItem value="REVIEWING">Reviewing</SelectItem>
-                    <SelectItem value="APPROVED">Approved</SelectItem>
-                    <SelectItem value="REJECTED">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                disabled={isLoading}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="REVIEWING">Reviewing</SelectItem>
+                  <SelectItem value="APPROVED">Approved</SelectItem>
+                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* </div>  */}
 
         <div className="flex justify-end gap-2">

@@ -9,7 +9,10 @@ import type {
 import { toJobSearchQueryString } from "@/lib/utils/public-listing";
 import type { ApiResponse } from "@/shared/base/api-response.base";
 import { API_BASE_URL } from "@/shared/constants/constant";
-import type { PaginatedQueryParams, PaginatedResult } from "@/shared/types/pagination";
+import type {
+  PaginatedQueryParams,
+  PaginatedResult,
+} from "@/shared/types/pagination";
 
 const PUBLIC_CONTENT_REVALIDATE_SECONDS = 300;
 

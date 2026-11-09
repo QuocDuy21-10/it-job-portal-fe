@@ -3,9 +3,18 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { EducationRequestSchema, type EducationRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  EducationRequestSchema,
+  type EducationRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -50,14 +59,16 @@ export default function EducationModal({
 
   useEffect(() => {
     if (isOpen) {
-      reset(education || {
-        school: "",
-        degree: "",
-        field: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
+      reset(
+        education || {
+          school: "",
+          degree: "",
+          field: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        }
+      );
     }
   }, [isOpen, education, reset]);
 
@@ -76,16 +87,20 @@ export default function EducationModal({
       <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.education.addTitle") : t("cv.education.editTitle")}
+            {mode === "add"
+              ? t("cv.education.addTitle")
+              : t("cv.education.editTitle")}
           </DialogTitle>
-          <DialogDescription>
-            {t("cv.education.description")}
-          </DialogDescription>
+          <DialogDescription>{t("cv.education.description")}</DialogDescription>
         </DialogHeader>
 
         <ModalHeaderBanner
           type="education"
-          title={mode === "add" ? t("cv.education.addTitle") : t("cv.education.editTitle")}
+          title={
+            mode === "add"
+              ? t("cv.education.addTitle")
+              : t("cv.education.editTitle")
+          }
           description={t("cv.education.description")}
         />
 
@@ -97,19 +112,23 @@ export default function EducationModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.education.schoolLabel")} <span className="text-destructive">*</span>
+                  {t("cv.education.schoolLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.education.schoolPlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.school ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.school
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.school && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.school.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.school.message}
                   </p>
                 )}
               </div>
@@ -124,19 +143,23 @@ export default function EducationModal({
               render={({ field }) => (
                 <div>
                   <label className="block text-sm font-medium mb-2 text-foreground">
-                    {t("cv.education.degreeLabel")} <span className="text-destructive">*</span>
+                    {t("cv.education.degreeLabel")}{" "}
+                    <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
                     {...field}
                     placeholder={t("cv.education.degreePlaceholder")}
                     className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                      errors.degree ? "border-destructive focus:ring-destructive/50" : "border-border"
+                      errors.degree
+                        ? "border-destructive focus:ring-destructive/50"
+                        : "border-border"
                     }`}
                   />
                   {errors.degree && (
                     <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                      <span className="font-medium">⚠</span> {errors.degree.message}
+                      <span className="font-medium">⚠</span>{" "}
+                      {errors.degree.message}
                     </p>
                   )}
                 </div>
@@ -149,19 +172,23 @@ export default function EducationModal({
               render={({ field }) => (
                 <div>
                   <label className="block text-sm font-medium mb-2 text-foreground">
-                    {t("cv.education.fieldLabel")} <span className="text-destructive">*</span>
+                    {t("cv.education.fieldLabel")}{" "}
+                    <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
                     {...field}
                     placeholder={t("cv.education.fieldPlaceholder")}
                     className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                      errors.field ? "border-destructive focus:ring-destructive/50" : "border-border"
+                      errors.field
+                        ? "border-destructive focus:ring-destructive/50"
+                        : "border-border"
                     }`}
                   />
                   {errors.field && (
                     <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                      <span className="font-medium">⚠</span> {errors.field.message}
+                      <span className="font-medium">⚠</span>{" "}
+                      {errors.field.message}
                     </p>
                   )}
                 </div>
@@ -177,22 +204,32 @@ export default function EducationModal({
               render={({ field }) => (
                 <div>
                   <label className="block text-sm font-medium mb-2 text-foreground">
-                    {t("cv.education.startDateLabel")} <span className="text-destructive">*</span>
+                    {t("cv.education.startDateLabel")}{" "}
+                    <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="month"
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().slice(0, 7)
+                        : ""
+                    }
                     onChange={(e) => {
-                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                      const dateValue = e.target.value
+                        ? new Date(e.target.value + "-01").toISOString()
+                        : "";
                       field.onChange(dateValue);
                     }}
                     className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                      errors.startDate ? "border-destructive focus:ring-destructive/50" : "border-border"
+                      errors.startDate
+                        ? "border-destructive focus:ring-destructive/50"
+                        : "border-border"
                     }`}
                   />
                   {errors.startDate && (
                     <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                      <span className="font-medium">⚠</span> {errors.startDate.message}
+                      <span className="font-medium">⚠</span>{" "}
+                      {errors.startDate.message}
                     </p>
                   )}
                 </div>
@@ -205,23 +242,35 @@ export default function EducationModal({
               render={({ field }) => (
                 <div>
                   <label className="block text-sm font-medium mb-2 text-foreground">
-                    {t("cv.education.endDateLabel")} <span className="text-muted-foreground text-xs">(Optional)</span>
+                    {t("cv.education.endDateLabel")}{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (Optional)
+                    </span>
                   </label>
                   <input
                     type="month"
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().slice(0, 7)
+                        : ""
+                    }
                     onChange={(e) => {
-                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                      const dateValue = e.target.value
+                        ? new Date(e.target.value + "-01").toISOString()
+                        : "";
                       field.onChange(dateValue);
                     }}
                     placeholder={t("cv.education.endDatePlaceholder")}
                     className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                      errors.endDate ? "border-destructive focus:ring-destructive/50" : "border-border"
+                      errors.endDate
+                        ? "border-destructive focus:ring-destructive/50"
+                        : "border-border"
                     }`}
                   />
                   {errors.endDate && (
                     <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                      <span className="font-medium">⚠</span> {errors.endDate.message}
+                      <span className="font-medium">⚠</span>{" "}
+                      {errors.endDate.message}
                     </p>
                   )}
                 </div>
@@ -236,7 +285,10 @@ export default function EducationModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.education.descriptionLabel")} <span className="text-muted-foreground text-xs">(Optional)</span>
+                  {t("cv.education.descriptionLabel")}{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (Optional)
+                  </span>
                 </label>
                 <textarea
                   {...field}
@@ -244,12 +296,15 @@ export default function EducationModal({
                   placeholder={t("cv.education.descriptionPlaceholder")}
                   rows={4}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all ${
-                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.description
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.description && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.description.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.description.message}
                   </p>
                 )}
               </div>
@@ -270,7 +325,9 @@ export default function EducationModal({
               type="submit"
               className="px-6 bg-primary hover:bg-primary/90"
             >
-              {mode === "add" ? t("cv.education.saveLabel") : t("cv.education.updateLabel")}
+              {mode === "add"
+                ? t("cv.education.saveLabel")
+                : t("cv.education.updateLabel")}
             </Button>
           </div>
         </form>

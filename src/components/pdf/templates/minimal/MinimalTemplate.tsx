@@ -19,15 +19,15 @@ interface MinimalCVTemplateProps {
  * Minimalist single-column layout focused on content
  */
 const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
-  const { 
-    personalInfo, 
-    education, 
-    experience, 
-    skills, 
-    languages, 
-    projects, 
-    certificates, 
-    awards 
+  const {
+    personalInfo,
+    education,
+    experience,
+    skills,
+    languages,
+    projects,
+    certificates,
+    awards,
   } = cvData;
 
   return (
@@ -36,27 +36,39 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
         {/* Header */}
         <View style={minimalStyles.header}>
           <View style={minimalStyles.headerInfo}>
-            <Text style={minimalStyles.name}>{personalInfo.fullName || "Họ và Tên"}</Text>
+            <Text style={minimalStyles.name}>
+              {personalInfo.fullName || "Họ và Tên"}
+            </Text>
             {personalInfo.title && (
               <Text style={minimalStyles.title}>{personalInfo.title}</Text>
             )}
             <View style={minimalStyles.contactRow}>
               {personalInfo.phone && (
-                <Text style={minimalStyles.contactItem}>{personalInfo.phone}</Text>
+                <Text style={minimalStyles.contactItem}>
+                  {personalInfo.phone}
+                </Text>
               )}
               {personalInfo.email && (
-                <Text style={minimalStyles.contactItem}>{personalInfo.email}</Text>
+                <Text style={minimalStyles.contactItem}>
+                  {personalInfo.email}
+                </Text>
               )}
               {personalInfo.address && (
-                <Text style={minimalStyles.contactItem}>{personalInfo.address}</Text>
+                <Text style={minimalStyles.contactItem}>
+                  {personalInfo.address}
+                </Text>
               )}
               {personalInfo.personalLink && (
-                <Text style={minimalStyles.contactItem}>{personalInfo.personalLink}</Text>
+                <Text style={minimalStyles.contactItem}>
+                  {personalInfo.personalLink}
+                </Text>
               )}
             </View>
           </View>
           <Image
-            src={getProxiedImageUrl(personalInfo.avatar || "/images/avatar-default.jpg")}
+            src={getProxiedImageUrl(
+              personalInfo.avatar || "/images/avatar-default.jpg"
+            )}
             style={minimalStyles.avatar}
           />
         </View>
@@ -80,15 +92,22 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
                 <View key={exp.id} style={minimalStyles.experienceItem}>
                   <View style={minimalStyles.experienceHeader}>
                     <View style={{ flex: 1 }}>
-                      <Text style={minimalStyles.experienceCompany}>{exp.company}</Text>
-                      <Text style={minimalStyles.experiencePosition}>{exp.position}</Text>
+                      <Text style={minimalStyles.experienceCompany}>
+                        {exp.company}
+                      </Text>
+                      <Text style={minimalStyles.experiencePosition}>
+                        {exp.position}
+                      </Text>
                     </View>
                     <Text style={minimalStyles.experienceDate}>
-                      {formatDateForDisplay(exp.startDate)} - {formatDateForDisplay(exp.endDate)}
+                      {formatDateForDisplay(exp.startDate)} -{" "}
+                      {formatDateForDisplay(exp.endDate)}
                     </Text>
                   </View>
                   {exp.description && (
-                    <Text style={minimalStyles.experienceDescription}>{exp.description}</Text>
+                    <Text style={minimalStyles.experienceDescription}>
+                      {exp.description}
+                    </Text>
                   )}
                 </View>
               ))}
@@ -105,17 +124,22 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
                 <View key={edu.id} style={minimalStyles.educationItem}>
                   <View style={minimalStyles.educationHeader}>
                     <View style={{ flex: 1 }}>
-                      <Text style={minimalStyles.educationSchool}>{edu.school}</Text>
+                      <Text style={minimalStyles.educationSchool}>
+                        {edu.school}
+                      </Text>
                       <Text style={minimalStyles.educationDegree}>
                         {edu.degree} - {edu.field}
                       </Text>
                     </View>
                     <Text style={minimalStyles.educationDate}>
-                      {formatDateForDisplay(edu.startDate)} - {formatDateForDisplay(edu.endDate)}
+                      {formatDateForDisplay(edu.startDate)} -{" "}
+                      {formatDateForDisplay(edu.endDate)}
                     </Text>
                   </View>
                   {edu.description && (
-                    <Text style={minimalStyles.educationDescription}>{edu.description}</Text>
+                    <Text style={minimalStyles.educationDescription}>
+                      {edu.description}
+                    </Text>
                   )}
                 </View>
               ))}
@@ -152,9 +176,13 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
                       Vị trí: {project.position}
                     </Text>
                   )}
-                  <Text style={minimalStyles.projectDescription}>{project.description}</Text>
+                  <Text style={minimalStyles.projectDescription}>
+                    {project.description}
+                  </Text>
                   {project.link && (
-                    <Text style={minimalStyles.projectLink}>Link: {project.link}</Text>
+                    <Text style={minimalStyles.projectLink}>
+                      Link: {project.link}
+                    </Text>
                   )}
                 </View>
               ))}
@@ -185,7 +213,9 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
                 <View key={cert.id} style={minimalStyles.certificateItem}>
                   <View style={minimalStyles.certificateHeader}>
                     <View style={{ flex: 1 }}>
-                      <Text style={minimalStyles.certificateName}>{cert.name}</Text>
+                      <Text style={minimalStyles.certificateName}>
+                        {cert.name}
+                      </Text>
                       <Text style={minimalStyles.certificateIssuer}>
                         Tổ chức cấp: {cert.issuer}
                       </Text>
@@ -203,7 +233,9 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
         {/* Awards */}
         {awards.length > 0 && (
           <View style={minimalStyles.section}>
-            <Text style={minimalStyles.sectionTitle}>Danh hiệu & Giải thưởng</Text>
+            <Text style={minimalStyles.sectionTitle}>
+              Danh hiệu & Giải thưởng
+            </Text>
             <View style={minimalStyles.sectionContent}>
               {awards.map((award) => (
                 <View key={award.id} style={minimalStyles.awardItem}>
@@ -211,7 +243,9 @@ const MinimalCVTemplate: React.FC<MinimalCVTemplateProps> = ({ cvData }) => {
                     <View style={{ flex: 1 }}>
                       <Text style={minimalStyles.awardName}>{award.name}</Text>
                       {award.description && (
-                        <Text style={minimalStyles.awardDescription}>{award.description}</Text>
+                        <Text style={minimalStyles.awardDescription}>
+                          {award.description}
+                        </Text>
                       )}
                     </View>
                     <Text style={minimalStyles.awardDate}>

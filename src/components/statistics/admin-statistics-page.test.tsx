@@ -8,7 +8,10 @@ const mockReplace = jest.fn();
 
 jest.mock("next/dynamic", () => ({
   __esModule: true,
-  default: (_loader: unknown, options?: { loading?: () => React.ReactNode }) => {
+  default: (
+    _loader: unknown,
+    options?: { loading?: () => React.ReactNode }
+  ) => {
     return function MockDynamicComponent() {
       return <div data-testid="dynamic-chart">{options?.loading?.()}</div>;
     };

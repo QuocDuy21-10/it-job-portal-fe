@@ -69,7 +69,9 @@ export const subscriberApi = baseApi.injectEndpoints({
         url: `/subscribers/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Subscriber" as const, id }],
+      providesTags: (result, error, id) => [
+        { type: "Subscriber" as const, id },
+      ],
     }),
 
     getSubscriberSkills: builder.query<ApiResponse<SubscriberSkills>, void>({
@@ -80,8 +82,10 @@ export const subscriberApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Subscriber" as const, id: "SKILLS" }],
     }),
 
-
-    getSubscribersByUser: builder.query<ApiResponse<GetMySubscribersResponse>, void>({
+    getSubscribersByUser: builder.query<
+      ApiResponse<GetMySubscribersResponse>,
+      void
+    >({
       query: () => ({
         url: `/subscribers/by-user`,
         method: "GET",

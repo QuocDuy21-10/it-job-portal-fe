@@ -101,10 +101,7 @@ export function UserTable({
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={8}
-                    className="h-40 text-center"
-                  >
+                  <TableCell colSpan={8} className="h-40 text-center">
                     <div className="flex flex-col items-center justify-center gap-3 py-8">
                       <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                         <Shield className="h-6 w-6 text-gray-400 dark:text-gray-500" />
@@ -156,13 +153,17 @@ function UserTableSkeleton() {
           <TableHeader>
             <TableRow className="border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-900/50">
               <TableHead className="w-[50px]" />
-              <TableHead className="w-[60px]">{t("adminPages.shared.number")}</TableHead>
+              <TableHead className="w-[60px]">
+                {t("adminPages.shared.number")}
+              </TableHead>
               <TableHead>{t("adminPages.users.table.user")}</TableHead>
               <TableHead>{t("adminPages.users.table.email")}</TableHead>
               <TableHead>{t("adminPages.users.table.role")}</TableHead>
               <TableHead>{t("adminPages.users.table.status")}</TableHead>
               <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-              <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
+              <TableHead className="text-right">
+                {t("adminPages.shared.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -263,7 +264,9 @@ function UserTableRow({
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(user._id)}
-          aria-label={t("adminPages.shared.selectItem", { resource: user.name })}
+          aria-label={t("adminPages.shared.selectItem", {
+            resource: user.name,
+          })}
         />
       </TableCell>
       {/* Order Number */}
@@ -289,10 +292,7 @@ function UserTableRow({
 
       {/* Role */}
       <TableCell>
-        <Badge
-          variant={getRoleBadgeColor(roleName)}
-          className="font-medium"
-        >
+        <Badge variant={getRoleBadgeColor(roleName)} className="font-medium">
           {roleName}
         </Badge>
       </TableCell>

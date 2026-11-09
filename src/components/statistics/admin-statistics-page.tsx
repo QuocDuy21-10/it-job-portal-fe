@@ -58,16 +58,10 @@ export function AdminStatisticsPage() {
   const shouldRedirectToHr = userRole === ROLES.HR;
   const shouldSkipQuery = isAuthLoading || userRole !== ROLES.SUPER_ADMIN;
 
-  const {
-    data,
-    error,
-    isError,
-    isFetching,
-    isLoading,
-    refetch,
-  } = useGetAdminDashboardStatsQuery(undefined, {
-    skip: shouldSkipQuery,
-  });
+  const { data, error, isError, isFetching, isLoading, refetch } =
+    useGetAdminDashboardStatsQuery(undefined, {
+      skip: shouldSkipQuery,
+    });
 
   useEffect(() => {
     if (!isAuthLoading && shouldRedirectToHr) {
@@ -135,7 +129,9 @@ export function AdminStatisticsPage() {
           disabled={isFetching}
           className="gap-2"
         >
-          <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+          />
           {isFetching
             ? t("statisticsDashboard.shared.refreshing")
             : t("statisticsDashboard.shared.refresh")}

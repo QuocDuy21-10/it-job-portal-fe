@@ -37,7 +37,7 @@ export interface IChatQuotaStatus {
 }
 
 export interface IChatTransportMessage extends IChatRecommendationMetadata {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: string; // ISO Date string (serializable for Redux)
 }

@@ -1,7 +1,14 @@
 "use client";
 
 import parse from "html-react-parser";
-import { ArrowUpRight, Calendar, ChevronRight, Info, MapPin, XCircle } from "lucide-react";
+import {
+  ArrowUpRight,
+  Calendar,
+  ChevronRight,
+  Info,
+  MapPin,
+  XCircle,
+} from "lucide-react";
 import {
   CompanyLogo,
   JOB_LEVEL_LABEL_KEYS,
@@ -158,8 +165,12 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
             <Info className="h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
             <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
               {aggregatorName
-                ? t("externalJobPage.sourceNoticeAggregator", { sourceName: aggregatorName })
-                : t("externalJobPage.sourceNotice", { companyName: job.companyName })}
+                ? t("externalJobPage.sourceNoticeAggregator", {
+                    sourceName: aggregatorName,
+                  })
+                : t("externalJobPage.sourceNotice", {
+                    companyName: job.companyName,
+                  })}
             </p>
           </div>
         </Card>
@@ -197,19 +208,33 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
           <Card className="h-fit border-slate-200 bg-white p-6 dark:border-border dark:bg-card">
             <dl className="space-y-4 text-sm">
               {levelLabel && (
-                <InfoRow label={t("externalJobPage.level")} value={levelLabel} />
+                <InfoRow
+                  label={t("externalJobPage.level")}
+                  value={levelLabel}
+                />
               )}
               <InfoRow
                 label={t("externalJobPage.workplace")}
                 value={t(
-                  job.isRemote ? "externalJobPage.remote" : "externalJobPage.workplaceUnknown"
+                  job.isRemote
+                    ? "externalJobPage.remote"
+                    : "externalJobPage.workplaceUnknown"
                 )}
               />
-              <InfoRow label={t("externalJobPage.location")} value={job.location} />
+              <InfoRow
+                label={t("externalJobPage.location")}
+                value={job.location}
+              />
               {job.salaryText && (
-                <InfoRow label={t("externalJobPage.salary")} value={job.salaryText} />
+                <InfoRow
+                  label={t("externalJobPage.salary")}
+                  value={job.salaryText}
+                />
               )}
-              <InfoRow label={t("externalJobPage.postedAt")} value={postedLabel} />
+              <InfoRow
+                label={t("externalJobPage.postedAt")}
+                value={postedLabel}
+              />
             </dl>
             {job.skills.length > 0 && (
               <div className="mt-6 space-y-2">

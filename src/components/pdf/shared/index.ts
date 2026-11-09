@@ -3,4 +3,4 @@
  * Central export point for shared/reusable PDF components
  */
 
-export { ContactRowItem, Section, CVHeader } from './common-components';
+export { ContactRowItem, Section, CVHeader } from "./common-components";

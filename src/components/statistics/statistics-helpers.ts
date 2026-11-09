@@ -23,7 +23,9 @@ export function resolveStatisticsErrorMessage(
   return fallbackMessage;
 }
 
-export function resolveStatisticsErrorStatus(error: unknown): number | undefined {
+export function resolveStatisticsErrorStatus(
+  error: unknown
+): number | undefined {
   if (isRecord(error) && typeof error.status === "number") {
     return error.status;
   }
@@ -36,7 +38,9 @@ export function formatStatisticNumber(
   locale?: string,
   options?: Intl.NumberFormatOptions
 ): string {
-  return new Intl.NumberFormat(resolveIntlLocale(locale), options).format(value);
+  return new Intl.NumberFormat(resolveIntlLocale(locale), options).format(
+    value
+  );
 }
 
 export function formatStatisticDecimal(
@@ -54,7 +58,10 @@ export function formatStatisticPercent(value: number, locale?: string): string {
   return `${formatStatisticDecimal(value, locale, 1)}%`;
 }
 
-export function formatStatisticDateTime(value: string, locale?: string): string {
+export function formatStatisticDateTime(
+  value: string,
+  locale?: string
+): string {
   return new Intl.DateTimeFormat(resolveIntlLocale(locale), {
     dateStyle: "medium",
     timeStyle: "short",

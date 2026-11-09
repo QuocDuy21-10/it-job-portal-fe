@@ -1,7 +1,7 @@
 /**
  * PDF Icon Components
  * Sử dụng SVG (Svg, Path, Circle, Rect) từ @react-pdf/renderer
- * 
+ *
  * LƯU Ý:
  * - Không dùng lucide-react hay font icons trong PDF
  * - Phải dùng SVG primitives của react-pdf
@@ -20,9 +20,9 @@ interface IconProps {
 /**
  * Email Icon (Envelope)
  */
-export const EmailIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const EmailIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -39,9 +39,9 @@ export const EmailIcon: React.FC<IconProps> = ({
 /**
  * Phone Icon
  */
-export const PhoneIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const PhoneIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -58,9 +58,9 @@ export const PhoneIcon: React.FC<IconProps> = ({
 /**
  * Location/Address Icon (Map Pin)
  */
-export const LocationIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const LocationIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -71,23 +71,16 @@ export const LocationIcon: React.FC<IconProps> = ({
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <Circle
-      cx="12"
-      cy="10"
-      r="3"
-      fill="none"
-      stroke={color}
-      strokeWidth="2"
-    />
+    <Circle cx="12" cy="10" r="3" fill="none" stroke={color} strokeWidth="2" />
   </Svg>
 );
 
 /**
  * Birthday/Calendar Icon
  */
-export const CalendarIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const CalendarIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -111,9 +104,9 @@ export const CalendarIcon: React.FC<IconProps> = ({
 /**
  * Gender/User Icon
  */
-export const UserIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const UserIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -124,23 +117,16 @@ export const UserIcon: React.FC<IconProps> = ({
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <Circle
-      cx="12"
-      cy="7"
-      r="4"
-      fill="none"
-      stroke={color}
-      strokeWidth="2"
-    />
+    <Circle cx="12" cy="7" r="4" fill="none" stroke={color} strokeWidth="2" />
   </Svg>
 );
 
 /**
  * Link Icon (External link)
  */
-export const LinkIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const LinkIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -165,9 +151,9 @@ export const LinkIcon: React.FC<IconProps> = ({
 /**
  * Briefcase Icon (for Experience)
  */
-export const BriefcaseIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const BriefcaseIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -192,9 +178,9 @@ export const BriefcaseIcon: React.FC<IconProps> = ({
 /**
  * Award/Star Icon
  */
-export const AwardIcon: React.FC<IconProps> = ({ 
-  size = CVIconSizes.medium, 
-  color = "#666" 
+export const AwardIcon: React.FC<IconProps> = ({
+  size = CVIconSizes.medium,
+  color = "#666",
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Circle

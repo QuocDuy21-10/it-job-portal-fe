@@ -3,9 +3,18 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CertificateRequestSchema, type CertificateRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  CertificateRequestSchema,
+  type CertificateRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -47,11 +56,13 @@ export default function CertificateModal({
 
   useEffect(() => {
     if (isOpen) {
-      reset(certificate || {
-        name: "",
-        issuer: "",
-        date: "",
-      });
+      reset(
+        certificate || {
+          name: "",
+          issuer: "",
+          date: "",
+        }
+      );
     }
   }, [isOpen, certificate, reset]);
 
@@ -70,7 +81,9 @@ export default function CertificateModal({
       <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.certificates.addTitle") : t("cv.certificates.editTitle")}
+            {mode === "add"
+              ? t("cv.certificates.addTitle")
+              : t("cv.certificates.editTitle")}
           </DialogTitle>
           <DialogDescription>
             {t("cv.certificates.description")}
@@ -79,7 +92,11 @@ export default function CertificateModal({
 
         <ModalHeaderBanner
           type="certificate"
-          title={mode === "add" ? t("cv.certificates.addTitle") : t("cv.certificates.editTitle")}
+          title={
+            mode === "add"
+              ? t("cv.certificates.addTitle")
+              : t("cv.certificates.editTitle")
+          }
           description={t("cv.certificates.description")}
         />
 
@@ -91,14 +108,17 @@ export default function CertificateModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.certificates.nameLabel")} <span className="text-destructive">*</span>
+                  {t("cv.certificates.nameLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.certificates.namePlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.name
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.name && (
@@ -117,19 +137,23 @@ export default function CertificateModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.certificates.issuerLabel")} <span className="text-destructive">*</span>
+                  {t("cv.certificates.issuerLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.certificates.issuerPlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.issuer ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.issuer
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.issuer && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.issuer.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.issuer.message}
                   </p>
                 )}
               </div>
@@ -143,17 +167,26 @@ export default function CertificateModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.certificates.dateLabel")} <span className="text-destructive">*</span>
+                  {t("cv.certificates.dateLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="month"
-                  value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                  value={
+                    field.value
+                      ? new Date(field.value).toISOString().slice(0, 7)
+                      : ""
+                  }
                   onChange={(e) => {
-                    const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                    const dateValue = e.target.value
+                      ? new Date(e.target.value + "-01").toISOString()
+                      : "";
                     field.onChange(dateValue);
                   }}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.date ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.date
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.date && (
@@ -179,7 +212,9 @@ export default function CertificateModal({
               type="submit"
               className="px-6 bg-primary hover:bg-primary/90"
             >
-              {mode === "add" ? t("cv.certificates.saveLabel") : t("cv.certificates.updateLabel")}
+              {mode === "add"
+                ? t("cv.certificates.saveLabel")
+                : t("cv.certificates.updateLabel")}
             </Button>
           </div>
         </form>

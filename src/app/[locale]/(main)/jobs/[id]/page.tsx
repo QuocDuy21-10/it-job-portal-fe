@@ -139,24 +139,24 @@ const buildJobBreadcrumbsStructuredData = (job: Job, locale: AppLocale) => {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": homeUrl,
+        position: 1,
+        name: "Home",
+        item: homeUrl,
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Jobs",
-        "item": jobsUrl,
+        position: 2,
+        name: "Jobs",
+        item: jobsUrl,
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": job.name,
-        "item": jobUrl,
+        position: 3,
+        name: job.name,
+        item: jobUrl,
       },
     ],
   };
@@ -177,7 +177,8 @@ export async function generateMetadata({
 
   const title = buildJobTitle(job.name, job.company.name);
   const description =
-    toMetadataDescription(job.description) || buildJobSummary(job.company.name, job.location);
+    toMetadataDescription(job.description) ||
+    buildJobSummary(job.company.name, job.location);
 
   return buildLocalizedPageMetadata({
     locale,
@@ -219,7 +220,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(buildJobBreadcrumbsStructuredData(job, locale)),
+          __html: serializeJsonLd(
+            buildJobBreadcrumbsStructuredData(job, locale)
+          ),
         }}
       />
 
@@ -271,7 +274,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               </h1>
               <div className="flex items-center gap-3 text-blue-100">
                 <Briefcase className="h-5 w-5" />
-                <Link href={companyPath} className="text-xl font-medium transition-colors hover:text-white">
+                <Link
+                  href={companyPath}
+                  className="text-xl font-medium transition-colors hover:text-white"
+                >
                   {job.company.name}
                 </Link>
               </div>
@@ -292,7 +298,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
                         {t("jobDetailPage.summary.location")}
                       </p>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">{job.location}</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
+                        {job.location}
+                      </p>
                     </div>
                   </div>
                   <div className="group flex items-start gap-3">
@@ -303,7 +311,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
                         {t("jobDetailPage.summary.level")}
                       </p>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">{job.level}</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
+                        {job.level}
+                      </p>
                     </div>
                   </div>
                   <div className="group flex items-start gap-3">
@@ -314,7 +324,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
                         {t("jobDetailPage.summary.workType")}
                       </p>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">{job.formOfWork}</p>
+                      <p className="font-semibold text-slate-900 dark:text-slate-100">
+                        {job.formOfWork}
+                      </p>
                     </div>
                   </div>
                   <div className="group flex items-start gap-3">
@@ -350,7 +362,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                         <span className="font-semibold">
                           {t("jobDetailPage.deadline.label")}
                         </span>{" "}
-                        {t("jobDetailPage.deadline.value", { days: daysRemaining })}
+                        {t("jobDetailPage.deadline.value", {
+                          days: daysRemaining,
+                        })}
                       </p>
                     </div>
                   </div>
@@ -405,7 +419,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>{t("jobDetailPage.summary.level")}:</strong> {job.level}
+                          <strong>{t("jobDetailPage.summary.level")}:</strong>{" "}
+                          {job.level}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
@@ -413,7 +428,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>{t("jobDetailPage.summary.workType")}:</strong> {job.formOfWork}
+                          <strong>
+                            {t("jobDetailPage.summary.workType")}:
+                          </strong>{" "}
+                          {job.formOfWork}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
@@ -421,7 +439,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>{t("jobDetailPage.summary.location")}:</strong> {job.location}
+                          <strong>
+                            {t("jobDetailPage.summary.location")}:
+                          </strong>{" "}
+                          {job.location}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
@@ -429,7 +450,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                           ✓
                         </span>
                         <span>
-                          <strong>{t("jobDetailPage.requirements.quantityLabel")}:</strong>{" "}
+                          <strong>
+                            {t("jobDetailPage.requirements.quantityLabel")}:
+                          </strong>{" "}
                           {t("jobDetailPage.requirements.quantityValue", {
                             quantity: job.quantity,
                           })}
@@ -461,7 +484,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                         {t("jobDetailPage.sidebar.hiringCompany")}
                       </p>
-                      <h2 className="mt-1 text-xl font-bold text-foreground">{job.company.name}</h2>
+                      <h2 className="mt-1 text-xl font-bold text-foreground">
+                        {job.company.name}
+                      </h2>
                     </div>
                     <div className="flex items-start gap-3 rounded-lg bg-primary/5 p-4">
                       <MapPin className="mt-0.5 h-4 w-4 text-primary" />
@@ -469,11 +494,15 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           {t("jobDetailPage.sidebar.hiringArea")}
                         </p>
-                        <p className="text-sm font-semibold text-foreground">{job.location}</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {job.location}
+                        </p>
                       </div>
                     </div>
                     <Button asChild className="w-full" size="lg">
-                      <Link href={companyPath}>{t("jobDetailPage.sidebar.viewCompanyProfile")}</Link>
+                      <Link href={companyPath}>
+                        {t("jobDetailPage.sidebar.viewCompanyProfile")}
+                      </Link>
                     </Button>
                   </div>
                 </Card>

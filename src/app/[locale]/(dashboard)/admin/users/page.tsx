@@ -10,7 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetUsersQuery, useBulkDeleteUsersMutation } from "@/features/user/redux/user.api";
+import {
+  useGetUsersQuery,
+  useBulkDeleteUsersMutation,
+} from "@/features/user/redux/user.api";
 import { useUserOperations } from "@/hooks/use-user";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { SearchBar } from "@/components/ui/search-bar";
@@ -24,7 +27,11 @@ import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
-import { CreateUserFormData, UpdateUserFormData, User } from "@/features/user/schemas/user.schema";
+import {
+  CreateUserFormData,
+  UpdateUserFormData,
+  User,
+} from "@/features/user/schemas/user.schema";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
 import { ROLE_VALUES } from "@/shared/constants/role-values";
 
@@ -40,15 +47,15 @@ export default function UsersPage() {
   // Construct filter query dynamically
   const filter = useMemo(() => {
     const filters: string[] = [];
-    
+
     if (searchQuery) {
       filters.push(`name=/${searchQuery}/i`);
     }
-    
+
     if (selectedRole && selectedRole !== "all") {
       filters.push(`role=${selectedRole}`);
     }
-    
+
     return filters.join("&");
   }, [searchQuery, selectedRole]);
 
@@ -87,8 +94,15 @@ export default function UsersPage() {
     return usersData?.data?.result || [];
   }, [usersData]);
 
-  const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
-    useTableSelection(users);
+  const {
+    selectedIds,
+    selectedCount,
+    isAllSelected,
+    isIndeterminate,
+    toggle,
+    toggleAll,
+    clear,
+  } = useTableSelection(users);
 
   const totalItems = usersData?.data?.meta?.pagination?.total || 0;
   const selectedResourceLabel =
@@ -97,33 +111,48 @@ export default function UsersPage() {
       : t("adminPages.resources.users");
 
   // Optimized handlers with useCallback
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
 
-  const handleRoleChange = useCallback((value: string) => {
-    setSelectedRole(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handleRoleChange = useCallback(
+    (value: string) => {
+      setSelectedRole(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
 
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-    clear();
-  }, [clear]);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setCurrentPage(page);
+      clear();
+    },
+    [clear]
+  );
 
-  const handlePageSizeChange = useCallback((size: number) => {
-    setPageSize(size);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handlePageSizeChange = useCallback(
+    (size: number) => {
+      setPageSize(size);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
 
   const handleBulkDelete = useCallback(async () => {
     try {
       const result = await bulkDeleteUsers(Array.from(selectedIds)).unwrap();
-      const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
+      const { deletedCount, requestedCount } = result.data ?? {
+        deletedCount: 0,
+        requestedCount: selectedIds.size,
+      };
       if (deletedCount < requestedCount) {
         toast.warning(
           t("adminPages.shared.bulkDeletePartial", {
@@ -156,7 +185,9 @@ export default function UsersPage() {
     }
   }, [bulkDeleteUsers, clear, selectedIds, t]);
 
-  const handleSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
+  const handleSubmit = async (
+    formData: CreateUserFormData | UpdateUserFormData
+  ) => {
     return handleUserSubmit(formData);
   };
 
@@ -208,11 +239,15 @@ export default function UsersPage() {
               <SelectTrigger className="w-full bg-white dark:bg-gray-900">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-gray-400" />
-                  <SelectValue placeholder={t("adminPages.users.roleFilterPlaceholder")} />
+                  <SelectValue
+                    placeholder={t("adminPages.users.roleFilterPlaceholder")}
+                  />
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("adminPages.users.allRoles")}</SelectItem>
+                <SelectItem value="all">
+                  {t("adminPages.users.allRoles")}
+                </SelectItem>
                 {ROLE_VALUES.map((role) => (
                   <SelectItem key={role} value={role}>
                     {role}
@@ -234,7 +269,12 @@ export default function UsersPage() {
             })}
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clear}
+              className="gap-1.5"
+            >
               <X className="h-4 w-4" />
               {t("adminPages.shared.clear")}
             </Button>

@@ -134,7 +134,9 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                   </FormControl>
                   <SelectContent>
                     {jobLevels.map((level) => (
-                      <SelectItem key={level.value} value={level.value}>{level.label}</SelectItem>
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -160,7 +162,9 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                   </FormControl>
                   <SelectContent>
                     {jobTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -339,7 +343,7 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
                   placeholder="Chọn công ty"
                   searchPlaceholder="Tìm kiếm công ty..."
                   emptyText="Không tìm thấy công ty"
-                  disabled={isLoading }
+                  disabled={isLoading}
                 />
               </FormControl>
               <FormMessage />

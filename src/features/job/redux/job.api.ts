@@ -19,7 +19,10 @@ import type {
 
 export const jobApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getJobs: builder.query<ApiResponse<PaginatedResult<Job>>, PaginatedQueryParams>({
+    getJobs: builder.query<
+      ApiResponse<PaginatedResult<Job>>,
+      PaginatedQueryParams
+    >({
       query: ({ page = 1, limit = 10, filter = "", sort = "", keyword }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;
@@ -103,10 +106,7 @@ export const jobApi = baseApi.injectEndpoints({
         method: "PATCH",
         data: data,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Job", id },
-        "Job",
-      ],
+      invalidatesTags: (result, error, { id }) => [{ type: "Job", id }, "Job"],
     }),
 
     // Bulk delete jobs

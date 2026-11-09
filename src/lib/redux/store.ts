@@ -15,14 +15,14 @@ import { baseApi } from "./api";
 import authSlice from "@/features/auth/redux/auth.slice";
 import { setRefreshTokenFailedCallback } from "@/lib/axios/axios-instance";
 import { setRefreshTokenAction } from "@/features/auth/redux/auth.slice";
-import companyReducer from '@/features/company/redux/company.slice';
-import userReducer from '@/features/user/redux/user.slice';
-import jobReducer from '@/features/job/redux/job.slice';
-import resumeReducer from '@/features/resume/redux/resume.slice';
+import companyReducer from "@/features/company/redux/company.slice";
+import userReducer from "@/features/user/redux/user.slice";
+import jobReducer from "@/features/job/redux/job.slice";
+import resumeReducer from "@/features/resume/redux/resume.slice";
 import chatBotReducer, {
   getActiveChatQuotaStatus,
-} from '@/features/chatbot/redux/chat-bot.slice';
-import notificationReducer from '@/features/notification/redux/notification.slice';
+} from "@/features/chatbot/redux/chat-bot.slice";
+import notificationReducer from "@/features/notification/redux/notification.slice";
 import { authErrorMiddleware } from "./middleware/auth-error.middleware";
 
 // Redux Persist Configuration for auth slice

@@ -61,7 +61,8 @@ const translations: Record<string, string> = {
   "chatWidget.features.cv.title": "Review and improve your CV",
   "chatWidget.features.cv.description": "Analyze strengths and missing points",
   "chatWidget.features.stats.title": "Market insights",
-  "chatWidget.features.stats.description": "Salary, trending skills, top companies",
+  "chatWidget.features.stats.description":
+    "Salary, trending skills, top companies",
   "chatWidget.chips.platformJobs": "How many Node.js jobs are open?",
   "chatWidget.chips.hotSkills": "What are the hottest skills in 2026?",
   "chatWidget.chips.topCompanies": "Top 5 companies hiring the most?",

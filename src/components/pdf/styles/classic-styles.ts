@@ -19,7 +19,7 @@ export const classicStyles = StyleSheet.create({
     fontSize: CVFontSizes.bodyMedium,
     lineHeight: CVLineHeights.normal,
   },
-  
+
   // === HEADER STYLES ===
   header: {
     flexDirection: "row",

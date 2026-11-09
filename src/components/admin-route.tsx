@@ -36,7 +36,6 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
     }
   }, [isMounted, isAuthenticated, isLoading, isAdmin, locale, router]);
 
-
   if (!isMounted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -49,7 +48,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   }
 
   const shouldShowLoading = isLoading && !(isAuthenticated && isAdmin);
-  
+
   if (shouldShowLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

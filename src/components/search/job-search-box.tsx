@@ -45,7 +45,10 @@ export function JobSearchBox({
           <label htmlFor="job-search-box" className="sr-only">
             {mounted ? t("home.jobTitleOrKeyword") : "Job title or keyword"}
           </label>
-          <Search className="listing-muted-text pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" aria-hidden="true" />
+          <Search
+            className="listing-muted-text pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2"
+            aria-hidden="true"
+          />
           <SearchSuggestInput
             id="job-search-box"
             value={searchQuery}
@@ -76,9 +79,7 @@ export function JobSearchBox({
             searchPlaceholder="Tìm kiếm tỉnh/thành..."
             noBorder
             className="h-12 w-full bg-transparent text-foreground dark:text-white z-[100]"
-            leftIcon={
-              <MapPin className="listing-muted-text mr-1 h-5 w-5" />
-            }
+            leftIcon={<MapPin className="listing-muted-text mr-1 h-5 w-5" />}
           />
         </div>
 

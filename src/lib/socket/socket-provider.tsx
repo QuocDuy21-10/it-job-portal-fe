@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
@@ -21,7 +28,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   const connect = useCallback(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("access_token")
+        : null;
     if (!token) return;
 
     // Disconnect existing socket if any

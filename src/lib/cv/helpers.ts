@@ -12,7 +12,10 @@ export const formatDateDisplay = (date: string | Date | undefined): string => {
     return "Hiện tại";
   }
   if (date instanceof Date) {
-    return date.toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" });
+    return date.toLocaleDateString("vi-VN", {
+      month: "2-digit",
+      year: "numeric",
+    });
   }
   return date;
 };

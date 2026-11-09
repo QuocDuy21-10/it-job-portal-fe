@@ -11,10 +11,7 @@ const NOT_FOUND_MESSAGES = {
     description:
       "We couldn't find the page you're looking for. The page may have been removed or the URL may be incorrect.",
     suggestionsTitle: "You can try:",
-    suggestions: [
-      "Checking the URL again",
-      "Going back to the previous page",
-    ],
+    suggestions: ["Checking the URL again", "Going back to the previous page"],
     home: "Back to home",
     jobs: "Browse jobs",
     back: "Go back",
@@ -25,10 +22,7 @@ const NOT_FOUND_MESSAGES = {
     description:
       "Rất tiếc, chúng tôi không thể tìm thấy trang bạn đang tìm kiếm. Có thể trang đã bị xóa hoặc URL không chính xác.",
     suggestionsTitle: "Bạn có thể thử:",
-    suggestions: [
-      "Kiểm tra lại đường dẫn URL",
-      "Quay lại trang trước đó",
-    ],
+    suggestions: ["Kiểm tra lại đường dẫn URL", "Quay lại trang trước đó"],
     home: "Về trang chủ",
     jobs: "Tìm việc làm",
     back: "Quay lại",
@@ -65,7 +59,9 @@ export default function NotFound() {
         {/* Content */}
         <div className="space-y-6 mb-10">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold text-gray-900">{messages.title}</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              {messages.title}
+            </h2>
             <p className="text-lg text-gray-600 max-w-md mx-auto">
               {messages.description}
             </p>
@@ -126,9 +122,7 @@ export default function NotFound() {
         </div>
 
         {/* Footer Text */}
-        <p className="mt-8 text-sm text-gray-500">
-          {messages.errorCode}
-        </p>
+        <p className="mt-8 text-sm text-gray-500">{messages.errorCode}</p>
       </div>
     </div>
   );

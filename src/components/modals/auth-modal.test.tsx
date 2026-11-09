@@ -17,15 +17,13 @@ type Messages = typeof en;
 let mockMessages: Messages = en;
 
 function mockTranslate(messages: Messages, key: string): string {
-  const value = key
-    .split(".")
-    .reduce<unknown>((value, segment) => {
-      if (value && typeof value === "object" && segment in value) {
-        return (value as Record<string, unknown>)[segment];
-      }
+  const value = key.split(".").reduce<unknown>((value, segment) => {
+    if (value && typeof value === "object" && segment in value) {
+      return (value as Record<string, unknown>)[segment];
+    }
 
-      return key;
-    }, messages);
+    return key;
+  }, messages);
 
   return typeof value === "string" ? value : key;
 }
@@ -48,7 +46,10 @@ jest.mock("@/hooks/use-i18n", () => ({
 }));
 
 jest.mock("@/components/modals/login-form", () => ({
-  LoginForm: ({ onSuccess, onTabChange }: {
+  LoginForm: ({
+    onSuccess,
+    onTabChange,
+  }: {
     onSuccess?: (redirectUrl?: string) => void;
     onTabChange?: (tab: AuthModalTab) => void;
   }) => (
@@ -65,7 +66,11 @@ jest.mock("@/components/modals/login-form", () => ({
 }));
 
 jest.mock("@/components/modals/register-form", () => ({
-  RegisterForm: ({ onSuccess }: { onSuccess?: (redirectUrl?: string) => void }) => (
+  RegisterForm: ({
+    onSuccess,
+  }: {
+    onSuccess?: (redirectUrl?: string) => void;
+  }) => (
     <div>
       <div>Mock register form</div>
       <button type="button" onClick={() => onSuccess?.()}>

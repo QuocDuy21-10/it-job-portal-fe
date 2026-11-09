@@ -66,7 +66,6 @@ export interface ICVProfile {
   updatedAt?: string;
 }
 
-
 export interface CVData {
   _id?: string;
   userId?: string;

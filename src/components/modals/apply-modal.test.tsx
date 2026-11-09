@@ -11,15 +11,13 @@ type Messages = typeof en;
 let mockMessages: Messages = en;
 
 function mockTranslate(messages: Messages, key: string): string {
-  const value = key
-    .split(".")
-    .reduce<unknown>((value, segment) => {
-      if (value && typeof value === "object" && segment in value) {
-        return (value as Record<string, unknown>)[segment];
-      }
+  const value = key.split(".").reduce<unknown>((value, segment) => {
+    if (value && typeof value === "object" && segment in value) {
+      return (value as Record<string, unknown>)[segment];
+    }
 
-      return key;
-    }, messages);
+    return key;
+  }, messages);
 
   return typeof value === "string" ? value : key;
 }
@@ -77,7 +75,9 @@ describe("ApplyModal", () => {
 
     expect(screen.getByText("Apply now")).toBeInTheDocument();
     expect(screen.getByText("Full name")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Submit application" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Submit application" })
+    ).toBeInTheDocument();
   });
 
   it("renders Vietnamese copy when the current locale is Vietnamese", () => {
@@ -95,6 +95,8 @@ describe("ApplyModal", () => {
 
     expect(screen.getByText("Ứng tuyển ngay")).toBeInTheDocument();
     expect(screen.getByText("Họ và tên")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Gửi đơn ứng tuyển" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Gửi đơn ứng tuyển" })
+    ).toBeInTheDocument();
   });
 });

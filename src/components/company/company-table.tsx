@@ -1,4 +1,12 @@
-import { Pencil, Trash2, Building2, MapPin, Globe, Calendar, Users } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Building2,
+  MapPin,
+  Globe,
+  Calendar,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -37,7 +45,7 @@ interface CompanyTableProps {
   isIndeterminate: boolean;
 }
 
-export function   CompanyTable({
+export function CompanyTable({
   companies,
   isLoading,
   onEdit,
@@ -61,55 +69,61 @@ export function   CompanyTable({
       <TooltipProvider>
         <div className="admin-card">
           <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={isIndeterminate ? "indeterminate" : isAllSelected}
-                  onCheckedChange={onToggleAll}
-                  aria-label={t("adminPages.shared.selectAll")}
-                />
-              </TableHead>
-              <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
-              <TableHead>{t("adminPages.companies.table.name")}</TableHead>
-              <TableHead>{t("adminPages.companies.table.address")}</TableHead>
-              <TableHead>{t("adminPages.companies.table.website")}</TableHead>
-              <TableHead>{t("adminPages.companies.table.employees")}</TableHead>
-              <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-              <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {companies.length === 0 ? (
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={8} className="py-12">
-                  <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
-                    <Building2 className="h-12 w-12 text-gray-300" />
-                    <div className="text-center">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
-                        {t("adminPages.companies.table.emptyTitle")}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {t("adminPages.companies.table.emptyDescription")}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={isIndeterminate ? "indeterminate" : isAllSelected}
+                    onCheckedChange={onToggleAll}
+                    aria-label={t("adminPages.shared.selectAll")}
+                  />
+                </TableHead>
+                <TableHead className="w-[80px]">
+                  {t("adminPages.shared.number")}
+                </TableHead>
+                <TableHead>{t("adminPages.companies.table.name")}</TableHead>
+                <TableHead>{t("adminPages.companies.table.address")}</TableHead>
+                <TableHead>{t("adminPages.companies.table.website")}</TableHead>
+                <TableHead>
+                  {t("adminPages.companies.table.employees")}
+                </TableHead>
+                <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
+                <TableHead className="text-right">
+                  {t("adminPages.shared.actions")}
+                </TableHead>
               </TableRow>
-            ) : (
-              companies.map((company, index) => (
-                <CompanyTableRow
-                  key={company._id}
-                  company={company}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  orderNumber={(currentPage - 1) * pageSize + index + 1}
-                  isSelected={selectedIds.has(company._id as string)}
-                  onToggleSelect={onToggleSelect}
-                />
-              ))
-            )}
-          </TableBody>
+            </TableHeader>
+            <TableBody>
+              {companies.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="py-12">
+                    <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
+                      <Building2 className="h-12 w-12 text-gray-300" />
+                      <div className="text-center">
+                        <p className="font-medium text-gray-900 dark:text-gray-100">
+                          {t("adminPages.companies.table.emptyTitle")}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          {t("adminPages.companies.table.emptyDescription")}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                companies.map((company, index) => (
+                  <CompanyTableRow
+                    key={company._id}
+                    company={company}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    orderNumber={(currentPage - 1) * pageSize + index + 1}
+                    isSelected={selectedIds.has(company._id as string)}
+                    onToggleSelect={onToggleSelect}
+                  />
+                ))
+              )}
+            </TableBody>
           </Table>
         </div>
       </TooltipProvider>
@@ -136,14 +150,19 @@ function CompanyTableRow({
   onToggleSelect,
 }: CompanyTableRowProps) {
   const { t, language } = useI18n();
-  
+
   return (
-    <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
+    <TableRow
+      className="admin-table-row group"
+      data-state={isSelected ? "selected" : undefined}
+    >
       <TableCell>
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(company._id as string)}
-          aria-label={t("adminPages.shared.selectItem", { resource: company.name })}
+          aria-label={t("adminPages.shared.selectItem", {
+            resource: company.name,
+          })}
         />
       </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
@@ -196,7 +215,9 @@ function CompanyTableRow({
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
-            {company.createdAt ? formatLocaleDate(company.createdAt, language) : "-"}
+            {company.createdAt
+              ? formatLocaleDate(company.createdAt, language)
+              : "-"}
           </span>
         </div>
       </TableCell>
@@ -254,13 +275,17 @@ function CompanyTableSkeleton() {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead className="w-[80px]">
+              {t("adminPages.shared.number")}
+            </TableHead>
             <TableHead>{t("adminPages.companies.table.name")}</TableHead>
             <TableHead>{t("adminPages.companies.table.address")}</TableHead>
             <TableHead>{t("adminPages.companies.table.website")}</TableHead>
             <TableHead>{t("adminPages.companies.table.employees")}</TableHead>
             <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
+            <TableHead className="text-right">
+              {t("adminPages.shared.actions")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

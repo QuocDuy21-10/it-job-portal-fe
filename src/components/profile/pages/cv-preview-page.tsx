@@ -10,9 +10,12 @@ import { useI18n } from "@/hooks/use-i18n";
 import { useRouter } from "@/i18n/navigation";
 import DownloadPDFButton from "@/components/pdf/download-pdf-button";
 import PDFPreview from "@/components/pdf/pdf-preview";
-import { ClassicTemplate, ModernTemplate, MinimalTemplate } from "@/components/cv/templates";
+import {
+  ClassicTemplate,
+  ModernTemplate,
+  MinimalTemplate,
+} from "@/components/cv/templates";
 import { cn } from "@/lib/utils";
-
 
 export default function CVPreviewPage() {
   const router = useRouter();
@@ -39,8 +42,11 @@ export default function CVPreviewPage() {
             fullName: result.personalInfo.fullName,
             phone: result.personalInfo.phone || "",
             email: result.personalInfo.email,
-            birthday: result.personalInfo.birthday ? new Date(result.personalInfo.birthday) : undefined,
-            gender: result.personalInfo.gender as "male" | "female" | "other" | undefined,
+            birthday: result.personalInfo.birthday
+              ? new Date(result.personalInfo.birthday)
+              : undefined,
+            gender: result.personalInfo.gender as
+              "male" | "female" | "other" | undefined,
             address: result.personalInfo.address || "",
             personalLink: result.personalInfo.personalLink || "",
             bio: result.personalInfo.bio || "",
@@ -120,9 +126,15 @@ export default function CVPreviewPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <FileText className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-          <h2 className="text-xl font-semibold mb-2">{t("cvPreviewPage.emptyTitle")}</h2>
-          <p className="text-muted-foreground mb-4">{t("cvPreviewPage.emptyDescription")}</p>
-          <Button onClick={() => router.push("/profile?tab=create-cv")}>{t("cvPreviewPage.createButton")}</Button>
+          <h2 className="text-xl font-semibold mb-2">
+            {t("cvPreviewPage.emptyTitle")}
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            {t("cvPreviewPage.emptyDescription")}
+          </p>
+          <Button onClick={() => router.push("/profile?tab=create-cv")}>
+            {t("cvPreviewPage.createButton")}
+          </Button>
         </div>
       </div>
     );
@@ -220,13 +232,22 @@ export default function CVPreviewPage() {
 
         {showPDFPreview ? (
           <Card className="p-4 md:p-6 bg-white dark:bg-card border border-border shadow-lg">
-            <PDFPreview cvData={cvData} template={selectedTemplate as "classic" | "modern" | "minimal"} />
+            <PDFPreview
+              cvData={cvData}
+              template={selectedTemplate as "classic" | "modern" | "minimal"}
+            />
           </Card>
         ) : (
           <Card className="p-6 md:p-8 bg-white dark:bg-card border border-border shadow-lg">
-            {selectedTemplate === "classic" && <ClassicTemplate cvData={cvData} />}
-            {selectedTemplate === "modern" && <ModernTemplate cvData={cvData} />}
-            {selectedTemplate === "minimal" && <MinimalTemplate cvData={cvData} />}
+            {selectedTemplate === "classic" && (
+              <ClassicTemplate cvData={cvData} />
+            )}
+            {selectedTemplate === "modern" && (
+              <ModernTemplate cvData={cvData} />
+            )}
+            {selectedTemplate === "minimal" && (
+              <MinimalTemplate cvData={cvData} />
+            )}
           </Card>
         )}
       </div>

@@ -13,11 +13,8 @@ const meterLabels = {
   remainingCompact: (remaining: number) => `${remaining} left`,
   dailyLimitTooltip: (limit: number) =>
     `You get ${limit} AI exchanges per day.`,
-  resetTooltip: (
-    remaining: number,
-    relativeTime: string,
-    localTime: string
-  ) => `${remaining} AI replies left. Resets ${relativeTime} at ${localTime}.`,
+  resetTooltip: (remaining: number, relativeTime: string, localTime: string) =>
+    `${remaining} AI replies left. Resets ${relativeTime} at ${localTime}.`,
   resetFallback: "the next reset",
 };
 

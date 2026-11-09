@@ -25,7 +25,7 @@ export const CVColors = {
   bgGray: "#ecf0f1",
   bgBlue: "#3498db",
   bgGradientStart: "#2563eb", // blue-600
-  bgGradientEnd: "#4f46e5",   // indigo-600
+  bgGradientEnd: "#4f46e5", // indigo-600
 
   // Section title colors
   sectionTitleClassic: "#2c3e50",
@@ -68,7 +68,7 @@ export const CVSpacing = {
   pageMargin: 40,
   sectionMarginTop: 20,
   itemMarginBottom: 12,
-  
+
   // Paddings
   headerPaddingBottom: 15,
   sectionPaddingBottom: 5,
@@ -111,7 +111,9 @@ export const CVIconSizes = {
  * Helper function to get Tailwind classes matching PDF styles
  * Dùng cho HTML templates
  */
-export const getTailwindClasses = (template: "classic" | "modern" | "minimal") => {
+export const getTailwindClasses = (
+  template: "classic" | "modern" | "minimal"
+) => {
   const base = {
     classic: {
       page: "bg-white text-gray-900 p-8 rounded-lg space-y-6 shadow-lg max-w-4xl mx-auto",
@@ -142,7 +144,8 @@ export const getTailwindClasses = (template: "classic" | "modern" | "minimal") =
       name: "text-2xl font-light tracking-wide",
       bio: "text-sm text-gray-600 mt-2",
       contact: "flex gap-4 mt-3 text-xs text-gray-600",
-      sectionTitle: "text-sm font-bold tracking-widest text-gray-700 mb-4 uppercase",
+      sectionTitle:
+        "text-sm font-bold tracking-widest text-gray-700 mb-4 uppercase",
       itemTitle: "font-bold text-sm",
       itemSubtitle: "text-xs text-gray-600",
       itemDate: "text-xs text-gray-500",

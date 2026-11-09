@@ -150,7 +150,8 @@ export default function EmailSubscriptionPage() {
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <label className="block text-sm font-medium text-foreground mb-2 cursor-help">
-                      {t("emailSubscription.skillsLabel")} <span className="text-destructive">*</span>
+                      {t("emailSubscription.skillsLabel")}{" "}
+                      <span className="text-destructive">*</span>
                     </label>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
@@ -168,7 +169,9 @@ export default function EmailSubscriptionPage() {
                   value={selectedSkills}
                   onChange={setSelectedSkills}
                   placeholder={t("emailSubscription.skillsPlaceholder")}
-                  searchPlaceholder={t("emailSubscription.skillsSearchPlaceholder")}
+                  searchPlaceholder={t(
+                    "emailSubscription.skillsSearchPlaceholder"
+                  )}
                   disabled={isLoadingSkillCatalog}
                 />
               </div>
@@ -178,7 +181,8 @@ export default function EmailSubscriptionPage() {
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <label className="block text-sm font-medium text-foreground mb-2 cursor-help">
-                      {t("emailSubscription.locationLabel")} <span className="text-destructive">*</span>
+                      {t("emailSubscription.locationLabel")}{" "}
+                      <span className="text-destructive">*</span>
                     </label>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
@@ -196,7 +200,9 @@ export default function EmailSubscriptionPage() {
                   value={selectedLocationCode}
                   onChange={setSelectedLocationCode}
                   placeholder={t("emailSubscription.locationPlaceholder")}
-                  searchPlaceholder={t("emailSubscription.locationSearchPlaceholder")}
+                  searchPlaceholder={t(
+                    "emailSubscription.locationSearchPlaceholder"
+                  )}
                 />
               </div>
             </div>
@@ -224,7 +230,9 @@ export default function EmailSubscriptionPage() {
                 </div>
               </div>
               {totalSubscriptions >= maxAllowed && (
-                <span className="badge-error">{t("emailSubscription.limitReached")}</span>
+                <span className="badge-error">
+                  {t("emailSubscription.limitReached")}
+                </span>
               )}
             </div>
 

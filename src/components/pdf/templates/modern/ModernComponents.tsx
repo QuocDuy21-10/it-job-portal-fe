@@ -16,9 +16,12 @@ interface ModernInfoRowProps {
   value?: string;
 }
 
-export const ModernInfoRow: React.FC<ModernInfoRowProps> = ({ label, value }) => {
+export const ModernInfoRow: React.FC<ModernInfoRowProps> = ({
+  label,
+  value,
+}) => {
   if (!value) return null;
-  
+
   return (
     <View style={modernStyles.infoRow}>
       <Text style={modernStyles.infoLabel}>{label}:</Text>
@@ -35,18 +38,25 @@ interface ModernSkillItemProps {
   level: string;
 }
 
-export const ModernSkillItem: React.FC<ModernSkillItemProps> = ({ name, level }) => {
+export const ModernSkillItem: React.FC<ModernSkillItemProps> = ({
+  name,
+  level,
+}) => {
   const levelCount = getSkillLevel(level);
-  
+
   return (
     <View style={modernStyles.skillItemModern}>
       <Text style={modernStyles.skillName}>{name}</Text>
       <View style={modernStyles.skillLevelContainer}>
         <View style={modernStyles.skillLevelBar}>
           {[...Array(5)].map((_, index) => (
-            <View 
-              key={index} 
-              style={index < levelCount ? modernStyles.skillLevelDot : modernStyles.skillLevelDotEmpty} 
+            <View
+              key={index}
+              style={
+                index < levelCount
+                  ? modernStyles.skillLevelDot
+                  : modernStyles.skillLevelDotEmpty
+              }
             />
           ))}
         </View>
@@ -86,7 +96,9 @@ export const ModernEducationItem: React.FC<ModernEducationItemProps> = ({
         {formatDateForDisplay(startDate)} - {formatDateForDisplay(endDate)}
       </Text>
       {description && (
-        <Text style={modernStyles.educationDescriptionModern}>{description}</Text>
+        <Text style={modernStyles.educationDescriptionModern}>
+          {description}
+        </Text>
       )}
     </View>
   );
@@ -100,12 +112,18 @@ interface ModernSectionTitleProps {
   variant?: "sidebar" | "content";
 }
 
-export const ModernSectionTitle: React.FC<ModernSectionTitleProps> = ({ 
-  title, 
-  variant = "sidebar" 
+export const ModernSectionTitle: React.FC<ModernSectionTitleProps> = ({
+  title,
+  variant = "sidebar",
 }) => {
   return (
-    <Text style={variant === "sidebar" ? modernStyles.sidebarSectionTitle : modernStyles.contentSectionTitle}>
+    <Text
+      style={
+        variant === "sidebar"
+          ? modernStyles.sidebarSectionTitle
+          : modernStyles.contentSectionTitle
+      }
+    >
       {title}
     </Text>
   );
@@ -141,7 +159,9 @@ export const ModernExperienceItem: React.FC<ModernExperienceItemProps> = ({
         </Text>
       </View>
       {description && (
-        <Text style={modernStyles.experienceDescriptionModern}>{description}</Text>
+        <Text style={modernStyles.experienceDescriptionModern}>
+          {description}
+        </Text>
       )}
     </View>
   );

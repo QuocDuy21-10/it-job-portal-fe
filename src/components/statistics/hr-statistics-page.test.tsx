@@ -6,7 +6,10 @@ import { ROLES } from "@/shared/constants/roles";
 
 jest.mock("next/dynamic", () => ({
   __esModule: true,
-  default: (_loader: unknown, options?: { loading?: () => React.ReactNode }) => {
+  default: (
+    _loader: unknown,
+    options?: { loading?: () => React.ReactNode }
+  ) => {
     return function MockDynamicComponent() {
       return <div data-testid="dynamic-chart">{options?.loading?.()}</div>;
     };
@@ -37,7 +40,8 @@ jest.mock("@/features/statistics/redux/statistics.api", () => ({
 }));
 
 const mockUseAppSelector = useAppSelector as unknown as jest.Mock;
-const mockUseGetHrDashboardStatsQuery = useGetHrDashboardStatsQuery as jest.Mock;
+const mockUseGetHrDashboardStatsQuery =
+  useGetHrDashboardStatsQuery as jest.Mock;
 
 const createState = (roleName?: string, isLoading = false) => ({
   auth: {
@@ -98,9 +102,7 @@ describe("HrStatisticsPage", () => {
       screen.getByText("statisticsDashboard.hr.title")
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "statisticsDashboard.hr.cards.totalApplications.label"
-      )
+      screen.getByText("statisticsDashboard.hr.cards.totalApplications.label")
     ).toBeInTheDocument();
     expect(screen.getByText("168")).toBeInTheDocument();
     expect(mockUseGetHrDashboardStatsQuery).toHaveBeenCalledWith(undefined, {

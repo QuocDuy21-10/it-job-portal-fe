@@ -122,7 +122,11 @@ const getQuotaTooltipText = (
 
   const { localTime, relativeTime } = getResetCopyParts(quota, labels, locale);
 
-  return labels.resetTooltip(quota.remainingQuota ?? 0, relativeTime, localTime);
+  return labels.resetTooltip(
+    quota.remainingQuota ?? 0,
+    relativeTime,
+    localTime
+  );
 };
 
 const getBatteryFill = (
@@ -238,11 +242,7 @@ export const ChatQuotaWarning = ({
   }
 
   const isExhausted = quota.remainingQuota <= 0;
-  const { localTime, relativeTime } = getResetCopyParts(
-    quota,
-    labels,
-    locale
-  );
+  const { localTime, relativeTime } = getResetCopyParts(quota, labels, locale);
 
   return (
     <div

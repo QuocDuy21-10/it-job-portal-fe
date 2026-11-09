@@ -37,13 +37,16 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const t = useCallback((key: string, values?: TranslationValues): string => {
-    try {
-      return translate(key, values);
-    } catch {
-      return key;
-    }
-  }, [translate]);
+  const t = useCallback(
+    (key: string, values?: TranslationValues): string => {
+      try {
+        return translate(key, values);
+      } catch {
+        return key;
+      }
+    },
+    [translate]
+  );
 
   const handleSetLanguage = useCallback(
     (lang: Language) => {

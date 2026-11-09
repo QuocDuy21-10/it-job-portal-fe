@@ -27,7 +27,9 @@ import {
 import { useI18n } from "@/hooks/use-i18n";
 
 export default function RegisterPage() {
-  const [socialLoading, setSocialLoading] = useState<"google" | "facebook" | null>(null);
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "facebook" | null
+  >(null);
   const router = useRouter();
   const { t } = useI18n();
   const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
@@ -64,7 +66,10 @@ export default function RegisterPage() {
       }
     } catch (error: any) {
       console.error("Register error:", error);
-      const errorMessage = error?.data?.message || error.message || t("authModal.register.toasts.failed");
+      const errorMessage =
+        error?.data?.message ||
+        error.message ||
+        t("authModal.register.toasts.failed");
       toast.error(`${t("authModal.register.toasts.failed")}: ${errorMessage}`);
     }
   };
@@ -91,8 +96,7 @@ export default function RegisterPage() {
       title={t("authModal.register.titlePage")}
       description={t("authModal.register.descriptionPage")}
     >
-      <AuthHeader
-      />
+      <AuthHeader />
       <AuthCard
         title={t("authModal.tabs.signup")}
         description={t("authModal.description.signin")}
@@ -164,7 +168,9 @@ export default function RegisterPage() {
           <PasswordInput
             id="confirmPassword"
             label={t("authModal.register.fields.confirmPassword.label")}
-            placeholder={t("authModal.register.fields.confirmPassword.placeholder")}
+            placeholder={t(
+              "authModal.register.fields.confirmPassword.placeholder"
+            )}
             error={errors.confirmPassword?.message}
             disabled={isLoading}
             {...register("confirmPassword")}

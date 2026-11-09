@@ -23,7 +23,7 @@ const AuthModalContext = createContext<AuthModalContextValue | undefined>(
 
 /**
  * AuthModalProvider
- * 
+ *
  * Global context provider for authentication modal state.
  * Manages modal visibility and active tab state.
  */
@@ -66,20 +66,20 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
 
 /**
  * useAuthModal Hook
- * 
+ *
  * Custom hook to access auth modal state and controls.
  * Must be used within AuthModalProvider.
- * 
+ *
  * @example
  * const { openModal } = useAuthModal();
  * openModal('signin'); // Open modal with Sign In tab
  */
 export function useAuthModal() {
   const context = useContext(AuthModalContext);
-  
+
   if (!context) {
     throw new Error("useAuthModal must be used within AuthModalProvider");
   }
-  
+
   return context;
 }

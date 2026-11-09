@@ -19,15 +19,15 @@ interface CVTemplateRendererProps {
 /**
  * CV Template Renderer Component
  * Renders the appropriate CV template based on templateType
- * 
+ *
  * @param cvData - CV profile data
  * @param templateType - Template type to render (default: "modern")
- * 
+ *
  * @example
  * ```tsx
- * <CVTemplateRenderer 
- *   cvData={cvProfile} 
- *   templateType="modern" 
+ * <CVTemplateRenderer
+ *   cvData={cvProfile}
+ *   templateType="modern"
  * />
  * ```
  */
@@ -64,7 +64,8 @@ export function getTemplateDisplayName(templateType: CVTemplateType): string {
 export function getTemplateDescription(templateType: CVTemplateType): string {
   const descriptions: Record<CVTemplateType, string> = {
     modern: "Thiết kế hai cột chuyên nghiệp, phù hợp cho ngành công nghệ",
-    classic: "Thiết kế truyền thống, dễ đọc, phù hợp cho môi trường doanh nghiệp",
+    classic:
+      "Thiết kế truyền thống, dễ đọc, phù hợp cho môi trường doanh nghiệp",
     minimal: "Thiết kế tối giản, thanh lịch, tập trung vào nội dung",
   };
   return descriptions[templateType];

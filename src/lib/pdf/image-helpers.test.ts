@@ -18,7 +18,8 @@ describe("getProxiedImageUrl", () => {
   });
 
   it("returns data URIs as-is", () => {
-    const dataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    const dataUri =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     expect(getProxiedImageUrl(dataUri)).toBe(dataUri);
   });
 
@@ -48,22 +49,24 @@ describe("getProxiedImageUrl", () => {
 
   it("does not crash and returns external URLs as-is when NEXT_PUBLIC_API_URL is undefined", () => {
     delete process.env.NEXT_PUBLIC_API_URL;
-    const externalUrl = "https://lh3.googleusercontent.com/a/ACg8ocJ_ipmdfD1N8EaBIQhIY39s8iRRvPwGsar3766y-ShRtzSQUg=s96-c";
+    const externalUrl =
+      "https://lh3.googleusercontent.com/a/ACg8ocJ_ipmdfD1N8EaBIQhIY39s8iRRvPwGsar3766y-ShRtzSQUg=s96-c";
     expect(getProxiedImageUrl(externalUrl)).toBe(externalUrl);
   });
 
   it("returns external URLs as-is if they do not match localhost:8081 or NEXT_PUBLIC_API_URL", () => {
     process.env.NEXT_PUBLIC_API_URL = "http://api.jobportal.local";
-    const externalUrl = "https://lh3.googleusercontent.com/a/ACg8ocJ_ipmdfD1N8EaBIQhIY39s8iRRvPwGsar3766y-ShRtzSQUg=s96-c";
+    const externalUrl =
+      "https://lh3.googleusercontent.com/a/ACg8ocJ_ipmdfD1N8EaBIQhIY39s8iRRvPwGsar3766y-ShRtzSQUg=s96-c";
     expect(getProxiedImageUrl(externalUrl)).toBe(externalUrl);
   });
 
   it("handles completely invalid URLs by returning undefined instead of throwing", () => {
     // Suppress console.error in tests for expected invalid URL logging
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
-    
+
     expect(getProxiedImageUrl("http://:")).toBeUndefined();
-    
+
     spy.mockRestore();
   });
 });

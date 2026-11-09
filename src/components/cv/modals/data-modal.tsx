@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from 'lucide-react';
+import { X } from "lucide-react";
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -35,7 +35,9 @@ export default function DataModal({
           <div>
             <h2 className="text-xl font-bold text-foreground">{title}</h2>
             {description && (
-              <p className="text-sm text-muted-foreground mt-1">{description}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {description}
+              </p>
             )}
           </div>
           <button

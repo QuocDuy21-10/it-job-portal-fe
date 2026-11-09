@@ -3,7 +3,10 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import { type Company, type TopHiringCompany } from "@/features/company/schemas/company.schema";
+import {
+  type Company,
+  type TopHiringCompany,
+} from "@/features/company/schemas/company.schema";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
@@ -14,7 +17,10 @@ interface CompanyCardProps {
 }
 
 function stripHtmlTags(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function CompanyCard({ company, className }: CompanyCardProps) {
@@ -26,12 +32,15 @@ export function CompanyCard({ company, className }: CompanyCardProps) {
     "-";
   const openPositions = new Intl.NumberFormat(locale).format(
     (company as TopHiringCompany).totalOpenJobs ??
-    (company as Company).totalJobs ??
-    0
+      (company as Company).totalJobs ??
+      0
   );
 
   return (
-    <Link href={`/companies/${company._id}`} className={cn("group block h-full", className)}>
+    <Link
+      href={`/companies/${company._id}`}
+      className={cn("group block h-full", className)}
+    >
       <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-xl dark:bg-transparent">
         <CardContent className="flex h-full min-h-[320px] flex-col items-center justify-between gap-6 p-8 text-center">
           <div className="flex flex-col items-center gap-5">

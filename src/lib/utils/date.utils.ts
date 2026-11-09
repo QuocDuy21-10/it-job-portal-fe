@@ -9,9 +9,13 @@ function resolveDateFnsLocale(locale?: string) {
  * Format timestamp thành dạng "3 phút trước", "5 giờ trước"
  * @param timestamp ISO string hoặc Date
  */
-export function formatRelativeTime(timestamp: string | Date, locale?: string): string {
+export function formatRelativeTime(
+  timestamp: string | Date,
+  locale?: string
+): string {
   try {
-    const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+    const date =
+      typeof timestamp === "string" ? new Date(timestamp) : timestamp;
     return formatDistanceToNow(date, {
       addSuffix: true,
       locale: resolveDateFnsLocale(locale),
@@ -29,7 +33,8 @@ export function formatRelativeTime(timestamp: string | Date, locale?: string): s
  */
 export function formatChatTimestamp(timestamp: string | Date): string {
   try {
-    const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+    const date =
+      typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
     if (isToday(date)) {
       return format(date, "HH:mm");
@@ -48,9 +53,13 @@ export function formatChatTimestamp(timestamp: string | Date): string {
 /**
  * Check xem timestamp có trong vòng X phút không
  */
-export function isWithinMinutes(timestamp: string | Date, minutes: number): boolean {
+export function isWithinMinutes(
+  timestamp: string | Date,
+  minutes: number
+): boolean {
   try {
-    const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+    const date =
+      typeof timestamp === "string" ? new Date(timestamp) : timestamp;
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     return diff < minutes * 60 * 1000;

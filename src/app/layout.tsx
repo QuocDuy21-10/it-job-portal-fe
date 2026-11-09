@@ -24,7 +24,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`${roboto.variable} font-sans flex min-h-screen flex-col`}>
+      <body
+        className={`${roboto.variable} font-sans flex min-h-screen flex-col`}
+      >
         <ReduxProvider>
           <CaslProvider>
             <GoogleOAuthProvider>

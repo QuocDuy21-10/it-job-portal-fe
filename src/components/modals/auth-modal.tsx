@@ -26,19 +26,14 @@ import { cn } from "@/lib/utils";
 
 /**
  * AuthModal Component
- * 
+ *
  * A responsive, mobile-friendly authentication modal with Sign In and Sign Up tabs.
  * Dynamically switches to a bottom drawer on mobile and centered dialog on desktop.
  */
 export function AuthModal() {
   const { t } = useI18n();
-  const {
-    isOpen,
-    activeTab,
-    successCallback,
-    closeModal,
-    setActiveTab,
-  } = useAuthModal();
+  const { isOpen, activeTab, successCallback, closeModal, setActiveTab } =
+    useAuthModal();
   const router = useRouter();
   const locale = useLocale();
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -59,15 +54,17 @@ export function AuthModal() {
     }
   };
 
-  const titleText = activeTab === "signin"
-    ? t("authModal.title.signin")
-    : t("authModal.title.signup");
+  const titleText =
+    activeTab === "signin"
+      ? t("authModal.title.signin")
+      : t("authModal.title.signup");
 
-  const descriptionText = activeTab === "signin"
-    ? t("authModal.description.signin")
-    : locale === "vi"
-    ? "Đăng ký để tiếp tục"
-    : "Sign up to continue";
+  const descriptionText =
+    activeTab === "signin"
+      ? t("authModal.description.signin")
+      : locale === "vi"
+        ? "Đăng ký để tiếp tục"
+        : "Sign up to continue";
 
   const tabsContent = (
     <Tabs
@@ -96,7 +93,10 @@ export function AuthModal() {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="signin" className="mt-5 focus-visible:outline-none p-0">
+      <TabsContent
+        value="signin"
+        className="mt-5 focus-visible:outline-none p-0"
+      >
         <LoginForm
           onSuccess={handleLoginSuccess}
           onTabChange={setActiveTab}
@@ -104,7 +104,10 @@ export function AuthModal() {
         />
       </TabsContent>
 
-      <TabsContent value="signup" className="mt-5 focus-visible:outline-none p-0">
+      <TabsContent
+        value="signup"
+        className="mt-5 focus-visible:outline-none p-0"
+      >
         <RegisterForm
           onSuccess={() => setActiveTab("signin")}
           onTabChange={setActiveTab}
@@ -145,9 +148,7 @@ export function AuthModal() {
             {descriptionText}
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-6">
-          {tabsContent}
-        </div>
+        <div className="mt-6">{tabsContent}</div>
       </DialogContent>
     </Dialog>
   );

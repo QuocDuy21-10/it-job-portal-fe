@@ -25,9 +25,7 @@ import { useI18n } from "@/hooks/use-i18n";
 const STREAM_ENDPOINT = `${API_BASE_URL}/chat/message/stream`;
 
 type StreamSendResult =
-  | { status: "started" }
-  | { status: "handled_error" }
-  | { status: "fallback" };
+  { status: "started" } | { status: "handled_error" } | { status: "fallback" };
 
 const getResponseErrorMessage = async (
   response: Response,
@@ -165,7 +163,10 @@ export const useStreamChat = () => {
             const finalChunk = decoder.decode();
 
             if (finalChunk) {
-              const parsedChunk = parseServerSentEventChunk(pending, finalChunk);
+              const parsedChunk = parseServerSentEventChunk(
+                pending,
+                finalChunk
+              );
               pending = parsedChunk.pending;
               parsedChunk.events.forEach(handleParsedEvent);
             }

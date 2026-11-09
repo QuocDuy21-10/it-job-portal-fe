@@ -1,25 +1,28 @@
 import { baseApi } from "@/lib/redux/api";
 import { ApiResponse } from "@/shared/base/api-response.base";
-import { 
-  CVProfile, 
-  UpsertCVProfileRequest 
+import {
+  CVProfile,
+  UpsertCVProfileRequest,
 } from "../schemas/cv-profile.schema";
 
 export const cvProfileApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Upsert CV Profile (Create or Update) with Avatar Upload
-    upsertCVProfile: builder.mutation<ApiResponse<CVProfile>, { data: UpsertCVProfileRequest; avatar?: File }>({
+    upsertCVProfile: builder.mutation<
+      ApiResponse<CVProfile>,
+      { data: UpsertCVProfileRequest; avatar?: File }
+    >({
       query: ({ data, avatar }) => {
         const formData = new FormData();
-        
+
         // Add avatar file if provided
         if (avatar) {
           formData.append("avatar", avatar);
         }
-        
+
         // Add CV profile data as a single JSON string
         formData.append("cvData", JSON.stringify(data));
-        
+
         return {
           url: "/cv-profiles/upsert",
           method: "POST",

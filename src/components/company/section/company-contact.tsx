@@ -39,7 +39,10 @@ export default function CompanyContact({ company }: CompanyContactProps) {
               </div>
             </Tooltip.Trigger>
             <Tooltip.Portal>
-              <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+              <Tooltip.Content
+                sideOffset={6}
+                className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700"
+              >
                 {t("companyDetailPage.contact.addressTooltip")}
                 <Tooltip.Arrow className="fill-slate-900" />
               </Tooltip.Content>
@@ -57,7 +60,7 @@ export default function CompanyContact({ company }: CompanyContactProps) {
                     <Globe className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   {company?.website ? (
-                    <a 
+                    <a
                       href={company.website}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -74,7 +77,10 @@ export default function CompanyContact({ company }: CompanyContactProps) {
               </div>
             </Tooltip.Trigger>
             <Tooltip.Portal>
-              <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+              <Tooltip.Content
+                sideOffset={6}
+                className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700"
+              >
                 {t("companyDetailPage.contact.websiteTooltip")}
                 <Tooltip.Arrow className="fill-slate-900" />
               </Tooltip.Content>

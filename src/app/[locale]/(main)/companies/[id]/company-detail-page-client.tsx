@@ -48,7 +48,10 @@ export default function CompanyDetailPageClient({
   return (
     <div className="space-y-6">
       <Card className="border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg dark:border-border dark:bg-card">
-        <form onSubmit={handleSearchSubmit} className="flex flex-col gap-4 sm:flex-row">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex flex-col gap-4 sm:flex-row"
+        >
           <div className="relative flex-1">
             <Input
               placeholder={t("companyDetailPage.filters.searchPlaceholder")}
@@ -70,10 +73,14 @@ export default function CompanyDetailPageClient({
 
           <Select
             value={selectedLocationCode || "all"}
-            onValueChange={(value) => setSelectedLocationCode(value === "all" ? "" : value)}
+            onValueChange={(value) =>
+              setSelectedLocationCode(value === "all" ? "" : value)
+            }
           >
             <SelectTrigger className="h-11 w-full sm:w-[200px] border-slate-300 bg-white text-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-border dark:bg-card dark:text-slate-100">
-              <SelectValue placeholder={t("companyDetailPage.filters.allLocations")} />
+              <SelectValue
+                placeholder={t("companyDetailPage.filters.allLocations")}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">
@@ -107,4 +114,3 @@ export default function CompanyDetailPageClient({
     </div>
   );
 }
-

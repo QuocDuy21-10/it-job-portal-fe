@@ -23,10 +23,10 @@ export function formatTimeRemaining(seconds: number): string {
  */
 export function maskEmail(email: string): string {
   if (!email || !email.includes("@")) return email;
-  
+
   const [localPart, domain] = email.split("@");
   if (localPart.length <= 2) return email;
-  
+
   const maskedLocal = localPart[0] + "***" + localPart[localPart.length - 1];
   return `${maskedLocal}@${domain}`;
 }

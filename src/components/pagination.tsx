@@ -1,5 +1,10 @@
 import { Button } from "./ui/button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -95,9 +100,19 @@ export function Pagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-6 w-full">
       {/* Items info */}
       <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-        Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{startItem}</span> đến{" "}
-        <span className="font-bold text-slate-900 dark:text-slate-100">{endItem}</span> trong tổng số{" "}
-        <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems}</span> kết quả
+        Hiển thị{" "}
+        <span className="font-bold text-slate-900 dark:text-slate-100">
+          {startItem}
+        </span>{" "}
+        đến{" "}
+        <span className="font-bold text-slate-900 dark:text-slate-100">
+          {endItem}
+        </span>{" "}
+        trong tổng số{" "}
+        <span className="font-bold text-slate-900 dark:text-slate-100">
+          {totalItems}
+        </span>{" "}
+        kết quả
       </div>
 
       {/* Pagination controls */}
@@ -120,7 +135,10 @@ export function Pagination({
           {getPageNumbers().map((page, index) => {
             if (page === "...") {
               return (
-                <span key={`ellipsis-${index}`} className="px-3 text-slate-400 dark:text-slate-500">
+                <span
+                  key={`ellipsis-${index}`}
+                  className="px-3 text-slate-400 dark:text-slate-500"
+                >
                   ...
                 </span>
               );
@@ -163,7 +181,6 @@ export function Pagination({
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
-
       </div>
 
       {/* Page size selector */}
@@ -175,7 +192,10 @@ export function Pagination({
           value={pageSize.toString()}
           onValueChange={handlePageSizeChange}
         >
-          <SelectTrigger className="w-[100px] h-9 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700" aria-label="Select page size">
+          <SelectTrigger
+            className="w-[100px] h-9 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
+            aria-label="Select page size"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

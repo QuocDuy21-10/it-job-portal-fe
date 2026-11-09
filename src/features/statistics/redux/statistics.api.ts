@@ -31,10 +31,7 @@ export const statisticsApi = baseApi.injectEndpoints({
      * Lấy thống kê dashboard cho HR
      * @returns HR dashboard statistics data
      */
-    getHrDashboardStats: builder.query<
-      ApiResponse<IHrDashboardStats>,
-      void
-    >({
+    getHrDashboardStats: builder.query<ApiResponse<IHrDashboardStats>, void>({
       query: () => ({
         url: DASHBOARD_API_ENDPOINTS.hrStats,
         method: "GET",
@@ -45,7 +42,5 @@ export const statisticsApi = baseApi.injectEndpoints({
 });
 
 // Export hooks để sử dụng trong components
-export const {
-  useGetAdminDashboardStatsQuery,
-  useGetHrDashboardStatsQuery,
-} = statisticsApi;
+export const { useGetAdminDashboardStatsQuery, useGetHrDashboardStatsQuery } =
+  statisticsApi;

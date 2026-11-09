@@ -11,11 +11,7 @@ interface AuthLayoutProps {
   description?: string;
 }
 
-export function AuthLayout({ 
-  children, 
-  title,
-  description
-}: AuthLayoutProps) {
+export function AuthLayout({ children, title, description }: AuthLayoutProps) {
   const { t } = useI18n();
   const displayTitle = title || t("authLayout.defaultTitle");
   const displayDescription = description || t("authLayout.defaultDescription");
@@ -33,14 +29,17 @@ export function AuthLayout({
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800" />
-        
+
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        
+        <div
+          className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]" />
-        
+
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-12 py-16 text-white">
           {/* Logo */}
@@ -69,9 +68,7 @@ export function AuthLayout({
 
       {/* Right Side - Form Content */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-4 py-12 bg-background">
-        <div className="w-full max-w-md">
-          {children}
-        </div>
+        <div className="w-full max-w-md">{children}</div>
       </div>
     </div>
   );

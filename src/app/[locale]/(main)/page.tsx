@@ -20,7 +20,10 @@ export async function generateMetadata({
   }
 
   const resolvedLocale = locale as AppLocale;
-  const meta = await getTranslations({ locale: resolvedLocale, namespace: "meta" });
+  const meta = await getTranslations({
+    locale: resolvedLocale,
+    namespace: "meta",
+  });
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,

@@ -3,7 +3,12 @@
 import { Plus, Trash2, Edit2, GraduationCap, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import EducationModal from "../modals/education-modal";
 import { useEducationModal } from "@/hooks/use-education-modal";
@@ -30,7 +35,7 @@ export default function EducationSection({
   onRemove,
 }: EducationSectionProps) {
   const { t, language } = useI18n();
-  
+
   const {
     isOpen,
     mode,
@@ -64,13 +69,13 @@ export default function EducationSection({
         title={t("cv.education.title")}
         description={t("cv.education.description")}
         actionButton={
-            <Button
-              onClick={openAddModal}
-              className="gap-2 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4 " />
-              {t("cv.education.addButton")}
-            </Button>
+          <Button
+            onClick={openAddModal}
+            className="gap-2 bg-primary hover:bg-primary/90"
+          >
+            <Plus className="w-4 h-4 " />
+            {t("cv.education.addButton")}
+          </Button>
         }
       >
         {education.length === 0 ? (

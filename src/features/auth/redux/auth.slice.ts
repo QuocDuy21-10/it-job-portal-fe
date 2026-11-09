@@ -5,10 +5,7 @@ import {
   UserInfo,
   normalizeSavedJobIds,
 } from "../schemas/auth.schema";
-import {
-  isAdminRole,
-  isSuperAdmin,
-} from "@/shared/constants/roles";
+import { isAdminRole, isSuperAdmin } from "@/shared/constants/roles";
 import type { RoleName } from "@/shared/constants/role-values";
 
 const initialState: AuthState = {
@@ -282,20 +279,17 @@ export const selectHasRole =
   };
 
 // ✅ Selector để check if user có quyền truy cập admin panel
-export const selectIsAdmin = createSelector(
-  [selectUserRole],
-  (role) => isAdminRole(role)
+export const selectIsAdmin = createSelector([selectUserRole], (role) =>
+  isAdminRole(role)
 );
 
 // ✅ Selector để check if user là SUPER_ADMIN (bypass tất cả permission check)
-export const selectIsSuperAdmin = createSelector(
-  [selectUserRole],
-  (role) => isSuperAdmin(role)
+export const selectIsSuperAdmin = createSelector([selectUserRole], (role) =>
+  isSuperAdmin(role)
 );
 
-export const selectSavedJobIds = createSelector(
-  [selectUser],
-  (user) => normalizeSavedJobIds(user)
+export const selectSavedJobIds = createSelector([selectUser], (user) =>
+  normalizeSavedJobIds(user)
 );
 
 export const selectJobFavorites = selectSavedJobIds;

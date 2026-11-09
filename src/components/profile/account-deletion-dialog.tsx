@@ -16,9 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  useRequestAccountDeletionMutation,
-} from "@/features/auth/redux/auth.api";
+import { useRequestAccountDeletionMutation } from "@/features/auth/redux/auth.api";
 import { setLogoutAction } from "@/features/auth/redux/auth.slice";
 import { useI18n } from "@/hooks/use-i18n";
 import { useRouter } from "@/i18n/navigation";
@@ -48,7 +46,8 @@ export function AccountDeletionDialog({
   const dispatch = useDispatch();
   const { t, language } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
-  const [requestAccountDeletion, { isLoading }] = useRequestAccountDeletionMutation();
+  const [requestAccountDeletion, { isLoading }] =
+    useRequestAccountDeletionMutation();
 
   const localDeletionSchema = z.object({
     password: z.string().min(1, t("settings.deleteAccount.confirmPassword")),
@@ -79,16 +78,21 @@ export function AccountDeletionDialog({
 
   const handleLocalSubmit = async (data: LocalDeletionFormData) => {
     try {
-      const result = await requestAccountDeletion({ password: data.password }).unwrap();
+      const result = await requestAccountDeletion({
+        password: data.password,
+      }).unwrap();
       const scheduledDate = result.data?.scheduledDeletionAt
         ? formatLocaleDate(result.data.scheduledDeletionAt, language)
         : "";
-      toast.success(t("settings.deleteAccount.requestSuccess", { date: scheduledDate }));
+      toast.success(
+        t("settings.deleteAccount.requestSuccess", { date: scheduledDate })
+      );
       setLoggingOutFlag(true);
       dispatch(setLogoutAction());
       router.push("/login");
     } catch (error: any) {
-      const msg = error?.data?.message || t("settings.deleteAccount.requestError");
+      const msg =
+        error?.data?.message || t("settings.deleteAccount.requestError");
       toast.error(msg);
     }
   };
@@ -99,12 +103,15 @@ export function AccountDeletionDialog({
       const scheduledDate = result.data?.scheduledDeletionAt
         ? formatLocaleDate(result.data.scheduledDeletionAt, language)
         : "";
-      toast.success(t("settings.deleteAccount.requestSuccess", { date: scheduledDate }));
+      toast.success(
+        t("settings.deleteAccount.requestSuccess", { date: scheduledDate })
+      );
       setLoggingOutFlag(true);
       dispatch(setLogoutAction());
       router.push("/login");
     } catch (error: any) {
-      const msg = error?.data?.message || t("settings.deleteAccount.requestError");
+      const msg =
+        error?.data?.message || t("settings.deleteAccount.requestError");
       toast.error(msg);
     }
   };
@@ -128,12 +135,8 @@ export function AccountDeletionDialog({
                   {t("settings.deleteAccount.warningTitle")}
                 </p>
               </div>
-              <p>
-                {t("settings.deleteAccount.warningDescriptionLine1")}
-              </p>
-              <p>
-                {t("settings.deleteAccount.warningDescriptionLine2")}
-              </p>
+              <p>{t("settings.deleteAccount.warningDescriptionLine1")}</p>
+              <p>{t("settings.deleteAccount.warningDescriptionLine2")}</p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -145,7 +148,7 @@ export function AccountDeletionDialog({
           >
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                {t("settings.deleteAccount.confirmTextPrefix")} {" "}
+                {t("settings.deleteAccount.confirmTextPrefix")}{" "}
                 <code className="px-1.5 py-0.5 bg-muted rounded text-destructive font-mono text-xs">
                   DELETE
                 </code>{" "}
@@ -210,7 +213,11 @@ export function AccountDeletionDialog({
                   onClick={() => setShowPassword((s) => !s)}
                   className="absolute inset-y-0 right-2 flex items-center px-2 text-muted-foreground hover:text-foreground"
                   aria-pressed={showPassword}
-                  aria-label={showPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
+                  aria-label={
+                    showPassword
+                      ? t("settingsPage.hidePassword")
+                      : t("settingsPage.showPassword")
+                  }
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />

@@ -175,8 +175,7 @@ export const getPendingToolActionForJob = (
   actionType: ChatToolActionType = "save_job"
 ): IChatToolAction | undefined =>
   message.pendingToolActions?.find(
-    (action) =>
-      action.type === actionType && action.payload.jobId === jobId
+    (action) => action.type === actionType && action.payload.jobId === jobId
   );
 
 export const getMissingRecommendedJobIds = (message: IMessage): string[] => {

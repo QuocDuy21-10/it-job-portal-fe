@@ -8,9 +8,7 @@ interface StatisticsLoadingStateProps {
   label: string;
 }
 
-export function StatisticsLoadingState({
-  label,
-}: StatisticsLoadingStateProps) {
+export function StatisticsLoadingState({ label }: StatisticsLoadingStateProps) {
   return (
     <div className="flex min-h-[320px] items-center justify-center">
       <div className="flex flex-col items-center gap-3 text-center text-muted-foreground">

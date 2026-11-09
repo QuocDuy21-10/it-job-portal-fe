@@ -199,15 +199,12 @@ describe("useJobList", () => {
 
   it("updates applied and draft search state when initialSearchState changes", () => {
     let initialSearchState = createInitialSearchState({ q: "initial" });
-    const { result, rerender } = renderHook(
-      (props) => useJobList(props),
-      {
-        initialProps: {
-          initialData: createInitialData(),
-          initialSearchState,
-        },
-      }
-    );
+    const { result, rerender } = renderHook((props) => useJobList(props), {
+      initialProps: {
+        initialData: createInitialData(),
+        initialSearchState,
+      },
+    });
 
     expect(result.current.searchQuery).toBe("initial");
     expect(result.current.searchInput).toBe("initial");

@@ -20,21 +20,23 @@ interface ClassicCVTemplateProps {
  * Single-page traditional layout with clear sections
  */
 const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
-  const { 
-    personalInfo, 
-    education, 
-    experience, 
-    skills, 
-    languages, 
-    projects, 
-    certificates, 
-    awards 
+  const {
+    personalInfo,
+    education,
+    experience,
+    skills,
+    languages,
+    projects,
+    certificates,
+    awards,
   } = cvData;
 
   // Use proxied URL to avoid CORS issues
   const personalInfoWithProxiedAvatar = {
     ...personalInfo,
-    avatar: getProxiedImageUrl(personalInfo.avatar || "/images/avatar-default.jpg"),
+    avatar: getProxiedImageUrl(
+      personalInfo.avatar || "/images/avatar-default.jpg"
+    ),
   };
 
   return (
@@ -59,17 +61,22 @@ const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
               <View key={edu.id} style={classicStyles.educationItem}>
                 <View style={classicStyles.educationHeader}>
                   <View>
-                    <Text style={classicStyles.educationSchool}>{edu.school}</Text>
+                    <Text style={classicStyles.educationSchool}>
+                      {edu.school}
+                    </Text>
                     <Text style={classicStyles.educationDegree}>
                       {edu.degree} - {edu.field}
                     </Text>
                   </View>
                   <Text style={classicStyles.educationDate}>
-                    {formatDateForDisplay(edu.startDate)} - {formatDateForDisplay(edu.endDate)}
+                    {formatDateForDisplay(edu.startDate)} -{" "}
+                    {formatDateForDisplay(edu.endDate)}
                   </Text>
                 </View>
                 {edu.description && (
-                  <Text style={classicStyles.educationDescription}>{edu.description}</Text>
+                  <Text style={classicStyles.educationDescription}>
+                    {edu.description}
+                  </Text>
                 )}
               </View>
             ))}
@@ -96,14 +103,21 @@ const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
               <View key={exp.id} style={classicStyles.experienceItem}>
                 <View style={classicStyles.experienceHeader}>
                   <View style={classicStyles.experienceLeftContent}>
-                    <Text style={classicStyles.experienceCompany}>{exp.company}</Text>
-                    <Text style={classicStyles.experiencePosition}>{exp.position}</Text>
+                    <Text style={classicStyles.experienceCompany}>
+                      {exp.company}
+                    </Text>
+                    <Text style={classicStyles.experiencePosition}>
+                      {exp.position}
+                    </Text>
                     {exp.description && (
-                      <Text style={classicStyles.experienceDescription}>{exp.description}</Text>
+                      <Text style={classicStyles.experienceDescription}>
+                        {exp.description}
+                      </Text>
                     )}
                   </View>
                   <Text style={classicStyles.experienceDate}>
-                    {formatDateForDisplay(exp.startDate)} - {formatDateForDisplay(exp.endDate)}
+                    {formatDateForDisplay(exp.startDate)} -{" "}
+                    {formatDateForDisplay(exp.endDate)}
                   </Text>
                 </View>
               </View>
@@ -123,10 +137,14 @@ const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
                   </Text>
                 )}
                 {project.description && (
-                  <Text style={classicStyles.projectDescription}>{project.description}</Text>
+                  <Text style={classicStyles.projectDescription}>
+                    {project.description}
+                  </Text>
                 )}
                 {project.link && (
-                  <Text style={classicStyles.projectLink}>Link: {project.link}</Text>
+                  <Text style={classicStyles.projectLink}>
+                    Link: {project.link}
+                  </Text>
                 )}
               </View>
             ))}
@@ -140,7 +158,9 @@ const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
               <View key={cert.id} style={classicStyles.certificateItem}>
                 <View style={classicStyles.certificateHeader}>
                   <View style={classicStyles.certificateLeftContent}>
-                    <Text style={classicStyles.certificateName}>{cert.name}</Text>
+                    <Text style={classicStyles.certificateName}>
+                      {cert.name}
+                    </Text>
                     <Text style={classicStyles.certificateIssuer}>
                       Tổ chức cấp: {cert.issuer}
                     </Text>
@@ -174,7 +194,9 @@ const ClassicCVTemplate: React.FC<ClassicCVTemplateProps> = ({ cvData }) => {
                   <View style={classicStyles.awardLeftContent}>
                     <Text style={classicStyles.awardName}>{award.name}</Text>
                     {award.description && (
-                      <Text style={classicStyles.awardDescription}>{award.description}</Text>
+                      <Text style={classicStyles.awardDescription}>
+                        {award.description}
+                      </Text>
                     )}
                   </View>
                   <Text style={classicStyles.awardDate}>

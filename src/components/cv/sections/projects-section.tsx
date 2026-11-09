@@ -3,7 +3,12 @@
 import { Plus, Trash2, Edit2, FolderGit2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import ProjectModal from "../modals/project-modal";
 import { useProjectModal } from "@/hooks/use-project-modal";
@@ -64,13 +69,13 @@ export default function ProjectsSection({
         title={t("cv.projects.title")}
         description={t("cv.projects.description")}
         actionButton={
-            <Button
-              onClick={openAddModal}
-              className="gap-2 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4" />
-              {t("cv.projects.addButton")}
-            </Button>
+          <Button
+            onClick={openAddModal}
+            className="gap-2 bg-primary hover:bg-primary/90"
+          >
+            <Plus className="w-4 h-4" />
+            {t("cv.projects.addButton")}
+          </Button>
         }
       >
         {projects.length === 0 ? (
@@ -102,7 +107,7 @@ export default function ProjectsSection({
                         </p>
                       )}
                       {project.link && (
-                        <a 
+                        <a
                           href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -140,7 +145,9 @@ export default function ProjectsSection({
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDelete(project.id, project.name)}
+                            onClick={() =>
+                              handleDelete(project.id, project.name)
+                            }
                             className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

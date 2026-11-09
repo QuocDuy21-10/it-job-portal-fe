@@ -17,7 +17,10 @@ import {
 
 export const resumeApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getResumes: builder.query<ApiResponse<PaginatedResult<Resume>>, PaginatedQueryParams>({
+    getResumes: builder.query<
+      ApiResponse<PaginatedResult<Resume>>,
+      PaginatedQueryParams
+    >({
       query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
         let query = `page=${page}&limit=${limit}&populate=companyId,jobId&fields=companyId.name,jobId.name`;
         if (filter) query += `&${filter}`;

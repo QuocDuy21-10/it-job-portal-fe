@@ -3,9 +3,18 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AwardRequestSchema, type AwardRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  AwardRequestSchema,
+  type AwardRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -47,11 +56,13 @@ export default function AwardModal({
 
   useEffect(() => {
     if (isOpen) {
-      reset(award || {
-        name: "",
-        date: "",
-        description: "",
-      });
+      reset(
+        award || {
+          name: "",
+          date: "",
+          description: "",
+        }
+      );
     }
   }, [isOpen, award, reset]);
 
@@ -70,16 +81,18 @@ export default function AwardModal({
       <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.awards.addTitle") : t("cv.awards.editTitle")}
+            {mode === "add"
+              ? t("cv.awards.addTitle")
+              : t("cv.awards.editTitle")}
           </DialogTitle>
-          <DialogDescription>
-            {t("cv.awards.description")}
-          </DialogDescription>
+          <DialogDescription>{t("cv.awards.description")}</DialogDescription>
         </DialogHeader>
 
         <ModalHeaderBanner
           type="award"
-          title={mode === "add" ? t("cv.awards.addTitle") : t("cv.awards.editTitle")}
+          title={
+            mode === "add" ? t("cv.awards.addTitle") : t("cv.awards.editTitle")
+          }
           description={t("cv.awards.description")}
         />
 
@@ -91,14 +104,17 @@ export default function AwardModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.awards.nameLabel")} <span className="text-destructive">*</span>
+                  {t("cv.awards.nameLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.awards.namePlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.name
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.name && (
@@ -117,17 +133,26 @@ export default function AwardModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.awards.dateLabel")} <span className="text-destructive">*</span>
+                  {t("cv.awards.dateLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="month"
-                  value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                  value={
+                    field.value
+                      ? new Date(field.value).toISOString().slice(0, 7)
+                      : ""
+                  }
                   onChange={(e) => {
-                    const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                    const dateValue = e.target.value
+                      ? new Date(e.target.value + "-01").toISOString()
+                      : "";
                     field.onChange(dateValue);
                   }}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.date ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.date
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.date && (
@@ -146,7 +171,10 @@ export default function AwardModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.awards.descriptionLabel")} <span className="text-muted-foreground text-xs">(Optional)</span>
+                  {t("cv.awards.descriptionLabel")}{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (Optional)
+                  </span>
                 </label>
                 <textarea
                   {...field}
@@ -154,12 +182,15 @@ export default function AwardModal({
                   placeholder={t("cv.awards.descriptionPlaceholder")}
                   rows={4}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all ${
-                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.description
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.description && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.description.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.description.message}
                   </p>
                 )}
               </div>
@@ -180,7 +211,9 @@ export default function AwardModal({
               type="submit"
               className="px-6 bg-primary hover:bg-primary/90"
             >
-              {mode === "add" ? t("cv.awards.saveLabel") : t("cv.awards.updateLabel")}
+              {mode === "add"
+                ? t("cv.awards.saveLabel")
+                : t("cv.awards.updateLabel")}
             </Button>
           </div>
         </form>

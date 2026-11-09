@@ -59,17 +59,23 @@ export function useCompanyFollow(companyId: string) {
       try {
         if (previousState) {
           await unfollowCompany(companyId).unwrap();
-          toast.success(t("followButton.toasts.unfollowSuccess"), { duration: 1000 });
+          toast.success(t("followButton.toasts.unfollowSuccess"), {
+            duration: 1000,
+          });
         } else {
           await followCompany(companyId).unwrap();
-          toast.success(t("followButton.toasts.followSuccess"), { duration: 1000 });
+          toast.success(t("followButton.toasts.followSuccess"), {
+            duration: 1000,
+          });
         }
       } catch (error: any) {
         setOptimisticIsFollowing(previousState);
 
         console.error("Toggle company follow error:", error);
         const errorMessage =
-          error?.data?.message || error?.message || t("followButton.toasts.error");
+          error?.data?.message ||
+          error?.message ||
+          t("followButton.toasts.error");
         toast.error(errorMessage);
       }
     },

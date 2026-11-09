@@ -25,7 +25,9 @@ export function useProjectModal(
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentProject, setCurrentProject] = useState<Project | undefined>(undefined);
+  const [currentProject, setCurrentProject] = useState<Project | undefined>(
+    undefined
+  );
 
   const openAddModal = () => {
     setMode("add");

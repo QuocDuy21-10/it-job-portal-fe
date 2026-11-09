@@ -36,7 +36,9 @@ import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 
 function LoginContent() {
-  const [socialLoading, setSocialLoading] = useState<"google" | "facebook" | null>(null);
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "facebook" | null
+  >(null);
   const [showVerifiedMessage, setShowVerifiedMessage] = useState(false);
   const hasShownToast = useRef(false);
 
@@ -81,7 +83,8 @@ function LoginContent() {
   });
 
   const [login, { isLoading }] = useLoginMutation();
-  const [googleLogin, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
+  const [googleLogin, { isLoading: isGoogleLoading }] =
+    useGoogleLoginMutation();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -108,7 +111,7 @@ function LoginContent() {
         const redirectUrl = getRedirectUrl(userRole);
 
         // Đợi redux-persist lưu state vào localStorage trước khi redirect
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         router.push(redirectUrl);
       }
@@ -157,7 +160,7 @@ function LoginContent() {
         const redirectUrl = getRedirectUrl(userRole);
 
         // Đợi redux-persist lưu state vào localStorage trước khi redirect
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         router.push(redirectUrl);
       }
@@ -239,10 +242,7 @@ function LoginContent() {
               <Label htmlFor="password" className="dark:text-gray-200">
                 {t("authModal.login.fields.password.label")}
               </Label>
-              <Link
-                href="/forgot-password"
-                className="text-sm auth-link"
-              >
+              <Link href="/forgot-password" className="text-sm auth-link">
                 {t("authModal.login.forgotPassword")}
               </Link>
             </div>
@@ -257,9 +257,9 @@ function LoginContent() {
           </div>
 
           {/* Submit Button */}
-          <Button 
-            type="submit" 
-            className="w-full auth-button-primary h-11" 
+          <Button
+            type="submit"
+            className="w-full auth-button-primary h-11"
             disabled={isLoading}
           >
             {isLoading ? (

@@ -53,7 +53,9 @@ export function CountdownTimer({
         <Clock
           className={cn(
             "w-5 h-5 transition-colors",
-            isLowTime ? "text-destructive animate-pulse" : "text-muted-foreground"
+            isLowTime
+              ? "text-destructive animate-pulse"
+              : "text-muted-foreground"
           )}
         />
         {/* Circular progress */}
@@ -76,14 +78,15 @@ export function CountdownTimer({
           />
         </svg>
       </div>
-      
+
       <span
         className={cn(
           "text-sm font-mono font-medium tabular-nums transition-colors",
           isLowTime ? "text-destructive" : "text-muted-foreground"
         )}
       >
-        {String(minutes).padStart(2, "0")}:{String(remainingSeconds).padStart(2, "0")}
+        {String(minutes).padStart(2, "0")}:
+        {String(remainingSeconds).padStart(2, "0")}
       </span>
     </div>
   );

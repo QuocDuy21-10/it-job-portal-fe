@@ -22,7 +22,10 @@ type AuthMeCacheUser = {
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<ApiResponse<PaginatedResult<User>>, PaginatedQueryParams>({
+    getUsers: builder.query<
+      ApiResponse<PaginatedResult<User>>,
+      PaginatedQueryParams
+    >({
       query: ({ page = 1, limit = 10, filter = "", sort = "createdAt" }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;
@@ -81,13 +84,19 @@ export const userApi = baseApi.injectEndpoints({
     }),
 
     // Lock user account
-    lockUser: builder.mutation<ApiResponse<User>, { id: string; reason?: string }>({
+    lockUser: builder.mutation<
+      ApiResponse<User>,
+      { id: string; reason?: string }
+    >({
       query: ({ id, reason }) => ({
         url: `/users/${id}/lock`,
         method: "PATCH",
         data: reason ? { reason } : {},
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "User", id }, "User"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "User", id },
+        "User",
+      ],
     }),
 
     // Unlock user account
@@ -216,7 +225,10 @@ export const userApi = baseApi.injectEndpoints({
             if (draft.data?.user) {
               const currentFollowing = draft.data.user.companyFollowed || [];
               if (!currentFollowing.includes(companyId)) {
-                draft.data.user.companyFollowed = [...currentFollowing, companyId];
+                draft.data.user.companyFollowed = [
+                  ...currentFollowing,
+                  companyId,
+                ];
               }
             }
           })

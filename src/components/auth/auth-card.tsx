@@ -1,5 +1,11 @@
 import { ReactNode } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface AuthCardProps {
   title?: string;
@@ -12,9 +18,16 @@ interface AuthCardProps {
  * AuthCard - Unified card wrapper for auth forms
  * Provides consistent styling, shadow, and spacing
  */
-export function AuthCard({ title, description, children, className = "" }: AuthCardProps) {
+export function AuthCard({
+  title,
+  description,
+  children,
+  className = "",
+}: AuthCardProps) {
   return (
-    <Card className={`shadow-xl border-0 backdrop-blur-sm bg-white/95 dark:bg-slate-800/95 ${className}`}>
+    <Card
+      className={`shadow-xl border-0 backdrop-blur-sm bg-white/95 dark:bg-slate-800/95 ${className}`}
+    >
       {(title || description) && (
         <CardHeader className="space-y-1 pb-4">
           {title && (

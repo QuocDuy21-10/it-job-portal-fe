@@ -10,7 +10,7 @@ export const modernStyles = StyleSheet.create({
   page: {
     flexDirection: "row",
     fontFamily: "Roboto",
-    fontSize: 10, 
+    fontSize: 10,
     lineHeight: 1.5,
   },
 

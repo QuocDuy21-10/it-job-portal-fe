@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useState, useEffect, KeyboardEvent, ClipboardEvent } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  KeyboardEvent,
+  ClipboardEvent,
+} from "react";
 import { cn } from "@/lib/utils";
 
 interface OTPInputProps {
@@ -68,7 +74,7 @@ export function OTPInput({
     if (e.key === "Backspace") {
       e.preventDefault();
       const newValue = value.split("");
-      
+
       if (newValue[index]) {
         // Nếu ô hiện tại có giá trị, xóa nó
         newValue[index] = "";
@@ -146,42 +152,44 @@ export function OTPInput({
               "w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold rounded-xl",
               "transition-all duration-200 ease-out",
               "border-2 outline-none",
-              
+
               // Background
               "bg-background dark:bg-gray-900",
-              
+
               // Normal state
               "border-border dark:border-gray-700",
-              
+
               // Hover state
-              !disabled && "hover:border-primary/40 dark:hover:border-primary/40",
-              
+              !disabled &&
+                "hover:border-primary/40 dark:hover:border-primary/40",
+
               // Focus state
               isActive && [
                 "border-primary dark:border-primary",
                 "ring-4 ring-primary/20 dark:ring-primary/30",
                 "scale-105",
               ],
-              
+
               // Filled state
-              isFilled && !isActive && [
-                "border-primary/60 dark:border-primary/60",
-                "bg-primary/5 dark:bg-primary/10",
-              ],
-              
+              isFilled &&
+                !isActive && [
+                  "border-primary/60 dark:border-primary/60",
+                  "bg-primary/5 dark:bg-primary/10",
+                ],
+
               // Error state
               error && [
                 "border-destructive dark:border-red-500",
                 "bg-destructive/5 dark:bg-red-500/10",
                 isActive && "ring-destructive/20 dark:ring-red-500/30",
               ],
-              
+
               // Disabled state
               disabled && [
                 "opacity-50 cursor-not-allowed",
                 "bg-muted dark:bg-gray-800",
               ],
-              
+
               // Text color
               "text-foreground dark:text-white",
               error && "text-destructive dark:text-red-400"

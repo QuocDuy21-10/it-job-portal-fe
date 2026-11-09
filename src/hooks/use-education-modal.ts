@@ -25,7 +25,9 @@ export function useEducationModal(
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentEducation, setCurrentEducation] = useState<Education | undefined>(undefined);
+  const [currentEducation, setCurrentEducation] = useState<
+    Education | undefined
+  >(undefined);
 
   const openAddModal = () => {
     setMode("add");
@@ -52,7 +54,10 @@ export function useEducationModal(
       };
       onAdd(newEducation);
       toast.success(t("cv.toasts.educationAddSuccess"), {
-        description: t("cv.toasts.educationAdded", { school: data.school, degree: data.degree }),
+        description: t("cv.toasts.educationAdded", {
+          school: data.school,
+          degree: data.degree,
+        }),
         duration: 2000,
       });
     } else if (mode === "edit" && currentEducation) {

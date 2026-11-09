@@ -85,16 +85,10 @@ describe("chat message utils", () => {
     const now = Date.parse("2026-05-14T00:00:00.000Z");
 
     expect(
-      isChatToolActionExpired(
-        { expiresAt: "2026-05-13T23:59:59.000Z" },
-        now
-      )
+      isChatToolActionExpired({ expiresAt: "2026-05-13T23:59:59.000Z" }, now)
     ).toBe(true);
     expect(
-      isChatToolActionExpired(
-        { expiresAt: "2026-05-14T00:00:01.000Z" },
-        now
-      )
+      isChatToolActionExpired({ expiresAt: "2026-05-14T00:00:01.000Z" }, now)
     ).toBe(false);
     expect(isChatToolActionExpired({}, now)).toBe(false);
   });

@@ -33,8 +33,18 @@ export default function PersonalInfoPage() {
 
   const personalInfoSchema = useMemo(() => {
     return z.object({
-      name: z.string().min(2, t("authModal.validation.name.min") || "Name must be at least 2 characters"),
-      email: z.string().email(t("authModal.validation.email.invalid") || "Invalid email address"),
+      name: z
+        .string()
+        .min(
+          2,
+          t("authModal.validation.name.min") ||
+            "Name must be at least 2 characters"
+        ),
+      email: z
+        .string()
+        .email(
+          t("authModal.validation.email.invalid") || "Invalid email address"
+        ),
     });
   }, [t]);
 
@@ -93,10 +103,16 @@ export default function PersonalInfoPage() {
         };
         updateUserLoginInfo(dispatch, updatedUser);
       }
-      toast.success(t("adminPages.personalInfo.toasts.success") || "Cập nhật thông tin thành công!");
+      toast.success(
+        t("adminPages.personalInfo.toasts.success") ||
+          "Cập nhật thông tin thành công!"
+      );
     } catch (error: any) {
       console.error("Update personal info error:", error);
-      const msg = error?.data?.message || t("adminPages.personalInfo.toasts.error") || "Cập nhật thông tin thất bại.";
+      const msg =
+        error?.data?.message ||
+        t("adminPages.personalInfo.toasts.error") ||
+        "Cập nhật thông tin thất bại.";
       toast.error(msg);
     }
   };
@@ -118,7 +134,9 @@ export default function PersonalInfoPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
               <User className="h-4 w-4 text-white" />
             </div>
-            <h1 className="admin-page-title">{t("adminPages.personalInfo.title")}</h1>
+            <h1 className="admin-page-title">
+              {t("adminPages.personalInfo.title")}
+            </h1>
           </div>
           <p className="admin-page-description">
             {t("adminPages.personalInfo.description")}
@@ -143,7 +161,9 @@ export default function PersonalInfoPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {user?.name}
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {user?.email}
+            </p>
             {user?.role && (
               <Badge variant="secondary" className="text-xs">
                 {user.role}
@@ -166,7 +186,10 @@ export default function PersonalInfoPage() {
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder={t("authModal.register.fields.name.placeholder") || "Nguyễn Văn A"}
+                      placeholder={
+                        t("authModal.register.fields.name.placeholder") ||
+                        "Nguyễn Văn A"
+                      }
                       disabled={isUpdating}
                       className="bg-gray-50/50 dark:bg-secondary/30 focus-ring-primary"
                     />
@@ -189,7 +212,10 @@ export default function PersonalInfoPage() {
                     <Input
                       {...field}
                       type="email"
-                      placeholder={t("authModal.register.fields.email.placeholder") || "example@email.com"}
+                      placeholder={
+                        t("authModal.register.fields.email.placeholder") ||
+                        "example@email.com"
+                      }
                       disabled={true}
                       className="bg-gray-50/50 dark:bg-secondary/30 focus-ring-primary"
                     />

@@ -45,13 +45,17 @@ jest.mock("@/components/cv/sections/personal-info-section", () => {
 
 jest.mock("@/components/cv/sections/education-section", () => {
   return function MockEducationSection({ education }: any) {
-    return <section data-testid="education-section">{education.length}</section>;
+    return (
+      <section data-testid="education-section">{education.length}</section>
+    );
   };
 });
 
 jest.mock("@/components/cv/sections/work-experience-section", () => {
   return function MockWorkExperienceSection({ experience }: any) {
-    return <section data-testid="experience-section">{experience.length}</section>;
+    return (
+      <section data-testid="experience-section">{experience.length}</section>
+    );
   };
 });
 
@@ -63,7 +67,9 @@ jest.mock("@/components/cv/sections/skills-section", () => {
 
 jest.mock("@/components/cv/sections/languages-section", () => {
   return function MockLanguagesSection({ languages }: any) {
-    return <section data-testid="languages-section">{languages.length}</section>;
+    return (
+      <section data-testid="languages-section">{languages.length}</section>
+    );
   };
 });
 
@@ -75,7 +81,11 @@ jest.mock("@/components/cv/sections/projects-section", () => {
 
 jest.mock("@/components/cv/sections/certificates-section", () => {
   return function MockCertificatesSection({ certificates }: any) {
-    return <section data-testid="certificates-section">{certificates.length}</section>;
+    return (
+      <section data-testid="certificates-section">
+        {certificates.length}
+      </section>
+    );
   };
 });
 
@@ -87,7 +97,11 @@ jest.mock("@/components/cv/sections/awards-section", () => {
 
 jest.mock("@/components/cv/completion-progress", () => {
   return function MockCompletionProgress({ cvData }: any) {
-    return <aside data-testid="completion-progress">{cvData.personalInfo.fullName}</aside>;
+    return (
+      <aside data-testid="completion-progress">
+        {cvData.personalInfo.fullName}
+      </aside>
+    );
   };
 });
 
@@ -151,11 +165,19 @@ describe("CreateCVPage", () => {
       expect(fetchMyCVProfile).toHaveBeenCalledTimes(1);
     });
 
-    expect(await screen.findByTestId("personal-info-section")).toHaveTextContent("Nguyen Van A");
-    expect(screen.getByTestId("personal-info-section")).toHaveTextContent("user@example.com");
-    expect(screen.getByTestId("personal-info-section")).toHaveTextContent("https://example.com/avatar.jpg");
+    expect(
+      await screen.findByTestId("personal-info-section")
+    ).toHaveTextContent("Nguyen Van A");
+    expect(screen.getByTestId("personal-info-section")).toHaveTextContent(
+      "user@example.com"
+    );
+    expect(screen.getByTestId("personal-info-section")).toHaveTextContent(
+      "https://example.com/avatar.jpg"
+    );
     expect(screen.getByTestId("education-section")).toHaveTextContent("1");
-    expect(screen.getByTestId("completion-progress")).toHaveTextContent("Nguyen Van A");
+    expect(screen.getByTestId("completion-progress")).toHaveTextContent(
+      "Nguyen Van A"
+    );
     expect(mockUseLazyGetMeQuery).not.toHaveBeenCalled();
   });
 });

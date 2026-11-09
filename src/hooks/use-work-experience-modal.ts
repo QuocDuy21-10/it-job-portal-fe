@@ -25,7 +25,9 @@ export function useWorkExperienceModal(
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentExperience, setCurrentExperience] = useState<WorkExperience | undefined>(undefined);
+  const [currentExperience, setCurrentExperience] = useState<
+    WorkExperience | undefined
+  >(undefined);
 
   const openAddModal = () => {
     setMode("add");

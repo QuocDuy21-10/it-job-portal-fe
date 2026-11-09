@@ -246,8 +246,11 @@ describe("useCompanyFollow", () => {
 
     expect(mockUnfollowCompany).toHaveBeenCalledWith("company-1");
     expect(result.current.isFollowing).toBe(false);
-    expect(mockToastSuccess).toHaveBeenCalledWith("followButton.toasts.unfollowSuccess", {
-      duration: 1000,
-    });
+    expect(mockToastSuccess).toHaveBeenCalledWith(
+      "followButton.toasts.unfollowSuccess",
+      {
+        duration: 1000,
+      }
+    );
   });
 });

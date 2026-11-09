@@ -21,12 +21,20 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
             {cvData.personalInfo.fullName || "Họ và Tên"}
           </h1>
           {cvData.personalInfo.title && (
-            <p className="text-base text-gray-600 mt-1">{cvData.personalInfo.title}</p>
+            <p className="text-base text-gray-600 mt-1">
+              {cvData.personalInfo.title}
+            </p>
           )}
           <div className="flex flex-wrap gap-3 mt-3 text-xs text-gray-600">
-            {cvData.personalInfo.phone && <span>{cvData.personalInfo.phone}</span>}
-            {cvData.personalInfo.email && <span>{cvData.personalInfo.email}</span>}
-            {cvData.personalInfo.address && <span>{cvData.personalInfo.address}</span>}
+            {cvData.personalInfo.phone && (
+              <span>{cvData.personalInfo.phone}</span>
+            )}
+            {cvData.personalInfo.email && (
+              <span>{cvData.personalInfo.email}</span>
+            )}
+            {cvData.personalInfo.address && (
+              <span>{cvData.personalInfo.address}</span>
+            )}
             {cvData.personalInfo.birthday && (
               <span>{formatDateDisplay(cvData.personalInfo.birthday)}</span>
             )}
@@ -35,8 +43,8 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
                 {cvData.personalInfo.gender === "male"
                   ? "Nam"
                   : cvData.personalInfo.gender === "female"
-                  ? "Nữ"
-                  : "Khác"}
+                    ? "Nữ"
+                    : "Khác"}
               </span>
             )}
             {cvData.personalInfo.personalLink && (
@@ -81,11 +89,16 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
               <div key={exp.id}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{exp.position}</h3>
-                    <p className="text-sm text-gray-600 mt-0.5">{exp.company}</p>
+                    <h3 className="font-semibold text-gray-900">
+                      {exp.position}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-0.5">
+                      {exp.company}
+                    </p>
                   </div>
                   <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
-                    {formatDateDisplay(exp.startDate)} - {formatDateDisplay(exp.endDate)}
+                    {formatDateDisplay(exp.startDate)} -{" "}
+                    {formatDateDisplay(exp.endDate)}
                   </span>
                 </div>
                 {exp.description && (
@@ -110,13 +123,16 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
               <div key={edu.id}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{edu.school}</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      {edu.school}
+                    </h3>
                     <p className="text-sm text-gray-600 mt-0.5">
                       {edu.degree} - {edu.field}
                     </p>
                   </div>
                   <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
-                    {formatDateDisplay(edu.startDate)} - {formatDateDisplay(edu.endDate)}
+                    {formatDateDisplay(edu.startDate)} -{" "}
+                    {formatDateDisplay(edu.endDate)}
                   </span>
                 </div>
                 {edu.description && (
@@ -137,7 +153,9 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
             Kỹ năng
           </h2>
           <p className="text-sm text-gray-700">
-            {cvData.skills.map((skill) => `${skill.name} (${skill.level})`).join(" • ")}
+            {cvData.skills
+              .map((skill) => `${skill.name} (${skill.level})`)
+              .join(" • ")}
           </p>
         </section>
       )}
@@ -153,7 +171,9 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
               <div key={project.id}>
                 <h3 className="font-semibold text-gray-900">{project.name}</h3>
                 {project.position && (
-                  <p className="text-sm text-gray-600 mt-0.5">Vị trí: {project.position}</p>
+                  <p className="text-sm text-gray-600 mt-0.5">
+                    Vị trí: {project.position}
+                  </p>
                 )}
                 <p className="text-sm text-gray-700 mt-2 leading-relaxed">
                   {project.description}
@@ -200,7 +220,9 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold text-gray-900">{cert.name}</h3>
-                    <p className="text-sm text-gray-600 mt-0.5">Tổ chức cấp: {cert.issuer}</p>
+                    <p className="text-sm text-gray-600 mt-0.5">
+                      Tổ chức cấp: {cert.issuer}
+                    </p>
                   </div>
                   <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
                     {formatDateDisplay(cert.date)}
@@ -223,7 +245,9 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
               <div key={award.id}>
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{award.name}</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      {award.name}
+                    </h3>
                     {award.description && (
                       <p className="text-sm text-gray-700 mt-1 leading-relaxed">
                         {award.description}

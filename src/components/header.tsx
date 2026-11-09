@@ -1,6 +1,20 @@
 "use client";
 
-import { Briefcase, Menu, X, User, LogOut, Settings, FileText, PlusCircle, Mail, Bell, Globe, ChevronDown, Check } from "lucide-react";
+import {
+  Briefcase,
+  Menu,
+  X,
+  User,
+  LogOut,
+  Settings,
+  FileText,
+  PlusCircle,
+  Mail,
+  Bell,
+  Globe,
+  ChevronDown,
+  Check,
+} from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -33,7 +47,8 @@ export function Header() {
   const { language, setLanguage, t, mounted: i18nMounted } = useI18n();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const { user, isAuthenticated, isRehydrated } = useAuth();
-  const hasToken = typeof window !== "undefined" && !!localStorage.getItem("access_token");
+  const hasToken =
+    typeof window !== "undefined" && !!localStorage.getItem("access_token");
   const pathname = usePathname();
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -57,7 +72,8 @@ export function Header() {
   }, []);
 
   const isJobsActive = pathname === "/jobs" || pathname.startsWith("/jobs/");
-  const isCompaniesActive = pathname === "/companies" || pathname.startsWith("/companies/");
+  const isCompaniesActive =
+    pathname === "/companies" || pathname.startsWith("/companies/");
 
   useEffect(() => {
     setIsMounted(true);
@@ -107,7 +123,6 @@ export function Header() {
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-white/10 dark:bg-[#101528] supports-[backdrop-filter]:dark:bg-[#101528]">
         <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-          
           {/* Mobile Header Left Section: Hamburger & Logo text */}
           <div className="flex md:hidden items-center gap-4">
             <button
@@ -193,22 +208,26 @@ export function Header() {
             ) : isAuthenticated && user ? (
               <>
                 <NotificationBell />
-                <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen} modal={false}>
+                <DropdownMenu
+                  open={userMenuOpen}
+                  onOpenChange={setUserMenuOpen}
+                  modal={false}
+                >
                   <DropdownMenuTrigger asChild>
-                      <button
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-primary/20 bg-secondary overflow-hidden focus:outline-none focus-visible:outline-none hover:shadow-md transition-all duration-300 hover:scale-105 data-[state=open]:ring-2 data-[state=open]:ring-primary/20"
-                        aria-label="User menu"
-                      >
-                        <Image
-                          src={user?.avatar || '/images/avatar-default.jpg'}
-                          alt={user?.name || user?.email || "avatar"}
-                          width={40}
-                          height={40}
-                          className="object-cover rounded-full"
-                        />
-                      </button>
+                    <button
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                      className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-primary/20 bg-secondary overflow-hidden focus:outline-none focus-visible:outline-none hover:shadow-md transition-all duration-300 hover:scale-105 data-[state=open]:ring-2 data-[state=open]:ring-primary/20"
+                      aria-label="User menu"
+                    >
+                      <Image
+                        src={user?.avatar || "/images/avatar-default.jpg"}
+                        alt={user?.name || user?.email || "avatar"}
+                        width={40}
+                        height={40}
+                        className="object-cover rounded-full"
+                      />
+                    </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
@@ -217,12 +236,21 @@ export function Header() {
                     onMouseLeave={handleMouseLeave}
                   >
                     <DropdownMenuLabel>
-                      {user?.name && <div className="font-semibold truncate">{user.name}</div>}
-                      <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
+                      {user?.name && (
+                        <div className="font-semibold truncate">
+                          {user.name}
+                        </div>
+                      )}
+                      <div className="text-xs text-muted-foreground truncate">
+                        {user?.email}
+                      </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=overview" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=overview"
+                        className="cursor-pointer"
+                      >
                         <User className="mr-2 h-4 w-4" />
                         {i18nMounted ? t("nav.dashboard") : "Dashboard"}
                       </Link>
@@ -231,42 +259,64 @@ export function Header() {
                       <DropdownMenuItem asChild>
                         <Link href="/admin" className="cursor-pointer">
                           <Settings className="mr-2 h-4 w-4" />
-                          {i18nMounted ? t("nav.adminDashboard") : "Admin Dashboard"}
+                          {i18nMounted
+                            ? t("nav.adminDashboard")
+                            : "Admin Dashboard"}
                         </Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=my-cv" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=my-cv"
+                        className="cursor-pointer"
+                      >
                         <FileText className="mr-2 h-4 w-4" />
                         {i18nMounted ? t("nav.myCV") : "My CV"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=create-cv" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=create-cv"
+                        className="cursor-pointer"
+                      >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         {i18nMounted ? t("nav.createCV") : "Create CV"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=my-jobs" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=my-jobs"
+                        className="cursor-pointer"
+                      >
                         <Briefcase className="mr-2 h-4 w-4" />
                         {i18nMounted ? t("nav.myJobs") : "My Jobs"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=email-subscription" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=email-subscription"
+                        className="cursor-pointer"
+                      >
                         <Mail className="mr-2 h-4 w-4" />
-                        {i18nMounted ? t("nav.emailSubscription") : "Email Subscription"}
+                        {i18nMounted
+                          ? t("nav.emailSubscription")
+                          : "Email Subscription"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=notifications" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=notifications"
+                        className="cursor-pointer"
+                      >
                         <Bell className="mr-2 h-4 w-4" />
                         {i18nMounted ? t("nav.notifications") : "Notifications"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile?tab=settings" className="cursor-pointer">
+                      <Link
+                        href="/profile?tab=settings"
+                        className="cursor-pointer"
+                      >
                         <Settings className="mr-2 h-4 w-4" />
                         {i18nMounted ? t("nav.settings") : "Settings"}
                       </Link>
@@ -303,14 +353,18 @@ export function Header() {
 
               {/* Language Toggle */}
               <div className="relative language-toggle-container">
-                  <button
-                    onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                    className="flex items-center gap-2 h-10 px-3 bg-white dark:bg-transparent hover:bg-secondary/80 dark:hover:bg-secondary/20 rounded-lg transition-all duration-200 text-sm font-semibold text-foreground/80 focus:outline-none"
-                  >
-                    <Globe className="h-[18px] w-[18px] text-foreground/70" />
-                    <span className="uppercase text-[13px] tracking-wide">{language}</span>
-                    <ChevronDown className={`h-3.5 w-3.5 text-foreground/70 transition-transform duration-200 ${showLanguageMenu ? 'rotate-180' : ''}`} />
-                  </button>
+                <button
+                  onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                  className="flex items-center gap-2 h-10 px-3 bg-white dark:bg-transparent hover:bg-secondary/80 dark:hover:bg-secondary/20 rounded-lg transition-all duration-200 text-sm font-semibold text-foreground/80 focus:outline-none"
+                >
+                  <Globe className="h-[18px] w-[18px] text-foreground/70" />
+                  <span className="uppercase text-[13px] tracking-wide">
+                    {language}
+                  </span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 text-foreground/70 transition-transform duration-200 ${showLanguageMenu ? "rotate-180" : ""}`}
+                  />
+                </button>
                 {showLanguageMenu && (
                   <div className="absolute right-0 mt-2.5 w-52 bg-card border border-border/80 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <button
@@ -325,7 +379,12 @@ export function Header() {
                       }`}
                     >
                       <span>English</span>
-                      {language === "en" && <Check className="h-4 w-4 text-primary" strokeWidth={3} />}
+                      {language === "en" && (
+                        <Check
+                          className="h-4 w-4 text-primary"
+                          strokeWidth={3}
+                        />
+                      )}
                     </button>
                     <div className="h-px bg-border/60" />
                     <button
@@ -340,7 +399,12 @@ export function Header() {
                       }`}
                     >
                       <span>Tiếng Việt</span>
-                      {language === "vi" && <Check className="h-4 w-4 text-primary" strokeWidth={3} />}
+                      {language === "vi" && (
+                        <Check
+                          className="h-4 w-4 text-primary"
+                          strokeWidth={3}
+                        />
+                      )}
                     </button>
                   </div>
                 )}
@@ -350,9 +414,8 @@ export function Header() {
 
           {/* Mobile Header Right Section: Notification & User Avatar */}
           <div className="flex md:hidden items-center gap-2">
-            {!isMounted ? (
-              null
-            ) : hasToken && (!isRehydrated || (isAuthenticated && !user)) ? (
+            {!isMounted ? null : hasToken &&
+              (!isRehydrated || (isAuthenticated && !user)) ? (
               <div className="flex items-center gap-2">
                 <div className="h-10 w-10 rounded-full bg-secondary animate-pulse" />
                 <div className="w-10 h-10 rounded-full bg-secondary animate-pulse border-2 border-primary/20" />
@@ -366,7 +429,7 @@ export function Header() {
                   aria-label="User account"
                 >
                   <Image
-                    src={user?.avatar || '/images/avatar-default.jpg'}
+                    src={user?.avatar || "/images/avatar-default.jpg"}
                     alt={user?.name || user?.email || "avatar"}
                     width={40}
                     height={40}
@@ -388,7 +451,9 @@ export function Header() {
       {/* Left Drawer Overlay */}
       <div
         className={`fixed inset-0 z-40 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-          leftDrawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          leftDrawerOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setLeftDrawerOpen(false)}
       />
@@ -400,7 +465,11 @@ export function Header() {
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b dark:border-white/10">
-          <Link href="/" className="flex items-center" onClick={() => setLeftDrawerOpen(false)}>
+          <Link
+            href="/"
+            className="flex items-center"
+            onClick={() => setLeftDrawerOpen(false)}
+          >
             <Image
               src="/images/logo.png"
               alt="DevLink"
@@ -432,7 +501,12 @@ export function Header() {
               )}
               onClick={() => setLeftDrawerOpen(false)}
             >
-              <Briefcase className={cn("h-5 w-5 transition-colors", isJobsActive ? "text-primary" : "text-muted-foreground")} />
+              <Briefcase
+                className={cn(
+                  "h-5 w-5 transition-colors",
+                  isJobsActive ? "text-primary" : "text-muted-foreground"
+                )}
+              />
               <span className="font-medium">
                 {i18nMounted ? t("nav.findJobs") : "Find Jobs"}
               </span>
@@ -447,7 +521,12 @@ export function Header() {
               )}
               onClick={() => setLeftDrawerOpen(false)}
             >
-              <Briefcase className={cn("h-5 w-5 transition-colors", isCompaniesActive ? "text-primary" : "text-muted-foreground")} />
+              <Briefcase
+                className={cn(
+                  "h-5 w-5 transition-colors",
+                  isCompaniesActive ? "text-primary" : "text-muted-foreground"
+                )}
+              />
               <span className="font-medium">
                 {i18nMounted ? t("nav.companies") : "Companies"}
               </span>
@@ -540,7 +619,9 @@ export function Header() {
       {/* Right Drawer Overlay */}
       <div
         className={`fixed inset-0 z-40 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-          rightDrawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          rightDrawerOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setRightDrawerOpen(false)}
       />
@@ -570,7 +651,7 @@ export function Header() {
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full border-2 border-primary/20 overflow-hidden flex-shrink-0">
                 <Image
-                  src={user?.avatar || '/images/avatar-default.jpg'}
+                  src={user?.avatar || "/images/avatar-default.jpg"}
                   alt={user?.name || user?.email || "avatar"}
                   width={56}
                   height={56}
@@ -655,7 +736,9 @@ export function Header() {
             >
               <Mail className="h-5 w-5 text-muted-foreground" />
               <span className="font-medium text-sm">
-                {i18nMounted ? t("nav.emailSubscription") : "Email Subscription"}
+                {i18nMounted
+                  ? t("nav.emailSubscription")
+                  : "Email Subscription"}
               </span>
             </Link>
 

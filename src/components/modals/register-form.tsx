@@ -28,10 +28,10 @@ interface RegisterFormProps {
 
 /**
  * RegisterForm Component
- * 
+ *
  * Reusable registration form.
  * Can be used in modal or standalone page.
- * 
+ *
  * @param onSuccess - Callback after successful registration
  * @param isModal - Whether form is inside modal
  */
@@ -66,10 +66,10 @@ export function RegisterForm({
   const onSubmit = async (data: RegisterFormData) => {
     try {
       const response = await signUp(data).unwrap();
-      
+
       if (response.statusCode === 201) {
         toast.success(t("authModal.toasts.registerSuccess"));
-        
+
         onSuccess?.(isModal ? undefined : "/login");
       }
     } catch (error: any) {
@@ -86,10 +86,7 @@ export function RegisterForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Name Input */}
       <div className="space-y-2">
-        <Label 
-          htmlFor="name"
-          className="text-sm font-medium text-foreground"
-        >
+        <Label htmlFor="name" className="text-sm font-medium text-foreground">
           {t("authModal.register.fields.name.label")}{" "}
           <span className="text-destructive">*</span>
         </Label>
@@ -101,7 +98,9 @@ export function RegisterForm({
           {...register("name")}
           className={cn(
             "rounded-xl h-11 transition-all",
-            errors.name ? "border-destructive focus-visible:ring-destructive" : ""
+            errors.name
+              ? "border-destructive focus-visible:ring-destructive"
+              : ""
           )}
         />
         {errors.name && (
@@ -113,10 +112,7 @@ export function RegisterForm({
 
       {/* Email Input */}
       <div className="space-y-2">
-        <Label 
-          htmlFor="email"
-          className="text-sm font-medium text-foreground"
-        >
+        <Label htmlFor="email" className="text-sm font-medium text-foreground">
           {t("authModal.register.fields.email.label")}{" "}
           <span className="text-destructive">*</span>
         </Label>
@@ -128,7 +124,9 @@ export function RegisterForm({
           {...register("email")}
           className={cn(
             "rounded-xl h-11 transition-all",
-            errors.email ? "border-destructive focus-visible:ring-destructive" : ""
+            errors.email
+              ? "border-destructive focus-visible:ring-destructive"
+              : ""
           )}
         />
         {errors.email && (
@@ -157,7 +155,9 @@ export function RegisterForm({
           <PasswordInput
             id="confirmPassword"
             label={t("authModal.register.fields.confirmPassword.label")}
-            placeholder={t("authModal.register.fields.confirmPassword.placeholder")}
+            placeholder={t(
+              "authModal.register.fields.confirmPassword.placeholder"
+            )}
             autoComplete="new-password"
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
@@ -171,7 +171,9 @@ export function RegisterForm({
           <Checkbox
             id="acceptTerms"
             checked={acceptTerms}
-            onCheckedChange={(checked) => setValue("acceptTerms", checked as boolean)}
+            onCheckedChange={(checked) =>
+              setValue("acceptTerms", checked as boolean)
+            }
             className="mt-0.5"
           />
           <label
@@ -180,7 +182,7 @@ export function RegisterForm({
           >
             {t("authModal.register.fields.acceptTerms.prefix")}{" "}
             <Link
-              href="/terms" 
+              href="/terms"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
@@ -190,7 +192,7 @@ export function RegisterForm({
             </Link>{" "}
             {t("authModal.register.fields.acceptTerms.and")}{" "}
             <Link
-              href="/privacy" 
+              href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
@@ -208,9 +210,9 @@ export function RegisterForm({
       </div>
 
       {/* Submit Button */}
-      <Button 
-        type="submit" 
-        className="w-full h-11 font-semibold rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] mt-2" 
+      <Button
+        type="submit"
+        className="w-full h-11 font-semibold rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] mt-2"
         disabled={isLoading}
       >
         {isLoading ? (

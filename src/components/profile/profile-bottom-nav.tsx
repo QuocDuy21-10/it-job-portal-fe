@@ -16,12 +16,7 @@ import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 export type PageType =
-  | "overview"
-  | "my-cv"
-  | "create-cv"
-  | "my-jobs"
-  | "notifications"
-  | "settings";
+  "overview" | "my-cv" | "create-cv" | "my-jobs" | "notifications" | "settings";
 
 interface NavItem {
   id: PageType;

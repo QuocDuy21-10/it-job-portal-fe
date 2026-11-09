@@ -3,9 +3,18 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ProjectRequestSchema, type ProjectRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  ProjectRequestSchema,
+  type ProjectRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -48,12 +57,14 @@ export default function ProjectModal({
 
   useEffect(() => {
     if (isOpen) {
-      reset(project || {
-        name: "",
-        position: "",
-        description: "",
-        link: "",
-      });
+      reset(
+        project || {
+          name: "",
+          position: "",
+          description: "",
+          link: "",
+        }
+      );
     }
   }, [isOpen, project, reset]);
 
@@ -72,16 +83,20 @@ export default function ProjectModal({
       <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.projects.addTitle") : t("cv.projects.editTitle")}
+            {mode === "add"
+              ? t("cv.projects.addTitle")
+              : t("cv.projects.editTitle")}
           </DialogTitle>
-          <DialogDescription>
-            {t("cv.projects.description")}
-          </DialogDescription>
+          <DialogDescription>{t("cv.projects.description")}</DialogDescription>
         </DialogHeader>
 
         <ModalHeaderBanner
           type="project"
-          title={mode === "add" ? t("cv.projects.addTitle") : t("cv.projects.editTitle")}
+          title={
+            mode === "add"
+              ? t("cv.projects.addTitle")
+              : t("cv.projects.editTitle")
+          }
           description={t("cv.projects.description")}
         />
 
@@ -93,14 +108,17 @@ export default function ProjectModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.projects.nameLabel")} <span className="text-destructive">*</span>
+                  {t("cv.projects.nameLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.projects.namePlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.name ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.name
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.name && (
@@ -119,19 +137,23 @@ export default function ProjectModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.projects.positionLabel")} <span className="text-destructive">*</span>
+                  {t("cv.projects.positionLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.projects.positionPlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.position ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.position
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.position && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.position.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.position.message}
                   </p>
                 )}
               </div>
@@ -145,7 +167,10 @@ export default function ProjectModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.projects.linkLabel")} <span className="text-muted-foreground text-xs">(Optional)</span>
+                  {t("cv.projects.linkLabel")}{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (Optional)
+                  </span>
                 </label>
                 <input
                   type="url"
@@ -153,7 +178,9 @@ export default function ProjectModal({
                   value={field.value || ""}
                   placeholder={t("cv.projects.linkPlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.link ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.link
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.link && (
@@ -172,19 +199,23 @@ export default function ProjectModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.projects.descriptionLabel")} <span className="text-destructive">*</span>
+                  {t("cv.projects.descriptionLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <textarea
                   {...field}
                   placeholder={t("cv.projects.descriptionPlaceholder")}
                   rows={4}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all ${
-                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.description
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.description && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.description.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.description.message}
                   </p>
                 )}
               </div>
@@ -205,7 +236,9 @@ export default function ProjectModal({
               type="submit"
               className="px-6 bg-primary hover:bg-primary/90"
             >
-              {mode === "add" ? t("cv.projects.saveLabel") : t("cv.projects.updateLabel")}
+              {mode === "add"
+                ? t("cv.projects.saveLabel")
+                : t("cv.projects.updateLabel")}
             </Button>
           </div>
         </form>

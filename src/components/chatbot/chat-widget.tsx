@@ -1,17 +1,9 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/use-chat";
 import { useI18n } from "@/hooks/use-i18n";
-import {
-  XMarkIcon,
-  ChatBubbleLeftIcon,
-} from "@heroicons/react/24/solid";
+import { XMarkIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
 import ChatTooltip from "@/components/chatbot/chat-tooltip";
 import ChatSurface from "@/components/chatbot/chat-surface";
 import {
@@ -39,7 +31,9 @@ const ChatWidget = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   // === Drag State ===
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(
+    null
+  );
   const isDragging = useRef(false);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -100,31 +94,34 @@ const ChatWidget = () => {
     [position]
   );
 
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      if (!isDragging.current) return;
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return;
 
-      const dx = e.clientX - dragStartPos.current.x;
-      const dy = e.clientY - dragStartPos.current.y;
-      totalMovement.current = Math.sqrt(dx * dx + dy * dy);
+    const dx = e.clientX - dragStartPos.current.x;
+    const dy = e.clientY - dragStartPos.current.y;
+    totalMovement.current = Math.sqrt(dx * dx + dy * dy);
 
-      if (totalMovement.current > DRAG_THRESHOLD) {
-        wasDragging.current = true;
-      }
+    if (totalMovement.current > DRAG_THRESHOLD) {
+      wasDragging.current = true;
+    }
 
-      const newX = Math.max(
-        4,
-        Math.min(window.innerWidth - BUTTON_SIZE - 4, e.clientX - dragOffset.current.x)
-      );
-      const newY = Math.max(
-        4,
-        Math.min(window.innerHeight - BUTTON_SIZE - 4, e.clientY - dragOffset.current.y)
-      );
+    const newX = Math.max(
+      4,
+      Math.min(
+        window.innerWidth - BUTTON_SIZE - 4,
+        e.clientX - dragOffset.current.x
+      )
+    );
+    const newY = Math.max(
+      4,
+      Math.min(
+        window.innerHeight - BUTTON_SIZE - 4,
+        e.clientY - dragOffset.current.y
+      )
+    );
 
-      setPosition({ x: newX, y: newY });
-    },
-    []
-  );
+    setPosition({ x: newX, y: newY });
+  }, []);
 
   const handlePointerUp = useCallback(() => {
     isDragging.current = false;

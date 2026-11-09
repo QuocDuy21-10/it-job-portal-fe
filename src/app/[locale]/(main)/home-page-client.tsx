@@ -142,13 +142,15 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-10">
             {/* Heading */}
             <div className="space-y-4">
-               <h1 className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}>
+              <h1
+                className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}
+              >
                 {t("home.findYour")}
                 <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
                   {t("home.dreamJob")}
                 </span>
               </h1>
-             <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
+              <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
                 {t("home.discoverOpportunities")} {t("home.startCareerJourney")}
               </p>
             </div>
@@ -161,21 +163,27 @@ export default function Home() {
             {/* Stats */}
             <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
               <div className="text-center">
-                <div className="text-2xl font-bold text-foreground sm:text-3xl">20k+</div>
+                <div className="text-2xl font-bold text-foreground sm:text-3xl">
+                  20k+
+                </div>
                 <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
                   {t("home.activeJobs")}
                 </div>
               </div>
               <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
               <div className="text-center">
-                <div className="text-2xl font-bold text-foreground sm:text-3xl">5k+</div>
+                <div className="text-2xl font-bold text-foreground sm:text-3xl">
+                  5k+
+                </div>
                 <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
                   {t("home.companies")}
                 </div>
               </div>
               <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
               <div className="text-center">
-                <div className="text-2xl font-bold text-foreground sm:text-3xl">100k+</div>
+                <div className="text-2xl font-bold text-foreground sm:text-3xl">
+                  100k+
+                </div>
                 <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
                   {t("home.jobSeekers")}
                 </div>
@@ -194,87 +202,87 @@ export default function Home() {
           actionHref="/jobs"
         />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {jobsLoading ? (
-              // Loading placeholders — matches redesigned default JobCard dimensions
-              Array.from({ length: 3 }).map((_, index) => (
-                <Card key={index}>
-                  <CardContent className="p-5">
-                    <div className="animate-pulse space-y-3">
-                      {/* Header: logo + title/company */}
-                      <div className="flex items-start gap-3 pr-9">
-                        <div className="h-12 w-12 rounded-xl bg-muted" />
-                        <div className="flex-1 space-y-1.5">
-                          <div className="h-4 bg-muted rounded w-3/4" />
-                          <div className="h-3 bg-muted rounded w-1/2" />
-                        </div>
-                      </div>
-                      {/* Skills */}
-                      <div className="flex gap-1.5">
-                        <div className="h-5 bg-muted rounded-md w-14" />
-                        <div className="h-5 bg-muted rounded-md w-16" />
-                        <div className="h-5 bg-muted rounded-md w-12" />
-                      </div>
-                      {/* Meta: location + type */}
-                      <div className="flex items-center gap-2">
-                        <div className="h-3 bg-muted rounded w-20" />
-                        <div className="h-3 bg-muted rounded w-16" />
-                      </div>
-                      {/* Footer: salary + time */}
-                      <div className="flex justify-between pt-3 border-t border-border/40">
-                        <div className="h-4 bg-muted rounded w-20" />
-                        <div className="h-3 bg-muted rounded w-16" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {jobsLoading ? (
+            // Loading placeholders — matches redesigned default JobCard dimensions
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index}>
+                <CardContent className="p-5">
+                  <div className="animate-pulse space-y-3">
+                    {/* Header: logo + title/company */}
+                    <div className="flex items-start gap-3 pr-9">
+                      <div className="h-12 w-12 rounded-xl bg-muted" />
+                      <div className="flex-1 space-y-1.5">
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : jobsError ? (
-              <div className="col-span-3 text-center py-8">
-                <p className="home-muted-text text-muted-foreground">
-                  {t("home.loadJobsError")}
-                </p>
-              </div>
-            ) : featuredJobsToRender.length === 0 ? (
-              <div className="col-span-3 text-center py-8">
-                <p className="home-muted-text text-muted-foreground">
-                  {t("home.noJobs")}
-                </p>
-              </div>
-            ) : (
-              featuredJobsToRender.map((job: Job) => (
-                <JobCard
-                  key={job._id}
-                  job={job}
-                  className="home-panel-surface home-subtle-border dark:bg-transparent"
-                />
-              ))
-            )}
-          </div>
-
-          {/* Jobs Pagination */}
-          {!jobsLoading && !jobsError && featuredJobsToRender.length > 0 && (
-            <div className="mt-8">
-              <SimplePagination
-                page={jobsPage}
-                totalPages={jobsTotalPages}
-                onPageChange={setJobsPage}
-                labelText={t("jobsPage.pageLabel")}
-              />
+                    {/* Skills */}
+                    <div className="flex gap-1.5">
+                      <div className="h-5 bg-muted rounded-md w-14" />
+                      <div className="h-5 bg-muted rounded-md w-16" />
+                      <div className="h-5 bg-muted rounded-md w-12" />
+                    </div>
+                    {/* Meta: location + type */}
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 bg-muted rounded w-20" />
+                      <div className="h-3 bg-muted rounded w-16" />
+                    </div>
+                    {/* Footer: salary + time */}
+                    <div className="flex justify-between pt-3 border-t border-border/40">
+                      <div className="h-4 bg-muted rounded w-20" />
+                      <div className="h-3 bg-muted rounded w-16" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : jobsError ? (
+            <div className="col-span-3 text-center py-8">
+              <p className="home-muted-text text-muted-foreground">
+                {t("home.loadJobsError")}
+              </p>
             </div>
+          ) : featuredJobsToRender.length === 0 ? (
+            <div className="col-span-3 text-center py-8">
+              <p className="home-muted-text text-muted-foreground">
+                {t("home.noJobs")}
+              </p>
+            </div>
+          ) : (
+            featuredJobsToRender.map((job: Job) => (
+              <JobCard
+                key={job._id}
+                job={job}
+                className="home-panel-surface home-subtle-border dark:bg-transparent"
+              />
+            ))
           )}
+        </div>
 
-          <div className="mt-8 text-center sm:hidden">
-            <Button
-              asChild
-              variant="outline"
-              className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-            >
-              <Link href="/jobs">
-                {t("home.viewAllJobs")} <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+        {/* Jobs Pagination */}
+        {!jobsLoading && !jobsError && featuredJobsToRender.length > 0 && (
+          <div className="mt-8">
+            <SimplePagination
+              page={jobsPage}
+              totalPages={jobsTotalPages}
+              onPageChange={setJobsPage}
+              labelText={t("jobsPage.pageLabel")}
+            />
           </div>
+        )}
+
+        <div className="mt-8 text-center sm:hidden">
+          <Button
+            asChild
+            variant="outline"
+            className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+          >
+            <Link href="/jobs">
+              {t("home.viewAllJobs")} <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
       </SectionContainer>
 
       {/* Top Companies Section */}
@@ -355,7 +363,9 @@ export default function Home() {
                         </CardContent>
                       </Card>
                     ) : (
-                      <CompanyCard company={companyOrIndex as TopHiringCompany} />
+                      <CompanyCard
+                        company={companyOrIndex as TopHiringCompany}
+                      />
                     )}
                   </CarouselItem>
                 ))}
@@ -392,9 +402,7 @@ export default function Home() {
             variant="outline"
             className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
           >
-            <Link href="/companies">
-              {t("home.viewAllCompanies")}
-            </Link>
+            <Link href="/companies">{t("home.viewAllCompanies")}</Link>
           </Button>
         </div>
       </SectionContainer>
@@ -402,76 +410,69 @@ export default function Home() {
       {/* How It Works Section */}
       <SectionContainer className="home-section-base">
         <div className="text-center mb-12">
-          <h2 className={TYPOGRAPHY.h2}>
-            {t("home.howItWorks")}
-          </h2>
+          <h2 className={TYPOGRAPHY.h2}>{t("home.howItWorks")}</h2>
           <p className="home-muted-text mt-3 text-lg text-muted-foreground">
             {t("home.howItWorksDescription")}
           </p>
         </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
-            {/* Step 1 */}
-            <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg">
-                  <UserPlus className="h-10 w-10 text-white" aria-hidden="true" />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+          {/* Step 1 */}
+          <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg">
+                <UserPlus className="h-10 w-10 text-white" aria-hidden="true" />
               </div>
-              <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-                {t("home.searchJobs")}
-              </h3>
-              <p className="home-muted-text leading-relaxed text-muted-foreground">
-                {t("home.searchJobsDescription")}
-              </p>
             </div>
-
-            {/* Step 2 */}
-            <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mx-auto shadow-lg">
-                  <MousePointerClick
-                    className="h-10 w-10 text-white"
-                    aria-hidden="true"
-                  />
-                </div>
-              </div>
-              <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-                {t("home.applyWithEase")}
-              </h3>
-              <p className="home-muted-text leading-relaxed text-muted-foreground">
-                {t("home.applyWithEaseDescription")}
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto shadow-lg">
-                  <Trophy
-                    className="h-10 w-10 text-white"
-                    aria-hidden="true"
-                  />
-                </div>
-              </div>
-              <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-                {t("home.getHired")}
-              </h3>
-              <p className="home-muted-text leading-relaxed text-muted-foreground">
-                {t("home.getHiredDescription")}
-              </p>
-            </div>
+            <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
+              {t("home.searchJobs")}
+            </h3>
+            <p className="home-muted-text leading-relaxed text-muted-foreground">
+              {t("home.searchJobsDescription")}
+            </p>
           </div>
+
+          {/* Step 2 */}
+          <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mx-auto shadow-lg">
+                <MousePointerClick
+                  className="h-10 w-10 text-white"
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+            <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
+              {t("home.applyWithEase")}
+            </h3>
+            <p className="home-muted-text leading-relaxed text-muted-foreground">
+              {t("home.applyWithEaseDescription")}
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto shadow-lg">
+                <Trophy className="h-10 w-10 text-white" aria-hidden="true" />
+              </div>
+            </div>
+            <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
+              {t("home.getHired")}
+            </h3>
+            <p className="home-muted-text leading-relaxed text-muted-foreground">
+              {t("home.getHiredDescription")}
+            </p>
+          </div>
+        </div>
       </SectionContainer>
 
       {/* CTA Section */}
       <section className="home-cta-surface relative overflow-hidden py-16 text-white sm:py-20 lg:py-24">
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none">
-          </div>
+        <div className="absolute inset-0 opacity-30 pointer-events-none"></div>
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="max-w-3xl mx-auto space-y-8">

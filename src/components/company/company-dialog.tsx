@@ -47,7 +47,9 @@ export function CompanyDialog({
     setPendingNewLogo(next);
   };
 
-  const wrappedOnSubmit = async (data: CreateCompanyFormData): Promise<boolean> => {
+  const wrappedOnSubmit = async (
+    data: CreateCompanyFormData
+  ): Promise<boolean> => {
     const success = await onSubmit(data);
     if (success) {
       submittedRef.current = true;
@@ -92,4 +94,3 @@ export function CompanyDialog({
     </Dialog>
   );
 }
-

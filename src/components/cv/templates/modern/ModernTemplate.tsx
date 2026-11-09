@@ -5,7 +5,11 @@
 
 import React from "react";
 import { ICVProfile } from "@/shared/types/cv";
-import { formatDateDisplay, formatGender, getSkillLevelPercentage } from "@/lib/cv/helpers";
+import {
+  formatDateDisplay,
+  formatGender,
+  getSkillLevelPercentage,
+} from "@/lib/cv/helpers";
 
 interface ModernTemplateProps {
   cvData: ICVProfile;
@@ -41,7 +45,9 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
           <div className="space-y-2 text-xs px-1">
             {cvData.personalInfo.birthday && (
               <div className="flex gap-2">
-                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">Ngày sinh:</span>
+                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">
+                  Ngày sinh:
+                </span>
                 <span className="text-black flex-1">
                   {formatDateDisplay(cvData.personalInfo.birthday)}
                 </span>
@@ -49,7 +55,9 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
             )}
             {cvData.personalInfo.gender && (
               <div className="flex gap-2">
-                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">Giới tính:</span>
+                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">
+                  Giới tính:
+                </span>
                 <span className="text-black flex-1">
                   {formatGender(cvData.personalInfo.gender)}
                 </span>
@@ -57,25 +65,39 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
             )}
             {cvData.personalInfo.phone && (
               <div className="flex gap-2">
-                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">Điện thoại:</span>
-                <span className="text-black flex-1">{cvData.personalInfo.phone}</span>
+                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">
+                  Điện thoại:
+                </span>
+                <span className="text-black flex-1">
+                  {cvData.personalInfo.phone}
+                </span>
               </div>
             )}
             {cvData.personalInfo.email && (
               <div className="flex gap-2">
-                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">Email:</span>
-                <span className="text-black flex-1 break-all">{cvData.personalInfo.email}</span>
+                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">
+                  Email:
+                </span>
+                <span className="text-black flex-1 break-all">
+                  {cvData.personalInfo.email}
+                </span>
               </div>
             )}
             {cvData.personalInfo.address && (
               <div className="flex gap-2">
-                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">Địa chỉ:</span>
-                <span className="text-black flex-1">{cvData.personalInfo.address}</span>
+                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">
+                  Địa chỉ:
+                </span>
+                <span className="text-black flex-1">
+                  {cvData.personalInfo.address}
+                </span>
               </div>
             )}
             {cvData.personalInfo.personalLink && (
               <div className="flex gap-2">
-                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">Website:</span>
+                <span className="font-bold text-[#2F4F4F] w-20 flex-shrink-0">
+                  Website:
+                </span>
                 <span className="text-black flex-1 break-all text-xs">
                   {cvData.personalInfo.personalLink}
                 </span>
@@ -93,17 +115,25 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
             <div className="space-y-3 px-1">
               {cvData.skills.map((skill) => (
                 <div key={skill.id}>
-                  <p className="text-sm font-semibold text-gray-800 mb-1">{skill.name}</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-1">
+                    {skill.name}
+                  </p>
                   <div className="flex items-center gap-2">
                     <div className="flex gap-0.5">
                       {[1, 2, 3, 4, 5].map((dot) => (
                         <div
                           key={dot}
                           className={`w-1.5 h-1.5 rounded-full ${
-                            dot <= (skill.level === "Beginner" ? 1 :
-                                   skill.level === "Intermediate" ? 3 :
-                                   skill.level === "Advanced" ? 4 :
-                                   skill.level === "Expert" ? 5 : 3)
+                            dot <=
+                            (skill.level === "Beginner"
+                              ? 1
+                              : skill.level === "Intermediate"
+                                ? 3
+                                : skill.level === "Advanced"
+                                  ? 4
+                                  : skill.level === "Expert"
+                                    ? 5
+                                    : 3)
                               ? "bg-[#2F4F4F]"
                               : "bg-gray-400"
                           }`}
@@ -127,12 +157,15 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
             <div className="space-y-4 px-1">
               {cvData.education.map((edu) => (
                 <div key={edu.id}>
-                  <p className="text-sm font-bold text-[#2F4F4F] mb-1">{edu.school}</p>
+                  <p className="text-sm font-bold text-[#2F4F4F] mb-1">
+                    {edu.school}
+                  </p>
                   <p className="text-xs text-gray-800 mb-1">
                     {edu.degree} - {edu.field}
                   </p>
                   <p className="text-xs text-gray-600 italic mb-1">
-                    {formatDateDisplay(edu.startDate)} - {formatDateDisplay(edu.endDate)}
+                    {formatDateDisplay(edu.startDate)} -{" "}
+                    {formatDateDisplay(edu.endDate)}
                   </p>
                   {edu.description && (
                     <p className="text-xs text-gray-600 leading-relaxed">
@@ -171,11 +204,16 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                 <div key={exp.id}>
                   <div className="flex justify-between items-start mb-1">
                     <div className="flex-1">
-                      <h3 className="font-bold text-[#2F4F4F] text-base">{exp.company}</h3>
-                      <p className="text-sm font-semibold text-gray-800 mt-0.5">{exp.position}</p>
+                      <h3 className="font-bold text-[#2F4F4F] text-base">
+                        {exp.company}
+                      </h3>
+                      <p className="text-sm font-semibold text-gray-800 mt-0.5">
+                        {exp.position}
+                      </p>
                     </div>
                     <span className="text-xs text-gray-600 italic whitespace-nowrap ml-4">
-                      {formatDateDisplay(exp.startDate)} - {formatDateDisplay(exp.endDate)}
+                      {formatDateDisplay(exp.startDate)} -{" "}
+                      {formatDateDisplay(exp.endDate)}
                     </span>
                   </div>
                   {exp.description && (
@@ -183,9 +221,10 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                       {exp.description}
                     </p>
                   )}
-                  {cvData.experience.length >= 2 && idx < cvData.experience.length - 1 && (
-                    <div className="border-b border-[#2F4F4F] mt-4" />
-                  )}
+                  {cvData.experience.length >= 2 &&
+                    idx < cvData.experience.length - 1 && (
+                      <div className="border-b border-[#2F4F4F] mt-4" />
+                    )}
                 </div>
               ))}
             </div>
@@ -201,7 +240,9 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
             <div className="space-y-4">
               {cvData.projects.map((project, idx) => (
                 <div key={project.id}>
-                  <h3 className="font-bold text-[#2F4F4F] text-base">{project.name}</h3>
+                  <h3 className="font-bold text-[#2F4F4F] text-base">
+                    {project.name}
+                  </h3>
                   {project.position && (
                     <p className="text-sm text-gray-600 font-semibold mt-0.5">
                       Vị trí: {project.position}
@@ -211,11 +252,14 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                     {project.description}
                   </p>
                   {project.link && (
-                    <p className="text-xs text-[#2F4F4F] italic mt-1">Link: {project.link}</p>
+                    <p className="text-xs text-[#2F4F4F] italic mt-1">
+                      Link: {project.link}
+                    </p>
                   )}
-                  {cvData.projects.length >= 2 && idx < cvData.projects.length - 1 && (
-                    <div className="border-b border-[#2F4F4F] mt-4" />
-                  )}
+                  {cvData.projects.length >= 2 &&
+                    idx < cvData.projects.length - 1 && (
+                      <div className="border-b border-[#2F4F4F] mt-4" />
+                    )}
                 </div>
               ))}
             </div>
@@ -232,12 +276,17 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
               {cvData.languages.map((lang, idx) => (
                 <div key={lang.id}>
                   <div className="flex justify-between items-center py-1">
-                    <p className="font-semibold text-gray-800 text-sm">{lang.name}</p>
-                    <p className="text-sm text-gray-600 italic">{lang.proficiency}</p>
+                    <p className="font-semibold text-gray-800 text-sm">
+                      {lang.name}
+                    </p>
+                    <p className="text-sm text-gray-600 italic">
+                      {lang.proficiency}
+                    </p>
                   </div>
-                  {cvData.languages.length >= 2 && idx < cvData.languages.length - 1 && (
-                    <div className="border-b border-[#2F4F4F]" />
-                  )}
+                  {cvData.languages.length >= 2 &&
+                    idx < cvData.languages.length - 1 && (
+                      <div className="border-b border-[#2F4F4F]" />
+                    )}
                 </div>
               ))}
             </div>
@@ -255,7 +304,9 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                 <div key={cert.id}>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-bold text-[#2F4F4F] text-sm">{cert.name}</h3>
+                      <h3 className="font-bold text-[#2F4F4F] text-sm">
+                        {cert.name}
+                      </h3>
                       <p className="text-sm text-gray-800 mt-0.5">
                         Tổ chức cấp: {cert.issuer}
                       </p>
@@ -264,9 +315,10 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                       {formatDateDisplay(cert.date)}
                     </span>
                   </div>
-                  {cvData.certificates.length >= 2 && idx < cvData.certificates.length - 1 && (
-                    <div className="border-b border-[#2F4F4F] mt-3" />
-                  )}
+                  {cvData.certificates.length >= 2 &&
+                    idx < cvData.certificates.length - 1 && (
+                      <div className="border-b border-[#2F4F4F] mt-3" />
+                    )}
                 </div>
               ))}
             </div>
@@ -284,7 +336,9 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                 <div key={award.id}>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-bold text-[#2F4F4F] text-sm">{award.name}</h3>
+                      <h3 className="font-bold text-[#2F4F4F] text-sm">
+                        {award.name}
+                      </h3>
                       {award.description && (
                         <p className="text-sm text-gray-800 mt-1 leading-relaxed">
                           {award.description}
@@ -295,9 +349,10 @@ export const ModernTemplate: React.FC<ModernTemplateProps> = ({ cvData }) => {
                       {formatDateDisplay(award.date)}
                     </span>
                   </div>
-                  {cvData.awards.length >= 2 && idx < cvData.awards.length - 1 && (
-                    <div className="border-b border-[#2F4F4F] mt-3" />
-                  )}
+                  {cvData.awards.length >= 2 &&
+                    idx < cvData.awards.length - 1 && (
+                      <div className="border-b border-[#2F4F4F] mt-3" />
+                    )}
                 </div>
               ))}
             </div>

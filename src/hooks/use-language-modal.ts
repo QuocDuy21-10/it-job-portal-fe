@@ -25,7 +25,9 @@ export function useLanguageModal(
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentLanguage, setCurrentLanguage] = useState<Language | undefined>(undefined);
+  const [currentLanguage, setCurrentLanguage] = useState<Language | undefined>(
+    undefined
+  );
 
   const openAddModal = () => {
     if (languages.length >= 5) {

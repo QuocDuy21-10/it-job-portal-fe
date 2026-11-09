@@ -21,8 +21,11 @@ import { Link } from "@/i18n/navigation";
 
 export default function ForgotPasswordPage() {
   const { t } = useI18n();
-  const forgotPasswordSchema = useMemo(() => createForgotPasswordSchema(t), [t]);
-  
+  const forgotPasswordSchema = useMemo(
+    () => createForgotPasswordSchema(t),
+    [t]
+  );
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
   const [submittedEmail, setSubmittedEmail] = useState("");
@@ -71,7 +74,7 @@ export default function ForgotPasswordPage() {
       }
     } catch (error: any) {
       console.error("Forgot password error:", error);
-      
+
       // Vẫn hiển thị success message để bảo mật (không tiết lộ email có tồn tại hay không)
       setIsSuccess(true);
       toast.success(t("authModal.forgotPassword.toasts.sendFallback"));
@@ -88,7 +91,6 @@ export default function ForgotPasswordPage() {
         title={t("authModal.forgotPassword.titleCard")}
         description={t("authModal.forgotPassword.descriptionCard")}
       >
-
         {isSuccess ? (
           <div className="space-y-4 py-2">
             <div className="flex flex-col items-center justify-center py-6 text-center">
@@ -99,7 +101,9 @@ export default function ForgotPasswordPage() {
                 {t("authModal.forgotPassword.successTitle")}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {t("authModal.forgotPassword.successDescription", { email: submittedEmail })}
+                {t("authModal.forgotPassword.successDescription", {
+                  email: submittedEmail,
+                })}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500">
                 {t("authModal.forgotPassword.successHelp")}
@@ -107,7 +111,9 @@ export default function ForgotPasswordPage() {
 
               {cooldownTime > 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
-                  {t("authModal.forgotPassword.cooldownText", { time: cooldownTime })}
+                  {t("authModal.forgotPassword.cooldownText", {
+                    time: cooldownTime,
+                  })}
                 </p>
               )}
             </div>
@@ -120,7 +126,11 @@ export default function ForgotPasswordPage() {
                 onClick={() => setIsSuccess(false)}
                 disabled={cooldownTime > 0}
               >
-                {cooldownTime > 0 ? t("authModal.forgotPassword.waitCooldownBtn", { time: cooldownTime }) : t("authModal.forgotPassword.resendBtn")}
+                {cooldownTime > 0
+                  ? t("authModal.forgotPassword.waitCooldownBtn", {
+                      time: cooldownTime,
+                    })
+                  : t("authModal.forgotPassword.resendBtn")}
               </Button>
 
               <Link href="/login" className="block">
@@ -170,7 +180,9 @@ export default function ForgotPasswordPage() {
                     {t("authModal.forgotPassword.sendingBtn")}
                   </>
                 ) : cooldownTime > 0 ? (
-                  t("authModal.forgotPassword.waitCooldownBtn", { time: cooldownTime })
+                  t("authModal.forgotPassword.waitCooldownBtn", {
+                    time: cooldownTime,
+                  })
                 ) : (
                   t("authModal.forgotPassword.submitBtn")
                 )}

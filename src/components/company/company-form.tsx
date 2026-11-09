@@ -192,8 +192,8 @@ export function CompanyForm({
             {isLoading || form.formState.isSubmitting
               ? "Saving..."
               : initialData
-              ? "Update Company"
-              : "Create Company"}
+                ? "Update Company"
+                : "Create Company"}
           </Button>
         </div>
       </form>

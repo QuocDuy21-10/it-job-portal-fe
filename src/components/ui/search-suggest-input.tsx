@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Search, X, Clock, Code2, Briefcase, Sparkles, ChevronRight } from "lucide-react";
+import {
+  Search,
+  X,
+  Clock,
+  Code2,
+  Briefcase,
+  Sparkles,
+  ChevronRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useI18n } from "@/hooks/use-i18n";
 import { cn } from "@/lib/utils";
@@ -24,12 +32,22 @@ export interface SearchSuggestInputProps {
   forceClose?: boolean;
 }
 
-
 const CATEGORY_KEYWORDS = new Set([
-  "frontend", "backend", "fullstack", "devops", "ui/ux design", 
-  "project management", "data science", "machine learning", 
-  "mobile development", "web development", "cloud computing", 
-  "devsecops", "agile", "scrum", "kanban"
+  "frontend",
+  "backend",
+  "fullstack",
+  "devops",
+  "ui/ux design",
+  "project management",
+  "data science",
+  "machine learning",
+  "mobile development",
+  "web development",
+  "cloud computing",
+  "devsecops",
+  "agile",
+  "scrum",
+  "kanban",
 ]);
 
 function getSuggestionIcon(label: string) {
@@ -104,31 +122,36 @@ export function SearchSuggestInput({
     const trimmed = term.trim();
     if (!trimmed) return;
     setHistory((prev) => {
-      const filtered = prev.filter((item) => item.toLowerCase() !== trimmed.toLowerCase());
+      const filtered = prev.filter(
+        (item) => item.toLowerCase() !== trimmed.toLowerCase()
+      );
       const next = [trimmed, ...filtered].slice(0, 5);
       localStorage.setItem("job_portal_search_history", JSON.stringify(next));
       return next;
     });
   }, []);
 
-  const deleteFromHistory = React.useCallback((e: React.MouseEvent, term: string) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setHistory((prev) => {
-      const next = prev.filter((item) => item !== term);
-      localStorage.setItem("job_portal_search_history", JSON.stringify(next));
-      return next;
-    });
-  }, []);
+  const deleteFromHistory = React.useCallback(
+    (e: React.MouseEvent, term: string) => {
+      e.stopPropagation();
+      e.preventDefault();
+      setHistory((prev) => {
+        const next = prev.filter((item) => item !== term);
+        localStorage.setItem("job_portal_search_history", JSON.stringify(next));
+        return next;
+      });
+    },
+    []
+  );
 
   const hasMinQuery = value.trim().length >= 2;
 
   const suggestions = React.useMemo(() => {
     const q = value.trim().toLowerCase();
     if (q.length < 2) return [];
-    return skillOptions.filter((skill) =>
-      skill.label.toLowerCase().includes(q)
-    ).slice(0, maxSuggestions);
+    return skillOptions
+      .filter((skill) => skill.label.toLowerCase().includes(q))
+      .slice(0, maxSuggestions);
   }, [value, maxSuggestions, skillOptions]);
 
   // Combined items list for keyboard navigation
@@ -139,12 +162,14 @@ export function SearchSuggestInput({
     return history.map((h) => ({ label: h, value: h }));
   }, [hasMinQuery, suggestions, history]);
 
-  const [dropdownStyle, setDropdownStyle] = React.useState<React.CSSProperties>({
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: "100%",
-  });
+  const [dropdownStyle, setDropdownStyle] = React.useState<React.CSSProperties>(
+    {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: "100%",
+    }
+  );
 
   const isOpen = !disabled && isFocused && !forceClose;
 
@@ -160,7 +185,7 @@ export function SearchSuggestInput({
         const parentRect = parentSearchBox.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
         const leftOffset = parentRect.left - containerRect.left;
-        
+
         setDropdownStyle({
           position: "absolute",
           left: `${leftOffset}px`,
@@ -223,19 +248,25 @@ export function SearchSuggestInput({
     };
   }, [closeSuggestions]);
 
-  const selectSuggestion = React.useCallback((label: string) => {
-    onChange(label);
-    saveToHistory(label);
-    onSubmit?.(label);
-    closeSuggestions();
-    inputRef.current?.blur();
-  }, [closeSuggestions, onChange, onSubmit, saveToHistory]);
+  const selectSuggestion = React.useCallback(
+    (label: string) => {
+      onChange(label);
+      saveToHistory(label);
+      onSubmit?.(label);
+      closeSuggestions();
+      inputRef.current?.blur();
+    },
+    [closeSuggestions, onChange, onSubmit, saveToHistory]
+  );
 
   const handleBlurCapture = React.useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {
       const nextTarget = event.relatedTarget;
 
-      if (nextTarget instanceof Node && containerRef.current?.contains(nextTarget)) {
+      if (
+        nextTarget instanceof Node &&
+        containerRef.current?.contains(nextTarget)
+      ) {
         return;
       }
 
@@ -331,7 +362,8 @@ export function SearchSuggestInput({
         className={cn(
           heightClass,
           size === "lg" ? "pl-4 pr-14 text-lg" : "pl-4 pr-14",
-          noBorder && "border-0 shadow-none focus-visible:ring-0 focus-visible:border-transparent outline-none",
+          noBorder &&
+            "border-0 shadow-none focus-visible:ring-0 focus-visible:border-transparent outline-none",
           inputClassName
         )}
       />
@@ -383,15 +415,23 @@ export function SearchSuggestInput({
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon className="h-4 w-4 shrink-0 text-muted-foreground/65" aria-hidden="true" />
+                        <Icon
+                          className="h-4 w-4 shrink-0 text-muted-foreground/65"
+                          aria-hidden="true"
+                        />
                         <span className="text-foreground font-medium">
-                          <HighlightedLabel label={skill.label} query={value.trim()} />
+                          <HighlightedLabel
+                            label={skill.label}
+                            query={value.trim()}
+                          />
                         </span>
                       </div>
-                      <ChevronRight className={cn(
-                        "h-4 w-4 shrink-0 transition-opacity duration-200",
-                        isSelected ? "opacity-100 text-primary" : "opacity-0"
-                      )} />
+                      <ChevronRight
+                        className={cn(
+                          "h-4 w-4 shrink-0 transition-opacity duration-200",
+                          isSelected ? "opacity-100 text-primary" : "opacity-0"
+                        )}
+                      />
                     </li>
                   );
                 })}
@@ -437,7 +477,9 @@ export function SearchSuggestInput({
                         >
                           <div className="flex items-center gap-3">
                             <Clock className="h-4 w-4 shrink-0 text-muted-foreground/60" />
-                            <span className="text-foreground font-medium">{term}</span>
+                            <span className="text-foreground font-medium">
+                              {term}
+                            </span>
                           </div>
                           <button
                             type="button"
@@ -496,4 +538,3 @@ export function SearchSuggestInput({
     </div>
   );
 }
-

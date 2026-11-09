@@ -12,7 +12,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { SkillRequestSchema, type SkillRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  SkillRequestSchema,
+  type SkillRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -69,7 +72,9 @@ export default function SkillModal({
       <DialogContent className="max-w-md w-[95vw] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.skills.addTitle") : t("cv.skills.editTitle")}
+            {mode === "add"
+              ? t("cv.skills.addTitle")
+              : t("cv.skills.editTitle")}
           </DialogTitle>
           <DialogDescription>
             {mode === "add"
@@ -80,8 +85,14 @@ export default function SkillModal({
 
         <ModalHeaderBanner
           type="skill"
-          title={mode === "add" ? t("cv.skills.addTitle") : t("cv.skills.editTitle")}
-          description={mode === "add" ? t("cv.skills.addDescription") : t("cv.skills.editDescription")}
+          title={
+            mode === "add" ? t("cv.skills.addTitle") : t("cv.skills.editTitle")
+          }
+          description={
+            mode === "add"
+              ? t("cv.skills.addDescription")
+              : t("cv.skills.editDescription")
+          }
         />
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
@@ -149,7 +160,11 @@ export default function SkillModal({
               disabled={isSubmitting}
               className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
             >
-              {isSubmitting ? t("cv.skills.savingButton") : mode === "add" ? t("cv.skills.saveButton") : t("cv.skills.updateButton")}
+              {isSubmitting
+                ? t("cv.skills.savingButton")
+                : mode === "add"
+                  ? t("cv.skills.saveButton")
+                  : t("cv.skills.updateButton")}
             </Button>
           </div>
         </form>

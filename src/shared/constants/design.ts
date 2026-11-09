@@ -17,7 +17,8 @@ export const COLORS = {
     button: "hover:opacity-90",
   },
   text: {
-    gradient: "bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent",
+    gradient:
+      "bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent",
     muted: "text-muted-foreground",
     primary: "text-primary",
   },
@@ -55,7 +56,8 @@ export const TRANSITIONS = {
 } as const;
 
 export const EFFECTS = {
-  cardHover: "transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:-translate-y-1",
+  cardHover:
+    "transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:-translate-y-1",
   buttonHover: "transition-colors duration-200",
   glassMorphism: "bg-background/80 backdrop-blur-lg border border-border/50",
   smoothShadow: "shadow-sm hover:shadow-md transition-shadow duration-300",

@@ -15,7 +15,9 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt ?? ""} />,
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    <img {...props} alt={props.alt ?? ""} />
+  ),
 }));
 
 jest.mock("@/features/company/redux/company.api", () => ({
@@ -43,7 +45,15 @@ jest.mock("@/components/simple-pagination", () => ({
 }));
 
 jest.mock("@/i18n/navigation", () => ({
-  Link: ({ children, className, href }: { children: React.ReactNode; className?: string; href: string }) => (
+  Link: ({
+    children,
+    className,
+    href,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    href: string;
+  }) => (
     <a className={className} href={href}>
       {children}
     </a>
@@ -120,9 +130,7 @@ describe("CompaniesPageClient", () => {
       screen.getByRole("button", { name: "companyList.searchButton" })
     ).toBeInTheDocument();
     expect(screen.getByText("420")).toBeInTheDocument();
-    expect(
-      screen.getByText("companyList.companiesFound")
-    ).toBeInTheDocument();
+    expect(screen.getByText("companyList.companiesFound")).toBeInTheDocument();
   });
 
   it("does not update the URL while the user is still typing", () => {
@@ -157,7 +165,9 @@ describe("CompaniesPageClient", () => {
       target: { value: "tech" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "companyList.searchButton" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "companyList.searchButton" })
+    );
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith("/en/companies?q=tech", {

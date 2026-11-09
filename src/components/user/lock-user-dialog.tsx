@@ -54,7 +54,9 @@ export function LockUserDialog({
               <DialogTitle>Lock User Account</DialogTitle>
               <DialogDescription className="mt-0.5">
                 Lock{" "}
-                <span className="font-medium text-foreground">{user?.name}</span>
+                <span className="font-medium text-foreground">
+                  {user?.name}
+                </span>
                 ? They will be signed out immediately and unable to log in.
               </DialogDescription>
             </div>
@@ -64,7 +66,9 @@ export function LockUserDialog({
         <div className="space-y-2 py-2">
           <Label htmlFor="lock-reason" className="text-sm font-medium">
             Reason{" "}
-            <span className="text-muted-foreground font-normal">(optional)</span>
+            <span className="text-muted-foreground font-normal">
+              (optional)
+            </span>
           </Label>
           <Textarea
             id="lock-reason"

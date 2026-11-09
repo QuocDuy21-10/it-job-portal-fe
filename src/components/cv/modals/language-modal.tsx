@@ -12,7 +12,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { LanguageRequestSchema, type LanguageRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  LanguageRequestSchema,
+  type LanguageRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -69,7 +72,9 @@ export default function LanguageModal({
       <DialogContent className="max-w-md w-[95vw] bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.languages.addTitle") : t("cv.languages.editTitle")}
+            {mode === "add"
+              ? t("cv.languages.addTitle")
+              : t("cv.languages.editTitle")}
           </DialogTitle>
           <DialogDescription>
             {mode === "add"
@@ -80,8 +85,16 @@ export default function LanguageModal({
 
         <ModalHeaderBanner
           type="language"
-          title={mode === "add" ? t("cv.languages.addTitle") : t("cv.languages.editTitle")}
-          description={mode === "add" ? t("cv.languages.addDescription") : t("cv.languages.editDescription")}
+          title={
+            mode === "add"
+              ? t("cv.languages.addTitle")
+              : t("cv.languages.editTitle")
+          }
+          description={
+            mode === "add"
+              ? t("cv.languages.addDescription")
+              : t("cv.languages.editDescription")
+          }
         />
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
@@ -149,7 +162,11 @@ export default function LanguageModal({
               disabled={isSubmitting}
               className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
             >
-              {isSubmitting ? t("cv.languages.savingButton") : mode === "add" ? t("cv.languages.saveButton") : t("cv.languages.updateButton")}
+              {isSubmitting
+                ? t("cv.languages.savingButton")
+                : mode === "add"
+                  ? t("cv.languages.saveButton")
+                  : t("cv.languages.updateButton")}
             </Button>
           </div>
         </form>

@@ -54,7 +54,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function ExternalJobPage({ params }: ExternalJobPageProps) {
+export default async function ExternalJobPage({
+  params,
+}: ExternalJobPageProps) {
   const { id } = await resolveExternalJobParams(params);
   const job = await fetchPublicExternalJobById(id);
 

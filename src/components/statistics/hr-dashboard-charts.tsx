@@ -2,7 +2,13 @@
 
 import { useMemo } from "react";
 import { useI18n } from "@/hooks/use-i18n";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
@@ -110,7 +116,9 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
     <div className="grid gap-6 xl:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.hr.charts.statusDistributionTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.hr.charts.statusDistributionTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.hr.charts.statusDistributionDescription")}
           </CardDescription>
@@ -120,9 +128,18 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
             className="h-[280px] w-full"
             config={statusChartConfig}
           >
-            <BarChart accessibilityLayer data={statusDistributionData} layout="vertical">
+            <BarChart
+              accessibilityLayer
+              data={statusDistributionData}
+              layout="vertical"
+            >
               <CartesianGrid horizontal={false} />
-              <XAxis type="number" allowDecimals={false} tickLine={false} axisLine={false} />
+              <XAxis
+                type="number"
+                allowDecimals={false}
+                tickLine={false}
+                axisLine={false}
+              />
               <YAxis
                 dataKey="label"
                 type="category"
@@ -138,7 +155,9 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
                     formatter={(value, _, item) => (
                       <div className="flex items-center justify-between gap-4">
                         <span>{item.payload.label}</span>
-                        <span>{formatStatisticNumber(Number(value), language)}</span>
+                        <span>
+                          {formatStatisticNumber(Number(value), language)}
+                        </span>
                       </div>
                     )}
                   />
@@ -152,7 +171,9 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.hr.charts.applicationTrendTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.hr.charts.applicationTrendTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.hr.charts.applicationTrendDescription")}
           </CardDescription>
@@ -164,9 +185,23 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
           >
             <AreaChart accessibilityLayer data={applicationTrendData}>
               <defs>
-                <linearGradient id="hr-application-trend" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="var(--color-count)" stopOpacity={0.05} />
+                <linearGradient
+                  id="hr-application-trend"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-count)"
+                    stopOpacity={0.35}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-count)"
+                    stopOpacity={0.05}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
@@ -177,8 +212,12 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
                 content={
                   <ChartTooltipContent
                     indicator="line"
-                    labelFormatter={(_, payload) => payload?.[0]?.payload.tooltipLabel}
-                    formatter={(value) => formatStatisticNumber(Number(value), language)}
+                    labelFormatter={(_, payload) =>
+                      payload?.[0]?.payload.tooltipLabel
+                    }
+                    formatter={(value) =>
+                      formatStatisticNumber(Number(value), language)
+                    }
                   />
                 }
               />
@@ -196,7 +235,9 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.hr.charts.topJobsTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.hr.charts.topJobsTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.hr.charts.topJobsDescription")}
           </CardDescription>
@@ -205,7 +246,10 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
           {stats.topJobsByApplications.length > 0 ? (
             <div className="space-y-4">
               {stats.topJobsByApplications.map((item) => (
-                <div key={item.jobId} className="flex items-center justify-between gap-4">
+                <div
+                  key={item.jobId}
+                  className="flex items-center justify-between gap-4"
+                >
                   <div className="min-w-0 space-y-1">
                     <p className="truncate font-medium text-foreground">
                       {item.jobName}
@@ -230,7 +274,9 @@ export function HrDashboardCharts({ stats }: HrDashboardChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("statisticsDashboard.hr.charts.performanceTitle")}</CardTitle>
+          <CardTitle>
+            {t("statisticsDashboard.hr.charts.performanceTitle")}
+          </CardTitle>
           <CardDescription>
             {t("statisticsDashboard.hr.charts.performanceDescription")}
           </CardDescription>

@@ -70,7 +70,9 @@ function NotificationItemComponent({
         <div
           className={cn(
             "rounded-lg p-2 flex-shrink-0",
-            notification.isRead ? "bg-muted text-muted-foreground" : typeMeta.accentClassName
+            notification.isRead
+              ? "bg-muted text-muted-foreground"
+              : typeMeta.accentClassName
           )}
         >
           <TypeIcon className="h-4 w-4" />
@@ -114,13 +116,20 @@ function NotificationItemComponent({
           title: notification.title,
         })}
       >
-        <div className={cn("rounded-lg p-3 flex-shrink-0", typeMeta.accentClassName)}>
+        <div
+          className={cn(
+            "rounded-lg p-3 flex-shrink-0",
+            typeMeta.accentClassName
+          )}
+        >
           <TypeIcon className="h-5 w-5" />
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-foreground">{notification.title}</h3>
+            <h3 className="font-semibold text-foreground">
+              {notification.title}
+            </h3>
             {!notification.isRead && showUnreadIndicator && (
               <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-primary animate-pulse" />
             )}
@@ -131,13 +140,19 @@ function NotificationItemComponent({
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-2 md:gap-3">
-            <p className="text-xs text-muted-foreground" title={formatAbsoluteTime(notification.createdAt, language)}>
+            <p
+              className="text-xs text-muted-foreground"
+              title={formatAbsoluteTime(notification.createdAt, language)}
+            >
               {formatRelativeTime(notification.createdAt, language)}
             </p>
             {showTypeBadge && (
               <Badge
                 variant="secondary"
-                className={cn("border text-xs font-medium", typeMeta.badgeClassName)}
+                className={cn(
+                  "border text-xs font-medium",
+                  typeMeta.badgeClassName
+                )}
               >
                 {t(typeMeta.labelKey)}
               </Badge>

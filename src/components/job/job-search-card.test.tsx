@@ -95,8 +95,12 @@ describe("JobSearchCard", () => {
     render(<JobSearchCard item={internalItem} />);
 
     expect(new Set(hrefs())).toEqual(new Set(["/jobs/job-1"]));
-    expect(screen.getByRole("button", { name: "Save job" })).toBeInTheDocument();
-    expect(screen.queryByText("jobsPage.externalBadge")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Save job" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("jobsPage.externalBadge")
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText("jobsPage.salaryNotDisclosed")
     ).not.toBeInTheDocument();
@@ -109,15 +113,23 @@ describe("JobSearchCard", () => {
     expect(new Set(hrefs())).toEqual(new Set(["/jobs/external/ext-1"]));
     expect(screen.getByText("jobsPage.externalBadge")).toBeInTheDocument();
     expect(screen.getByText("jobsPage.salaryNotDisclosed")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Save job" })).not.toBeInTheDocument();
-    expect(screen.getByText("jobsPage.jobCard.viewDetails")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Save job" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText("jobsPage.jobCard.viewDetails")
+    ).toBeInTheDocument();
   });
 
   it("shows the salary text of an external job when provided", () => {
-    render(<JobSearchCard item={{ ...externalItem, salaryText: "Negotiable" }} />);
+    render(
+      <JobSearchCard item={{ ...externalItem, salaryText: "Negotiable" }} />
+    );
 
     expect(screen.getByText("Negotiable")).toBeInTheDocument();
-    expect(screen.queryByText("jobsPage.salaryNotDisclosed")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("jobsPage.salaryNotDisclosed")
+    ).not.toBeInTheDocument();
   });
 
   it("shows the closing-soon status from endDate for internal jobs", () => {
@@ -130,6 +142,8 @@ describe("JobSearchCard", () => {
       />
     );
 
-    expect(screen.getByText("jobsPage.jobCard.statusClosing")).toBeInTheDocument();
+    expect(
+      screen.getByText("jobsPage.jobCard.statusClosing")
+    ).toBeInTheDocument();
   });
 });

@@ -20,7 +20,8 @@ export const en = {
     followTooltip: "Click to get notified when new jobs are posted",
     unfollowTooltip: "Click to unfollow this company",
     loginTooltip: "Log in to follow this company",
-    followAlertTooltip: "Follow to receive notifications about new job openings",
+    followAlertTooltip:
+      "Follow to receive notifications about new job openings",
     toasts: {
       unfollowSuccess: "Successfully unfollowed company",
       followSuccess: "Successfully followed company",
@@ -41,14 +42,16 @@ export const en = {
     topEmployers: "Discover Top Employers",
     findYourNext: "Find Your Next ",
     employer: "Employer",
-    browseTopCompanies: "Browse top companies and explore exciting career opportunities",
+    browseTopCompanies:
+      "Browse top companies and explore exciting career opportunities",
     companiesFound: "companies found",
     loading: "Loading companies...",
     errorLoading: "Error loading companies.",
     openPositions: "open positions",
     viewDetails: "View Details",
     noCompaniesFound: "No companies found",
-    tryAdjustingSearch: "Try adjusting your search query to find what you're looking for",
+    tryAdjustingSearch:
+      "Try adjusting your search query to find what you're looking for",
     clearSearch: "Clear Search",
     previous: "Previous",
     next: "Next",
@@ -60,7 +63,8 @@ export const en = {
     viewProfile: "View Company Profile",
     followCompany: "Follow Company",
     tip: "Tip:",
-    followTip: "Follow this company to receive notifications about new job openings.",
+    followTip:
+      "Follow this company to receive notifications about new job openings.",
   },
   meta: {
     title: "DevLink - Find Your Dream Job",
@@ -137,10 +141,12 @@ export const en = {
     shared: {
       guardLoading: "Checking access...",
       errorTitle: "Unable to load statistics",
-      errorDescription: "The statistics service is currently unavailable. Please try again.",
+      errorDescription:
+        "The statistics service is currently unavailable. Please try again.",
       retry: "Try again",
       emptyTitle: "No statistics available",
-      emptyDescription: "Statistics will appear here once the platform has enough data to aggregate.",
+      emptyDescription:
+        "Statistics will appear here once the platform has enough data to aggregate.",
       refresh: "Refresh",
       refreshing: "Refreshing...",
       generatedAt: "Generated at",
@@ -185,12 +191,15 @@ export const en = {
         jobTrendTitle: "Job creation trend",
         jobTrendDescription: "Seven-day view of newly created jobs.",
         applicationTrendTitle: "Application trend",
-        applicationTrendDescription: "Seven-day view of incoming resume submissions.",
+        applicationTrendDescription:
+          "Seven-day view of incoming resume submissions.",
         topSkillsTitle: "Top demanded skills",
-        topSkillsDescription: "Skills that appear most often across approved active jobs.",
+        topSkillsDescription:
+          "Skills that appear most often across approved active jobs.",
         skillDemandHint: "Active approved job mentions",
         processingHealthTitle: "Resume processing health",
-        processingHealthDescription: "Pipeline visibility for parsing and analysis stages.",
+        processingHealthDescription:
+          "Pipeline visibility for parsing and analysis stages.",
         totalResumes: "Total resumes tracked",
         parsedResumes: "Parsed resumes",
         parseFailedResumes: "Parse failures",
@@ -211,7 +220,8 @@ export const en = {
       cards: {
         countActiveJobs: {
           label: "Active jobs",
-          description: "Approved jobs for your company that are still accepting candidates.",
+          description:
+            "Approved jobs for your company that are still accepting candidates.",
         },
         countPendingApprovalJobs: {
           label: "Pending approval",
@@ -236,14 +246,17 @@ export const en = {
       },
       charts: {
         statusDistributionTitle: "Application status distribution",
-        statusDistributionDescription: "Current recruiting funnel grouped by resume status.",
+        statusDistributionDescription:
+          "Current recruiting funnel grouped by resume status.",
         applicationTrendTitle: "Application trend",
-        applicationTrendDescription: "Seven-day view of new applications for your company.",
+        applicationTrendDescription:
+          "Seven-day view of new applications for your company.",
         topJobsTitle: "Top jobs by applications",
         topJobsDescription: "Roles attracting the highest application volume.",
         topJobsHint: "Applications received",
         performanceTitle: "Recruiting performance",
-        performanceDescription: "Response speed and AI matching quality for your company.",
+        performanceDescription:
+          "Response speed and AI matching quality for your company.",
         responseRate: "Response rate",
         firstResponseHours: "Avg. first response",
         matchingScore: "Avg. matching score",
@@ -458,10 +471,12 @@ export const en = {
     },
     login: {
       titlePage: "Welcome Back to DevLink",
-      descriptionPage: "Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations.",
+      descriptionPage:
+        "Sign in to access your account and continue your job search journey. Find opportunities that match your skills and aspirations.",
       verificationAlert: {
         title: "Email Verified!",
-        message: "Your email has been successfully verified. You can now sign in to your account.",
+        message:
+          "Your email has been successfully verified. You can now sign in to your account.",
       },
       fields: {
         email: {
@@ -490,7 +505,8 @@ export const en = {
     },
     register: {
       titlePage: "Join DevLink Today",
-      descriptionPage: "Create your account and unlock access to thousands of job opportunities. Start your career journey with us.",
+      descriptionPage:
+        "Create your account and unlock access to thousands of job opportunities. Start your career journey with us.",
       socialDivider: "Or sign up with",
       fields: {
         name: {
@@ -525,7 +541,8 @@ export const en = {
         signInNow: "Sign in now",
       },
       toasts: {
-        success: "Registration successful! Please check your email to verify your account.",
+        success:
+          "Registration successful! Please check your email to verify your account.",
         failed: "Registration failed",
         googleSignupComingSoon: "Google signup coming soon.",
         googleSignupFailed: "Google signup failed.",
@@ -571,7 +588,8 @@ export const en = {
         digit: "Password must include at least one number",
         special: "Password must include at least one special character",
         whitespace: "Password must not contain spaces",
-        repeatedCharacters: "Password must not repeat a character more than 3 times in a row",
+        repeatedCharacters:
+          "Password must not repeat a character more than 3 times in a row",
         common: "Password is too common. Please choose another password",
       },
       confirmPassword: {
@@ -584,7 +602,8 @@ export const en = {
     },
     forgotPassword: {
       titlePage: "Reset Your Password",
-      descriptionPage: "Don't worry! It happens. Enter your email and we'll send you instructions to reset your password.",
+      descriptionPage:
+        "Don't worry! It happens. Enter your email and we'll send you instructions to reset your password.",
       titleCard: "Reset Password",
       descriptionCard: "We'll send a reset link to your email",
       successTitle: "Email Sent Successfully!",
@@ -598,7 +617,8 @@ export const en = {
       sendingBtn: "Sending...",
       toasts: {
         sendSuccess: "Sent password reset instructions!",
-        sendFallback: "If the email exists, you will receive instructions shortly.",
+        sendFallback:
+          "If the email exists, you will receive instructions shortly.",
       },
     },
     resetPassword: {
@@ -610,7 +630,8 @@ export const en = {
       successDescription: "Your password has been updated successfully.",
       redirectingText: "Redirecting to login page in {time}s...",
       goLoginBtn: "Go to Login Page",
-      requirements: "Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.",
+      requirements:
+        "Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.",
       submitBtn: "Reset Password",
       toasts: {
         invalidLink: "Invalid password reset link",
@@ -625,9 +646,12 @@ export const en = {
       descriptionPage: "We've sent a verification code to your email",
       titleCard: "Enter Verification Code",
       alreadyVerified: "Already verified?",
-      descriptionCardWithEmail: "Please check your email {email} for the 6-digit code",
-      descriptionCardDefault: "Please enter the 6-digit code we sent to your email",
-      alertInfo: "The verification code will expire in 5 minutes. Please enter it below to activate your account.",
+      descriptionCardWithEmail:
+        "Please check your email {email} for the 6-digit code",
+      descriptionCardDefault:
+        "Please enter the 6-digit code we sent to your email",
+      alertInfo:
+        "The verification code will expire in 5 minutes. Please enter it below to activate your account.",
       verifyBtn: "Verify Email",
       verifyingBtn: "Verifying...",
       dividerText: "Didn't receive the code?",
@@ -672,7 +696,8 @@ export const en = {
       },
       cv: {
         label: "Upload CV",
-        placeholder: "Choose a file or drag and drop (.doc, .docx, .pdf - Max 5MB)",
+        placeholder:
+          "Choose a file or drag and drop (.doc, .docx, .pdf - Max 5MB)",
       },
     },
     actions: {
@@ -757,7 +782,7 @@ export const en = {
       toasts: {
         success: "Personal information updated successfully!",
         error: "Failed to update personal information.",
-      }
+      },
     },
     changePassword: {
       title: "Change Password",
@@ -777,15 +802,17 @@ export const en = {
       toasts: {
         success: "Password updated successfully! Please log in again.",
         error: "Failed to update password.",
-      }
+      },
     },
     dashboard: {
       metaTitle: "Admin Dashboard | IT Dev Link",
-      metaDescription: "Manage and monitor recruitment statistics across the platform",
+      metaDescription:
+        "Manage and monitor recruitment statistics across the platform",
     },
     hrDashboard: {
       metaTitle: "HR Dashboard | IT Dev Link",
-      metaDescription: "Track recruiting efficiency and application processing progress",
+      metaDescription:
+        "Track recruiting efficiency and application processing progress",
     },
     shared: {
       number: "No.",
@@ -809,7 +836,8 @@ export const en = {
       lock: "Lock",
       unlock: "Unlock",
       desktopWarningTitle: "Optimal Experience on Desktop",
-      desktopWarningDesc: "This page contains complex management tables and is best viewed on a desktop screen. You can scroll horizontally to view full table details.",
+      desktopWarningDesc:
+        "This page contains complex management tables and is best viewed on a desktop screen. You can scroll horizontally to view full table details.",
     },
     resources: {
       user: "user",
@@ -843,10 +871,10 @@ export const en = {
       toasts: {
         createSuccess: "User created successfully!",
         updateSuccess: "User updated successfully!",
-        deleteSuccess: "Deleted user \"{name}\" successfully!",
+        deleteSuccess: 'Deleted user "{name}" successfully!',
         operationError: "Something went wrong. Please try again.",
         deleteError: "Unable to delete the user. Please try again.",
-        lockSuccess: "Locked account \"{name}\" successfully!",
+        lockSuccess: 'Locked account "{name}" successfully!',
         lockError: "Unable to lock the account. Please try again.",
         unlockSuccess: "Account unlocked successfully!",
         unlockError: "Unable to unlock the account. Please try again.",
@@ -872,7 +900,7 @@ export const en = {
       toasts: {
         createSuccess: "Company created successfully!",
         updateSuccess: "Company updated successfully!",
-        deleteSuccess: "Deleted company \"{name}\" successfully!",
+        deleteSuccess: 'Deleted company "{name}" successfully!',
         operationError: "Something went wrong. Please try again.",
         deleteError: "Unable to delete the company. Please try again.",
       },
@@ -920,11 +948,11 @@ export const en = {
       toasts: {
         createSuccess: "Job created successfully!",
         updateSuccess: "Job updated successfully!",
-        deleteSuccess: "Deleted job \"{name}\" successfully!",
+        deleteSuccess: 'Deleted job "{name}" successfully!',
         operationError: "Something went wrong. Please try again.",
         deleteError: "Unable to delete the job. Please try again.",
-        approveSuccess: "Approved job \"{name}\" successfully!",
-        rejectSuccess: "Rejected job \"{name}\" successfully!",
+        approveSuccess: 'Approved job "{name}" successfully!',
+        rejectSuccess: 'Rejected job "{name}" successfully!',
         approvalError: "Unable to update approval status. Please try again.",
       },
     },
@@ -944,7 +972,7 @@ export const en = {
       toasts: {
         createSuccess: "Role created successfully!",
         updateSuccess: "Role updated successfully!",
-        deleteSuccess: "Deleted role \"{name}\" successfully!",
+        deleteSuccess: 'Deleted role "{name}" successfully!',
         operationError: "Something went wrong. Please try again.",
         deleteError: "Unable to delete the role. Please try again.",
       },
@@ -993,7 +1021,7 @@ export const en = {
       },
       toasts: {
         updateSuccess: "Application updated successfully!",
-        deleteSuccess: "Deleted application \"{name}\" successfully!",
+        deleteSuccess: 'Deleted application "{name}" successfully!',
         operationError: "Something went wrong. Please try again.",
         deleteError: "Unable to delete the application. Please try again.",
       },
@@ -1071,7 +1099,8 @@ export const en = {
       experience: "Work Experience",
       skills: "Skills",
       languages: "Languages",
-      notEnough: "Complete at least {percent}% of your profile to preview and download CV",
+      notEnough:
+        "Complete at least {percent}% of your profile to preview and download CV",
       previewDownload: "Preview & Download",
       checklistTitle: "COMPLETED ITEMS:",
       tip: "Building a complete profile increases your chances of getting noticed by top employers by up to 3x.",
@@ -1157,7 +1186,7 @@ export const en = {
       editTooltip: "Edit this skill",
       deleteTooltip: "Delete this skill",
       deleteSuccess: "Skill deleted",
-      deleteSuccessDesc: "Skill \"{name}\" has been deleted",
+      deleteSuccessDesc: 'Skill "{name}" has been deleted',
       edit: "Edit",
       delete: "Delete",
       addTitle: "Add Skill",
@@ -1183,7 +1212,7 @@ export const en = {
       editTooltip: "Edit this language",
       deleteTooltip: "Delete this language",
       deleteSuccess: "Language deleted",
-      deleteSuccessDesc: "Language \"{name}\" has been deleted",
+      deleteSuccessDesc: 'Language "{name}" has been deleted',
       edit: "Edit",
       delete: "Delete",
       addTitle: "Add Language",
@@ -1314,8 +1343,10 @@ export const en = {
       skillsRequired: "Please select at least one skill",
       locationRequired: "Please select a location",
       maxSubscriptions: "You can only create up to {count} subscription(s)",
-      registerFailed: "Something went wrong while creating the subscription. Please try again.",
-      deleteFailed: "Something went wrong while cancelling the subscription. Please try again.",
+      registerFailed:
+        "Something went wrong while creating the subscription. Please try again.",
+      deleteFailed:
+        "Something went wrong while cancelling the subscription. Please try again.",
     },
     list: {
       loading: "Loading...",
@@ -1402,7 +1433,8 @@ export const en = {
     guidelinesTitle: "CV upload tips",
     guideline1: "• Keep your CV updated with the latest information",
     guideline2: "• Use PDF format for the most reliable display",
-    guideline3: "• Name the file clearly, for example: CV_FullName_Position.pdf",
+    guideline3:
+      "• Name the file clearly, for example: CV_FullName_Position.pdf",
     guideline4: "• Review all information carefully before uploading",
     uploadedSectionTitle: "Uploaded CV",
     uploadedCount: "{count} file(s)",
@@ -1504,7 +1536,8 @@ export const en = {
     sortLabel: "Sort:",
     searchingJobs: "Searching for matching jobs...",
     emptyTitle: "No jobs found",
-    emptyDescription: "Try adjusting your filters or searching with a different keyword",
+    emptyDescription:
+      "Try adjusting your filters or searching with a different keyword",
     suspenseLoading: "Loading jobs...",
     jobTypeOptions: {
       all: "All work types",
@@ -1571,7 +1604,8 @@ export const en = {
     workplace: "Workplace",
     remote: "Remote",
     workplaceUnknown: "Not specified — see the original posting",
-    fullContentAtSource: "The full description of this job is on the original posting.",
+    fullContentAtSource:
+      "The full description of this job is on the original posting.",
     location: "Location",
     salary: "Salary",
     skills: "Skills",
@@ -1620,9 +1654,11 @@ export const en = {
       submit: "Create password",
     },
     toasts: {
-      changePasswordSuccess: "Password changed successfully. Please sign in again.",
+      changePasswordSuccess:
+        "Password changed successfully. Please sign in again.",
       changePasswordError: "Failed to change password",
-      setPasswordSuccess: "Password created successfully. Please sign in again.",
+      setPasswordSuccess:
+        "Password created successfully. Please sign in again.",
       setPasswordError: "Failed to create password",
     },
   },
@@ -1632,10 +1668,10 @@ export const en = {
       gracePeriodNote:
         "Your account will be permanently deleted after 30 days. You can cancel any time during that period.",
       confirmPassword: "Enter your password to confirm",
-      confirmText: 'Type DELETE to confirm',
+      confirmText: "Type DELETE to confirm",
       pendingBanner: "Your account is scheduled for deletion on {date}",
       pendingBannerNote:
-        "Log back in and click \"Cancel Deletion\" to keep your account.",
+        'Log back in and click "Cancel Deletion" to keep your account.',
       cancelDeletion: "Cancel Deletion",
       requestSuccess:
         "Your account has been scheduled for deletion on {date}. You can cancel within 30 days.",
@@ -1643,7 +1679,8 @@ export const en = {
       cancelSuccess:
         "Account deletion cancelled. Your account is now fully active.",
       cancelError: "Unable to cancel account deletion request",
-      warningTitle: "Warning: this action will schedule your account for deletion!",
+      warningTitle:
+        "Warning: this action will schedule your account for deletion!",
       warningDescriptionLine1:
         "Your account will be permanently deleted after 30 days. All data, including CVs, messages, and applications, will be removed and cannot be recovered.",
       warningDescriptionLine2:
@@ -1657,7 +1694,8 @@ export const en = {
         successMessage:
           "Your account deletion has been cancelled. Your account is now fully active.",
         goToLogin: "Go to Login",
-        invalidToken: "This cancellation link is invalid or has already expired.",
+        invalidToken:
+          "This cancellation link is invalid or has already expired.",
         missingToken: "No cancellation token was found in the link.",
         redirecting: "Redirecting to login in {count} second(s)...",
       },
@@ -1669,7 +1707,8 @@ export const en = {
   authLayout: {
     loaderText: "Checking access...",
     defaultTitle: "Welcome to DevLink",
-    defaultDescription: "Your gateway to career opportunities. Connect with top employers and find your dream job.",
+    defaultDescription:
+      "Your gateway to career opportunities. Connect with top employers and find your dream job.",
     feature1: "1000+ Companies hiring",
     feature2: "Verified job listings",
     feature3: "Easy application process",
@@ -1693,7 +1732,8 @@ export const en = {
   middleware: {
     forbidden: "You do not have permission to perform this action",
     serverError: "Server error. Please try again later",
-    networkError: "Cannot connect to server. Please check your network connection",
+    networkError:
+      "Cannot connect to server. Please check your network connection",
   },
   fileUpload: {
     toasts: {

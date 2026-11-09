@@ -23,9 +23,11 @@ export const ResumeEntitySchema = ResumeSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
-  aiAnalysis: z.object({
-    matchingScore: z.number(),
-  }).optional(),
+  aiAnalysis: z
+    .object({
+      matchingScore: z.number(),
+    })
+    .optional(),
   priority: z.enum(["HIGH", "MEDIUM", "LOW", "EXCELLENT"]).optional(),
   createdBy: z
     .object({
@@ -40,20 +42,24 @@ export const ResumeEntitySchema = ResumeSchema.extend({
     })
     .optional(),
 }).extend({
-  companyId: z.union([
-    z.string(),
-    z.object({
-      _id: z.string(),
-      name: z.string(),
-    }),
-  ]).optional(),
-  jobId: z.union([
-    z.string(),
-    z.object({
-      _id: z.string(),
-      name: z.string(),
-    }),
-  ]).optional(),
+  companyId: z
+    .union([
+      z.string(),
+      z.object({
+        _id: z.string(),
+        name: z.string(),
+      }),
+    ])
+    .optional(),
+  jobId: z
+    .union([
+      z.string(),
+      z.object({
+        _id: z.string(),
+        name: z.string(),
+      }),
+    ])
+    .optional(),
 });
 
 export const CreateResumeFormData = z.object({
@@ -108,7 +114,9 @@ export const ResumeAppliedJobEntitySchema = ResumeAppliedJob.extend({
 });
 
 // Types
-export type ResumeAppliedJobEntity = z.infer<typeof ResumeAppliedJobEntitySchema>;
+export type ResumeAppliedJobEntity = z.infer<
+  typeof ResumeAppliedJobEntitySchema
+>;
 export type Resume = z.infer<typeof ResumeEntitySchema>;
 export type ResumeFormData = z.infer<typeof ResumeSchema>;
 export type CreateResumeFormData = z.infer<typeof CreateResumeFormData>;
@@ -116,7 +124,7 @@ export type UpdateResumeFormData = z.infer<typeof UpdateResumeFormData>;
 export type ResumeAppliedJob = z.infer<typeof ResumeAppliedJob>;
 export type ResumeResponseUpload = z.infer<typeof ResumeAppliedJobEntitySchema>;
 export type ResumeUpload = {
-  file: File; 
+  file: File;
   folderType: string;
   jobId: string;
-}
+};

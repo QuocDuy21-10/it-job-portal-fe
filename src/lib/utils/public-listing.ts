@@ -55,8 +55,7 @@ const JOB_SEARCH_SORT_BY_LIST_SORT: Record<string, JobSearchSort> = {
 };
 
 type SearchParamsSource =
-  | URLSearchParams
-  | Record<string, string | string[] | undefined>;
+  URLSearchParams | Record<string, string | string[] | undefined>;
 
 export type JobListSearchState = {
   experience: string;
@@ -239,15 +238,15 @@ export const buildCompanyListQueryArgs = (
   searchState: CompanyListSearchState
 ): PaginatedQueryParams => {
   return {
-    filter: searchState.q
-      ? `name=/${encodeURIComponent(searchState.q)}/i`
-      : "",
+    filter: searchState.q ? `name=/${encodeURIComponent(searchState.q)}/i` : "",
     limit: searchState.limit,
     page: searchState.page,
   };
 };
 
-export const buildJobListUrlSearchParams = (searchState: JobListSearchState) => {
+export const buildJobListUrlSearchParams = (
+  searchState: JobListSearchState
+) => {
   const params = new URLSearchParams();
 
   if (searchState.q) {
@@ -383,8 +382,6 @@ export const areCompanyListSearchStatesEqual = (
   right: CompanyListSearchState
 ) => {
   return (
-    left.limit === right.limit &&
-    left.page === right.page &&
-    left.q === right.q
+    left.limit === right.limit && left.page === right.page && left.q === right.q
   );
 };

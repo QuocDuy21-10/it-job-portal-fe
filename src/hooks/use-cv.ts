@@ -1,18 +1,21 @@
 import { useState, useCallback } from "react";
-import { 
-  useUpsertCVProfileMutation, 
-  useLazyGetMyCVProfileQuery 
+import {
+  useUpsertCVProfileMutation,
+  useLazyGetMyCVProfileQuery,
 } from "@/features/cv-profile/redux/cv-profile.api";
-import { 
-  UpsertCVProfileRequest, 
-  CVProfile 
+import {
+  UpsertCVProfileRequest,
+  CVProfile,
 } from "@/features/cv-profile/schemas/cv-profile.schema";
 
 interface UseCV {
   isLoading: boolean;
   error: string | null;
   cvData: CVProfile | null;
-  upsertCV: (data: UpsertCVProfileRequest, avatarFile?: File) => Promise<CVProfile | null>;
+  upsertCV: (
+    data: UpsertCVProfileRequest,
+    avatarFile?: File
+  ) => Promise<CVProfile | null>;
   fetchMyCVProfile: () => Promise<CVProfile | null>;
   clearError: () => void;
   refetch: () => Promise<CVProfile | null>;
@@ -27,10 +30,15 @@ export const useCV = (): UseCV => {
 
   const [
     triggerGetMyCVProfile,
-    { data: cvProfileData, isLoading: isLoadingQuery, isFetching: isFetchingQuery },
+    {
+      data: cvProfileData,
+      isLoading: isLoadingQuery,
+      isFetching: isFetchingQuery,
+    },
   ] = useLazyGetMyCVProfileQuery();
-  
-  const [upsertCVMutation, { isLoading: isUpserting }] = useUpsertCVProfileMutation();
+
+  const [upsertCVMutation, { isLoading: isUpserting }] =
+    useUpsertCVProfileMutation();
 
   const cvData = cvProfileData?.data || null;
   const isLoading = isLoadingQuery || isFetchingQuery || isUpserting;
@@ -45,14 +53,15 @@ export const useCV = (): UseCV => {
 
     try {
       const result = await triggerGetMyCVProfile(undefined, false).unwrap();
-      
+
       if (result.data) {
         return result.data;
       }
-      
+
       return null;
     } catch (err: any) {
-      const errorMessage = err?.data?.message || err?.message || "Có lỗi xảy ra khi tải CV";
+      const errorMessage =
+        err?.data?.message || err?.message || "Có lỗi xảy ra khi tải CV";
       setError(errorMessage);
       return null;
     }
@@ -62,23 +71,33 @@ export const useCV = (): UseCV => {
    * Upsert CV Profile (Create or Update)
    * POST /cv-profiles/upsert
    */
-  const upsertCV = useCallback(async (data: UpsertCVProfileRequest, avatarFile?: File): Promise<CVProfile | null> => {
-    setError(null);
+  const upsertCV = useCallback(
+    async (
+      data: UpsertCVProfileRequest,
+      avatarFile?: File
+    ): Promise<CVProfile | null> => {
+      setError(null);
 
-    try {
-      const result = await upsertCVMutation({ data, avatar: avatarFile }).unwrap();
-      
-      if (result.data) {
-        return result.data;
-      } else {
-        throw new Error(result.message || "Failed to save CV");
+      try {
+        const result = await upsertCVMutation({
+          data,
+          avatar: avatarFile,
+        }).unwrap();
+
+        if (result.data) {
+          return result.data;
+        } else {
+          throw new Error(result.message || "Failed to save CV");
+        }
+      } catch (err: any) {
+        const errorMessage =
+          err?.data?.message || err?.message || "Có lỗi xảy ra khi lưu CV";
+        setError(errorMessage);
+        return null;
       }
-    } catch (err: any) {
-      const errorMessage = err?.data?.message || err?.message || "Có lỗi xảy ra khi lưu CV";
-      setError(errorMessage);
-      return null;
-    }
-  }, [upsertCVMutation]);
+    },
+    [upsertCVMutation]
+  );
 
   const clearError = useCallback(() => {
     setError(null);

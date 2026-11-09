@@ -25,4 +25,3 @@ export type PopularSkill = z.infer<typeof PopularSkillSchema>;
 export interface GetPopularSkillsParams {
   limit?: number;
 }
-

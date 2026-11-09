@@ -6,7 +6,10 @@ import { ICVProfile } from "@/shared/types/cv";
  */
 export const calculateCVCompletion = (cvData: ICVProfile): number => {
   const sections = [
-    { weight: 1, filled: !!(cvData.personalInfo.fullName && cvData.personalInfo.email) },
+    {
+      weight: 1,
+      filled: !!(cvData.personalInfo.fullName && cvData.personalInfo.email),
+    },
     { weight: 1, filled: cvData.education.length > 0 },
     { weight: 1, filled: cvData.experience.length > 0 },
     { weight: 1, filled: cvData.skills.length > 0 },

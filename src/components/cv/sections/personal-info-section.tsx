@@ -4,7 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit2, Mail, Phone, User as UserIcon, Briefcase, Calendar, MapPin } from "lucide-react";
+import {
+  Edit2,
+  Mail,
+  Phone,
+  User as UserIcon,
+  Briefcase,
+  Calendar,
+  MapPin,
+} from "lucide-react";
 import CVFormSection from "@/components/sections/cv-form-section";
 import PersonalInfoModal from "../modals/personal-info-modal";
 import { PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
@@ -50,7 +58,7 @@ export default function PersonalInfoSection({
     if (data.address) onUpdate("address", data.address || "");
     if (data.personalLink) onUpdate("personalLink", data.personalLink || "");
     if (data.bio) onUpdate("bio", data.bio || "");
-    
+
     // Handle avatar file separately
     if (avatarFile && onAvatarChange) {
       onAvatarChange(avatarFile);
@@ -106,7 +114,11 @@ export default function PersonalInfoSection({
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-bold text-foreground leading-tight">
-                  {personalInfo.fullName || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                  {personalInfo.fullName || (
+                    <span className="text-muted-foreground italic">
+                      {t("cv.personalInfo.noData")}
+                    </span>
+                  )}
                 </h3>
                 {personalInfo.title ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
@@ -114,7 +126,9 @@ export default function PersonalInfoSection({
                     {personalInfo.title}
                   </span>
                 ) : (
-                  <span className="text-xs text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>
+                  <span className="text-xs text-muted-foreground italic">
+                    {t("cv.personalInfo.noData")}
+                  </span>
                 )}
               </div>
             </div>
@@ -128,7 +142,11 @@ export default function PersonalInfoSection({
                   {t("cv.personalInfo.email")}
                 </div>
                 <p className="text-sm text-foreground break-all font-medium">
-                  {personalInfo.email || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                  {personalInfo.email || (
+                    <span className="text-muted-foreground italic">
+                      {t("cv.personalInfo.noData")}
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -139,7 +157,11 @@ export default function PersonalInfoSection({
                   {t("cv.personalInfo.phone")}
                 </div>
                 <p className="text-sm text-foreground font-medium">
-                  {personalInfo.phone || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                  {personalInfo.phone || (
+                    <span className="text-muted-foreground italic">
+                      {t("cv.personalInfo.noData")}
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -150,7 +172,11 @@ export default function PersonalInfoSection({
                   {t("cv.personalInfo.birthday")}
                 </div>
                 <p className="text-sm text-foreground font-medium">
-                  {formatDate(personalInfo.birthday) || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                  {formatDate(personalInfo.birthday) || (
+                    <span className="text-muted-foreground italic">
+                      {t("cv.personalInfo.noData")}
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -161,7 +187,11 @@ export default function PersonalInfoSection({
                   {t("cv.personalInfo.gender")}
                 </div>
                 <p className="text-sm text-foreground font-medium">
-                  {getGenderLabel(personalInfo.gender) || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                  {getGenderLabel(personalInfo.gender) || (
+                    <span className="text-muted-foreground italic">
+                      {t("cv.personalInfo.noData")}
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -172,7 +202,11 @@ export default function PersonalInfoSection({
                   {t("cv.personalInfo.address")}
                 </div>
                 <p className="text-sm text-foreground font-medium">
-                  {personalInfo.address || <span className="text-muted-foreground italic">{t("cv.personalInfo.noData")}</span>}
+                  {personalInfo.address || (
+                    <span className="text-muted-foreground italic">
+                      {t("cv.personalInfo.noData")}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>

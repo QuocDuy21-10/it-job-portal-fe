@@ -48,9 +48,10 @@ function JobListing({
     { skip: isDefaultFilter && !!initialJobs }
   );
 
-  const jobs = isDefaultFilter && initialJobs 
-    ? (initialJobs.result || []) 
-    : (data?.data?.result || []);
+  const jobs =
+    isDefaultFilter && initialJobs
+      ? initialJobs.result || []
+      : data?.data?.result || [];
 
   const showLoading = isDefaultFilter && initialJobs ? false : isLoading;
 
@@ -96,10 +97,10 @@ function JobListing({
               <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
             <p className="text-slate-700 dark:text-slate-300 font-medium">
-                {t("companyDetailPage.jobListing.emptyTitle")}
+              {t("companyDetailPage.jobListing.emptyTitle")}
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t("companyDetailPage.jobListing.emptyDescription")}
+              {t("companyDetailPage.jobListing.emptyDescription")}
             </p>
           </div>
         </Card>
@@ -109,4 +110,3 @@ function JobListing({
 }
 
 export default memo(JobListing);
-

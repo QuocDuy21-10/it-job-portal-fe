@@ -1,5 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useVerifyEmailMutation, useResendCodeMutation } from "@/features/auth/redux/auth.api";
+import {
+  useVerifyEmailMutation,
+  useResendCodeMutation,
+} from "@/features/auth/redux/auth.api";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
 
@@ -47,7 +50,7 @@ export function useVerification({
   const handleVerify = useCallback(
     async (code?: string) => {
       const verificationCode = code || otp;
-      
+
       if (!verificationCode || verificationCode.length !== 6) {
         onError?.(t("authModal.verifyEmail.errors.incompleteOtp"));
         return;
@@ -100,7 +103,10 @@ export function useVerification({
       const response = await resendCode({ email }).unwrap();
 
       if (response.statusCode === 201) {
-        toast.success(response.data?.message || t("authModal.verifyEmail.toasts.resendSuccess"));
+        toast.success(
+          response.data?.message ||
+            t("authModal.verifyEmail.toasts.resendSuccess")
+        );
         resetCountdown();
         setOtp(""); // Clear OTP
       }

@@ -37,10 +37,10 @@ interface LoginFormProps {
 
 /**
  * LoginForm Component
- * 
+ *
  * Reusable login form with email/password and social auth.
  * Can be used in modal or standalone page.
- * 
+ *
  * @param onSuccess - Callback after successful login
  * @param isModal - Whether form is inside modal (affects styling/behavior)
  */
@@ -69,7 +69,8 @@ export function LoginForm({
   });
 
   const [login, { isLoading }] = useLoginMutation();
-  const [googleLogin, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
+  const [googleLogin, { isLoading: isGoogleLoading }] =
+    useGoogleLoginMutation();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -162,8 +163,8 @@ export function LoginForm({
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Email Input */}
         <div className="space-y-2">
-          <Label 
-            htmlFor="email" 
+          <Label
+            htmlFor="email"
             className="text-sm font-medium text-foreground"
           >
             {t("authModal.login.fields.email.label")}
@@ -176,7 +177,9 @@ export function LoginForm({
             {...register("email")}
             className={cn(
               "rounded-xl h-11 transition-all",
-              errors.email ? "border-destructive focus-visible:ring-destructive" : ""
+              errors.email
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
             )}
           />
           {errors.email && (

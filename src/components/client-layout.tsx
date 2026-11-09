@@ -18,7 +18,7 @@ export function ClientLayout() {
   const pathname = usePathname();
   const locale = useLocale() as AppLocale;
   const dispatch = useAppDispatch();
-  
+
   const isRefreshToken = useAppSelector(selectIsRefreshToken);
   const errorRefreshToken = useAppSelector(selectErrorRefreshToken);
 
@@ -35,7 +35,8 @@ export function ClientLayout() {
       }
 
       toast.error(
-        errorRefreshToken || "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+        errorRefreshToken ||
+          "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
       );
 
       // Reset trạng thái refresh token trong Redux

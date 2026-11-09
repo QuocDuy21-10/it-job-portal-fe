@@ -5,13 +5,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import {
-  Building2,
-  ChevronRight,
-  Globe,
-  MapPin,
-  Users,
-} from "lucide-react";
+import { Building2, ChevronRight, Globe, MapPin, Users } from "lucide-react";
 import CompanyFollowButton from "../../../../../components/company/company-follow-button";
 import CompanyDetailPageClient from "./company-detail-page-client";
 import CompanyContact from "@/components/company/section/company-contact";
@@ -26,7 +20,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { fetchPublicCompanyById, fetchPublicJobs } from "@/lib/utils/public-content";
+import {
+  fetchPublicCompanyById,
+  fetchPublicJobs,
+} from "@/lib/utils/public-content";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import {
   buildLocalizedPageMetadata,
@@ -95,7 +92,10 @@ const buildCompanyStructuredData = (company: Company, locale: AppLocale) => {
   };
 };
 
-const buildCompanyBreadcrumbsStructuredData = (company: Company, locale: AppLocale) => {
+const buildCompanyBreadcrumbsStructuredData = (
+  company: Company,
+  locale: AppLocale
+) => {
   const homeUrl = getLocalizedUrl("/", locale);
   const companiesUrl = getLocalizedUrl("/companies", locale);
   const companyUrl = getLocalizedUrl(`/companies/${company._id}`, locale);
@@ -103,24 +103,24 @@ const buildCompanyBreadcrumbsStructuredData = (company: Company, locale: AppLoca
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": homeUrl,
+        position: 1,
+        name: "Home",
+        item: homeUrl,
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Companies",
-        "item": companiesUrl,
+        position: 2,
+        name: "Companies",
+        item: companiesUrl,
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": company.name,
-        "item": companyUrl,
+        position: 3,
+        name: company.name,
+        item: companyUrl,
       },
     ],
   };
@@ -189,7 +189,9 @@ export default async function CompanyDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(buildCompanyBreadcrumbsStructuredData(company, locale)),
+          __html: serializeJsonLd(
+            buildCompanyBreadcrumbsStructuredData(company, locale)
+          ),
         }}
       />
 
@@ -343,7 +345,9 @@ export default async function CompanyDetailPage({
                       <p className="font-medium text-slate-900 dark:text-slate-100">
                         {t("companyDetailPage.addressLabel")}
                       </p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">{company.address}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {company.address}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950">

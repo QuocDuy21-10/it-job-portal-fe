@@ -1,11 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, FileText, CheckCircle2, AlertCircle, Save, Download } from 'lucide-react';
+import {
+  Loader2,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Save,
+  Download,
+} from "lucide-react";
 import { useCV } from "@/hooks/use-cv";
 import { useRouter } from "next/navigation";
 import { calculateCVCompletion } from "@/lib/utils/cv-helpers";
-import { 
+import {
   UpsertCVProfileRequestSchema,
   type CVProfile,
   type UpsertCVProfileRequest,
@@ -48,7 +55,8 @@ const initialCVData: CVData = {
   awards: [],
 };
 
-const createLocalId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+const createLocalId = () =>
+  `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 const toDate = (value?: Date | string) => {
   if (!value) return undefined;
@@ -107,7 +115,7 @@ const normalizeCVProfile = (profile: CVProfile): CVData => ({
     company: exp.company,
     position: exp.position,
     startDate: toDate(exp.startDate) || exp.startDate,
-    endDate: toDate(exp.endDate) ,
+    endDate: toDate(exp.endDate),
     description: exp.description || "",
   })),
   skills: (profile.skills || []).map((skill: any) => ({
@@ -186,7 +194,7 @@ export default function CreateCVPage() {
           personalLink: cvData.personalInfo.personalLink || undefined,
           bio: cvData.personalInfo.bio || undefined,
         },
-        education: (cvData.education || []).map(edu => ({
+        education: (cvData.education || []).map((edu) => ({
           id: edu.id, // Include id for upsert
           school: edu.school,
           degree: edu.degree,
@@ -195,7 +203,7 @@ export default function CreateCVPage() {
           endDate: safeToISOString(edu.endDate),
           description: edu.description || undefined,
         })),
-        experience: (cvData.experience || []).map(exp => ({
+        experience: (cvData.experience || []).map((exp) => ({
           id: exp.id, // Include id for upsert
           company: exp.company,
           position: exp.position,
@@ -203,30 +211,30 @@ export default function CreateCVPage() {
           endDate: safeToISOString(exp.endDate),
           description: exp.description || undefined,
         })),
-        skills: (cvData.skills || []).map(skill => ({
+        skills: (cvData.skills || []).map((skill) => ({
           id: skill.id, // Include id for upsert
           name: skill.name,
           level: skill.level,
         })),
-        languages: (cvData.languages || []).map(lang => ({
+        languages: (cvData.languages || []).map((lang) => ({
           id: lang.id, // Include id for upsert
           name: lang.name,
           proficiency: lang.proficiency,
         })),
-        projects: (cvData.projects || []).map(proj => ({
+        projects: (cvData.projects || []).map((proj) => ({
           id: proj.id, // Include id for upsert
           name: proj.name,
           position: proj.position,
           description: proj.description,
           link: proj.link || undefined,
         })),
-        certificates: (cvData.certificates || []).map(cert => ({
+        certificates: (cvData.certificates || []).map((cert) => ({
           id: cert.id, // Include id for upsert
           name: cert.name,
           issuer: cert.issuer,
           date: safeToISOString(cert.date) || "",
         })),
-        awards: (cvData.awards || []).map(award => ({
+        awards: (cvData.awards || []).map((award) => ({
           id: award.id, // Include id for upsert
           name: award.name,
           date: safeToISOString(award.date) || "",
@@ -235,12 +243,13 @@ export default function CreateCVPage() {
       };
 
       // Manual validation using Zod
-      const zodValidation = UpsertCVProfileRequestSchema.safeParse(dataToValidate);
-      
+      const zodValidation =
+        UpsertCVProfileRequestSchema.safeParse(dataToValidate);
+
       if (!zodValidation.success) {
         const firstError = zodValidation.error.issues[0];
         toast.error(t("cvPage.validationError"), {
-          description: `${firstError.path.join('.')}: ${firstError.message}`,
+          description: `${firstError.path.join(".")}: ${firstError.message}`,
           duration: 4000,
         });
         return;
@@ -250,10 +259,10 @@ export default function CreateCVPage() {
 
       if (result) {
         toast.success(t("cvPage.saveSuccess"));
-        
+
         // Clear avatar file after successful save
         setAvatarFile(undefined);
-        
+
         const refreshedProfile = await fetchMyCVProfile();
 
         setCVData(normalizeCVProfile(refreshedProfile || result));
@@ -293,7 +302,9 @@ export default function CreateCVPage() {
         {isInitialLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-            <p className="text-lg text-muted-foreground">{t("cvPage.loading")}</p>
+            <p className="text-lg text-muted-foreground">
+              {t("cvPage.loading")}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -302,29 +313,48 @@ export default function CreateCVPage() {
               {/* Mobile Completion Progress Card */}
               <div className="block lg:hidden bg-white dark:bg-card p-5 rounded-lg border border-border shadow-sm">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold text-foreground">Hồ sơ của tôi</h2>
-                  <span className="text-primary font-bold text-sm">{completion}%</span>
+                  <h2 className="text-lg font-bold text-foreground">
+                    Hồ sơ của tôi
+                  </h2>
+                  <span className="text-primary font-bold text-sm">
+                    {completion}%
+                  </span>
                 </div>
                 <div className="w-full bg-secondary/35 h-2.5 rounded-full mb-6 overflow-hidden">
-                  <div 
-                    className="bg-primary h-full rounded-full transition-all duration-1000" 
+                  <div
+                    className="bg-primary h-full rounded-full transition-all duration-1000"
                     style={{ width: `${completion}%` }}
                   ></div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: "Kinh nghiệm", completed: cvData.experience.length > 0 },
-                    { label: "Học vấn", completed: cvData.education.length > 0 },
+                    {
+                      label: "Kinh nghiệm",
+                      completed: cvData.experience.length > 0,
+                    },
+                    {
+                      label: "Học vấn",
+                      completed: cvData.education.length > 0,
+                    },
                     { label: "Kỹ năng", completed: cvData.skills.length > 0 },
-                    { label: "Ngôn ngữ", completed: cvData.languages.length > 0 },
-                    { label: "Thông tin cá nhân", completed: !!(cvData.personalInfo.fullName && cvData.personalInfo.email) },
+                    {
+                      label: "Ngôn ngữ",
+                      completed: cvData.languages.length > 0,
+                    },
+                    {
+                      label: "Thông tin cá nhân",
+                      completed: !!(
+                        cvData.personalInfo.fullName &&
+                        cvData.personalInfo.email
+                      ),
+                    },
                   ].map((item, idx) => (
                     <span
                       key={idx}
                       className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all duration-300",
-                        item.completed 
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
+                        item.completed
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                           : "bg-destructive/10 text-destructive dark:text-red-400 border-destructive/20"
                       )}
                     >
@@ -373,7 +403,9 @@ export default function CreateCVPage() {
                 onRemove={(id) =>
                   setCVData((prev) => ({
                     ...prev,
-                    education: prev.education.filter((edu: any) => edu.id !== id),
+                    education: prev.education.filter(
+                      (edu: any) => edu.id !== id
+                    ),
                   }))
                 }
               />
@@ -397,7 +429,9 @@ export default function CreateCVPage() {
                 onRemove={(id) =>
                   setCVData((prev) => ({
                     ...prev,
-                    experience: prev.experience.filter((exp: any) => exp.id !== id),
+                    experience: prev.experience.filter(
+                      (exp: any) => exp.id !== id
+                    ),
                   }))
                 }
               />
@@ -445,7 +479,9 @@ export default function CreateCVPage() {
                 onRemove={(id) =>
                   setCVData((prev) => ({
                     ...prev,
-                    languages: prev.languages.filter((lang: any) => lang.id !== id),
+                    languages: prev.languages.filter(
+                      (lang: any) => lang.id !== id
+                    ),
                   }))
                 }
               />
@@ -469,7 +505,9 @@ export default function CreateCVPage() {
                 onRemove={(id) =>
                   setCVData((prev) => ({
                     ...prev,
-                    projects: prev.projects.filter((proj: any) => proj.id !== id),
+                    projects: prev.projects.filter(
+                      (proj: any) => proj.id !== id
+                    ),
                   }))
                 }
               />
@@ -493,7 +531,9 @@ export default function CreateCVPage() {
                 onRemove={(id) =>
                   setCVData((prev) => ({
                     ...prev,
-                    certificates: prev.certificates.filter((cert: any) => cert.id !== id),
+                    certificates: prev.certificates.filter(
+                      (cert: any) => cert.id !== id
+                    ),
                   }))
                 }
               />
@@ -527,7 +567,7 @@ export default function CreateCVPage() {
             <div className="lg:col-span-1">
               {/* Desktop Sticky Sidebar */}
               <aside className="hidden lg:block sticky top-24 self-start max-h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar">
-                <CompletionProgress 
+                <CompletionProgress
                   cvData={cvData}
                   onSave={handleUpdateCV}
                   isSaving={isLoading}

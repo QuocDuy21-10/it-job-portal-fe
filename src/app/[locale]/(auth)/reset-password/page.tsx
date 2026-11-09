@@ -88,7 +88,8 @@ function ResetPasswordForm() {
       console.error("Reset password error:", error);
 
       const errorMessage =
-        error?.data?.message || t("authModal.resetPassword.toasts.genericFailed");
+        error?.data?.message ||
+        t("authModal.resetPassword.toasts.genericFailed");
 
       if (
         errorMessage.includes("expired") ||
@@ -116,7 +117,6 @@ function ResetPasswordForm() {
         title={t("authModal.resetPassword.titleCard")}
         description={t("authModal.resetPassword.descriptionCard")}
       >
-
         {isSuccess ? (
           <div className="space-y-4 py-2">
             <div className="flex flex-col items-center justify-center py-6 text-center">
@@ -130,7 +130,9 @@ function ResetPasswordForm() {
                 {t("authModal.resetPassword.successDescription")}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500">
-                {t("authModal.resetPassword.redirectingText", { time: countdown })}
+                {t("authModal.resetPassword.redirectingText", {
+                  time: countdown,
+                })}
               </p>
 
               <Link href="/login" className="mt-6 w-full block">
@@ -188,10 +190,7 @@ function ResetPasswordForm() {
             </form>
 
             <div className="mt-6 flex justify-center">
-              <Link
-                href="/login"
-                className="text-sm auth-link"
-              >
+              <Link href="/login" className="text-sm auth-link">
                 {t("authModal.forgotPassword.backToLogin")}
               </Link>
             </div>

@@ -2,8 +2,8 @@
  * PDF Preview Component (Optional)
  * Hiển thị live preview của PDF trong UI
  * Sử dụng PDFViewer từ @react-pdf/renderer
- * 
- * LƯU Ý: 
+ *
+ * LƯU Ý:
  * - PDFViewer chỉ hoạt động trên client
  * - Có thể tốn tài nguyên nếu CV lớn
  * - Chỉ dùng cho preview, không phải production render
@@ -34,7 +34,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({
   cvData,
   template = "classic",
   width = "100%",
-  height = "calc(100vh - 10px)", 
+  height = "calc(100vh - 10px)",
   className = "",
 }) => {
   const [isClient, setIsClient] = useState(false);
@@ -65,12 +65,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({
 
   return (
     <div className={className} style={{ width, height }}>
-      <PDFViewer 
-        key={renderKey} 
-        width="100%" 
-        height="100%" 
-        showToolbar={true}
-      >
+      <PDFViewer key={renderKey} width="100%" height="100%" showToolbar={true}>
         <CVPdfDocument cvData={cvData} template={template} />
       </PDFViewer>
     </div>

@@ -31,7 +31,7 @@ export function SimplePagination({
   // Handle previous page navigation
   const handlePrevious = () => {
     if (isPrevDisabled) return;
-    
+
     if (onPrev) {
       onPrev();
     } else if (onPageChange) {
@@ -42,7 +42,7 @@ export function SimplePagination({
   // Handle next page navigation
   const handleNext = () => {
     if (isNextDisabled) return;
-    
+
     if (onNext) {
       onNext();
     } else if (onPageChange) {
@@ -64,8 +64,11 @@ export function SimplePagination({
   }
 
   return (
-    <nav 
-      className={cn("flex items-center justify-center gap-4 sm:gap-6 py-4", className)}
+    <nav
+      className={cn(
+        "flex items-center justify-center gap-4 sm:gap-6 py-4",
+        className
+      )}
       role="navigation"
       aria-label="Pagination Navigation"
     >
@@ -82,39 +85,39 @@ export function SimplePagination({
           "flex items-center justify-center",
           "rounded-full border-2",
           "transition-all duration-200 ease-out",
-          
+
           // Theme-aware colors using design system
           "border-primary bg-background",
           "text-primary",
-          
+
           // Interactive states
           "hover:bg-primary hover:text-primary-foreground",
           "hover:shadow-md hover:scale-105",
           "active:scale-95",
-          
+
           // Focus states (accessibility)
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           "focus-visible:ring-offset-background",
-          
+
           // Disabled state
           isPrevDisabled && [
             "opacity-40 cursor-not-allowed",
             "hover:bg-background hover:text-primary",
-            "hover:shadow-none hover:scale-100"
+            "hover:shadow-none hover:scale-100",
           ]
         )}
       >
-        <ChevronLeft 
+        <ChevronLeft
           className={cn(
             "h-5 w-5 sm:h-6 sm:w-6 transition-transform",
             !isPrevDisabled && "group-hover:-translate-x-0.5"
-          )} 
+          )}
         />
       </button>
 
       {/* Page Indicator */}
       {showLabel && (
-        <div 
+        <div
           className="flex items-center gap-2 select-none px-2"
           role="status"
           aria-live="polite"
@@ -132,7 +135,10 @@ export function SimplePagination({
             </span>
           )}
           {isLoading && (
-            <span className="ml-2 inline-flex h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden="true" />
+            <span
+              className="ml-2 inline-flex h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"
+              aria-hidden="true"
+            />
           )}
         </div>
       )}
@@ -150,33 +156,33 @@ export function SimplePagination({
           "flex items-center justify-center",
           "rounded-full border-2",
           "transition-all duration-200 ease-out",
-          
+
           // Theme-aware colors using design system
           "border-primary bg-background",
           "text-primary",
-          
+
           // Interactive states
           "hover:bg-primary hover:text-primary-foreground",
           "hover:shadow-md hover:scale-105",
           "active:scale-95",
-          
+
           // Focus states (accessibility)
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           "focus-visible:ring-offset-background",
-          
+
           // Disabled state
           isNextDisabled && [
             "opacity-40 cursor-not-allowed",
             "hover:bg-background hover:text-primary",
-            "hover:shadow-none hover:scale-100"
+            "hover:shadow-none hover:scale-100",
           ]
         )}
       >
-        <ChevronRight 
+        <ChevronRight
           className={cn(
             "h-5 w-5 sm:h-6 sm:w-6 transition-transform",
             !isNextDisabled && "group-hover:translate-x-0.5"
-          )} 
+          )}
         />
       </button>
     </nav>

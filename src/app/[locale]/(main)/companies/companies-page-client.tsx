@@ -31,7 +31,10 @@ type CompaniesPageClientProps = {
 };
 
 function stripHtmlTags(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 const truncateDescription = (text: string, lines = 2) => {
@@ -91,7 +94,9 @@ export default function CompanyListPage({
   const companies = paginatedData?.result || [];
   const total = paginatedData?.meta?.pagination?.total || 0;
   const totalPages = paginatedData?.meta?.pagination?.total_pages || 1;
-  const isCompaniesLoading = shouldUseInitialData ? false : isLoading || isFetching;
+  const isCompaniesLoading = shouldUseInitialData
+    ? false
+    : isLoading || isFetching;
 
   useEffect(() => {
     if (currentUrl === targetUrl) {
@@ -121,24 +126,21 @@ export default function CompanyListPage({
     }
   }, [currentSearchState.page, currentSearchState.q]);
 
-  const applySearch = useCallback(
-    (value?: string) => {
-      const nextSearchValue = (value || "").trim();
+  const applySearch = useCallback((value?: string) => {
+    const nextSearchValue = (value || "").trim();
 
-      setCurrentSearchState((state) => {
-        if (state.q === nextSearchValue && state.page === 1) {
-          return state;
-        }
+    setCurrentSearchState((state) => {
+      if (state.q === nextSearchValue && state.page === 1) {
+        return state;
+      }
 
-        return {
-          ...state,
-          page: 1,
-          q: nextSearchValue,
-        };
-      });
-    },
-    []
-  );
+      return {
+        ...state,
+        page: 1,
+        q: nextSearchValue,
+      };
+    });
+  }, []);
 
   const clearSearch = useCallback(() => {
     setSearchInput("");
@@ -168,14 +170,14 @@ export default function CompanyListPage({
     });
   }, []);
 
-
   return (
     <div className="listing-page-surface min-h-screen">
       {/* Hero Section */}
       <div className="home-hero-surface relative z-40 text-foreground py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-foreground">
-            {t("companyList.findYourNext")}{t("companyList.employer")}
+            {t("companyList.findYourNext")}
+            {t("companyList.employer")}
           </h1>
           <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground mb-10">
             {t("companyList.browseTopCompanies")}
@@ -235,12 +237,18 @@ export default function CompanyListPage({
       </div>
 
       {/* Main Content Area */}
-      <div ref={companiesRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div
+        ref={companiesRef}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+      >
         {/* Companies Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 9 }).map((_, i) => (
-              <Card key={i} className="listing-panel-surface listing-subtle-border border p-6 flex flex-col justify-between h-[300px]">
+              <Card
+                key={i}
+                className="listing-panel-surface listing-subtle-border border p-6 flex flex-col justify-between h-[300px]"
+              >
                 <div>
                   <div className="flex items-start justify-between mb-6">
                     <Skeleton className="h-16 w-16 rounded-lg" />
@@ -261,7 +269,9 @@ export default function CompanyListPage({
           </div>
         ) : error ? (
           <div className="text-center py-16">
-            <span className="text-destructive">{t("companyList.errorLoading")}</span>
+            <span className="text-destructive">
+              {t("companyList.errorLoading")}
+            </span>
           </div>
         ) : companies.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -303,12 +313,17 @@ export default function CompanyListPage({
                     {company.address && (
                       <div className="flex items-start gap-1 mb-4">
                         <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-                        <p className="text-xs text-muted-foreground line-clamp-1">{company.address}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {company.address}
+                        </p>
                       </div>
                     )}
 
                     <p className="listing-muted-text line-clamp-2 text-sm leading-relaxed">
-                      {truncateDescription(stripHtmlTags(company.description || ""), 2)}
+                      {truncateDescription(
+                        stripHtmlTags(company.description || ""),
+                        2
+                      )}
                     </p>
                   </div>
 
@@ -316,7 +331,8 @@ export default function CompanyListPage({
                     <div className="flex items-center gap-2 text-primary">
                       <Briefcase className="h-4 w-4" />
                       <span className="text-xs font-semibold">
-                        {company.totalJobs || 0} {t("companyList.openPositions")}
+                        {company.totalJobs || 0}{" "}
+                        {t("companyList.openPositions")}
                       </span>
                     </div>
                     <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:underline">
@@ -335,14 +351,17 @@ export default function CompanyListPage({
                 <Search className="w-16 h-16 text-muted-foreground/30" />
               </div>
             </div>
-            <h3 className={`${TYPOGRAPHY.h3} text-foreground mb-3`}>{t("companyList.noCompaniesFound")}</h3>
+            <h3 className={`${TYPOGRAPHY.h3} text-foreground mb-3`}>
+              {t("companyList.noCompaniesFound")}
+            </h3>
             <p className="listing-muted-text mx-auto mb-8 max-w-md">
               {t("companyList.tryAdjustingSearch")}
             </p>
-            <Button 
-              variant="outline" 
-              className="listing-panel-surface listing-subtle-border hover:bg-secondary/70 dark:hover:bg-white/[0.04]" 
-              onClick={clearSearch}> 
+            <Button
+              variant="outline"
+              className="listing-panel-surface listing-subtle-border hover:bg-secondary/70 dark:hover:bg-white/[0.04]"
+              onClick={clearSearch}
+            >
               {t("companyList.clearSearch")}
             </Button>
           </div>

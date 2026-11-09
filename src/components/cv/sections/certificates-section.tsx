@@ -1,9 +1,20 @@
 "use client";
 
-import { Plus, Trash2, Edit2, Award as AwardIcon, Calendar } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  Award as AwardIcon,
+  Calendar,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import CertificateModal from "../modals/certificate-modal";
 import { useCertificateModal } from "@/hooks/use-certificate-modal";
@@ -62,13 +73,13 @@ export default function CertificatesSection({
         title={t("cv.certificates.title")}
         description={t("cv.certificates.description")}
         actionButton={
-            <Button
-              onClick={openAddModal}
-              className="gap-2 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4" />
-              {t("cv.certificates.addButton")}
-            </Button>
+          <Button
+            onClick={openAddModal}
+            className="gap-2 bg-primary hover:bg-primary/90"
+          >
+            <Plus className="w-4 h-4" />
+            {t("cv.certificates.addButton")}
+          </Button>
         }
       >
         {certificates.length === 0 ? (

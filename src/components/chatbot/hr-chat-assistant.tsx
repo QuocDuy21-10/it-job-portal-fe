@@ -17,10 +17,7 @@ interface HrChatAssistantProps {
   onOpenChange: (isOpen: boolean) => void;
 }
 
-const HrChatAssistant = ({
-  isOpen,
-  onOpenChange,
-}: HrChatAssistantProps) => {
+const HrChatAssistant = ({ isOpen, onOpenChange }: HrChatAssistantProps) => {
   const { t } = useI18n();
   const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);

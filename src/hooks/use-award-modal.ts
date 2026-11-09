@@ -25,7 +25,9 @@ export function useAwardModal(
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentAward, setCurrentAward] = useState<Award | undefined>(undefined);
+  const [currentAward, setCurrentAward] = useState<Award | undefined>(
+    undefined
+  );
 
   const openAddModal = () => {
     setMode("add");

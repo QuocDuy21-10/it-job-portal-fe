@@ -38,7 +38,7 @@ const updateUserSchemaBase = z.object({
 });
 
 const withHrCompanyRequirement = <
-  TSchema extends typeof createUserSchemaBase | typeof updateUserSchemaBase
+  TSchema extends typeof createUserSchemaBase | typeof updateUserSchemaBase,
 >(
   schema: TSchema
 ) =>

@@ -37,7 +37,10 @@ export const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
   Manager: "jobsPage.jobLevelOptions.manager",
 };
 
-export const JOB_STATUS_LABEL_KEYS: Record<Exclude<JobStatusVariant, null>, string> = {
+export const JOB_STATUS_LABEL_KEYS: Record<
+  Exclude<JobStatusVariant, null>,
+  string
+> = {
   new: "jobsPage.jobCard.statusNew",
   closing: "jobsPage.jobCard.statusClosing",
 };
@@ -61,7 +64,7 @@ interface JobCardProps {
   actionLayout?: "default" | "inverted";
 }
 
-// Sub-components                                                     
+// Sub-components
 export const FavoriteButton = ({
   isSaved,
   onClick,
@@ -197,9 +200,7 @@ export const CompanyLogo = ({
           className="h-full w-full object-contain rounded-lg"
         />
       ) : (
-        <Building2
-          className={cn("text-muted-foreground/40", iconSize[size])}
-        />
+        <Building2 className={cn("text-muted-foreground/40", iconSize[size])} />
       )}
     </div>
   );
@@ -235,7 +236,7 @@ export const SkillTags = ({
   );
 };
 
-// Main component                                                     
+// Main component
 export function JobCard({
   job,
   variant = "default",
@@ -253,7 +254,11 @@ export function JobCard({
     ? t(JOB_STATUS_LABEL_KEYS[status.variant])
     : null;
   const salaryLabel = formatVndCurrency(job.salary ?? 0, language);
-  const jobTypeLabel = getTranslatedLabel(job.formOfWork, JOB_TYPE_LABEL_KEYS, t);
+  const jobTypeLabel = getTranslatedLabel(
+    job.formOfWork,
+    JOB_TYPE_LABEL_KEYS,
+    t
+  );
   const jobLevelLabel = job.level
     ? getTranslatedLabel(job.level, JOB_LEVEL_LABEL_KEYS, t)
     : null;
@@ -301,7 +306,9 @@ export function JobCard({
                   </span>
                   {!hideSalary && (
                     <>
-                      <span className="text-[11px] text-muted-foreground/30">•</span>
+                      <span className="text-[11px] text-muted-foreground/30">
+                        •
+                      </span>
                       <span className="text-sm font-bold text-primary dark:text-blue-400">
                         {salaryLabel}
                       </span>
@@ -414,7 +421,6 @@ export function JobCard({
                         {jobLevelLabel}
                       </Badge>
                     )}
-
                   </div>
 
                   {job.skills?.length > 0 && (
@@ -436,7 +442,7 @@ export function JobCard({
 
                       <Tooltip.Root>
                         <Tooltip.Trigger asChild>
-                          <Button 
+                          <Button
                             asChild
                             className="flex-1 sm:flex-initial sm:px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 shadow-sm"
                           >
@@ -484,7 +490,9 @@ export function JobCard({
                               sideOffset={6}
                               className="z-50 rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md"
                             >
-                              {t("companyDetailPage.jobListing.tooltips.salary")}
+                              {t(
+                                "companyDetailPage.jobListing.tooltips.salary"
+                              )}
                               <Tooltip.Arrow className="fill-foreground" />
                             </Tooltip.Content>
                           </Tooltip.Portal>
@@ -501,7 +509,7 @@ export function JobCard({
 
                         <Tooltip.Root>
                           <Tooltip.Trigger asChild>
-                            <Button 
+                            <Button
                               asChild
                               className="flex-1 sm:flex-initial sm:px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 shadow-sm"
                             >
@@ -599,10 +607,12 @@ export function JobCard({
           </div>
 
           {/* Footer: salary + time */}
-          <div className={cn(
-            "flex items-center justify-between pt-3 border-t border-border/40",
-            hideSalary && "justify-end"
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between pt-3 border-t border-border/40",
+              hideSalary && "justify-end"
+            )}
+          >
             {!hideSalary && (
               <span className="text-base font-bold text-primary bg-primary/5 dark:bg-primary/10 px-2.5 py-1 rounded-md">
                 {salaryLabel}

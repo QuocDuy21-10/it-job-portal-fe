@@ -23,7 +23,7 @@ interface AdminSidebarProps {
 /**
  * AdminSidebar Component
  * Sidebar chuyên dụng cho Admin Dashboard
- * 
+ *
  * Features:
  * - Toggle expand/collapse
  * - Permission-based navigation filtering
@@ -143,9 +143,7 @@ export function AdminSidebar({
                     )}
                     aria-hidden="true"
                   />
-                  {isExpanded && (
-                    <span className="flex-1">{label}</span>
-                  )}
+                  {isExpanded && <span className="flex-1">{label}</span>}
                   {isExpanded && item.badge && (
                     <span className="badge-primary text-xs px-2 py-0.5">
                       {item.badge}

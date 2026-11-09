@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 
 /**
  * useMediaQuery Hook
- * 
+ *
  * Safe client-side hook for responding to CSS media queries.
  * Prevents Next.js hydration mismatch issues by keeping state as false initially
  * and updating it inside useEffect after mount.
- * 
+ *
  * @param query - CSS media query string (e.g. "(max-width: 640px)")
  * @returns boolean - Whether the query matches the current viewport
  */

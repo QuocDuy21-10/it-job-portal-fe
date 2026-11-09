@@ -5,7 +5,12 @@ import { ADMIN_NAVIGATION } from "@/shared/config/admin-navigation";
 import { useFilteredNavigation } from "@/hooks/use-permission-check";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AdminMobileNavProps {
@@ -16,7 +21,7 @@ interface AdminMobileNavProps {
 /**
  * AdminMobileNav Component
  * Mobile navigation drawer cho Admin Dashboard
- * 
+ *
  * Features:
  * - Slide-in drawer navigation
  * - Permission-based filtering

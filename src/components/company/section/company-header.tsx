@@ -21,30 +21,32 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
   return (
     <Tooltip.Provider>
       <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white overflow-hidden">
-      {/* Decorative background */}
+        {/* Decorative background */}
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-end">
             {/* Logo & Company Info */}
             <div className="flex gap-6 flex-1">
               <div className="w-28 h-28 rounded-xl bg-white shadow-xl flex items-center justify-center flex-shrink-0 p-2 hover:shadow-2xl transition-shadow">
                 {company?.logo ? (
-                <Image
-                  src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
-                  alt={`${company?.name} logo`}
-                  width={96}
-                  height={96}
-                  className="object-contain rounded-lg"
-                  style={{ width: "auto", height: "auto" }}
-                />
-              ) : (
-                <Building2 className="h-12 w-12 text-slate-400" /> 
-              )}
+                  <Image
+                    src={`${API_BASE_URL_IMAGE}/images/company/${company.logo}`}
+                    alt={`${company?.name} logo`}
+                    width={96}
+                    height={96}
+                    className="object-contain rounded-lg"
+                    style={{ width: "auto", height: "auto" }}
+                  />
+                ) : (
+                  <Building2 className="h-12 w-12 text-slate-400" />
+                )}
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight drop-shadow-lg">{company?.name}</h1>
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight drop-shadow-lg">
+                  {company?.name}
+                </h1>
                 <div className="mb-6 text-blue-100 text-lg">
                   {parse(company?.description?.slice(0, 80) || "")}...
                 </div>
@@ -60,12 +62,17 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                             rel="noopener noreferrer"
                             className="hover:text-blue-200 transition-colors font-medium"
                           >
-                            {company.website.replace(/^https?:\/\//, "").substring(0, 30)}
+                            {company.website
+                              .replace(/^https?:\/\//, "")
+                              .substring(0, 30)}
                           </a>
                         </div>
                       </Tooltip.Trigger>
                       <Tooltip.Portal>
-                        <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+                        <Tooltip.Content
+                          sideOffset={6}
+                          className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700"
+                        >
                           {t("companyDetailPage.contact.websiteTooltip")}
                           <Tooltip.Arrow className="fill-slate-900" />
                         </Tooltip.Content>
@@ -76,11 +83,20 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                     <Tooltip.Trigger asChild>
                       <div className="flex items-center gap-2 text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/20 transition-all">
                         <Users className="w-5 h-5" />
-                        <span className="font-medium">{company?.numberOfEmployees ? t("companyDetailPage.employeesCount", { count: company.numberOfEmployees }) : t("companyDetailPage.notUpdated")}</span>
+                        <span className="font-medium">
+                          {company?.numberOfEmployees
+                            ? t("companyDetailPage.employeesCount", {
+                                count: company.numberOfEmployees,
+                              })
+                            : t("companyDetailPage.notUpdated")}
+                        </span>
                       </div>
                     </Tooltip.Trigger>
                     <Tooltip.Portal>
-                      <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
+                      <Tooltip.Content
+                        sideOffset={6}
+                        className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700"
+                      >
                         {t("companyDetailPage.sizeLabel")}
                         <Tooltip.Arrow className="fill-slate-900" />
                       </Tooltip.Content>
@@ -93,7 +109,7 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
             {/* Action Button */}
             <Tooltip.Root delayDuration={200}>
               <Tooltip.Trigger asChild>
-                <Button 
+                <Button
                   onClick={toggleFollowCompany}
                   disabled={!isHydrated}
                   className={cn(
@@ -103,7 +119,7 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                       : "bg-white hover:bg-blue-50 text-blue-700 border-2 border-white hover:border-blue-100"
                   )}
                 >
-                  <Heart 
+                  <Heart
                     className={cn(
                       "w-5 h-5 mr-2 transition-all duration-300",
                       isFollowing
@@ -111,12 +127,19 @@ export default function CompanyHeader({ company }: CompanyHeaderProps) {
                         : "fill-transparent text-blue-700"
                     )}
                   />
-                  {isFollowing ? t("followButton.following") : t("followButton.followAria")}
+                  {isFollowing
+                    ? t("followButton.following")
+                    : t("followButton.followAria")}
                 </Button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
-                <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700">
-                  {isFollowing ? t("followButton.unfollowAria") : t("followButton.followAlertTooltip")}
+                <Tooltip.Content
+                  sideOffset={6}
+                  className="z-50 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-xl border border-slate-700"
+                >
+                  {isFollowing
+                    ? t("followButton.unfollowAria")
+                    : t("followButton.followAlertTooltip")}
                   <Tooltip.Arrow className="fill-slate-900" />
                 </Tooltip.Content>
               </Tooltip.Portal>

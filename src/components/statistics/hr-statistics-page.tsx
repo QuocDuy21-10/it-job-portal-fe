@@ -2,7 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useAppSelector } from "@/lib/redux/hooks";
-import { selectIsLoading as selectAuthLoading, selectUserRole } from "@/features/auth/redux/auth.slice";
+import {
+  selectIsLoading as selectAuthLoading,
+  selectUserRole,
+} from "@/features/auth/redux/auth.slice";
 import { useGetHrDashboardStatsQuery } from "@/features/statistics/redux/statistics.api";
 import { ROLES } from "@/shared/constants/roles";
 import { useI18n } from "@/hooks/use-i18n";
@@ -48,16 +51,10 @@ export function HrStatisticsPage() {
 
   const shouldSkipQuery = isAuthLoading || userRole !== ROLES.HR;
 
-  const {
-    data,
-    error,
-    isError,
-    isFetching,
-    isLoading,
-    refetch,
-  } = useGetHrDashboardStatsQuery(undefined, {
-    skip: shouldSkipQuery,
-  });
+  const { data, error, isError, isFetching, isLoading, refetch } =
+    useGetHrDashboardStatsQuery(undefined, {
+      skip: shouldSkipQuery,
+    });
 
   if (isAuthLoading) {
     return (
@@ -133,7 +130,9 @@ export function HrStatisticsPage() {
           disabled={isFetching}
           className="gap-2"
         >
-          <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+          />
           {isFetching
             ? t("statisticsDashboard.shared.refreshing")
             : t("statisticsDashboard.shared.refresh")}
@@ -189,9 +188,7 @@ export function HrStatisticsPage() {
           },
           {
             id: "countApplications24h",
-            label: t(
-              "statisticsDashboard.hr.cards.countApplications24h.label"
-            ),
+            label: t("statisticsDashboard.hr.cards.countApplications24h.label"),
             description: t(
               "statisticsDashboard.hr.cards.countApplications24h.description"
             ),

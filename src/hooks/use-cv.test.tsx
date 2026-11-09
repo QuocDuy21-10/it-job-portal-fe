@@ -70,7 +70,9 @@ describe("useCV", () => {
 
     const { result } = renderHook(() => useCV());
 
-    await expect(result.current.fetchMyCVProfile()).resolves.toEqual(draftProfile);
+    await expect(result.current.fetchMyCVProfile()).resolves.toEqual(
+      draftProfile
+    );
     expect(triggerGetMyCVProfile).toHaveBeenCalledWith(undefined, false);
     expect(triggerGetMyCVProfile).toHaveBeenCalledTimes(1);
     expect(result.current.error).toBeNull();
@@ -125,7 +127,9 @@ describe("useCV", () => {
 
     const { result } = renderHook(() => useCV());
 
-    await expect(result.current.upsertCV(request, avatar)).resolves.toMatchObject({
+    await expect(
+      result.current.upsertCV(request, avatar)
+    ).resolves.toMatchObject({
       _id: "cv-1",
     });
     expect(upsert).toHaveBeenCalledWith({ data: request, avatar });

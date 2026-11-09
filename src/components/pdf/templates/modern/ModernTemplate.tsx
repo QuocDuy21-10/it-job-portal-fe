@@ -27,19 +27,21 @@ interface ModernCVTemplateProps {
  * Professional two-column layout with visual skill indicators
  */
 const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
-  const { 
-    personalInfo, 
-    education, 
-    experience, 
-    skills, 
-    languages, 
-    projects, 
-    certificates, 
-    awards 
+  const {
+    personalInfo,
+    education,
+    experience,
+    skills,
+    languages,
+    projects,
+    certificates,
+    awards,
   } = cvData;
 
   // Use proxied URL to avoid CORS issues
-  const avatarUrl = getProxiedImageUrl(personalInfo.avatar || "/images/avatar-default.jpg");
+  const avatarUrl = getProxiedImageUrl(
+    personalInfo.avatar || "/images/avatar-default.jpg"
+  );
 
   return (
     <Document>
@@ -53,7 +55,9 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
               {personalInfo.fullName || "Họ và Tên"}
             </Text>
             {personalInfo.title && (
-              <Text style={modernStyles.sidebarTitle}>{personalInfo.title}</Text>
+              <Text style={modernStyles.sidebarTitle}>
+                {personalInfo.title}
+              </Text>
             )}
           </View>
 
@@ -61,32 +65,27 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
           <View style={modernStyles.sidebarSection}>
             <ModernSectionTitle title="Thông tin cá nhân" variant="sidebar" />
             <View style={modernStyles.sidebarContent}>
-              <ModernInfoRow 
-                label="Ngày sinh" 
-                value={personalInfo.birthday ? formatDateForDisplay(personalInfo.birthday) : undefined} 
+              <ModernInfoRow
+                label="Ngày sinh"
+                value={
+                  personalInfo.birthday
+                    ? formatDateForDisplay(personalInfo.birthday)
+                    : undefined
+                }
               />
-              <ModernInfoRow 
-                label="Giới tính" 
-                value={formatGender(personalInfo.gender)} 
+              <ModernInfoRow
+                label="Giới tính"
+                value={formatGender(personalInfo.gender)}
               />
-              <ModernInfoRow 
-                label="Điện thoại" 
-                value={personalInfo.phone} 
-              />
-              <ModernInfoRow 
-                label="Email" 
-                value={personalInfo.email} 
-              />
+              <ModernInfoRow label="Điện thoại" value={personalInfo.phone} />
+              <ModernInfoRow label="Email" value={personalInfo.email} />
               {personalInfo.address && (
-                <ModernInfoRow 
-                  label="Địa chỉ" 
-                  value={personalInfo.address} 
-                />
+                <ModernInfoRow label="Địa chỉ" value={personalInfo.address} />
               )}
               {personalInfo.personalLink && (
-                <ModernInfoRow 
-                  label="Website" 
-                  value={personalInfo.personalLink} 
+                <ModernInfoRow
+                  label="Website"
+                  value={personalInfo.personalLink}
                 />
               )}
             </View>
@@ -98,10 +97,10 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
               <ModernSectionTitle title="Kỹ năng" variant="sidebar" />
               <View style={modernStyles.sidebarContent}>
                 {skills.map((skill) => (
-                  <ModernSkillItem 
-                    key={skill.id} 
-                    name={skill.name} 
-                    level={skill.level} 
+                  <ModernSkillItem
+                    key={skill.id}
+                    name={skill.name}
+                    level={skill.level}
                   />
                 ))}
               </View>
@@ -134,9 +133,14 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
           {/* Career Objective / Bio */}
           {personalInfo.bio && (
             <View style={modernStyles.contentSection}>
-              <ModernSectionTitle title="Mục tiêu nghề nghiệp" variant="content" />
+              <ModernSectionTitle
+                title="Mục tiêu nghề nghiệp"
+                variant="content"
+              />
               <View style={modernStyles.contentSectionBody}>
-                <Text style={modernStyles.bioTextModern}>{personalInfo.bio}</Text>
+                <Text style={modernStyles.bioTextModern}>
+                  {personalInfo.bio}
+                </Text>
               </View>
             </View>
           )}
@@ -144,7 +148,10 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
           {/* Experience */}
           {experience.length > 0 && (
             <View style={modernStyles.contentSection}>
-              <ModernSectionTitle title="Kinh nghiệm làm việc" variant="content" />
+              <ModernSectionTitle
+                title="Kinh nghiệm làm việc"
+                variant="content"
+              />
               <View style={modernStyles.contentSectionBody}>
                 {experience.map((exp, idx) => (
                   <React.Fragment key={exp.id}>
@@ -193,11 +200,15 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
               <View style={modernStyles.contentSectionBody}>
                 {languages.map((lang, idx) => (
                   <React.Fragment key={lang.id}>
-                  <View style={modernStyles.languageItemModern}>
-                    <Text style={modernStyles.languageNameModern}>{lang.name}</Text>
-                    <Text style={modernStyles.languageProficiencyModern}>{lang.proficiency}</Text>
-                  </View>
-                   {languages.length >= 2 && idx < languages.length - 1 && (
+                    <View style={modernStyles.languageItemModern}>
+                      <Text style={modernStyles.languageNameModern}>
+                        {lang.name}
+                      </Text>
+                      <Text style={modernStyles.languageProficiencyModern}>
+                        {lang.proficiency}
+                      </Text>
+                    </View>
+                    {languages.length >= 2 && idx < languages.length - 1 && (
                       <View style={modernStyles.experienceItemDivider}></View>
                     )}
                   </React.Fragment>
@@ -213,22 +224,25 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
               <View style={modernStyles.contentSectionBody}>
                 {certificates.map((cert, idx) => (
                   <React.Fragment key={cert.id}>
-                  <View style={modernStyles.certificateItemModern}>
-                    <View style={modernStyles.certificateHeaderModern}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={modernStyles.certificateNameModern}>{cert.name}</Text>
-                        <Text style={modernStyles.certificateIssuerModern}>
-                          Tổ chức cấp: {cert.issuer}
+                    <View style={modernStyles.certificateItemModern}>
+                      <View style={modernStyles.certificateHeaderModern}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={modernStyles.certificateNameModern}>
+                            {cert.name}
+                          </Text>
+                          <Text style={modernStyles.certificateIssuerModern}>
+                            Tổ chức cấp: {cert.issuer}
+                          </Text>
+                        </View>
+                        <Text style={modernStyles.certificateDateModern}>
+                          {formatDateForDisplay(cert.date)}
                         </Text>
                       </View>
-                      <Text style={modernStyles.certificateDateModern}>
-                        {formatDateForDisplay(cert.date)}
-                      </Text>
                     </View>
-                  </View>
-                   {certificates.length >= 2 && idx < certificates.length - 1 && (
-                      <View style={modernStyles.experienceItemDivider}></View>
-                    )}
+                    {certificates.length >= 2 &&
+                      idx < certificates.length - 1 && (
+                        <View style={modernStyles.experienceItemDivider}></View>
+                      )}
                   </React.Fragment>
                 ))}
               </View>
@@ -238,24 +252,31 @@ const ModernCVTemplate: React.FC<ModernCVTemplateProps> = ({ cvData }) => {
           {/* Awards */}
           {awards.length > 0 && (
             <View style={modernStyles.contentSection}>
-              <ModernSectionTitle title="Danh hiệu & Giải thưởng" variant="content" />
+              <ModernSectionTitle
+                title="Danh hiệu & Giải thưởng"
+                variant="content"
+              />
               <View style={modernStyles.contentSectionBody}>
                 {awards.map((award, idx) => (
                   <React.Fragment key={award.id}>
-                  <View style={modernStyles.awardItemModern}>
-                    <View style={modernStyles.awardHeaderModern}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={modernStyles.awardNameModern}>{award.name}</Text>
-                        {award.description && (
-                          <Text style={modernStyles.awardDescriptionModern}>{award.description}</Text>
-                        )}
+                    <View style={modernStyles.awardItemModern}>
+                      <View style={modernStyles.awardHeaderModern}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={modernStyles.awardNameModern}>
+                            {award.name}
+                          </Text>
+                          {award.description && (
+                            <Text style={modernStyles.awardDescriptionModern}>
+                              {award.description}
+                            </Text>
+                          )}
+                        </View>
+                        <Text style={modernStyles.awardDateModern}>
+                          {formatDateForDisplay(award.date)}
+                        </Text>
                       </View>
-                      <Text style={modernStyles.awardDateModern}>
-                        {formatDateForDisplay(award.date)}
-                      </Text>
                     </View>
-                  </View>
-                   {awards.length >= 2 && idx < awards.length - 1 && (
+                    {awards.length >= 2 && idx < awards.length - 1 && (
                       <View style={modernStyles.experienceItemDivider}></View>
                     )}
                   </React.Fragment>

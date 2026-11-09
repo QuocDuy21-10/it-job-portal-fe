@@ -66,7 +66,9 @@ export function useJobFavorite(jobId: string) {
           toast.success(t("jobFavorites.savedSuccess"), { duration: 1000 });
         }
       } catch (error: any) {
-        dispatch(previousState ? addSavedJobId(jobId) : removeSavedJobId(jobId));
+        dispatch(
+          previousState ? addSavedJobId(jobId) : removeSavedJobId(jobId)
+        );
 
         console.error("Toggle job favorite error:", error);
         const errorMessage =

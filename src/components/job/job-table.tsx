@@ -1,4 +1,11 @@
-import { Pencil, Trash2, Briefcase, MapPin, Calendar, ShieldCheck } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Briefcase,
+  MapPin,
+  Calendar,
+  ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,8 +28,10 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
-import { formatLocaleDate, formatVndCurrency } from "@/lib/utils/locale-formatters";
-
+import {
+  formatLocaleDate,
+  formatVndCurrency,
+} from "@/lib/utils/locale-formatters";
 
 interface JobTableProps {
   jobs: Job[];
@@ -73,7 +82,9 @@ export function JobTable({
                     aria-label={t("adminPages.shared.selectAll")}
                   />
                 </TableHead>
-                <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+                <TableHead className="w-[80px]">
+                  {t("adminPages.shared.number")}
+                </TableHead>
                 <TableHead>{t("adminPages.jobs.table.name")}</TableHead>
                 <TableHead>{t("adminPages.jobs.table.location")}</TableHead>
                 <TableHead>{t("adminPages.jobs.table.salary")}</TableHead>
@@ -81,7 +92,9 @@ export function JobTable({
                 <TableHead>{t("adminPages.jobs.table.isActive")}</TableHead>
                 <TableHead>{t("adminPages.jobs.table.approval")}</TableHead>
                 <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-                <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
+                <TableHead className="text-right">
+                  {t("adminPages.shared.actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -103,24 +116,24 @@ export function JobTable({
                 </TableRow>
               ) : (
                 jobs.map((job, index) => (
-                <JobTableRow
-                  key={job._id}
-                  job={job}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onApprove={onApprove}
-                  orderNumber={(currentPage - 1) * pageSize + index + 1}
-                  isSelected={selectedIds.has(job._id)}
-                  onToggleSelect={onToggleSelect}
-                />
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </TooltipProvider>
-  </Access>
-);
+                  <JobTableRow
+                    key={job._id}
+                    job={job}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onApprove={onApprove}
+                    orderNumber={(currentPage - 1) * pageSize + index + 1}
+                    isSelected={selectedIds.has(job._id)}
+                    onToggleSelect={onToggleSelect}
+                  />
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </TooltipProvider>
+    </Access>
+  );
 }
 
 // Tách component row để dễ maintain
@@ -134,20 +147,34 @@ interface JobTableRowProps {
   onToggleSelect: (id: string) => void;
 }
 
-function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected, onToggleSelect }: JobTableRowProps) {
+function JobTableRow({
+  job,
+  onEdit,
+  onDelete,
+  onApprove,
+  orderNumber,
+  isSelected,
+  onToggleSelect,
+}: JobTableRowProps) {
   const { t, language } = useI18n();
 
   const getLevelColor = () => {
     const level = job.level?.toLowerCase() || "";
-    if (level === "internship") return "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400";
-    if (level === "junior") return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
-    if (level === "mid") return "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
-    if (level === "senior") return "bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400";
-    if (level === "lead") return "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400";
-    if (level === "manager") return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+    if (level === "internship")
+      return "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400";
+    if (level === "junior")
+      return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
+    if (level === "mid")
+      return "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
+    if (level === "senior")
+      return "bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400";
+    if (level === "lead")
+      return "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400";
+    if (level === "manager")
+      return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
     return "bg-gray-100 text-gray-700";
   };
-  
+
   // Get approval status badge
   const getApprovalBadge = () => {
     const status = job.approvalStatus?.toUpperCase() || "PENDING";
@@ -188,9 +215,12 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
         return level || "-";
     }
   };
-  
+
   return (
-    <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
+    <TableRow
+      className="admin-table-row group"
+      data-state={isSelected ? "selected" : undefined}
+    >
       <TableCell>
         <Checkbox
           checked={isSelected}
@@ -225,21 +255,25 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Badge className={getLevelColor()}>
-            {getLevelLabel(job.level)}
-          </Badge>
+          <Badge className={getLevelColor()}>{getLevelLabel(job.level)}</Badge>
         </div>
       </TableCell>
       <TableCell>
         {job.isActive ? (
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
+            <Badge
+              variant="secondary"
+              className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800"
+            >
               {t("adminPages.shared.active")}
             </Badge>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Badge variant="destructive" className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
+            <Badge
+              variant="destructive"
+              className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800"
+            >
               {t("adminPages.shared.inactive")}
             </Badge>
           </div>
@@ -248,9 +282,7 @@ function JobTableRow({ job, onEdit, onDelete, onApprove, orderNumber, isSelected
       <TableCell>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center gap-2">
-              {getApprovalBadge()}
-            </div>
+            <div className="flex items-center gap-2">{getApprovalBadge()}</div>
           </TooltipTrigger>
           {job.approvalNote && (
             <TooltipContent className="max-w-xs">
@@ -339,7 +371,9 @@ function JobTableSkeleton() {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead className="w-[80px]">
+              {t("adminPages.shared.number")}
+            </TableHead>
             <TableHead>{t("adminPages.jobs.table.name")}</TableHead>
             <TableHead>{t("adminPages.jobs.table.location")}</TableHead>
             <TableHead>{t("adminPages.jobs.table.salary")}</TableHead>
@@ -347,15 +381,21 @@ function JobTableSkeleton() {
             <TableHead>{t("adminPages.jobs.table.isActive")}</TableHead>
             <TableHead>{t("adminPages.jobs.table.approval")}</TableHead>
             <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
+            <TableHead className="text-right">
+              {t("adminPages.shared.actions")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
-              <TableCell>                <Skeleton className="h-4 w-4" />
+              <TableCell>
+                {" "}
+                <Skeleton className="h-4 w-4" />
               </TableCell>
-              <TableCell>                <Skeleton className="h-4 w-8 mx-auto" />
+              <TableCell>
+                {" "}
+                <Skeleton className="h-4 w-8 mx-auto" />
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-3">

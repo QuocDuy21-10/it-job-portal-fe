@@ -93,7 +93,7 @@ const JobCard = ({
       <div className="flex gap-3 items-start mb-2">
         {job.company?.logo ? (
           <Image
-            src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`} 
+            src={`${API_BASE_URL_IMAGE}/images/company/${job.company.logo}`}
             alt={job.company.name || "Company logo"}
             width={40}
             height={40}
@@ -113,7 +113,8 @@ const JobCard = ({
             {job.name}
           </h4>
           <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {job.company?.name || t("chatWidget.recommendedJobs.companyFallback")}
+            {job.company?.name ||
+              t("chatWidget.recommendedJobs.companyFallback")}
           </p>
         </div>
       </div>
@@ -162,34 +163,36 @@ const JobCard = ({
         </span>
       </div>
 
-      {pendingToolAction && onConfirmPendingToolAction && onCancelPendingToolAction && (
-        <div className="mt-3 flex gap-2 border-t border-gray-100 pt-3 dark:border-border">
-          <Button
-            type="button"
-            size="sm"
-            variant={isSaved || isExpired ? "secondary" : "default"}
-            className="h-8 flex-1"
-            disabled={isSaved || isExpired || isActionPending}
-            onClick={handleConfirmPendingAction}
-          >
-            {isSaved
-              ? t("jobDetailPage.actions.saved")
-              : isExpired
-                ? t("chatWidget.toolActions.expired")
-                : t("chatWidget.toolActions.confirmSave")}
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="h-8 flex-1"
-            disabled={isActionPending}
-            onClick={handleCancelPendingAction}
-          >
-            {t("chatWidget.toolActions.dismiss")}
-          </Button>
-        </div>
-      )}
+      {pendingToolAction &&
+        onConfirmPendingToolAction &&
+        onCancelPendingToolAction && (
+          <div className="mt-3 flex gap-2 border-t border-gray-100 pt-3 dark:border-border">
+            <Button
+              type="button"
+              size="sm"
+              variant={isSaved || isExpired ? "secondary" : "default"}
+              className="h-8 flex-1"
+              disabled={isSaved || isExpired || isActionPending}
+              onClick={handleConfirmPendingAction}
+            >
+              {isSaved
+                ? t("jobDetailPage.actions.saved")
+                : isExpired
+                  ? t("chatWidget.toolActions.expired")
+                  : t("chatWidget.toolActions.confirmSave")}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-8 flex-1"
+              disabled={isActionPending}
+              onClick={handleCancelPendingAction}
+            >
+              {t("chatWidget.toolActions.dismiss")}
+            </Button>
+          </div>
+        )}
     </div>
   );
 };

@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/hooks/use-i18n";
 
-interface PasswordInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   rightLabel?: React.ReactNode;
   error?: string;
@@ -25,7 +24,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         {(label || rightLabel) && (
           <div className="flex items-center justify-between">
             {label ? (
-              <Label htmlFor={props.id} className="text-sm font-medium text-foreground dark:text-gray-200">
+              <Label
+                htmlFor={props.id}
+                className="text-sm font-medium text-foreground dark:text-gray-200"
+              >
                 {label}
               </Label>
             ) : (
@@ -57,7 +59,11 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             tabIndex={-1}
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-            aria-label={showPassword ? t("authModal.passwordInput.hidePassword") : t("authModal.passwordInput.showPassword")}
+            aria-label={
+              showPassword
+                ? t("authModal.passwordInput.hidePassword")
+                : t("authModal.passwordInput.showPassword")
+            }
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />

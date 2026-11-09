@@ -1,5 +1,5 @@
 export const vi = {
-    common: {
+  common: {
     cancel: "Huỷ",
     view: "Xem",
     collapse: "Thu gọn",
@@ -41,14 +41,16 @@ export const vi = {
     topEmployers: "Khám phá các nhà tuyển dụng hàng đầu",
     findYourNext: "Tìm kiếm ",
     employer: "Nhà tuyển dụng",
-    browseTopCompanies: "Duyệt qua các công ty hàng đầu và khám phá cơ hội nghề nghiệp hấp dẫn",
+    browseTopCompanies:
+      "Duyệt qua các công ty hàng đầu và khám phá cơ hội nghề nghiệp hấp dẫn",
     companiesFound: "công ty được tìm thấy",
     loading: "Đang tải danh sách công ty...",
     errorLoading: "Lỗi khi tải danh sách công ty.",
     openPositions: "vị trí đang tuyển",
     viewDetails: "Xem chi tiết",
     noCompaniesFound: "Không tìm thấy công ty nào",
-    tryAdjustingSearch: "Hãy thử thay đổi từ khóa tìm kiếm để có kết quả phù hợp hơn",
+    tryAdjustingSearch:
+      "Hãy thử thay đổi từ khóa tìm kiếm để có kết quả phù hợp hơn",
     clearSearch: "Xóa tìm kiếm",
     previous: "Trước",
     next: "Sau",
@@ -60,7 +62,8 @@ export const vi = {
     viewProfile: "Xem hồ sơ công ty",
     followCompany: "Theo dõi công ty",
     tip: "Mẹo:",
-    followTip: "Theo dõi công ty này để nhận thông báo về các vị trí tuyển dụng mới.",
+    followTip:
+      "Theo dõi công ty này để nhận thông báo về các vị trí tuyển dụng mới.",
   },
   meta: {
     title: "DevLink - Tìm Công Việc Mơ Ước",
@@ -94,7 +97,8 @@ export const vi = {
     noCompanies: "Hiện tại không có công ty nào. ",
     viewAllCompanies: "Xem Tất Cả Công Ty",
     howItWorks: "Cách Thức Hoạt Động",
-    howItWorksDescription: "Tìm được công việc IT mơ ước trong ba bước đơn giản",
+    howItWorksDescription:
+      "Tìm được công việc IT mơ ước trong ba bước đơn giản",
     searchJobs: "Tạo Hồ Sơ",
     searchJobsDescription:
       "Xây dựng hồ sơ chuyên nghiệp và giới thiệu kỹ năng của bạn đến các công ty IT hàng đầu",
@@ -137,7 +141,8 @@ export const vi = {
     shared: {
       guardLoading: "Đang kiểm tra quyền truy cập...",
       errorTitle: "Không thể tải dữ liệu thống kê",
-      errorDescription: "Dịch vụ thống kê hiện không khả dụng. Vui lòng thử lại sau.",
+      errorDescription:
+        "Dịch vụ thống kê hiện không khả dụng. Vui lòng thử lại sau.",
       retry: "Thử lại",
       emptyTitle: "Chưa có dữ liệu thống kê",
       emptyDescription:
@@ -186,12 +191,15 @@ export const vi = {
         jobTrendTitle: "Xu hướng đăng việc làm",
         jobTrendDescription: "Biến động số việc làm mới trong 7 ngày gần nhất.",
         applicationTrendTitle: "Xu hướng ứng tuyển",
-        applicationTrendDescription: "Biến động số hồ sơ nộp vào hệ thống trong 7 ngày gần nhất.",
+        applicationTrendDescription:
+          "Biến động số hồ sơ nộp vào hệ thống trong 7 ngày gần nhất.",
         topSkillsTitle: "Kỹ năng được tuyển nhiều nhất",
-        topSkillsDescription: "Các kỹ năng xuất hiện nhiều nhất trong nhóm việc làm đang hoạt động.",
+        topSkillsDescription:
+          "Các kỹ năng xuất hiện nhiều nhất trong nhóm việc làm đang hoạt động.",
         skillDemandHint: "Lượt xuất hiện trong việc làm đang tuyển",
         processingHealthTitle: "Sức khỏe xử lý hồ sơ",
-        processingHealthDescription: "Theo dõi trạng thái parse và phân tích hồ sơ bằng AI.",
+        processingHealthDescription:
+          "Theo dõi trạng thái parse và phân tích hồ sơ bằng AI.",
         totalResumes: "Tổng hồ sơ theo dõi",
         parsedResumes: "Hồ sơ đã parse",
         parseFailedResumes: "Parse thất bại",
@@ -200,7 +208,8 @@ export const vi = {
       },
     },
     hr: {
-      layoutDescription: "Các chỉ số vận hành tuyển dụng dành riêng cho công ty của bạn.",
+      layoutDescription:
+        "Các chỉ số vận hành tuyển dụng dành riêng cho công ty của bạn.",
       layoutBadge: "HR dashboard",
       eyebrow: "Hiệu quả tuyển dụng",
       title: "Dashboard thống kê HR",
@@ -212,7 +221,8 @@ export const vi = {
       cards: {
         countActiveJobs: {
           label: "Việc làm đang tuyển",
-          description: "Các việc làm đã duyệt của công ty vẫn đang nhận ứng viên.",
+          description:
+            "Các việc làm đã duyệt của công ty vẫn đang nhận ứng viên.",
         },
         countPendingApprovalJobs: {
           label: "Việc làm chờ duyệt",
@@ -232,19 +242,24 @@ export const vi = {
         },
         applicationStatusDistribution: {
           label: "Trạng thái theo dõi",
-          description: "Tổng số hồ sơ đang được thể hiện trong funnel hiện tại.",
+          description:
+            "Tổng số hồ sơ đang được thể hiện trong funnel hiện tại.",
         },
       },
       charts: {
         statusDistributionTitle: "Phân bố trạng thái hồ sơ",
-        statusDistributionDescription: "Funnel tuyển dụng hiện tại được nhóm theo trạng thái hồ sơ.",
+        statusDistributionDescription:
+          "Funnel tuyển dụng hiện tại được nhóm theo trạng thái hồ sơ.",
         applicationTrendTitle: "Xu hướng nhận hồ sơ",
-        applicationTrendDescription: "Biến động số hồ sơ mới của công ty trong 7 ngày gần nhất.",
+        applicationTrendDescription:
+          "Biến động số hồ sơ mới của công ty trong 7 ngày gần nhất.",
         topJobsTitle: "Công việc thu hút nhiều hồ sơ nhất",
-        topJobsDescription: "Các vị trí đang nhận được nhiều lượt ứng tuyển nhất.",
+        topJobsDescription:
+          "Các vị trí đang nhận được nhiều lượt ứng tuyển nhất.",
         topJobsHint: "Số hồ sơ đã nhận",
         performanceTitle: "Hiệu suất tuyển dụng",
-        performanceDescription: "Tốc độ phản hồi và chất lượng matching AI của công ty.",
+        performanceDescription:
+          "Tốc độ phản hồi và chất lượng matching AI của công ty.",
         responseRate: "Tỷ lệ phản hồi",
         firstResponseHours: "TB phản hồi đầu tiên",
         matchingScore: "TB điểm matching",
@@ -460,10 +475,12 @@ export const vi = {
     },
     login: {
       titlePage: "Chào mừng trở lại DevLink",
-      descriptionPage: "Đăng nhập để truy cập tài khoản và tiếp tục hành trình tìm kiếm việc làm của bạn. Tìm kiếm những cơ hội phù hợp với kỹ năng và định hướng của bạn.",
+      descriptionPage:
+        "Đăng nhập để truy cập tài khoản và tiếp tục hành trình tìm kiếm việc làm của bạn. Tìm kiếm những cơ hội phù hợp với kỹ năng và định hướng của bạn.",
       verificationAlert: {
         title: "Xác thực email thành công!",
-        message: "Email của bạn đã được xác thực thành công. Bây giờ bạn đã có thể đăng nhập.",
+        message:
+          "Email của bạn đã được xác thực thành công. Bây giờ bạn đã có thể đăng nhập.",
       },
       fields: {
         email: {
@@ -486,13 +503,15 @@ export const vi = {
         signUpNow: "Đăng ký ngay",
       },
       toasts: {
-        verifiedSuccess: "Xác thực email thành công! Bạn có thể đăng nhập ngay bây giờ.",
+        verifiedSuccess:
+          "Xác thực email thành công! Bạn có thể đăng nhập ngay bây giờ.",
         facebookLoginComingSoon: "Đăng nhập bằng Facebook sẽ sớm ra mắt.",
       },
     },
     register: {
       titlePage: "Tham gia DevLink ngay hôm nay",
-      descriptionPage: "Tạo tài khoản và mở khóa hàng ngàn cơ hội việc làm. Bắt đầu hành trình sự nghiệp của bạn cùng chúng tôi.",
+      descriptionPage:
+        "Tạo tài khoản và mở khóa hàng ngàn cơ hội việc làm. Bắt đầu hành trình sự nghiệp của bạn cùng chúng tôi.",
       socialDivider: "Hoặc đăng ký bằng",
       fields: {
         name: {
@@ -527,7 +546,8 @@ export const vi = {
         signInNow: "Đăng nhập ngay",
       },
       toasts: {
-        success: "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+        success:
+          "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
         failed: "Đăng ký thất bại",
         googleSignupComingSoon: "Đăng ký bằng Google sẽ sớm ra mắt.",
         googleSignupFailed: "Đăng ký bằng Google thất bại.",
@@ -560,7 +580,8 @@ export const vi = {
         max: "Email không được quá 255 ký tự",
         whitespace: "Email không được chứa khoảng trắng",
         invalidCharacter: "Email chứa ký tự không hợp lệ",
-        invalidDots: "Email không hợp lệ (không được bắt đầu hoặc kết thúc bằng dấu chấm)",
+        invalidDots:
+          "Email không hợp lệ (không được bắt đầu hoặc kết thúc bằng dấu chấm)",
         consecutiveDots: "Email không được chứa hai dấu chấm liên tiếp",
         invalidDomain: "Domain email không hợp lệ",
       },
@@ -573,7 +594,8 @@ export const vi = {
         digit: "Mật khẩu phải chứa ít nhất một số",
         special: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt",
         whitespace: "Mật khẩu không được chứa khoảng trắng",
-        repeatedCharacters: "Mật khẩu không được chứa ký tự lặp quá 3 lần liên tiếp",
+        repeatedCharacters:
+          "Mật khẩu không được chứa ký tự lặp quá 3 lần liên tiếp",
         common: "Mật khẩu quá phổ biến, vui lòng chọn mật khẩu khác",
       },
       confirmPassword: {
@@ -586,11 +608,13 @@ export const vi = {
     },
     forgotPassword: {
       titlePage: "Đặt lại mật khẩu của bạn",
-      descriptionPage: "Đừng lo lắng! Điều đó thỉnh thoảng vẫn xảy ra. Hãy nhập email của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu.",
+      descriptionPage:
+        "Đừng lo lắng! Điều đó thỉnh thoảng vẫn xảy ra. Hãy nhập email của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu.",
       titleCard: "Đặt lại mật khẩu",
       descriptionCard: "Chúng tôi sẽ gửi liên kết đặt lại vào email của bạn",
       successTitle: "Gửi email thành công!",
-      successDescription: "Chúng tôi đã gửi hướng dẫn đặt lại mật khẩu đến {email}",
+      successDescription:
+        "Chúng tôi đã gửi hướng dẫn đặt lại mật khẩu đến {email}",
       successHelp: "Vui lòng kiểm tra hộp thư đến (và cả thư mục spam).",
       cooldownText: "Gửi lại sau {time}s",
       resendBtn: "Gửi lại email",
@@ -600,7 +624,8 @@ export const vi = {
       sendingBtn: "Đang gửi...",
       toasts: {
         sendSuccess: "Đã gửi email hướng dẫn đặt lại mật khẩu!",
-        sendFallback: "Nếu email tồn tại trong hệ thống, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu.",
+        sendFallback:
+          "Nếu email tồn tại trong hệ thống, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu.",
       },
     },
     resetPassword: {
@@ -612,7 +637,8 @@ export const vi = {
       successDescription: "Mật khẩu của bạn đã được cập nhật thành công.",
       redirectingText: "Đang chuyển hướng đến trang đăng nhập sau {time}s...",
       goLoginBtn: "Đi đến trang đăng nhập",
-      requirements: "Mật khẩu phải dài ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.",
+      requirements:
+        "Mật khẩu phải dài ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.",
       submitBtn: "Đặt lại mật khẩu",
       toasts: {
         invalidLink: "Liên kết đặt lại mật khẩu không hợp lệ",
@@ -627,9 +653,12 @@ export const vi = {
       descriptionPage: "Chúng tôi đã gửi một mã xác thực đến email của bạn",
       titleCard: "Nhập mã xác thực",
       alreadyVerified: "Đã xác thực?",
-      descriptionCardWithEmail: "Vui lòng kiểm tra email {email} để nhận mã xác thực gồm 6 chữ số",
-      descriptionCardDefault: "Vui lòng nhập mã xác thực gồm 6 chữ số được gửi đến email của bạn",
-      alertInfo: "Mã xác thực sẽ hết hạn trong 5 phút. Vui lòng nhập mã dưới đây để kích hoạt tài khoản.",
+      descriptionCardWithEmail:
+        "Vui lòng kiểm tra email {email} để nhận mã xác thực gồm 6 chữ số",
+      descriptionCardDefault:
+        "Vui lòng nhập mã xác thực gồm 6 chữ số được gửi đến email của bạn",
+      alertInfo:
+        "Mã xác thực sẽ hết hạn trong 5 phút. Vui lòng nhập mã dưới đây để kích hoạt tài khoản.",
       verifyBtn: "Xác thực Email",
       verifyingBtn: "Đang xác thực...",
       dividerText: "Bạn chưa nhận được mã?",
@@ -735,7 +764,8 @@ export const vi = {
     jobListing: {
       loading: "Đang tải danh sách công việc...",
       error: "Không thể tải danh sách công việc.",
-      emptyTitle: "Không tìm thấy công việc phù hợp với tiêu chí tìm kiếm của bạn",
+      emptyTitle:
+        "Không tìm thấy công việc phù hợp với tiêu chí tìm kiếm của bạn",
       emptyDescription:
         "Hãy thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác",
       deadlineDays: "Còn {days} ngày",
@@ -759,7 +789,7 @@ export const vi = {
       toasts: {
         success: "Cập nhật thông tin cá nhân thành công!",
         error: "Cập nhật thông tin cá nhân thất bại.",
-      }
+      },
     },
     changePassword: {
       title: "Đổi mật khẩu",
@@ -779,11 +809,12 @@ export const vi = {
       toasts: {
         success: "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.",
         error: "Đổi mật khẩu thất bại.",
-      }
+      },
     },
     dashboard: {
       metaTitle: "Bảng điều khiển quản trị | IT Dev Link",
-      metaDescription: "Quản lý và theo dõi thống kê tuyển dụng trên toàn nền tảng",
+      metaDescription:
+        "Quản lý và theo dõi thống kê tuyển dụng trên toàn nền tảng",
     },
     hrDashboard: {
       metaTitle: "Bảng điều khiển HR | IT Dev Link",
@@ -811,7 +842,8 @@ export const vi = {
       lock: "Khóa",
       unlock: "Mở khóa",
       desktopWarningTitle: "Trải nghiệm tốt nhất trên máy tính",
-      desktopWarningDesc: "Trang này chứa các bảng quản trị phức tạp và hiển thị tốt nhất trên màn hình máy tính. Bạn có thể cuộn ngang để xem đầy đủ chi tiết bảng.",
+      desktopWarningDesc:
+        "Trang này chứa các bảng quản trị phức tạp và hiển thị tốt nhất trên màn hình máy tính. Bạn có thể cuộn ngang để xem đầy đủ chi tiết bảng.",
     },
     resources: {
       user: "người dùng",
@@ -845,10 +877,10 @@ export const vi = {
       toasts: {
         createSuccess: "Tạo người dùng thành công!",
         updateSuccess: "Cập nhật người dùng thành công!",
-        deleteSuccess: "Đã xóa người dùng \"{name}\" thành công!",
+        deleteSuccess: 'Đã xóa người dùng "{name}" thành công!',
         operationError: "Đã xảy ra lỗi. Vui lòng thử lại.",
         deleteError: "Không thể xóa người dùng. Vui lòng thử lại.",
-        lockSuccess: "Đã khóa tài khoản \"{name}\" thành công!",
+        lockSuccess: 'Đã khóa tài khoản "{name}" thành công!',
         lockError: "Không thể khóa tài khoản. Vui lòng thử lại.",
         unlockSuccess: "Đã mở khóa tài khoản thành công!",
         unlockError: "Không thể mở khóa tài khoản. Vui lòng thử lại.",
@@ -874,7 +906,7 @@ export const vi = {
       toasts: {
         createSuccess: "Tạo công ty thành công!",
         updateSuccess: "Cập nhật công ty thành công!",
-        deleteSuccess: "Đã xóa công ty \"{name}\" thành công!",
+        deleteSuccess: 'Đã xóa công ty "{name}" thành công!',
         operationError: "Đã xảy ra lỗi. Vui lòng thử lại.",
         deleteError: "Không thể xóa công ty. Vui lòng thử lại.",
       },
@@ -922,11 +954,11 @@ export const vi = {
       toasts: {
         createSuccess: "Tạo việc làm thành công!",
         updateSuccess: "Cập nhật việc làm thành công!",
-        deleteSuccess: "Đã xóa việc làm \"{name}\" thành công!",
+        deleteSuccess: 'Đã xóa việc làm "{name}" thành công!',
         operationError: "Đã xảy ra lỗi. Vui lòng thử lại.",
         deleteError: "Không thể xóa việc làm. Vui lòng thử lại.",
-        approveSuccess: "Đã duyệt việc làm \"{name}\" thành công!",
-        rejectSuccess: "Đã từ chối việc làm \"{name}\" thành công!",
+        approveSuccess: 'Đã duyệt việc làm "{name}" thành công!',
+        rejectSuccess: 'Đã từ chối việc làm "{name}" thành công!',
         approvalError: "Không thể cập nhật trạng thái duyệt. Vui lòng thử lại.",
       },
     },
@@ -946,7 +978,7 @@ export const vi = {
       toasts: {
         createSuccess: "Tạo vai trò thành công!",
         updateSuccess: "Cập nhật vai trò thành công!",
-        deleteSuccess: "Đã xóa vai trò \"{name}\" thành công!",
+        deleteSuccess: 'Đã xóa vai trò "{name}" thành công!',
         operationError: "Đã xảy ra lỗi. Vui lòng thử lại.",
         deleteError: "Không thể xóa vai trò. Vui lòng thử lại.",
       },
@@ -995,7 +1027,7 @@ export const vi = {
       },
       toasts: {
         updateSuccess: "Cập nhật hồ sơ thành công!",
-        deleteSuccess: "Đã xóa hồ sơ \"{name}\" thành công!",
+        deleteSuccess: 'Đã xóa hồ sơ "{name}" thành công!',
         operationError: "Đã xảy ra lỗi. Vui lòng thử lại.",
         deleteError: "Không thể xóa hồ sơ. Vui lòng thử lại.",
       },
@@ -1073,7 +1105,8 @@ export const vi = {
       experience: "Kinh nghiệm làm việc",
       skills: "Kỹ năng",
       languages: "Ngôn ngữ",
-      notEnough: "Cần hoàn thành ít nhất {percent}% hồ sơ để xem trước và tải xuống CV",
+      notEnough:
+        "Cần hoàn thành ít nhất {percent}% hồ sơ để xem trước và tải xuống CV",
       previewDownload: "Xem trước & Tải xuống",
       checklistTitle: "HOÀN THÀNH CÁC MỤC:",
       tip: "Hoàn thiện hồ sơ giúp tăng cơ hội được các nhà tuyển dụng hàng đầu chú ý lên gấp 3 lần.",
@@ -1104,7 +1137,8 @@ export const vi = {
       description: "Thêm kinh nghiệm làm việc của bạn",
       addButton: "Thêm kinh nghiệm",
       noData: "Chưa có kinh nghiệm làm việc",
-      noDataDescription: "Thêm kinh nghiệm làm việc của bạn để nổi bật với nhà tuyển dụng",
+      noDataDescription:
+        "Thêm kinh nghiệm làm việc của bạn để nổi bật với nhà tuyển dụng",
       editTooltip: "Chỉnh sửa",
       deleteTooltip: "Xóa",
       addTooltip: "Thêm kinh nghiệm làm việc mới",
@@ -1159,7 +1193,7 @@ export const vi = {
       editTooltip: "Chỉnh sửa kỹ năng này",
       deleteTooltip: "Xóa kỹ năng này",
       deleteSuccess: "Đã xóa kỹ năng",
-      deleteSuccessDesc: "Kỹ năng \"{name}\" đã được xóa",
+      deleteSuccessDesc: 'Kỹ năng "{name}" đã được xóa',
       edit: "Sửa",
       delete: "Xóa",
       addTitle: "Thêm Kỹ Năng",
@@ -1185,7 +1219,7 @@ export const vi = {
       editTooltip: "Chỉnh sửa ngôn ngữ này",
       deleteTooltip: "Xóa ngôn ngữ này",
       deleteSuccess: "Đã xóa ngôn ngữ",
-      deleteSuccessDesc: "Ngôn ngữ \"{name}\" đã được xóa",
+      deleteSuccessDesc: 'Ngôn ngữ "{name}" đã được xóa',
       edit: "Sửa",
       delete: "Xóa",
       addTitle: "Thêm Ngôn Ngữ",
@@ -1436,7 +1470,8 @@ export const vi = {
     loadError: "Không thể tải danh sách thông báo.",
     retry: "Thử lại",
     emptyTitle: "Không có thông báo",
-    emptyDescription: "Bạn sẽ nhận được thông báo về các hoạt động quan trọng tại đây",
+    emptyDescription:
+      "Bạn sẽ nhận được thông báo về các hoạt động quan trọng tại đây",
     previous: "Trước",
     next: "Sau",
     pageOf: "Trang {page} / {totalPages}",
@@ -1480,7 +1515,8 @@ export const vi = {
     pageLabel: "trang",
     breadcrumb: "Tìm việc làm",
     heroTitle: "Khám phá cơ hội nghề nghiệp",
-    heroDescription: "Tìm kiếm công việc phù hợp với kỹ năng và hoài bão của bạn",
+    heroDescription:
+      "Tìm kiếm công việc phù hợp với kỹ năng và hoài bão của bạn",
     searchPlaceholder: "Tìm theo tên công việc, kỹ năng hoặc từ khóa...",
     filters: "Bộ lọc",
     hideFilters: "Ẩn bộ lọc",
@@ -1506,7 +1542,8 @@ export const vi = {
     sortLabel: "Sắp xếp:",
     searchingJobs: "Đang tìm kiếm công việc phù hợp...",
     emptyTitle: "Không tìm thấy công việc",
-    emptyDescription: "Hãy thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác",
+    emptyDescription:
+      "Hãy thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác",
     suspenseLoading: "Đang tải trang việc làm...",
     jobTypeOptions: {
       all: "Tất cả hình thức",
@@ -1573,7 +1610,8 @@ export const vi = {
     workplace: "Hình thức",
     remote: "Remote",
     workplaceUnknown: "Chưa rõ — xem tại tin gốc",
-    fullContentAtSource: "Nội dung đầy đủ của tin này có tại trang tuyển dụng gốc.",
+    fullContentAtSource:
+      "Nội dung đầy đủ của tin này có tại trang tuyển dụng gốc.",
     location: "Địa điểm",
     salary: "Mức lương",
     skills: "Kỹ năng",
@@ -1634,10 +1672,10 @@ export const vi = {
       gracePeriodNote:
         "Tài khoản sẽ bị xóa vĩnh viễn sau 30 ngày. Bạn có thể hủy bất cứ lúc nào trong thời gian đó.",
       confirmPassword: "Nhập mật khẩu để xác nhận",
-      confirmText: 'Gõ DELETE để xác nhận',
+      confirmText: "Gõ DELETE để xác nhận",
       pendingBanner: "Tài khoản sẽ bị xóa vào ngày {date}",
       pendingBannerNote:
-        "Dăng nhập lại và nhấn \"Hủy xóa tài khoản\" để giữ lại tài khoản của bạn.",
+        'Dăng nhập lại và nhấn "Hủy xóa tài khoản" để giữ lại tài khoản của bạn.',
       cancelDeletion: "Hủy xóa tài khoản",
       requestSuccess:
         "Tài khoản đã được lên lịch xóa vào ngày {date}. Bạn có thể hủy trong vòng 30 ngày.",
@@ -1645,7 +1683,8 @@ export const vi = {
       cancelSuccess:
         "Đã hủy yêu cầu xóa tài khoản. Tài khoản của bạn vẫn hoạt động bình thường.",
       cancelError: "Không thể hủy yêu cầu xóa tài khoản",
-      warningTitle: "Cảnh báo: Hành động này sẽ lên lịch xóa tài khoản của bạn!",
+      warningTitle:
+        "Cảnh báo: Hành động này sẽ lên lịch xóa tài khoản của bạn!",
       warningDescriptionLine1:
         "Tài khoản sẽ bị xóa vĩnh viễn sau 30 ngày. Tất cả dữ liệu, bao gồm CV, tin nhắn và đơn ứng tuyển, sẽ bị xóa và không thể khôi phục.",
       warningDescriptionLine2:
@@ -1671,7 +1710,8 @@ export const vi = {
   authLayout: {
     loaderText: "Đang kiểm tra...",
     defaultTitle: "Chào mừng đến với DevLink",
-    defaultDescription: "Cổng thông tin cơ hội nghề nghiệp của bạn. Kết nối với các nhà tuyển dụng hàng đầu và tìm công việc mơ ước của bạn.",
+    defaultDescription:
+      "Cổng thông tin cơ hội nghề nghiệp của bạn. Kết nối với các nhà tuyển dụng hàng đầu và tìm công việc mơ ước của bạn.",
     feature1: "Hơn 1000+ công ty đang tuyển dụng",
     feature2: "Danh sách công việc đã được xác thực",
     feature3: "Quy trình ứng tuyển dễ dàng",
@@ -1695,7 +1735,8 @@ export const vi = {
   middleware: {
     forbidden: "Bạn không có quyền thực hiện hành động này",
     serverError: "Lỗi server. Vui lòng thử lại sau",
-    networkError: "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
+    networkError:
+      "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
   },
   fileUpload: {
     toasts: {

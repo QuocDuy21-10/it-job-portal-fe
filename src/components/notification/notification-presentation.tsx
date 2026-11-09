@@ -31,5 +31,8 @@ const DEFAULT_NOTIFICATION_META: NotificationTypeMeta = {
 };
 
 export function getNotificationTypeMeta(type: string): NotificationTypeMeta {
-  return NOTIFICATION_TYPE_META[type as NotificationType] ?? DEFAULT_NOTIFICATION_META;
+  return (
+    NOTIFICATION_TYPE_META[type as NotificationType] ??
+    DEFAULT_NOTIFICATION_META
+  );
 }

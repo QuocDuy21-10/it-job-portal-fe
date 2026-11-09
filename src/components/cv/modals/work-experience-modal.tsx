@@ -3,9 +3,18 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ExperienceRequestSchema, type ExperienceRequest } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  ExperienceRequestSchema,
+  type ExperienceRequest,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import ModalHeaderBanner from "./modal-header-banner";
 
@@ -49,13 +58,15 @@ export default function WorkExperienceModal({
 
   useEffect(() => {
     if (isOpen) {
-      reset(experience || {
-        company: "",
-        position: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
+      reset(
+        experience || {
+          company: "",
+          position: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        }
+      );
     }
   }, [isOpen, experience, reset]);
 
@@ -74,7 +85,9 @@ export default function WorkExperienceModal({
       <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-card via-card to-secondary/20 border-border/50 shadow-2xl p-6">
         <DialogHeader className="sr-only">
           <DialogTitle>
-            {mode === "add" ? t("cv.workExperience.addTitle") : t("cv.workExperience.editTitle")}
+            {mode === "add"
+              ? t("cv.workExperience.addTitle")
+              : t("cv.workExperience.editTitle")}
           </DialogTitle>
           <DialogDescription>
             {t("cv.workExperience.description")}
@@ -83,7 +96,11 @@ export default function WorkExperienceModal({
 
         <ModalHeaderBanner
           type="work"
-          title={mode === "add" ? t("cv.workExperience.addTitle") : t("cv.workExperience.editTitle")}
+          title={
+            mode === "add"
+              ? t("cv.workExperience.addTitle")
+              : t("cv.workExperience.editTitle")
+          }
           description={t("cv.workExperience.description")}
         />
 
@@ -95,19 +112,23 @@ export default function WorkExperienceModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.workExperience.companyLabel")} <span className="text-destructive">*</span>
+                  {t("cv.workExperience.companyLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.workExperience.companyPlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.company ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.company
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.company && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.company.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.company.message}
                   </p>
                 )}
               </div>
@@ -121,19 +142,23 @@ export default function WorkExperienceModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.workExperience.positionLabel")} <span className="text-destructive">*</span>
+                  {t("cv.workExperience.positionLabel")}{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   {...field}
                   placeholder={t("cv.workExperience.positionPlaceholder")}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                    errors.position ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.position
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.position && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.position.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.position.message}
                   </p>
                 )}
               </div>
@@ -148,22 +173,32 @@ export default function WorkExperienceModal({
               render={({ field }) => (
                 <div>
                   <label className="block text-sm font-medium mb-2 text-foreground">
-                    {t("cv.workExperience.startDateLabel")} <span className="text-destructive">*</span>
+                    {t("cv.workExperience.startDateLabel")}{" "}
+                    <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="month"
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().slice(0, 7)
+                        : ""
+                    }
                     onChange={(e) => {
-                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                      const dateValue = e.target.value
+                        ? new Date(e.target.value + "-01").toISOString()
+                        : "";
                       field.onChange(dateValue);
                     }}
                     className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                      errors.startDate ? "border-destructive focus:ring-destructive/50" : "border-border"
+                      errors.startDate
+                        ? "border-destructive focus:ring-destructive/50"
+                        : "border-border"
                     }`}
                   />
                   {errors.startDate && (
                     <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                      <span className="font-medium">⚠</span> {errors.startDate.message}
+                      <span className="font-medium">⚠</span>{" "}
+                      {errors.startDate.message}
                     </p>
                   )}
                 </div>
@@ -176,23 +211,35 @@ export default function WorkExperienceModal({
               render={({ field }) => (
                 <div>
                   <label className="block text-sm font-medium mb-2 text-foreground">
-                    {t("cv.workExperience.endDateLabel")} <span className="text-muted-foreground text-xs">(Optional)</span>
+                    {t("cv.workExperience.endDateLabel")}{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (Optional)
+                    </span>
                   </label>
                   <input
                     type="month"
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 7) : ""}
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().slice(0, 7)
+                        : ""
+                    }
                     onChange={(e) => {
-                      const dateValue = e.target.value ? new Date(e.target.value + "-01").toISOString() : "";
+                      const dateValue = e.target.value
+                        ? new Date(e.target.value + "-01").toISOString()
+                        : "";
                       field.onChange(dateValue);
                     }}
                     placeholder={t("cv.workExperience.endDatePlaceholder")}
                     className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                      errors.endDate ? "border-destructive focus:ring-destructive/50" : "border-border"
+                      errors.endDate
+                        ? "border-destructive focus:ring-destructive/50"
+                        : "border-border"
                     }`}
                   />
                   {errors.endDate && (
                     <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                      <span className="font-medium">⚠</span> {errors.endDate.message}
+                      <span className="font-medium">⚠</span>{" "}
+                      {errors.endDate.message}
                     </p>
                   )}
                 </div>
@@ -207,7 +254,10 @@ export default function WorkExperienceModal({
             render={({ field }) => (
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  {t("cv.workExperience.descriptionLabel")} <span className="text-muted-foreground text-xs">(Optional)</span>
+                  {t("cv.workExperience.descriptionLabel")}{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (Optional)
+                  </span>
                 </label>
                 <textarea
                   {...field}
@@ -215,12 +265,15 @@ export default function WorkExperienceModal({
                   placeholder={t("cv.workExperience.descriptionPlaceholder")}
                   rows={4}
                   className={`w-full px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all ${
-                    errors.description ? "border-destructive focus:ring-destructive/50" : "border-border"
+                    errors.description
+                      ? "border-destructive focus:ring-destructive/50"
+                      : "border-border"
                   }`}
                 />
                 {errors.description && (
                   <p className="mt-1.5 text-xs text-destructive flex items-center gap-1">
-                    <span className="font-medium">⚠</span> {errors.description.message}
+                    <span className="font-medium">⚠</span>{" "}
+                    {errors.description.message}
                   </p>
                 )}
               </div>
@@ -241,7 +294,9 @@ export default function WorkExperienceModal({
               type="submit"
               className="px-6 bg-primary hover:bg-primary/90"
             >
-              {mode === "add" ? t("cv.workExperience.saveLabel") : t("cv.workExperience.updateLabel")}
+              {mode === "add"
+                ? t("cv.workExperience.saveLabel")
+                : t("cv.workExperience.updateLabel")}
             </Button>
           </div>
         </form>

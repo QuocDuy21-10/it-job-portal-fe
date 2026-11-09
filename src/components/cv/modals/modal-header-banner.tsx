@@ -1,8 +1,24 @@
 "use client";
 
-import { LucideIcon, Trophy, Award, GraduationCap, Languages, Code2, Cpu, Briefcase } from "lucide-react";
+import {
+  LucideIcon,
+  Trophy,
+  Award,
+  GraduationCap,
+  Languages,
+  Code2,
+  Cpu,
+  Briefcase,
+} from "lucide-react";
 
-export type ModalBannerType = "award" | "certificate" | "education" | "language" | "project" | "skill" | "work";
+export type ModalBannerType =
+  | "award"
+  | "certificate"
+  | "education"
+  | "language"
+  | "project"
+  | "skill"
+  | "work";
 
 interface ModalHeaderBannerProps {
   title: string;
@@ -95,17 +111,29 @@ const BANNER_CONFIG: Record<
   },
 };
 
-export default function ModalHeaderBanner({ title, description, type }: ModalHeaderBannerProps) {
+export default function ModalHeaderBanner({
+  title,
+  description,
+  type,
+}: ModalHeaderBannerProps) {
   const config = BANNER_CONFIG[type];
   const Icon = config.icon;
 
   return (
-    <div className={`relative overflow-hidden w-full h-24 sm:h-28 md:h-32 rounded-xl bg-gradient-to-r ${config.bgGradient} p-4 sm:p-5 flex items-center justify-between border ${config.borderColor} shadow-inner transition-all duration-300 group`}>
+    <div
+      className={`relative overflow-hidden w-full h-24 sm:h-28 md:h-32 rounded-xl bg-gradient-to-r ${config.bgGradient} p-4 sm:p-5 flex items-center justify-between border ${config.borderColor} shadow-inner transition-all duration-300 group`}
+    >
       {/* Background abstract SVGs / decorative graphics */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30 dark:opacity-20">
         {/* Floating circles */}
-        <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-current filter blur-xl opacity-20 animate-pulse" style={{ color: "var(--primary)" }} />
-        <div className="absolute -bottom-16 right-20 w-28 h-28 rounded-full bg-current filter blur-lg opacity-10 animate-pulse duration-3000" style={{ color: "var(--primary)" }} />
+        <div
+          className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-current filter blur-xl opacity-20 animate-pulse"
+          style={{ color: "var(--primary)" }}
+        />
+        <div
+          className="absolute -bottom-16 right-20 w-28 h-28 rounded-full bg-current filter blur-lg opacity-10 animate-pulse duration-3000"
+          style={{ color: "var(--primary)" }}
+        />
 
         {/* Decorative Grid */}
         <svg
@@ -120,7 +148,12 @@ export default function ModalHeaderBanner({ title, description, type }: ModalHea
               patternUnits="userSpaceOnUse"
               x="100%"
             >
-              <path d="M.5 16V.5H16" fill="none" stroke="currentColor" strokeWidth="0.5" />
+              <path
+                d="M.5 16V.5H16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="0.5"
+              />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
@@ -130,7 +163,9 @@ export default function ModalHeaderBanner({ title, description, type }: ModalHea
       {/* Left section: Title & Description */}
       <div className="relative z-10 flex flex-col justify-center max-w-[75%] sm:max-w-[80%] space-y-1">
         <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase ${config.badgeBg} ${config.badgeColor} scale-90 sm:scale-100 origin-left`}>
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase ${config.badgeBg} ${config.badgeColor} scale-90 sm:scale-100 origin-left`}
+          >
             {config.badgeText}
           </span>
         </div>
@@ -144,8 +179,12 @@ export default function ModalHeaderBanner({ title, description, type }: ModalHea
 
       {/* Right section: Icon Graphic with glassmorphism glow */}
       <div className="relative z-10 flex items-center justify-center">
-        <div className={`p-3 sm:p-4 rounded-xl ${config.iconBg} border ${config.borderColor} shadow-lg backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
-          <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${config.iconColor} transition-transform duration-300`} />
+        <div
+          className={`p-3 sm:p-4 rounded-xl ${config.iconBg} border ${config.borderColor} shadow-lg backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}
+        >
+          <Icon
+            className={`w-6 h-6 sm:w-8 sm:h-8 ${config.iconColor} transition-transform duration-300`}
+          />
         </div>
       </div>
     </div>

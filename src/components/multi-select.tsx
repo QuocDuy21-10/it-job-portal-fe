@@ -5,7 +5,6 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { X, ChevronDown } from "lucide-react";
 
-
 interface Option {
   label: string;
   value: string;
@@ -21,8 +20,6 @@ type MultiSelectProps = {
   disabled?: boolean;
   leftIcon?: React.ReactNode;
 };
-
-
 
 export function MultiSelect({
   options,
@@ -90,7 +87,9 @@ export function MultiSelect({
           } ${isOpen ? "border-blue-500 ring-2 ring-blue-500 dark:border-blue-600 dark:ring-blue-600" : ""}`}
         >
           {leftIcon && (
-            <span className="mr-1 flex items-center text-slate-500 dark:text-slate-400">{leftIcon}</span>
+            <span className="mr-1 flex items-center text-slate-500 dark:text-slate-400">
+              {leftIcon}
+            </span>
           )}
           {selectedLabels.length > 0 ? (
             selectedLabels.map((label) => (
@@ -119,7 +118,9 @@ export function MultiSelect({
               </div>
             ))
           ) : (
-            <span className="text-slate-500 dark:text-slate-400 text-sm">{placeholder}</span>
+            <span className="text-slate-500 dark:text-slate-400 text-sm">
+              {placeholder}
+            </span>
           )}
           <div className="ml-auto">
             <ChevronDown

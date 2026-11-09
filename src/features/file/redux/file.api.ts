@@ -10,7 +10,7 @@ export const fileApi = baseApi.injectEndpoints({
       query: ({ file, folderType }) => {
         const formData = new FormData();
         formData.append("file", file);
-        
+
         // DO NOT set Content-Type header - let axios auto-detect FormData
         // and set multipart/form-data with proper boundary
         return {

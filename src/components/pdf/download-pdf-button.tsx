@@ -1,7 +1,7 @@
 /**
  * Download PDF Button Component
  * Sử dụng PDFDownloadLink từ @react-pdf/renderer
- * 
+ *
  * LƯU Ý:
  * - PDFDownloadLink chỉ render trên client (CSR)
  * - Có thể lag nếu CV data lớn → Cần loading state tốt
@@ -80,7 +80,12 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
       {({ blob, url, loading, error }) => {
         if (error) {
           return (
-            <Button variant="destructive" size={size} className={className} disabled>
+            <Button
+              variant="destructive"
+              size={size}
+              className={className}
+              disabled
+            >
               {t("downloadPdfButton.error")}
             </Button>
           );

@@ -57,14 +57,17 @@ export function useJobList({
   initialData,
   initialSearchState,
 }: UseJobListProps) {
-  const [prevInitialSearchState, setPrevInitialSearchState] = useState<JobListSearchState>(initialSearchState);
+  const [prevInitialSearchState, setPrevInitialSearchState] =
+    useState<JobListSearchState>(initialSearchState);
   const [draftState, setDraftState] = useState<JobListDraftState>(() => {
     return createDraftState(initialSearchState);
   });
   const [currentSearchState, setCurrentSearchState] =
     useState<JobListSearchState>(initialSearchState);
 
-  if (!areJobListSearchStatesEqual(initialSearchState, prevInitialSearchState)) {
+  if (
+    !areJobListSearchStatesEqual(initialSearchState, prevInitialSearchState)
+  ) {
     setPrevInitialSearchState(initialSearchState);
     setCurrentSearchState(initialSearchState);
     setDraftState(createDraftState(initialSearchState));
@@ -140,37 +143,34 @@ export function useJobList({
     });
   }, []);
 
-  const applyFilters = useCallback(
-    (overrides?: Partial<JobListDraftState>) => {
-      setDraftState((currentDraftState) => {
-        const nextDraftState = {
-          ...currentDraftState,
-          ...overrides,
+  const applyFilters = useCallback((overrides?: Partial<JobListDraftState>) => {
+    setDraftState((currentDraftState) => {
+      const nextDraftState = {
+        ...currentDraftState,
+        ...overrides,
+      };
+
+      setCurrentSearchState((currentState) => {
+        const nextSearchState: JobListSearchState = {
+          ...currentState,
+          experience: nextDraftState.experience,
+          locationCode: nextDraftState.locationCode,
+          page: 1,
+          q: nextDraftState.q,
+          salary: nextDraftState.salary,
+          type: nextDraftState.type,
         };
 
-        setCurrentSearchState((currentState) => {
-          const nextSearchState: JobListSearchState = {
-            ...currentState,
-            experience: nextDraftState.experience,
-            locationCode: nextDraftState.locationCode,
-            page: 1,
-            q: nextDraftState.q,
-            salary: nextDraftState.salary,
-            type: nextDraftState.type,
-          };
-
-          return areJobListSearchStatesEqual(nextSearchState, currentState)
-            ? currentState
-            : nextSearchState;
-        });
-
-        return areDraftStatesEqual(nextDraftState, currentDraftState)
-          ? currentDraftState
-          : nextDraftState;
+        return areJobListSearchStatesEqual(nextSearchState, currentState)
+          ? currentState
+          : nextSearchState;
       });
-    },
-    []
-  );
+
+      return areDraftStatesEqual(nextDraftState, currentDraftState)
+        ? currentDraftState
+        : nextDraftState;
+    });
+  }, []);
 
   const resetAllFilters = useCallback(() => {
     setDraftState((currentState) => {

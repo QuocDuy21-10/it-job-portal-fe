@@ -55,10 +55,15 @@ export function NotificationBell() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[calc(100vw-1rem)] max-w-sm p-0 sm:w-80">
+      <PopoverContent
+        align="end"
+        className="w-[calc(100vw-1rem)] max-w-sm p-0 sm:w-80"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h4 className="font-semibold text-sm">{t("notificationBell.title")}</h4>
+          <h4 className="font-semibold text-sm">
+            {t("notificationBell.title")}
+          </h4>
           {unreadCount > 0 && (
             <Button
               variant="ghost"

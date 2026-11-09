@@ -5,7 +5,15 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Briefcase, Heart, MapPin, Calendar, ExternalLink, Building2, DollarSign } from "lucide-react";
+import {
+  Briefcase,
+  Heart,
+  MapPin,
+  Calendar,
+  ExternalLink,
+  Building2,
+  DollarSign,
+} from "lucide-react";
 import { useTakeOutAppliedJobMutation } from "@/features/resume/redux/resume.api";
 import { ResumeAppliedJob } from "@/features/resume/schemas/resume.schema";
 import { useGetSavedJobsQuery } from "@/features/user/redux/user.api";
@@ -13,7 +21,10 @@ import { SavedJob } from "@/features/user/schemas/user.schema";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
-import { formatLocaleDate, formatVndCurrency } from "@/lib/utils/locale-formatters";
+import {
+  formatLocaleDate,
+  formatVndCurrency,
+} from "@/lib/utils/locale-formatters";
 import { LoadingState } from "../shared/loading-state";
 import { EmptyState } from "../shared/empty-state";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
@@ -240,19 +251,19 @@ export default function MyJobsPage() {
                               jobData.status === "PENDING"
                                 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/10 dark:text-yellow-400"
                                 : jobData.status === "REVIEWING"
-                                ? "bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400"
-                                : jobData.status === "APPROVED"
-                                ? "bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400"
-                                : "bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400"
+                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400"
+                                  : jobData.status === "APPROVED"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400"
+                                    : "bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400"
                             }`}
                           >
                             {jobData.status === "PENDING"
                               ? t("myJobsPage.statuses.pending")
                               : jobData.status === "REVIEWING"
-                              ? t("myJobsPage.statuses.reviewing")
-                              : jobData.status === "APPROVED"
-                              ? t("myJobsPage.statuses.approved")
-                              : t("myJobsPage.statuses.rejected")}
+                                ? t("myJobsPage.statuses.reviewing")
+                                : jobData.status === "APPROVED"
+                                  ? t("myJobsPage.statuses.approved")
+                                  : t("myJobsPage.statuses.rejected")}
                           </span>
                         </div>
                       )}
@@ -278,10 +289,14 @@ export default function MyJobsPage() {
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <MapPin className="w-4 h-4 flex-shrink-0" />
-                          <span className="truncate max-w-[200px]">{jobData.location}</span>
+                          <span className="truncate max-w-[200px]">
+                            {jobData.location}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1.5 text-primary font-medium">
-                          <span>{formatVndCurrency(jobData.salary, language)}</span>
+                          <span>
+                            {formatVndCurrency(jobData.salary, language)}
+                          </span>
                         </div>
                         {jobData.createdAt && (
                           <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -303,19 +318,19 @@ export default function MyJobsPage() {
                               jobData.status === "PENDING"
                                 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/10 dark:text-yellow-400"
                                 : jobData.status === "REVIEWING"
-                                ? "bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400"
-                                : jobData.status === "APPROVED"
-                                ? "bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400"
-                                : "bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400"
+                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400"
+                                  : jobData.status === "APPROVED"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400"
+                                    : "bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400"
                             }`}
                           >
                             {jobData.status === "PENDING"
                               ? t("myJobsPage.statuses.pending")
                               : jobData.status === "REVIEWING"
-                              ? t("myJobsPage.statuses.reviewing")
-                              : jobData.status === "APPROVED"
-                              ? t("myJobsPage.statuses.approved")
-                              : t("myJobsPage.statuses.rejected")}
+                                ? t("myJobsPage.statuses.reviewing")
+                                : jobData.status === "APPROVED"
+                                  ? t("myJobsPage.statuses.approved")
+                                  : t("myJobsPage.statuses.rejected")}
                           </span>
                         </div>
                       )}
@@ -325,17 +340,24 @@ export default function MyJobsPage() {
                     <div className="grid grid-cols-2 gap-y-2 md:hidden border-t border-border/50 pt-3 mt-1 w-full">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <MapPin className="w-4 h-4 text-muted-foreground/75 flex-shrink-0" />
-                        <span className="text-xs truncate">{jobData.location}</span>
+                        <span className="text-xs truncate">
+                          {jobData.location}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <DollarSign className="w-4 h-4 text-muted-foreground/75 flex-shrink-0" />
-                        <span className="text-xs font-medium text-foreground">{formatVndCurrency(jobData.salary, language)}</span>
+                        <span className="text-xs font-medium text-foreground">
+                          {formatVndCurrency(jobData.salary, language)}
+                        </span>
                       </div>
                       {jobData.createdAt && (
                         <div className="flex items-center gap-1.5 text-muted-foreground col-span-2">
                           <Calendar className="w-4 h-4 text-muted-foreground/75 flex-shrink-0" />
                           <span className="text-xs">
-                            {language === "vi" ? "Ngày ứng tuyển" : "Applied date"}: {formatLocaleDate(jobData.createdAt, language)}
+                            {language === "vi"
+                              ? "Ngày ứng tuyển"
+                              : "Applied date"}
+                            : {formatLocaleDate(jobData.createdAt, language)}
                           </span>
                         </div>
                       )}
@@ -349,15 +371,15 @@ export default function MyJobsPage() {
                           jobData.status === "APPROVED"
                             ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                             : jobData.status === "REJECTED"
-                            ? "bg-muted text-muted-foreground hover:bg-muted/80 dark:bg-muted dark:text-muted-foreground"
-                            : "bg-primary text-primary-foreground hover:bg-primary/90"
+                              ? "bg-muted text-muted-foreground hover:bg-muted/80 dark:bg-muted dark:text-muted-foreground"
+                              : "bg-primary text-primary-foreground hover:bg-primary/90"
                         }`}
                       >
                         {jobData.status === "APPROVED"
                           ? t("myJobsPage.viewOffer")
                           : jobData.status === "REJECTED"
-                          ? t("myJobsPage.viewFeedback")
-                          : t("myJobsPage.viewDetails")}
+                            ? t("myJobsPage.viewFeedback")
+                            : t("myJobsPage.viewDetails")}
                       </Link>
                     </div>
                   </div>
@@ -384,4 +406,3 @@ export default function MyJobsPage() {
     </div>
   );
 }
-

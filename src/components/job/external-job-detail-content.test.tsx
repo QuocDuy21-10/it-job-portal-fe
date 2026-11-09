@@ -51,25 +51,32 @@ describe("ExternalJobDetailContent", () => {
     expect(link).toHaveAttribute("target", "_blank");
     expect(link?.getAttribute("rel")).toContain("noopener");
     expect(screen.getByText("Build reliable services")).toBeInTheDocument();
-    expect(screen.getByText("externalJobPage.sourceNotice")).toBeInTheDocument();
+    expect(
+      screen.getByText("externalJobPage.sourceNotice")
+    ).toBeInTheDocument();
   });
 
   it.each([
     ["topdev", "TopDev"],
     ["itviec", "ITviec"],
-  ])("names the aggregator in the notice for %s listings", (sourceKey, sourceName) => {
-    render(<ExternalJobDetailContent job={{ ...job, sourceKey }} />);
+  ])(
+    "names the aggregator in the notice for %s listings",
+    (sourceKey, sourceName) => {
+      render(<ExternalJobDetailContent job={{ ...job, sourceKey }} />);
 
-    expect(
-      screen.getByText(`externalJobPage.sourceNoticeAggregator:${sourceName}`)
-    ).toBeInTheDocument();
-  });
+      expect(
+        screen.getByText(`externalJobPage.sourceNoticeAggregator:${sourceName}`)
+      ).toBeInTheDocument();
+    }
+  );
 
   it("hides the apply link and shows a notice for closed jobs", () => {
     render(<ExternalJobDetailContent job={{ ...job, status: "CLOSED" }} />);
 
     expect(applyLink()).not.toBeInTheDocument();
-    expect(screen.getByText("externalJobPage.closedNotice")).toBeInTheDocument();
+    expect(
+      screen.getByText("externalJobPage.closedNotice")
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "externalJobPage.viewOriginal" })
     ).toHaveAttribute("href", job.sourceUrl);
@@ -78,7 +85,11 @@ describe("ExternalJobDetailContent", () => {
   it("does not render links with unsafe schemes", () => {
     render(
       <ExternalJobDetailContent
-        job={{ ...job, applyUrl: "javascript:alert(1)", sourceUrl: "data:text/html,x" }}
+        job={{
+          ...job,
+          applyUrl: "javascript:alert(1)",
+          sourceUrl: "data:text/html,x",
+        }}
       />
     );
 
@@ -89,7 +100,11 @@ describe("ExternalJobDetailContent", () => {
   });
 
   it("shows the salary row when salary text is provided", () => {
-    render(<ExternalJobDetailContent job={{ ...job, salaryText: "20.000.000 – 30.000.000 VND" }} />);
+    render(
+      <ExternalJobDetailContent
+        job={{ ...job, salaryText: "20.000.000 – 30.000.000 VND" }}
+      />
+    );
 
     expect(screen.getByText("externalJobPage.salary")).toBeInTheDocument();
     expect(screen.getByText("20.000.000 – 30.000.000 VND")).toBeInTheDocument();
@@ -98,14 +113,20 @@ describe("ExternalJobDetailContent", () => {
   it("hides the salary row when there is no salary text", () => {
     render(<ExternalJobDetailContent job={job} />);
 
-    expect(screen.queryByText("externalJobPage.salary")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("externalJobPage.salary")
+    ).not.toBeInTheDocument();
   });
 
   it("does not claim on-site work when the source gives no remote flag", () => {
     render(<ExternalJobDetailContent job={job} />);
 
-    expect(screen.getByText("externalJobPage.workplaceUnknown")).toBeInTheDocument();
-    expect(screen.queryByText("externalJobPage.onsite")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("externalJobPage.workplaceUnknown")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("externalJobPage.onsite")
+    ).not.toBeInTheDocument();
   });
 
   it("shows Remote when the job is remote", () => {
@@ -121,10 +142,14 @@ describe("ExternalJobDetailContent", () => {
       />
     );
 
-    expect(screen.getByText("externalJobPage.fullContentAtSource")).toBeInTheDocument();
+    expect(
+      screen.getByText("externalJobPage.fullContentAtSource")
+    ).toBeInTheDocument();
     expect(
       screen.getAllByRole("link", { name: "externalJobPage.viewOriginal" })
     ).toHaveLength(2);
-    expect(screen.queryByText("Build reliable services")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Build reliable services")
+    ).not.toBeInTheDocument();
   });
 });

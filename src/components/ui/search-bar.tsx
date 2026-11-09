@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export interface SearchBarProps {
   /** Initial search value */
   value?: string;
-  
+
   onSearch: (value: string) => void;
   placeholder?: string;
   debounceDelay?: number;
@@ -23,10 +23,10 @@ export interface SearchBarProps {
 
 /**
  * SearchBar Component
- * 
+ *
  * Reusable search input with debounce, clear button, and flexible styling.
  * Replaces: UserSearchBar, CompanySearchBar, JobSearchBar, RoleSearchBar, etc.
- * 
+ *
  * Features:
  * ✅ Debounced input to reduce API calls
  * ✅ Optional clear button
@@ -34,14 +34,14 @@ export interface SearchBarProps {
  * ✅ Responsive width options
  * ✅ Accessible with ARIA labels
  * ✅ Smooth animations
- * 
+ *
  * @example
  * // Basic usage
  * <SearchBar
  *   placeholder="Search..."
  *   onSearch={handleSearch}
  * />
- * 
+ *
  * @example
  * // With custom delay and clear button
  * <SearchBar

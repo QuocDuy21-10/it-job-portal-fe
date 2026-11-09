@@ -37,8 +37,6 @@ export function AdminHeader({
   const user = useAppSelector(selectUser);
   const { t } = useI18n();
 
-
-
   return (
     <header
       className={cn(

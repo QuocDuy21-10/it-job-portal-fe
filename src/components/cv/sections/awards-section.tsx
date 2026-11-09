@@ -3,7 +3,12 @@
 import { Plus, Trash2, Edit2, Trophy, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import AwardModal from "../modals/award-modal";
 import { useAwardModal } from "@/hooks/use-award-modal";
@@ -62,13 +67,13 @@ export default function AwardsSection({
         title={t("cv.awards.title")}
         description={t("cv.awards.description")}
         actionButton={
-            <Button
-              onClick={openAddModal}
-              className="gap-2 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4" />
-              {t("cv.awards.addButton")}
-            </Button>
+          <Button
+            onClick={openAddModal}
+            className="gap-2 bg-primary hover:bg-primary/90"
+          >
+            <Plus className="w-4 h-4" />
+            {t("cv.awards.addButton")}
+          </Button>
         }
       >
         {awards.length === 0 ? (

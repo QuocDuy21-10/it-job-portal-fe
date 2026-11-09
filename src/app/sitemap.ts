@@ -5,21 +5,26 @@ import {
   getAlternateLanguageUrls,
   getLocalizedUrl,
 } from "@/shared/constants/seo";
-import { fetchPublicCompanies, fetchPublicJobs } from "@/lib/utils/public-content";
+import {
+  fetchPublicCompanies,
+  fetchPublicJobs,
+} from "@/lib/utils/public-content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
   // 1. Static Pages
-  const staticEntries = PUBLIC_SITEMAP_PATHS.map(({ pathname, changeFrequency, priority }) => ({
-    url: getLocalizedUrl(pathname, routing.defaultLocale),
-    lastModified,
-    changeFrequency,
-    priority,
-    alternates: {
-      languages: getAlternateLanguageUrls(pathname),
-    },
-  }));
+  const staticEntries = PUBLIC_SITEMAP_PATHS.map(
+    ({ pathname, changeFrequency, priority }) => ({
+      url: getLocalizedUrl(pathname, routing.defaultLocale),
+      lastModified,
+      changeFrequency,
+      priority,
+      alternates: {
+        languages: getAlternateLanguageUrls(pathname),
+      },
+    })
+  );
 
   // 2. Dynamic Job Pages
   let jobEntries: MetadataRoute.Sitemap = [];
@@ -30,7 +35,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const pathname = `/jobs/${job._id}`;
         return {
           url: getLocalizedUrl(pathname, routing.defaultLocale),
-          lastModified: new Date(job.updatedAt || job.createdAt || lastModified),
+          lastModified: new Date(
+            job.updatedAt || job.createdAt || lastModified
+          ),
           changeFrequency: "weekly" as const,
           priority: 0.7,
           alternates: {
@@ -52,7 +59,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const pathname = `/companies/${company._id}`;
         return {
           url: getLocalizedUrl(pathname, routing.defaultLocale),
-          lastModified: new Date(company.updatedAt || company.createdAt || lastModified),
+          lastModified: new Date(
+            company.updatedAt || company.createdAt || lastModified
+          ),
           changeFrequency: "weekly" as const,
           priority: 0.6,
           alternates: {

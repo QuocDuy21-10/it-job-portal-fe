@@ -91,7 +91,9 @@ export default function HrDashboardShellLayout({
                 aria-label={t("chatWidget.title")}
               >
                 <SparklesIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">{t("chatWidget.title")}</span>
+                <span className="hidden sm:inline">
+                  {t("chatWidget.title")}
+                </span>
               </Button>
             }
           />
@@ -106,7 +108,10 @@ export default function HrDashboardShellLayout({
 
           <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400" suppressHydrationWarning>
+              <p
+                className="text-center text-sm text-gray-500 dark:text-gray-400"
+                suppressHydrationWarning
+              >
                 {t("footer.hrCopyright", { year: new Date().getFullYear() })}
               </p>
             </div>

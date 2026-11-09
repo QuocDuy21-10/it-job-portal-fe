@@ -11,7 +11,7 @@ interface AuthHeaderProps {
  * AuthHeader - Unified header for auth pages
  * Displays logo, title, and description with consistent styling
  */
-export function AuthHeader({ 
+export function AuthHeader({
   showLogo = true,
   title,
   description,

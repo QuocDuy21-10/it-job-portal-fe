@@ -20,7 +20,13 @@ interface LogoUploadProps {
 const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-export function LogoUpload({ value, onChange, disabled, originalValue, onNewFileUploaded }: LogoUploadProps) {
+export function LogoUpload({
+  value,
+  onChange,
+  disabled,
+  originalValue,
+  onNewFileUploaded,
+}: LogoUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sessionFileName, setSessionFileName] = useState<string | null>(null);

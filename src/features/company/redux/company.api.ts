@@ -14,7 +14,10 @@ import {
 
 export const companyApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCompanies: builder.query<ApiResponse<PaginatedResult<Company>>, PaginatedQueryParams>({
+    getCompanies: builder.query<
+      ApiResponse<PaginatedResult<Company>>,
+      PaginatedQueryParams
+    >({
       query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
         let query = `page=${page}&limit=${limit}`;
         if (filter) query += `&${filter}`;

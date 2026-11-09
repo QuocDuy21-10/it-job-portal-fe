@@ -15,8 +15,7 @@ export interface ChatBotState {
 }
 
 type StreamFinalizationPayload =
-  | (IChatRecommendationMetadata & { content?: string })
-  | undefined;
+  (IChatRecommendationMetadata & { content?: string }) | undefined;
 
 const initialState: ChatBotState = {
   messages: [],
@@ -166,9 +165,7 @@ const chatBotSlice = createSlice({
 
     updateMessageRecommendations: (
       state,
-      action: PayloadAction<
-        { messageId: string } & IChatRecommendationMetadata
-      >
+      action: PayloadAction<{ messageId: string } & IChatRecommendationMetadata>
     ) => {
       const msg = state.messages.find(
         (message) => message.id === action.payload.messageId
@@ -233,8 +230,7 @@ const chatBotSlice = createSlice({
           (m) => m.id === state.streamingMessageId
         );
         if (msg) {
-          msg.content =
-            state.streamingContent || "Đã dừng tạo phản hồi.";
+          msg.content = state.streamingContent || "Đã dừng tạo phản hồi.";
         }
       }
       state.streamingMessageId = null;

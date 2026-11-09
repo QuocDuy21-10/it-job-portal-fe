@@ -1,4 +1,7 @@
-import { getRuntimeLocale, resolveIntlLocale } from "@/lib/utils/locale-formatters";
+import {
+  getRuntimeLocale,
+  resolveIntlLocale,
+} from "@/lib/utils/locale-formatters";
 
 const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
   { amount: 60, name: "seconds" },

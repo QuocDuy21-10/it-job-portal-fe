@@ -25,10 +25,7 @@ export async function GET(request: NextRequest) {
     ].filter(Boolean);
 
     if (!allowedHosts.some((host) => url.host === host)) {
-      return NextResponse.json(
-        { error: "Invalid image URL" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Invalid image URL" }, { status: 403 });
     }
 
     // Fetch image from backend

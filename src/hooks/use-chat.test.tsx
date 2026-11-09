@@ -57,8 +57,7 @@ jest.mock("sonner", () => ({
 
 const mockUseAppDispatch = useAppDispatch as unknown as jest.Mock;
 const mockUseAppSelector = useAppSelector as unknown as jest.Mock;
-const mockUseLazyGetChatHistoryQuery =
-  useLazyGetChatHistoryQuery as jest.Mock;
+const mockUseLazyGetChatHistoryQuery = useLazyGetChatHistoryQuery as jest.Mock;
 const mockUseSendMessageMutation = useSendMessageMutation as jest.Mock;
 const mockUseClearChatHistoryMutation =
   useClearChatHistoryMutation as jest.Mock;

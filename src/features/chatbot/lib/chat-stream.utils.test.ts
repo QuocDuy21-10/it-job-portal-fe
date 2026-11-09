@@ -5,10 +5,7 @@ import {
 
 describe("chat stream utils", () => {
   it("parses token events split across chunks", () => {
-    const firstChunk = parseServerSentEventChunk(
-      "",
-      "event: token\ndata: Xin"
-    );
+    const firstChunk = parseServerSentEventChunk("", "event: token\ndata: Xin");
     const secondChunk = parseServerSentEventChunk(
       firstChunk.pending,
       " chào\n\n"

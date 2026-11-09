@@ -53,7 +53,9 @@ export function SubscriptionList({
       <Card className="p-8 glass-effect">
         <div className="flex items-center justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <span className="ml-3 text-muted-foreground">{t("emailSubscription.list.loading")}</span>
+          <span className="ml-3 text-muted-foreground">
+            {t("emailSubscription.list.loading")}
+          </span>
         </div>
       </Card>
     );
@@ -86,7 +88,7 @@ export function SubscriptionList({
             className="group relative overflow-hidden bg-gradient-to-br from-card to-card/50 border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-500" />
-            
+
             <div className="relative p-5 space-y-4">
               {/* Header */}
               <div className="flex items-center justify-between">
@@ -134,10 +136,7 @@ export function SubscriptionList({
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {getSkillLabels(subscription.skills).map((skill) => (
-                    <span
-                      key={skill}
-                      className="badge-primary text-xs"
-                    >
+                    <span key={skill} className="badge-primary text-xs">
                       {skill}
                     </span>
                   ))}
@@ -153,14 +152,16 @@ export function SubscriptionList({
                   </p>
                 </div>
                 <span className="inline-flex items-center px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs rounded-full font-medium border border-green-500/20">
-                  {getLocationLabel(subscription.locationCode || subscription.location)}
+                  {getLocationLabel(
+                    subscription.locationCode || subscription.location
+                  )}
                 </span>
               </div>
 
               {/* Date */}
               <div className="pt-3 border-t border-border/50">
                 <p className="text-xs text-muted-foreground">
-                  {t("emailSubscription.list.subscribedOn")} {" "}
+                  {t("emailSubscription.list.subscribedOn")}{" "}
                   <span className="font-medium text-foreground">
                     {subscription.createdAt
                       ? formatLocaleDate(subscription.createdAt, language, {
@@ -212,7 +213,9 @@ export function SubscriptionList({
                 disabled={isDeleting}
                 className="btn-gradient-primary bg-gradient-to-r from-destructive to-destructive/80"
               >
-                {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isDeleting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {t("emailSubscription.list.confirmDelete")}
               </Button>
             </div>

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthInitializer } from "@/components/auth-initializer";
 import { ClientLayout } from "@/components/client-layout";
@@ -11,7 +15,11 @@ import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
 import { routing } from "@/i18n/routing";
 import { SocketProvider } from "@/lib/socket/socket-provider";
-import { SITE_NAME, getOpenGraphLocale, getSiteUrl } from "@/shared/constants/seo";
+import {
+  SITE_NAME,
+  getOpenGraphLocale,
+  getSiteUrl,
+} from "@/shared/constants/seo";
 
 type LocaleLayoutProps = {
   children: ReactNode;

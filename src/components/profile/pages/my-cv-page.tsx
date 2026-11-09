@@ -5,7 +5,14 @@ import type React from "react";
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Upload, File, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Upload,
+  File,
+  Trash2,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { SectionCard } from "../shared/section-card";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
@@ -66,7 +73,7 @@ export default function MyCVPage() {
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const file = e.dataTransfer.files?.[0];
     if (file) {
       validateAndUploadFile(file);
@@ -86,7 +93,8 @@ export default function MyCVPage() {
     });
 
     if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${numberFormatter.format(bytes / 1024)} KB`;
+    if (bytes < 1024 * 1024)
+      return `${numberFormatter.format(bytes / 1024)} KB`;
     return `${numberFormatter.format(bytes / (1024 * 1024))} MB`;
   };
 
@@ -119,16 +127,18 @@ export default function MyCVPage() {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <Upload className={`w-12 h-12 mx-auto mb-4 transition-colors ${
-            isDragging ? "text-primary" : "text-muted-foreground"
-          }`} />
+          <Upload
+            className={`w-12 h-12 mx-auto mb-4 transition-colors ${
+              isDragging ? "text-primary" : "text-muted-foreground"
+            }`}
+          />
           <p className="text-foreground font-medium mb-2">
             {isDragging ? t("myCvPage.dropHere") : t("myCvPage.dragDropPrompt")}
           </p>
           <p className="text-sm text-muted-foreground mb-4">
             {t("myCvPage.supportText")}
           </p>
-          <Button 
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               fileInputRef.current?.click();
@@ -169,8 +179,8 @@ export default function MyCVPage() {
 
       {/* Uploaded CV List */}
       {uploadedCV && (
-        <SectionCard 
-          title={t("myCvPage.uploadedSectionTitle")} 
+        <SectionCard
+          title={t("myCvPage.uploadedSectionTitle")}
           icon={CheckCircle2}
           headerAction={
             <span className="text-sm text-muted-foreground">

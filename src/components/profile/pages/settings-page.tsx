@@ -6,7 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, Lock, Trash2, User, Mail, Eye, EyeOff, KeyRound, Settings } from "lucide-react";
+import {
+  AlertCircle,
+  Lock,
+  Trash2,
+  User,
+  Mail,
+  Eye,
+  EyeOff,
+  KeyRound,
+  Settings,
+} from "lucide-react";
 import {
   useChangePasswordMutation,
   useGetMeQuery,
@@ -35,10 +45,14 @@ export default function SettingsPage({
   const router = useRouter();
   const dispatch = useDispatch();
   const { t } = useI18n();
-  const handleNavigateToCCV = onNavigateToCCV ?? (() => router.push("/profile?tab=create-cv", { scroll: false }));
+  const handleNavigateToCCV =
+    onNavigateToCCV ??
+    (() => router.push("/profile?tab=create-cv", { scroll: false }));
 
-  const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
-  const [setPassword, { isLoading: isSettingPassword }] = useSetPasswordMutation();
+  const [changePassword, { isLoading: isChangingPassword }] =
+    useChangePasswordMutation();
+  const [setPassword, { isLoading: isSettingPassword }] =
+    useSetPasswordMutation();
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showSetPasswordModal, setShowSetPasswordModal] = useState(false);
@@ -64,7 +78,11 @@ export default function SettingsPage({
     reset: resetChange,
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(ChangePasswordSchema),
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
   const {
@@ -90,7 +108,8 @@ export default function SettingsPage({
       setShowPasswordModal(false);
       handleAfterPasswordChange();
     } catch (error: any) {
-      const msg = error?.data?.message || t("settingsPage.toasts.changePasswordError");
+      const msg =
+        error?.data?.message || t("settingsPage.toasts.changePasswordError");
       toast.error(msg);
     }
   };
@@ -103,7 +122,8 @@ export default function SettingsPage({
       setShowSetPasswordModal(false);
       handleAfterPasswordChange();
     } catch (error: any) {
-      const msg = error?.data?.message || t("settingsPage.toasts.setPasswordError");
+      const msg =
+        error?.data?.message || t("settingsPage.toasts.setPasswordError");
       toast.error(msg);
     }
   };
@@ -117,7 +137,9 @@ export default function SettingsPage({
       return (
         <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
           <div>
-            <h3 className="font-medium text-foreground">{t("settingsPage.password.title")}</h3>
+            <h3 className="font-medium text-foreground">
+              {t("settingsPage.password.title")}
+            </h3>
             <p className="text-sm text-muted-foreground mt-1">
               {t("settingsPage.password.description")}
             </p>
@@ -137,7 +159,9 @@ export default function SettingsPage({
       return (
         <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
           <div>
-            <h3 className="font-medium text-foreground">{t("settingsPage.password.title")}</h3>
+            <h3 className="font-medium text-foreground">
+              {t("settingsPage.password.title")}
+            </h3>
             <p className="text-sm text-muted-foreground mt-1">
               {t("settingsPage.password.googleDescription")}
             </p>
@@ -207,9 +231,7 @@ export default function SettingsPage({
 
       {/* Security Settings */}
       <SectionCard title={t("settingsPage.securityTitle")} icon={Lock}>
-        <div className="space-y-4">
-          {renderPasswordSection()}
-        </div>
+        <div className="space-y-4">{renderPasswordSection()}</div>
       </SectionCard>
 
       {/* Delete Account */}
@@ -226,7 +248,9 @@ export default function SettingsPage({
               </p>
             </div>
             {user?.scheduledDeletionAt ? (
-              <PendingDeletionBanner scheduledDeletionAt={user.scheduledDeletionAt} />
+              <PendingDeletionBanner
+                scheduledDeletionAt={user.scheduledDeletionAt}
+              />
             ) : (
               <Button
                 onClick={() => setShowDeleteModal(true)}
@@ -251,7 +275,10 @@ export default function SettingsPage({
         title={t("settingsPage.changePasswordModal.title")}
         maxWidth="md"
       >
-        <form onSubmit={handleSubmitChange(onSubmitChangePassword)} className="space-y-4">
+        <form
+          onSubmit={handleSubmitChange(onSubmitChangePassword)}
+          className="space-y-4"
+        >
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               {t("settingsPage.changePasswordModal.currentPasswordLabel")}
@@ -263,16 +290,26 @@ export default function SettingsPage({
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="current-password"
                 disabled={isChangingPassword}
-                placeholder={t("settingsPage.changePasswordModal.currentPasswordPlaceholder")}
+                placeholder={t(
+                  "settingsPage.changePasswordModal.currentPasswordPlaceholder"
+                )}
               />
               <button
                 type="button"
                 onClick={() => setShowCurrentPassword((s) => !s)}
                 className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
                 aria-pressed={showCurrentPassword}
-                aria-label={showCurrentPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
+                aria-label={
+                  showCurrentPassword
+                    ? t("settingsPage.hidePassword")
+                    : t("settingsPage.showPassword")
+                }
               >
-                {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showCurrentPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             {changeErrors.currentPassword && (
@@ -293,16 +330,26 @@ export default function SettingsPage({
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="new-password"
                 disabled={isChangingPassword}
-                placeholder={t("settingsPage.changePasswordModal.newPasswordPlaceholder")}
+                placeholder={t(
+                  "settingsPage.changePasswordModal.newPasswordPlaceholder"
+                )}
               />
               <button
                 type="button"
                 onClick={() => setShowNewPassword((s) => !s)}
                 className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
                 aria-pressed={showNewPassword}
-                aria-label={showNewPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
+                aria-label={
+                  showNewPassword
+                    ? t("settingsPage.hidePassword")
+                    : t("settingsPage.showPassword")
+                }
               >
-                {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showNewPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             {changeErrors.newPassword && (
@@ -323,16 +370,26 @@ export default function SettingsPage({
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="new-password"
                 disabled={isChangingPassword}
-                placeholder={t("settingsPage.changePasswordModal.confirmPasswordPlaceholder")}
+                placeholder={t(
+                  "settingsPage.changePasswordModal.confirmPasswordPlaceholder"
+                )}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((s) => !s)}
                 className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
                 aria-pressed={showConfirmPassword}
-                aria-label={showConfirmPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
+                aria-label={
+                  showConfirmPassword
+                    ? t("settingsPage.hidePassword")
+                    : t("settingsPage.showPassword")
+                }
               >
-                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showConfirmPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             {changeErrors.confirmPassword && (
@@ -345,7 +402,10 @@ export default function SettingsPage({
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
-              onClick={() => { setShowPasswordModal(false); resetChange(); }}
+              onClick={() => {
+                setShowPasswordModal(false);
+                resetChange();
+              }}
               variant="outline"
               className="flex-1"
               disabled={isChangingPassword}
@@ -375,7 +435,10 @@ export default function SettingsPage({
         title={t("settingsPage.setPasswordModal.title")}
         maxWidth="md"
       >
-        <form onSubmit={handleSubmitSet(onSubmitSetPassword)} className="space-y-4">
+        <form
+          onSubmit={handleSubmitSet(onSubmitSetPassword)}
+          className="space-y-4"
+        >
           <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
             <p className="text-sm text-muted-foreground">
               {t("settingsPage.setPasswordModal.intro")}
@@ -392,16 +455,26 @@ export default function SettingsPage({
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="new-password"
                 disabled={isSettingPassword}
-                placeholder={t("settingsPage.setPasswordModal.newPasswordPlaceholder")}
+                placeholder={t(
+                  "settingsPage.setPasswordModal.newPasswordPlaceholder"
+                )}
               />
               <button
                 type="button"
                 onClick={() => setShowSetNewPassword((s) => !s)}
                 className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
                 aria-pressed={showSetNewPassword}
-                aria-label={showSetNewPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
+                aria-label={
+                  showSetNewPassword
+                    ? t("settingsPage.hidePassword")
+                    : t("settingsPage.showPassword")
+                }
               >
-                {showSetNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showSetNewPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             {setErrors.newPassword && (
@@ -422,16 +495,26 @@ export default function SettingsPage({
                 className="w-full px-3 py-2.5 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 autoComplete="new-password"
                 disabled={isSettingPassword}
-                placeholder={t("settingsPage.setPasswordModal.confirmPasswordPlaceholder")}
+                placeholder={t(
+                  "settingsPage.setPasswordModal.confirmPasswordPlaceholder"
+                )}
               />
               <button
                 type="button"
                 onClick={() => setShowSetConfirmPassword((s) => !s)}
                 className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700"
                 aria-pressed={showSetConfirmPassword}
-                aria-label={showSetConfirmPassword ? t("settingsPage.hidePassword") : t("settingsPage.showPassword")}
+                aria-label={
+                  showSetConfirmPassword
+                    ? t("settingsPage.hidePassword")
+                    : t("settingsPage.showPassword")
+                }
               >
-                {showSetConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showSetConfirmPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             {setErrors.confirmPassword && (
@@ -444,7 +527,10 @@ export default function SettingsPage({
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
-              onClick={() => { setShowSetPasswordModal(false); resetSet(); }}
+              onClick={() => {
+                setShowSetPasswordModal(false);
+                resetSet();
+              }}
               variant="outline"
               className="flex-1"
               disabled={isSettingPassword}

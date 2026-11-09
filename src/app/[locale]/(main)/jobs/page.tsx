@@ -36,7 +36,10 @@ export async function generateMetadata({
     locale: resolvedLocale,
     namespace: "jobsPage",
   });
-  const meta = await getTranslations({ locale: resolvedLocale, namespace: "meta" });
+  const meta = await getTranslations({
+    locale: resolvedLocale,
+    namespace: "meta",
+  });
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,

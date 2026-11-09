@@ -97,10 +97,7 @@ function CancelDeletionContent() {
 
         <CardContent className="flex flex-col items-center gap-4 pt-4">
           {pageState === "idle" && (
-            <Button
-              className="w-full"
-              onClick={handleKeepAccount}
-            >
+            <Button className="w-full" onClick={handleKeepAccount}>
               {t("settings.deleteAccount.cancelByToken.keepAccount")}
             </Button>
           )}

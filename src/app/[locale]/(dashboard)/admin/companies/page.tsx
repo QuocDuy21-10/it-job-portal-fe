@@ -3,7 +3,10 @@
 import { useState, useMemo, useCallback } from "react";
 import { Plus, Building2, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useGetCompaniesQuery, useBulkDeleteCompaniesMutation } from "@/features/company/redux/company.api";
+import {
+  useGetCompaniesQuery,
+  useBulkDeleteCompaniesMutation,
+} from "@/features/company/redux/company.api";
 import { useCompanyOperations } from "@/hooks/use-company";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { SearchBar } from "@/components/ui/search-bar";
@@ -32,18 +35,18 @@ export default function CompaniesPage() {
   // Construct filter and sort queries with useMemo
   const filter = useMemo(() => {
     const filters: string[] = [];
-    
+
     if (searchQuery) {
       filters.push(`name=/${searchQuery}/i`);
     }
-    
+
     if (selectedAddress) {
       filters.push(`address=/${selectedAddress}/i`);
     }
-    
+
     return filters.join("&");
   }, [searchQuery, selectedAddress]);
-  
+
   const sort = "sort=-createdAt";
 
   // Fetch companies với RTK Query
@@ -76,8 +79,15 @@ export default function CompaniesPage() {
     return companiesData?.data?.result || [];
   }, [companiesData]);
 
-  const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
-    useTableSelection(companies);
+  const {
+    selectedIds,
+    selectedCount,
+    isAllSelected,
+    isIndeterminate,
+    toggle,
+    toggleAll,
+    clear,
+  } = useTableSelection(companies);
 
   const pagination = companiesData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
@@ -87,33 +97,50 @@ export default function CompaniesPage() {
       : t("adminPages.resources.companies");
 
   // Handlers với useCallback để tránh re-render không cần thiết
-  const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-    clear();
-  }, [clear]);
-  
-  const handlePageSizeChange = useCallback((newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+      clear();
+    },
+    [clear]
+  );
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
-  
-  const handleAddressChange = useCallback((value: string) => {
-    setSelectedAddress(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handlePageSizeChange = useCallback(
+    (newPageSize: number) => {
+      setPageSize(newPageSize);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
+  const handleAddressChange = useCallback(
+    (value: string) => {
+      setSelectedAddress(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
 
   const handleBulkDelete = useCallback(async () => {
     try {
-      const result = await bulkDeleteCompanies(Array.from(selectedIds)).unwrap();
-      const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
+      const result = await bulkDeleteCompanies(
+        Array.from(selectedIds)
+      ).unwrap();
+      const { deletedCount, requestedCount } = result.data ?? {
+        deletedCount: 0,
+        requestedCount: selectedIds.size,
+      };
       if (deletedCount < requestedCount) {
         toast.warning(
           t("adminPages.shared.bulkDeletePartial", {
@@ -155,7 +182,9 @@ export default function CompaniesPage() {
             <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h1 className="admin-page-title">{t("adminPages.companies.title")}</h1>
+            <h1 className="admin-page-title">
+              {t("adminPages.companies.title")}
+            </h1>
             <p className="admin-page-description">
               {t("adminPages.companies.description")}
             </p>
@@ -200,7 +229,9 @@ export default function CompaniesPage() {
               value={selectedAddress}
               onChange={handleAddressChange}
               placeholder={t("adminPages.companies.locationFilterPlaceholder")}
-              searchPlaceholder={t("adminPages.companies.locationSearchPlaceholder")}
+              searchPlaceholder={t(
+                "adminPages.companies.locationSearchPlaceholder"
+              )}
               leftIcon={<Building2 className="h-4 w-4" />}
               allowClear
             />
@@ -218,7 +249,12 @@ export default function CompaniesPage() {
             })}
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clear}
+              className="gap-1.5"
+            >
               <X className="h-4 w-4" />
               {t("adminPages.shared.clear")}
             </Button>

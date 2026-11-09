@@ -26,7 +26,7 @@ export default function AdminLayout({
   const { t } = useI18n();
   const dispatch = useAppDispatch();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
-  
+
   // UI States
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -85,7 +85,10 @@ export default function AdminLayout({
           {/* Footer - Optional */}
           <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400" suppressHydrationWarning>
+              <p
+                className="text-center text-sm text-gray-500 dark:text-gray-400"
+                suppressHydrationWarning
+              >
                 {t("footer.adminCopyright", { year: new Date().getFullYear() })}
               </p>
             </div>

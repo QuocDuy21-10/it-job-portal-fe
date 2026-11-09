@@ -10,10 +10,7 @@ import React, {
 import { usePathname } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/solid";
+import { TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import ChatAiDisclaimer from "@/components/chatbot/chat-ai-disclaimer";
 import ChatComposer from "@/components/chatbot/chat-composer";
@@ -26,9 +23,7 @@ import ChatThinkingIndicator from "@/components/chatbot/chat-thinking-indicator"
 import JobCard from "@/components/chatbot/job-card";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { selectUser } from "@/features/auth/redux/auth.slice";
-import {
-  getPendingToolActionForJob,
-} from "@/features/chatbot/lib/chat-message.utils";
+import { getPendingToolActionForJob } from "@/features/chatbot/lib/chat-message.utils";
 import { getChatJobIdFromPathname } from "@/features/chatbot/lib/chat-route.utils";
 import { useChat } from "@/hooks/use-chat";
 import { useI18n } from "@/hooks/use-i18n";
@@ -46,13 +41,22 @@ interface ChatSurfaceProps {
 }
 
 const markdownComponents = {
-  ul: ({ node, ...props }: React.ComponentPropsWithoutRef<"ul"> & { node?: unknown }) => (
+  ul: ({
+    node,
+    ...props
+  }: React.ComponentPropsWithoutRef<"ul"> & { node?: unknown }) => (
     <ul className="list-disc space-y-0.5 pl-4" {...props} />
   ),
-  ol: ({ node, ...props }: React.ComponentPropsWithoutRef<"ol"> & { node?: unknown }) => (
+  ol: ({
+    node,
+    ...props
+  }: React.ComponentPropsWithoutRef<"ol"> & { node?: unknown }) => (
     <ol className="list-decimal space-y-0.5 pl-4" {...props} />
   ),
-  a: ({ node, ...props }: React.ComponentPropsWithoutRef<"a"> & { node?: unknown }) => (
+  a: ({
+    node,
+    ...props
+  }: React.ComponentPropsWithoutRef<"a"> & { node?: unknown }) => (
     <a
       className="text-blue-600 hover:underline dark:text-blue-400"
       target="_blank"
@@ -60,10 +64,16 @@ const markdownComponents = {
       {...props}
     />
   ),
-  p: ({ node, ...props }: React.ComponentPropsWithoutRef<"p"> & { node?: unknown }) => (
+  p: ({
+    node,
+    ...props
+  }: React.ComponentPropsWithoutRef<"p"> & { node?: unknown }) => (
     <p className="mb-1 last:mb-0" {...props} />
   ),
-  strong: ({ node, ...props }: React.ComponentPropsWithoutRef<"strong"> & { node?: unknown }) => (
+  strong: ({
+    node,
+    ...props
+  }: React.ComponentPropsWithoutRef<"strong"> & { node?: unknown }) => (
     <strong className="font-semibold" {...props} />
   ),
 };
@@ -140,14 +150,15 @@ const ChatSurface = ({
     [t, user?.name]
   );
   const hasPendingToolActions = useMemo(
-    () => messages.some((message) => Boolean(message.pendingToolActions?.length)),
+    () =>
+      messages.some((message) => Boolean(message.pendingToolActions?.length)),
     [messages]
   );
   const [currentTimeMs, setCurrentTimeMs] = useState(() => Date.now());
   const isQuotaExhausted = Boolean(
     quota &&
-      quota.remainingQuota === 0 &&
-      currentTimeMs < quota.nextResetTime * 1000
+    quota.remainingQuota === 0 &&
+    currentTimeMs < quota.nextResetTime * 1000
   );
   const quotaWarning =
     quota?.remainingQuota === 0 && !isQuotaExhausted ? undefined : quota;
@@ -166,7 +177,8 @@ const ChatSurface = ({
           behavior: "smooth",
         });
       } else {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        messagesContainerRef.current.scrollTop =
+          messagesContainerRef.current.scrollHeight;
       }
     }
   }, [messages, isTyping, streamingContent]);
@@ -231,7 +243,9 @@ const ChatSurface = ({
         await confirmPendingToolAction(messageId, pendingToolAction);
       } finally {
         setActiveToolActionId((currentActionId) =>
-          currentActionId === pendingToolAction.actionId ? null : currentActionId
+          currentActionId === pendingToolAction.actionId
+            ? null
+            : currentActionId
         );
       }
     },
@@ -246,7 +260,9 @@ const ChatSurface = ({
         await cancelPendingToolAction(messageId, pendingToolAction);
       } finally {
         setActiveToolActionId((currentActionId) =>
-          currentActionId === pendingToolAction.actionId ? null : currentActionId
+          currentActionId === pendingToolAction.actionId
+            ? null
+            : currentActionId
         );
       }
     },
@@ -358,7 +374,9 @@ const ChatSurface = ({
                       key={feature.id}
                       className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2.5 dark:border-gray-600 dark:bg-gray-700/50"
                     >
-                      <span className="text-lg leading-none">{feature.emoji}</span>
+                      <span className="text-lg leading-none">
+                        {feature.emoji}
+                      </span>
                       <div>
                         <p className="text-xs font-medium text-gray-700 dark:text-gray-200">
                           {feature.title}
@@ -394,11 +412,16 @@ const ChatSurface = ({
                   )}
                 >
                   {message.role === "assistant" ? (
-                    <div className={cn(
-                      "prose prose-sm max-w-none break-words dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5",
-                      message.id === streamingMessageId && streamingContent && "chat-streaming-active"
-                    )}>
-                      {message.id === streamingMessageId && !streamingContent ? (
+                    <div
+                      className={cn(
+                        "prose prose-sm max-w-none break-words dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5",
+                        message.id === streamingMessageId &&
+                          streamingContent &&
+                          "chat-streaming-active"
+                      )}
+                    >
+                      {message.id === streamingMessageId &&
+                      !streamingContent ? (
                         <ChatThinkingIndicator />
                       ) : (
                         <ReactMarkdown
@@ -412,7 +435,9 @@ const ChatSurface = ({
                       )}
                     </div>
                   ) : (
-                    <p className="break-words whitespace-pre-wrap">{message.content}</p>
+                    <p className="break-words whitespace-pre-wrap">
+                      {message.content}
+                    </p>
                   )}
                 </div>
 
@@ -427,7 +452,10 @@ const ChatSurface = ({
                         {message.recommendedJobs.map((job, index) => {
                           const recommendedJobId = job._id;
                           const pendingToolAction = recommendedJobId
-                            ? getPendingToolActionForJob(message, recommendedJobId)
+                            ? getPendingToolActionForJob(
+                                message,
+                                recommendedJobId
+                              )
                             : undefined;
 
                           return (
@@ -435,20 +463,25 @@ const ChatSurface = ({
                               key={recommendedJobId || `${message.id}-${index}`}
                               job={job}
                               pendingToolAction={pendingToolAction}
-                              onConfirmPendingToolAction={(nextPendingToolAction) =>
+                              onConfirmPendingToolAction={(
+                                nextPendingToolAction
+                              ) =>
                                 handleConfirmPendingToolAction(
                                   message.id,
                                   nextPendingToolAction
                                 )
                               }
-                              onCancelPendingToolAction={(nextPendingToolAction) =>
+                              onCancelPendingToolAction={(
+                                nextPendingToolAction
+                              ) =>
                                 handleCancelPendingToolAction(
                                   message.id,
                                   nextPendingToolAction
                                 )
                               }
                               isActionPending={
-                                activeToolActionId === pendingToolAction?.actionId
+                                activeToolActionId ===
+                                pendingToolAction?.actionId
                               }
                             />
                           );
@@ -512,11 +545,7 @@ const ChatSurface = ({
               quota={quotaWarning}
               locale={language}
               labels={{
-                lowRemainingWithReset: (
-                  remaining,
-                  relativeTime,
-                  localTime
-                ) =>
+                lowRemainingWithReset: (remaining, relativeTime, localTime) =>
                   t("chatWidget.quota.lowRemainingWithReset", {
                     remaining,
                     relativeTime,

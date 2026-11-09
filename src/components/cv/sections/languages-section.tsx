@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
@@ -99,7 +99,8 @@ export default function LanguagesSection({
                       </h4>
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                          PROFICIENCY_COLORS[lang.proficiency] || PROFICIENCY_COLORS.Intermediate
+                          PROFICIENCY_COLORS[lang.proficiency] ||
+                          PROFICIENCY_COLORS.Intermediate
                         }`}
                       >
                         {lang.proficiency}

@@ -23,7 +23,7 @@ export function getProxiedImageUrl(imageUrl?: string): string | undefined {
   // If it's a relative URL or backend URL, proxy it
   try {
     const url = new URL(imageUrl, window.location.origin);
-    
+
     // Resolve the backend API host safely to prevent crashes from invalid environment variables
     let isBackendUrl = url.host === "localhost:8081";
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -62,17 +62,17 @@ export async function getImageAsDataUri(
 ): Promise<string | null> {
   try {
     const response = await fetch(imageUrl);
-    
+
     if (!response.ok) {
       console.error("Failed to fetch image:", response.statusText);
       return null;
     }
 
     const blob = await response.blob();
-    
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
           resolve(reader.result);
@@ -80,11 +80,11 @@ export async function getImageAsDataUri(
           reject(new Error("Failed to convert image to data URI"));
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error("Failed to read image blob"));
       };
-      
+
       reader.readAsDataURL(blob);
     });
   } catch (error) {
@@ -110,7 +110,7 @@ export async function preloadImageAsDataUri(
   try {
     // Use proxy URL for fetching
     const proxiedUrl = getProxiedImageUrl(imageUrl);
-    
+
     if (!proxiedUrl) {
       return undefined;
     }

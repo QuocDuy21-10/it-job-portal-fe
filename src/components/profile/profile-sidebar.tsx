@@ -79,7 +79,7 @@ export default function ProfileSidebar({
     const checkScreenSize = () => {
       const mobile = window.innerWidth < 768; // md breakpoint
       setIsMobile(mobile);
-      
+
       // Desktop/Tablet: expanded, Mobile: collapsed
       if (!mobile && !isExpanded) {
         setIsExpanded(true);
@@ -94,8 +94,8 @@ export default function ProfileSidebar({
     checkScreenSize();
 
     // Listen for resize
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const handleToggle = () => {
@@ -249,11 +249,13 @@ export default function ProfileSidebar({
                     {isExpanded && (
                       <span className="flex-1 text-left">{item.label}</span>
                     )}
-                    {isExpanded && item.badge !== undefined && item.badge > 0 && (
-                      <span className="badge-primary text-xs px-2 py-0.5">
-                        {item.badge > 99 ? "99+" : item.badge}
-                      </span>
-                    )}
+                    {isExpanded &&
+                      item.badge !== undefined &&
+                      item.badge > 0 && (
+                        <span className="badge-primary text-xs px-2 py-0.5">
+                          {item.badge > 99 ? "99+" : item.badge}
+                        </span>
+                      )}
                   </button>
                 );
 
@@ -270,9 +272,7 @@ export default function ProfileSidebar({
                           </p>
                         )}
                         {item.badge !== undefined && item.badge > 0 && (
-                          <span className="ml-2 text-xs">
-                            ({item.badge})
-                          </span>
+                          <span className="ml-2 text-xs">({item.badge})</span>
                         )}
                       </TooltipContent>
                     </Tooltip>

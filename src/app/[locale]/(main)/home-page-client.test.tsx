@@ -103,12 +103,22 @@ jest.mock("@/components/company/company-card", () => ({
 }));
 
 jest.mock("@/components/ui/carousel", () => ({
-  Carousel: ({ children, setApi }: { children: React.ReactNode; setApi?: any }) => {
+  Carousel: ({
+    children,
+    setApi,
+  }: {
+    children: React.ReactNode;
+    setApi?: any;
+  }) => {
     // Call setApi in mock if provided to avoid runtime null checks or warnings
     return <div>{children}</div>;
   },
-  CarouselContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  CarouselItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  CarouselContent: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  CarouselItem: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   CarouselPrevious: () => <button type="button">Previous slide</button>,
   CarouselNext: () => <button type="button">Next slide</button>,
 }));

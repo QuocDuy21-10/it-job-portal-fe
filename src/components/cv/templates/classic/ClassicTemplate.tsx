@@ -69,8 +69,8 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
                 {cvData.personalInfo.gender === "male"
                   ? "Nam"
                   : cvData.personalInfo.gender === "female"
-                  ? "Nữ"
-                  : "Khác"}
+                    ? "Nữ"
+                    : "Khác"}
               </span>
             </div>
           )}
@@ -120,7 +120,8 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
                 <div className="flex justify-between items-start">
                   <h3 className="font-bold text-gray-900">{edu.school}</h3>
                   <span className="text-sm text-gray-600 whitespace-nowrap ml-4">
-                    {formatDateDisplay(edu.startDate)} - {formatDateDisplay(edu.endDate)}
+                    {formatDateDisplay(edu.startDate)} -{" "}
+                    {formatDateDisplay(edu.endDate)}
                   </span>
                 </div>
                 <p className="text-sm text-gray-700 mt-1">
@@ -172,7 +173,8 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
                     <p className="text-sm text-gray-700 mt-1">{exp.company}</p>
                   </div>
                   <span className="text-sm text-gray-600 whitespace-nowrap ml-4">
-                    {formatDateDisplay(exp.startDate)} - {formatDateDisplay(exp.endDate)}
+                    {formatDateDisplay(exp.startDate)} -{" "}
+                    {formatDateDisplay(exp.endDate)}
                   </span>
                 </div>
                 {exp.description && (
@@ -197,7 +199,9 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
               <div key={project.id}>
                 <h3 className="font-bold text-gray-900">{project.name}</h3>
                 {project.position && (
-                  <p className="text-sm text-gray-700 mt-1">Vị trí: {project.position}</p>
+                  <p className="text-sm text-gray-700 mt-1">
+                    Vị trí: {project.position}
+                  </p>
                 )}
                 <p className="text-sm text-gray-600 mt-2 leading-relaxed text-justify">
                   {project.description}
@@ -250,7 +254,9 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-bold text-gray-900">{cert.name}</h3>
-                    <p className="text-sm text-gray-700 mt-1">Tổ chức cấp: {cert.issuer}</p>
+                    <p className="text-sm text-gray-700 mt-1">
+                      Tổ chức cấp: {cert.issuer}
+                    </p>
                   </div>
                   <span className="text-sm text-gray-600 whitespace-nowrap ml-4">
                     {formatDateDisplay(cert.date)}

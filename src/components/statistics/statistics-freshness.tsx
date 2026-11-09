@@ -20,9 +20,7 @@ export function StatisticsFreshness({
 }: StatisticsFreshnessProps) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-muted-foreground">
-      <Badge variant="outline">
-        {fromCache ? cachedLabel : liveLabel}
-      </Badge>
+      <Badge variant="outline">{fromCache ? cachedLabel : liveLabel}</Badge>
       <span>
         {generatedAtLabel} {formatStatisticDateTime(generatedAt, locale)}
       </span>

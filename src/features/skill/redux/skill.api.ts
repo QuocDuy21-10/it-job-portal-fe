@@ -46,4 +46,3 @@ export const skillApi = baseApi.injectEndpoints({
 });
 
 export const { useGetSkillCatalogQuery, useGetPopularSkillsQuery } = skillApi;
-

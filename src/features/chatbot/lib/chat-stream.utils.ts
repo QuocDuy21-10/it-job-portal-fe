@@ -56,7 +56,8 @@ const parseServerSentEventBlock = (block: string): ServerSentEvent | null => {
 
     const separatorIndex = line.indexOf(":");
     const field = separatorIndex === -1 ? line : line.slice(0, separatorIndex);
-    const rawValue = separatorIndex === -1 ? "" : line.slice(separatorIndex + 1);
+    const rawValue =
+      separatorIndex === -1 ? "" : line.slice(separatorIndex + 1);
 
     if (field === "event") {
       event = rawValue.startsWith(" ") ? rawValue.slice(1) : rawValue;

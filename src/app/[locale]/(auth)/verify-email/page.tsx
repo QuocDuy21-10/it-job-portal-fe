@@ -63,7 +63,7 @@ function VerifyEmailContent() {
       autoVerifyRef.current = true;
       handleVerify(otp);
     }
-    
+
     // Reset ref khi OTP thay đổi (user đang nhập lại)
     if (otp.length < 6) {
       autoVerifyRef.current = false;
@@ -78,10 +78,13 @@ function VerifyEmailContent() {
     );
   }
 
-  const descString = t("authModal.verifyEmail.descriptionCardWithEmail", { email: "##EMAIL##" });
+  const descString = t("authModal.verifyEmail.descriptionCardWithEmail", {
+    email: "##EMAIL##",
+  });
   const renderDescription = () => {
     const parts = descString.split("##EMAIL##");
-    if (parts.length < 2) return t("authModal.verifyEmail.descriptionCardWithEmail", { email });
+    if (parts.length < 2)
+      return t("authModal.verifyEmail.descriptionCardWithEmail", { email });
     const [prefix, suffix] = parts;
     return (
       <>
@@ -187,7 +190,9 @@ function VerifyEmailContent() {
               ) : (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  {t("authModal.verifyEmail.resendCooldownBtn", { time: resendCountdown })}
+                  {t("authModal.verifyEmail.resendCooldownBtn", {
+                    time: resendCountdown,
+                  })}
                 </>
               )}
             </Button>

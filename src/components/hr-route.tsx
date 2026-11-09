@@ -52,7 +52,8 @@ export function HrRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const shouldShowLoading = isLoading || !isAuthenticated || userRole !== ROLES.HR;
+  const shouldShowLoading =
+    isLoading || !isAuthenticated || userRole !== ROLES.HR;
 
   if (shouldShowLoading) {
     return (

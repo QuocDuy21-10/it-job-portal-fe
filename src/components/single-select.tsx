@@ -97,29 +97,37 @@ export function SingleSelect({
               if (!isOpen) inputRef.current?.focus();
             }
           }}
-          className={noBorder
-            ? `flex items-center gap-2 p-3 transition-all min-h-[44px] ${
-                disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-              } ${isSearchSurface ? "dark:text-white" : ""}`
-            : `flex min-h-[44px] items-center gap-2 rounded-lg border bg-white p-3 transition-all dark:bg-card ${
-                disabled
-                  ? "cursor-not-allowed border-slate-200 opacity-50 dark:border-border"
-                  : "cursor-pointer border-slate-300 hover:border-blue-400 dark:border-border dark:hover:border-blue-600"
-              } ${isOpen ? "border-blue-500 ring-2 ring-blue-500 dark:border-blue-600 dark:ring-blue-600" : ""}`}
+          className={
+            noBorder
+              ? `flex items-center gap-2 p-3 transition-all min-h-[44px] ${
+                  disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                } ${isSearchSurface ? "dark:text-white" : ""}`
+              : `flex min-h-[44px] items-center gap-2 rounded-lg border bg-white p-3 transition-all dark:bg-card ${
+                  disabled
+                    ? "cursor-not-allowed border-slate-200 opacity-50 dark:border-border"
+                    : "cursor-pointer border-slate-300 hover:border-blue-400 dark:border-border dark:hover:border-blue-600"
+                } ${isOpen ? "border-blue-500 ring-2 ring-blue-500 dark:border-blue-600 dark:ring-blue-600" : ""}`
+          }
         >
           {leftIcon && (
-            <span className={`flex items-center ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
+            <span
+              className={`flex items-center ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}
+            >
               {leftIcon}
             </span>
           )}
-          
+
           <div className="flex-1 flex items-center gap-2">
             {selectedLabel ? (
-              <span className={`text-sm ${isSearchSurface ? "text-slate-900 dark:text-white" : "text-slate-900 dark:text-slate-100"}`}>
+              <span
+                className={`text-sm ${isSearchSurface ? "text-slate-900 dark:text-white" : "text-slate-900 dark:text-slate-100"}`}
+              >
                 {selectedLabel}
               </span>
             ) : (
-              <span className={`text-sm ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
+              <span
+                className={`text-sm ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}
+              >
                 {placeholder}
               </span>
             )}
@@ -132,7 +140,9 @@ export function SingleSelect({
                 className={`rounded-full p-1 transition ${isSearchSurface ? "hover:bg-slate-200 dark:hover:bg-white/10" : "hover:bg-slate-200 dark:hover:bg-secondary"}`}
                 aria-label="Clear selection"
               >
-                <X className={`h-4 w-4 ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`} />
+                <X
+                  className={`h-4 w-4 ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}
+                />
               </button>
             )}
             <ChevronDown
@@ -144,9 +154,13 @@ export function SingleSelect({
         </div>
 
         {isOpen && !disabled && (
-          <div className={`absolute left-0 right-0 top-full z-[100] mt-2 max-w-full rounded-lg border bg-white shadow-xl ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528]" : "dark:border-border dark:bg-card"} border-slate-200`}>
+          <div
+            className={`absolute left-0 right-0 top-full z-[100] mt-2 max-w-full rounded-lg border bg-white shadow-xl ${isSearchSurface ? "dark:border-white/10 dark:bg-[#101528]" : "dark:border-border dark:bg-card"} border-slate-200`}
+          >
             {/* Search input */}
-            <div className={`border-b p-3 ${isSearchSurface ? "border-slate-200 dark:border-white/10" : "border-slate-200 dark:border-border"}`}>
+            <div
+              className={`border-b p-3 ${isSearchSurface ? "border-slate-200 dark:border-white/10" : "border-slate-200 dark:border-border"}`}
+            >
               <input
                 ref={inputRef}
                 type="text"
@@ -192,7 +206,9 @@ export function SingleSelect({
                   </li>
                 ))
               ) : (
-                <li className={`px-4 py-6 text-center text-sm ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}>
+                <li
+                  className={`px-4 py-6 text-center text-sm ${isSearchSurface ? "text-slate-500 dark:text-white/70" : "text-slate-500 dark:text-slate-400"}`}
+                >
                   Không tìm thấy kết quả
                 </li>
               )}

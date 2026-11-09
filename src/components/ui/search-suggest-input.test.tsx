@@ -30,8 +30,6 @@ jest.mock("@/hooks/use-popular-skills", () => ({
   }),
 }));
 
-
-
 describe("SearchSuggestInput", () => {
   const mockOnChange = jest.fn();
   const mockOnSubmit = jest.fn();
@@ -58,7 +56,7 @@ describe("SearchSuggestInput", () => {
     );
 
     const input = screen.getByPlaceholderText("Search jobs...");
-    
+
     // Focus input to open the suggestions dropdown
     fireEvent.focus(input);
 

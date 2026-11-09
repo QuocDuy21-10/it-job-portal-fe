@@ -7,7 +7,9 @@ interface ChatThinkingIndicatorProps {
   className?: string;
 }
 
-export const ChatThinkingIndicator = ({ className }: ChatThinkingIndicatorProps) => {
+export const ChatThinkingIndicator = ({
+  className,
+}: ChatThinkingIndicatorProps) => {
   const { t } = useI18n();
 
   return (
@@ -20,7 +22,7 @@ export const ChatThinkingIndicator = ({ className }: ChatThinkingIndicatorProps)
         <span className="text-xs font-semibold tracking-wide text-blue-600 dark:text-blue-400">
           {t("chatWidget.messages.streamingPlaceholder")}
         </span>
-        
+
         {/* Animated Bouncing Dots */}
         <span className="flex items-center gap-1.5 ml-1">
           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-blue-500/70 dark:bg-blue-400/70 [animation-delay:-0.3s]" />

@@ -3,7 +3,10 @@
 import { useState, useMemo, useCallback } from "react";
 import { FileText, Filter, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useGetResumesQuery, useBulkDeleteResumesMutation } from "@/features/resume/redux/resume.api";
+import {
+  useGetResumesQuery,
+  useBulkDeleteResumesMutation,
+} from "@/features/resume/redux/resume.api";
 import { Resume } from "@/features/resume/schemas/resume.schema";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Pagination } from "@/components/pagination";
@@ -25,7 +28,6 @@ import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
-
 
 export default function ResumesPage() {
   const { t } = useI18n();
@@ -50,25 +52,25 @@ export default function ResumesPage() {
   // Construct filter queries with useMemo
   const filter = useMemo(() => {
     const filters: string[] = [];
-    
+
     if (searchQuery) {
       filters.push(`email=/${searchQuery}/i`);
     }
-    
+
     if (selectedStatus !== "all") {
       filters.push(`status=${selectedStatus}`);
     }
-    
+
     if (selectedPriority !== "all") {
       filters.push(`priority=${selectedPriority}`);
     }
-    
+
     if (selectedScore !== "all") {
       const [min, max] = selectedScore.split("-");
       filters.push(`aiAnalysis.matchingScore>=${min}`);
       filters.push(`aiAnalysis.matchingScore<=${max}`);
     }
-    
+
     return filters.join("&");
   }, [searchQuery, selectedStatus, selectedPriority, selectedScore]);
 
@@ -102,8 +104,15 @@ export default function ResumesPage() {
     return resumesData?.data?.result || [];
   }, [resumesData]);
 
-  const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
-    useTableSelection(resumes);
+  const {
+    selectedIds,
+    selectedCount,
+    isAllSelected,
+    isIndeterminate,
+    toggle,
+    toggleAll,
+    clear,
+  } = useTableSelection(resumes);
 
   const pagination = resumesData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
@@ -113,52 +122,76 @@ export default function ResumesPage() {
       : t("adminPages.resources.resumes");
 
   // Handlers với useCallback để tránh re-render không cần thiết
-  const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-    clear();
-  }, [clear]);
-  
-  const handlePageSizeChange = useCallback((newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+      clear();
+    },
+    [clear]
+  );
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
-  
-  const handleStatusChange = useCallback((value: string) => {
-    setSelectedStatus(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
-  
-  const handlePriorityChange = useCallback((value: string) => {
-    setSelectedPriority(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
-  
-  const handleScoreChange = useCallback((value: string) => {
-    setSelectedScore(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handlePageSizeChange = useCallback(
+    (newPageSize: number) => {
+      setPageSize(newPageSize);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
+  const handleStatusChange = useCallback(
+    (value: string) => {
+      setSelectedStatus(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
+  const handlePriorityChange = useCallback(
+    (value: string) => {
+      setSelectedPriority(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
+  const handleScoreChange = useCallback(
+    (value: string) => {
+      setSelectedScore(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
 
   // Sort handler
-  const handleSortChange = useCallback((value: string) => {
-    setSort(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
+  const handleSortChange = useCallback(
+    (value: string) => {
+      setSort(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
 
   const handleBulkDelete = useCallback(async () => {
     try {
       const result = await bulkDeleteResumes(Array.from(selectedIds)).unwrap();
-      const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
+      const { deletedCount, requestedCount } = result.data ?? {
+        deletedCount: 0,
+        requestedCount: selectedIds.size,
+      };
       if (deletedCount < requestedCount) {
         toast.warning(
           t("adminPages.shared.bulkDeletePartial", {
@@ -222,36 +255,63 @@ export default function ResumesPage() {
             value={searchQuery}
             width="full"
           />
-          
+
           {/* Row 2: 4 filters + Sort in grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Status Filter */}
             <Select value={selectedStatus} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder={t("adminPages.resumes.statusPlaceholder")} />
+                <SelectValue
+                  placeholder={t("adminPages.resumes.statusPlaceholder")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("adminPages.shared.allStatus")}</SelectItem>
-                <SelectItem value="PENDING">{t("statisticsDashboard.statuses.PENDING")}</SelectItem>
-                <SelectItem value="REVIEWING">{t("statisticsDashboard.statuses.REVIEWING")}</SelectItem>
-                <SelectItem value="APPROVED">{t("statisticsDashboard.statuses.APPROVED")}</SelectItem>
-                <SelectItem value="REJECTED">{t("statisticsDashboard.statuses.REJECTED")}</SelectItem>
+                <SelectItem value="all">
+                  {t("adminPages.shared.allStatus")}
+                </SelectItem>
+                <SelectItem value="PENDING">
+                  {t("statisticsDashboard.statuses.PENDING")}
+                </SelectItem>
+                <SelectItem value="REVIEWING">
+                  {t("statisticsDashboard.statuses.REVIEWING")}
+                </SelectItem>
+                <SelectItem value="APPROVED">
+                  {t("statisticsDashboard.statuses.APPROVED")}
+                </SelectItem>
+                <SelectItem value="REJECTED">
+                  {t("statisticsDashboard.statuses.REJECTED")}
+                </SelectItem>
               </SelectContent>
             </Select>
 
             {/* Priority Filter */}
-            <Select value={selectedPriority} onValueChange={handlePriorityChange}>
+            <Select
+              value={selectedPriority}
+              onValueChange={handlePriorityChange}
+            >
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder={t("adminPages.resumes.priorityPlaceholder")} />
+                <SelectValue
+                  placeholder={t("adminPages.resumes.priorityPlaceholder")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("adminPages.resumes.priorities.all")}</SelectItem>
-                <SelectItem value="EXCELLENT">{t("adminPages.resumes.priorities.excellent")}</SelectItem>
-                <SelectItem value="HIGH">{t("adminPages.resumes.priorities.high")}</SelectItem>
-                <SelectItem value="MEDIUM">{t("adminPages.resumes.priorities.medium")}</SelectItem>
-                <SelectItem value="LOW">{t("adminPages.resumes.priorities.low")}</SelectItem>
+                <SelectItem value="all">
+                  {t("adminPages.resumes.priorities.all")}
+                </SelectItem>
+                <SelectItem value="EXCELLENT">
+                  {t("adminPages.resumes.priorities.excellent")}
+                </SelectItem>
+                <SelectItem value="HIGH">
+                  {t("adminPages.resumes.priorities.high")}
+                </SelectItem>
+                <SelectItem value="MEDIUM">
+                  {t("adminPages.resumes.priorities.medium")}
+                </SelectItem>
+                <SelectItem value="LOW">
+                  {t("adminPages.resumes.priorities.low")}
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -259,7 +319,9 @@ export default function ResumesPage() {
             <Select value={selectedScore} onValueChange={handleScoreChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder={t("adminPages.resumes.scorePlaceholder")} />
+                <SelectValue
+                  placeholder={t("adminPages.resumes.scorePlaceholder")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {scoreRanges.map((range) => (
@@ -274,14 +336,26 @@ export default function ResumesPage() {
             <Select value={sort} onValueChange={handleSortChange}>
               <SelectTrigger className="w-full">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder={t("adminPages.resumes.sortPlaceholder")} />
+                <SelectValue
+                  placeholder={t("adminPages.resumes.sortPlaceholder")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default">{t("adminPages.resumes.sortOptions.default")}</SelectItem>
-                <SelectItem value="-createdAt">{t("adminPages.resumes.sortOptions.newest")}</SelectItem>
-                <SelectItem value="createdAt">{t("adminPages.resumes.sortOptions.oldest")}</SelectItem>
-                <SelectItem value="-aiAnalysis.matchingScore">{t("adminPages.resumes.sortOptions.highestScore")}</SelectItem>
-                <SelectItem value="aiAnalysis.matchingScore">{t("adminPages.resumes.sortOptions.lowestScore")}</SelectItem>
+                <SelectItem value="default">
+                  {t("adminPages.resumes.sortOptions.default")}
+                </SelectItem>
+                <SelectItem value="-createdAt">
+                  {t("adminPages.resumes.sortOptions.newest")}
+                </SelectItem>
+                <SelectItem value="createdAt">
+                  {t("adminPages.resumes.sortOptions.oldest")}
+                </SelectItem>
+                <SelectItem value="-aiAnalysis.matchingScore">
+                  {t("adminPages.resumes.sortOptions.highestScore")}
+                </SelectItem>
+                <SelectItem value="aiAnalysis.matchingScore">
+                  {t("adminPages.resumes.sortOptions.lowestScore")}
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -315,7 +389,12 @@ export default function ResumesPage() {
             })}
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clear}
+              className="gap-1.5"
+            >
               <X className="h-4 w-4" />
               {t("adminPages.shared.clear")}
             </Button>

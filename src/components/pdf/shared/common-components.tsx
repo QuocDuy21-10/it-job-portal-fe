@@ -29,11 +29,11 @@ interface ContactRowProps {
   placeholder?: string;
 }
 
-export const ContactRowItem: React.FC<ContactRowProps> = ({ 
-  icon, 
-  label, 
-  value, 
-  placeholder 
+export const ContactRowItem: React.FC<ContactRowProps> = ({
+  icon,
+  label,
+  value,
+  placeholder,
 }) => (
   <View style={classicStyles.contactRow}>
     {icon}
@@ -41,7 +41,9 @@ export const ContactRowItem: React.FC<ContactRowProps> = ({
     {value ? (
       <Text style={classicStyles.contactValue}>{value}</Text>
     ) : (
-      <Text style={classicStyles.contactPlaceholder}>{placeholder || "Chưa cập nhật"}</Text>
+      <Text style={classicStyles.contactPlaceholder}>
+        {placeholder || "Chưa cập nhật"}
+      </Text>
     )}
   </View>
 );
@@ -58,9 +60,7 @@ interface SectionProps {
 export const Section: React.FC<SectionProps> = ({ title, children }) => (
   <View style={classicStyles.section}>
     <Text style={classicStyles.sectionTitle}>{title}</Text>
-    <View style={classicStyles.sectionContent}>
-      {children}
-    </View>
+    <View style={classicStyles.sectionContent}>{children}</View>
   </View>
 );
 
@@ -70,7 +70,7 @@ export const Section: React.FC<SectionProps> = ({ title, children }) => (
  * Used in Classic template
  */
 interface CVHeaderProps {
-  personalInfo: ICVProfile['personalInfo'];
+  personalInfo: ICVProfile["personalInfo"];
 }
 
 export const CVHeader: React.FC<CVHeaderProps> = ({ personalInfo }) => {
@@ -90,14 +90,17 @@ export const CVHeader: React.FC<CVHeaderProps> = ({ personalInfo }) => {
     <View style={classicStyles.header}>
       {/* Avatar Section */}
       <View style={classicStyles.avatarContainer}>
-        <Image src={avatar || "/images/avatar-default.jpg"} style={classicStyles.avatar} />
+        <Image
+          src={avatar || "/images/avatar-default.jpg"}
+          style={classicStyles.avatar}
+        />
       </View>
 
       {/* Personal Info Section */}
       <View style={classicStyles.headerInfo}>
         <Text style={classicStyles.name}>{fullName || "Họ và tên"}</Text>
         {title && <Text style={classicStyles.title}>{title}</Text>}
-        
+
         <View style={classicStyles.contactGrid}>
           <ContactRowItem
             icon={<CalendarIcon size={8} color={CVColors.textMuted} />}

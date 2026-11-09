@@ -25,7 +25,7 @@ export const setLoggingOutFlag = (value: boolean) => {
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 const handleRefreshToken = async (): Promise<string | null> => {
@@ -39,7 +39,7 @@ const handleRefreshToken = async (): Promise<string | null> => {
     try {
       console.log("[Axios] Attempting to refresh token...");
 
-     // The refresh_token cookie will be automatically sent (withCredentials: true)
+      // The refresh_token cookie will be automatically sent (withCredentials: true)
       const response = await axios.get(`${API_BASE_URL}/auth/refresh`, {
         withCredentials: true,
         headers: {
@@ -63,7 +63,6 @@ const handleRefreshToken = async (): Promise<string | null> => {
     }
   });
 };
-
 
 // Request Interceptor: Add access_token to header before sending request
 axiosInstance.interceptors.request.use(
@@ -128,9 +127,7 @@ axiosInstance.interceptors.response.use(
           console.log("[Axios] Retrying original request with new token...");
           return axiosInstance(originalRequest);
         } else {
-          console.log(
-            "[Axios] Refresh token failed, calling callback..."
-          );
+          console.log("[Axios] Refresh token failed, calling callback...");
 
           localStorage.removeItem("access_token");
         }

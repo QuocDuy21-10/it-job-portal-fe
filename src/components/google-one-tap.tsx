@@ -20,7 +20,7 @@ export function GoogleOneTap({ disabled = false }: GoogleOneTapProps) {
   useGoogleOneTapLogin({
     onSuccess: async (credentialResponse) => {
       if (disabled) return;
-      
+
       try {
         if (!credentialResponse.credential) {
           toast.error("Không nhận được thông tin đăng nhập từ Google");
@@ -52,8 +52,7 @@ export function GoogleOneTap({ disabled = false }: GoogleOneTapProps) {
         }
       } catch (error: any) {
         console.error("Google One Tap login error:", error);
-        const errorMessage =
-          error?.message || "Đăng nhập với Google thất bại.";
+        const errorMessage = error?.message || "Đăng nhập với Google thất bại.";
         toast.error(errorMessage);
       }
     },

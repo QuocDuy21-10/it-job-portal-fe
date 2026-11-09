@@ -23,7 +23,9 @@ export function useSkillModal(
 ): UseSkillModalReturn {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentSkill, setCurrentSkill] = useState<Skill | undefined>(undefined);
+  const [currentSkill, setCurrentSkill] = useState<Skill | undefined>(
+    undefined
+  );
 
   const openAddModal = () => {
     if (skills.length >= 20) {

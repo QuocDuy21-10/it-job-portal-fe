@@ -3,14 +3,28 @@ import { z } from "zod";
 // Personal Info Schema (with detailed validation)
 export const PersonalInfoSchema = z.object({
   avatar: z.string().optional(),
-  title: z.string().min(2, "Tiêu đề phải có ít nhất 2 ký tự").max(100, "Tiêu đề không được quá 100 ký tự").optional(),
-  fullName: z.string().min(2, "Họ tên phải có ít nhất 2 ký tự").max(100, "Họ tên không được quá 100 ký tự"),
-  phone: z.string().min(10, "Số điện thoại không hợp lệ").max(15, "Số điện thoại không hợp lệ"),
+  title: z
+    .string()
+    .min(2, "Tiêu đề phải có ít nhất 2 ký tự")
+    .max(100, "Tiêu đề không được quá 100 ký tự")
+    .optional(),
+  fullName: z
+    .string()
+    .min(2, "Họ tên phải có ít nhất 2 ký tự")
+    .max(100, "Họ tên không được quá 100 ký tự"),
+  phone: z
+    .string()
+    .min(10, "Số điện thoại không hợp lệ")
+    .max(15, "Số điện thoại không hợp lệ"),
   email: z.string().email("Email không hợp lệ"),
   birthday: z.date().optional(),
   gender: z.enum(["male", "female", "other"]),
   address: z.string().max(200, "Địa chỉ không được quá 200 ký tự").optional(),
-  personalLink: z.string().url("Link không hợp lệ").optional().or(z.literal("")),
+  personalLink: z
+    .string()
+    .url("Link không hợp lệ")
+    .optional()
+    .or(z.literal("")),
   bio: z.string().max(500, "Bio không được quá 500 ký tự").optional(),
 });
 
@@ -18,22 +32,39 @@ export const CVProfilePersonalInfoSchema = PersonalInfoSchema.extend({
   title: z.string().max(100, "Tiêu đề không được quá 100 ký tự").optional(),
   phone: z.string().max(15, "Số điện thoại không hợp lệ").optional(),
   birthday: z.union([z.date(), z.string()]).optional(),
-  gender: z.union([z.enum(["male", "female", "other"]), z.literal("")]).optional(),
+  gender: z
+    .union([z.enum(["male", "female", "other"]), z.literal("")])
+    .optional(),
 });
 
 // Education Schema (for Request - with id for upsert)
 export const EducationRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  school: z.string().min(2, "Tên trường phải có ít nhất 2 ký tự").max(200, "Tên trường không được quá 200 ký tự"),
-  degree: z.string().min(2, "Bằng cấp phải có ít nhất 2 ký tự").max(100, "Bằng cấp không được quá 100 ký tự"),
-  field: z.string().min(2, "Chuyên ngành phải có ít nhất 2 ký tự").max(100, "Chuyên ngành không được quá 100 ký tự"),
+  school: z
+    .string()
+    .min(2, "Tên trường phải có ít nhất 2 ký tự")
+    .max(200, "Tên trường không được quá 200 ký tự"),
+  degree: z
+    .string()
+    .min(2, "Bằng cấp phải có ít nhất 2 ký tự")
+    .max(100, "Bằng cấp không được quá 100 ký tự"),
+  field: z
+    .string()
+    .min(2, "Chuyên ngành phải có ít nhất 2 ký tự")
+    .max(100, "Chuyên ngành không được quá 100 ký tự"),
   startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date format",
   }),
-  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }).optional(),
-  description: z.string().max(1000, "Mô tả không được quá 1000 ký tự").optional(),
+  endDate: z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date format",
+    })
+    .optional(),
+  description: z
+    .string()
+    .max(1000, "Mô tả không được quá 1000 ký tự")
+    .optional(),
 });
 
 // Education Schema (for Response - with id)
@@ -44,15 +75,27 @@ export const EducationSchema = EducationRequestSchema.extend({
 // Experience Schema (for Request - with id for upsert)
 export const ExperienceRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  company: z.string().min(2, "Tên công ty phải có ít nhất 2 ký tự").max(200, "Tên công ty không được quá 200 ký tự"),
-  position: z.string().min(2, "Vị trí phải có ít nhất 2 ký tự").max(100, "Vị trí không được quá 100 ký tự"),
+  company: z
+    .string()
+    .min(2, "Tên công ty phải có ít nhất 2 ký tự")
+    .max(200, "Tên công ty không được quá 200 ký tự"),
+  position: z
+    .string()
+    .min(2, "Vị trí phải có ít nhất 2 ký tự")
+    .max(100, "Vị trí không được quá 100 ký tự"),
   startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date format",
   }),
-  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }).optional(),
-  description: z.string().max(1000, "Mô tả không được quá 1000 ký tự").optional(),
+  endDate: z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date format",
+    })
+    .optional(),
+  description: z
+    .string()
+    .max(1000, "Mô tả không được quá 1000 ký tự")
+    .optional(),
 });
 
 // Experience Schema (for Response - with id)
@@ -63,7 +106,10 @@ export const ExperienceSchema = ExperienceRequestSchema.extend({
 // Skill Schema (for Request - with id for upsert)
 export const SkillRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  name: z.string().min(1, "Tên kỹ năng là bắt buộc").max(100, "Tên kỹ năng không được quá 100 ký tự"),
+  name: z
+    .string()
+    .min(1, "Tên kỹ năng là bắt buộc")
+    .max(100, "Tên kỹ năng không được quá 100 ký tự"),
   level: z.string().min(1, "Trình độ là bắt buộc"),
 });
 
@@ -75,7 +121,10 @@ export const SkillSchema = SkillRequestSchema.extend({
 // Language Schema (for Request - with id for upsert)
 export const LanguageRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  name: z.string().min(1, "Tên ngôn ngữ là bắt buộc").max(50, "Tên ngôn ngữ không được quá 50 ký tự"),
+  name: z
+    .string()
+    .min(1, "Tên ngôn ngữ là bắt buộc")
+    .max(50, "Tên ngôn ngữ không được quá 50 ký tự"),
   proficiency: z.string().min(1, "Trình độ là bắt buộc"),
 });
 
@@ -87,9 +136,18 @@ export const LanguageSchema = LanguageRequestSchema.extend({
 // Project Schema (for Request - with id for upsert)
 export const ProjectRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  name: z.string().min(2, "Tên dự án phải có ít nhất 2 ký tự").max(200, "Tên dự án không được quá 200 ký tự"),
-  position: z.string().min(2, "Vị trí phải có ít nhất 2 ký tự").max(100, "Vị trí không được quá 100 ký tự"),
-  description: z.string().min(10, "Mô tả phải có ít nhất 10 ký tự").max(1000, "Mô tả không được quá 1000 ký tự"),
+  name: z
+    .string()
+    .min(2, "Tên dự án phải có ít nhất 2 ký tự")
+    .max(200, "Tên dự án không được quá 200 ký tự"),
+  position: z
+    .string()
+    .min(2, "Vị trí phải có ít nhất 2 ký tự")
+    .max(100, "Vị trí không được quá 100 ký tự"),
+  description: z
+    .string()
+    .min(10, "Mô tả phải có ít nhất 10 ký tự")
+    .max(1000, "Mô tả không được quá 1000 ký tự"),
   link: z.string().url("Link không hợp lệ").optional().or(z.literal("")),
 });
 
@@ -101,8 +159,14 @@ export const ProjectSchema = ProjectRequestSchema.extend({
 // Certificate Schema (for Request - with id for upsert)
 export const CertificateRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  name: z.string().min(2, "Tên chứng chỉ phải có ít nhất 2 ký tự").max(200, "Tên chứng chỉ không được quá 200 ký tự"),
-  issuer: z.string().min(2, "Tên tổ chức cấp phải có ít nhất 2 ký tự").max(200, "Tên tổ chức cấp không được quá 200 ký tự"),
+  name: z
+    .string()
+    .min(2, "Tên chứng chỉ phải có ít nhất 2 ký tự")
+    .max(200, "Tên chứng chỉ không được quá 200 ký tự"),
+  issuer: z
+    .string()
+    .min(2, "Tên tổ chức cấp phải có ít nhất 2 ký tự")
+    .max(200, "Tên tổ chức cấp không được quá 200 ký tự"),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date format",
   }),
@@ -116,11 +180,17 @@ export const CertificateSchema = CertificateRequestSchema.extend({
 // Award Schema (for Request - with id for upsert)
 export const AwardRequestSchema = z.object({
   id: z.string().optional(), // Optional for new items, required for updates
-  name: z.string().min(2, "Tên giải thưởng phải có ít nhất 2 ký tự").max(200, "Tên giải thưởng không được quá 200 ký tự"),
+  name: z
+    .string()
+    .min(2, "Tên giải thưởng phải có ít nhất 2 ký tự")
+    .max(200, "Tên giải thưởng không được quá 200 ký tự"),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date format",
   }),
-  description: z.string().max(1000, "Mô tả không được quá 1000 ký tự").optional(),
+  description: z
+    .string()
+    .max(1000, "Mô tả không được quá 1000 ký tự")
+    .optional(),
 });
 
 // Award Schema (for Response - with id)
@@ -133,8 +203,16 @@ export const UpsertCVProfileRequestSchema = z.object({
   personalInfo: PersonalInfoSchema,
   education: z.array(EducationRequestSchema).optional().default([]),
   experience: z.array(ExperienceRequestSchema).optional().default([]),
-  skills: z.array(SkillRequestSchema).max(20, "Không được thêm quá 20 kỹ năng").optional().default([]),
-  languages: z.array(LanguageRequestSchema).max(5, "Không được thêm quá 5 ngôn ngữ").optional().default([]),
+  skills: z
+    .array(SkillRequestSchema)
+    .max(20, "Không được thêm quá 20 kỹ năng")
+    .optional()
+    .default([]),
+  languages: z
+    .array(LanguageRequestSchema)
+    .max(5, "Không được thêm quá 5 ngôn ngữ")
+    .optional()
+    .default([]),
   projects: z.array(ProjectRequestSchema).optional().default([]),
   certificates: z.array(CertificateRequestSchema).optional().default([]),
   awards: z.array(AwardRequestSchema).optional().default([]),
@@ -175,5 +253,7 @@ export type CertificateRequest = z.infer<typeof CertificateRequestSchema>;
 export type Certificate = z.infer<typeof CertificateSchema>;
 export type AwardRequest = z.infer<typeof AwardRequestSchema>;
 export type Award = z.infer<typeof AwardSchema>;
-export type UpsertCVProfileRequest = z.infer<typeof UpsertCVProfileRequestSchema>;
+export type UpsertCVProfileRequest = z.infer<
+  typeof UpsertCVProfileRequestSchema
+>;
 export type CVProfile = z.infer<typeof CVProfileSchema>;

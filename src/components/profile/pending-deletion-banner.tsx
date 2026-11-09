@@ -15,7 +15,8 @@ export function PendingDeletionBanner({
   scheduledDeletionAt,
 }: PendingDeletionBannerProps) {
   const { t, language } = useI18n();
-  const [cancelAccountDeletion, { isLoading }] = useCancelAccountDeletionMutation();
+  const [cancelAccountDeletion, { isLoading }] =
+    useCancelAccountDeletionMutation();
 
   const formattedDate = formatLocaleDate(scheduledDeletionAt, language, {
     year: "numeric",
@@ -28,7 +29,8 @@ export function PendingDeletionBanner({
       await cancelAccountDeletion().unwrap();
       toast.success(t("settings.deleteAccount.cancelSuccess"));
     } catch (error: any) {
-      const msg = error?.data?.message || t("settings.deleteAccount.cancelError");
+      const msg =
+        error?.data?.message || t("settings.deleteAccount.cancelError");
       toast.error(msg);
     }
   };

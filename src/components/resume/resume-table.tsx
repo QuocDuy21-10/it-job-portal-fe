@@ -72,16 +72,22 @@ export function ResumeTable({
                     aria-label={t("adminPages.shared.selectAll")}
                   />
                 </TableHead>
-                <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+                <TableHead className="w-[80px]">
+                  {t("adminPages.shared.number")}
+                </TableHead>
                 <TableHead>{t("adminPages.resumes.table.email")}</TableHead>
                 <TableHead>{t("adminPages.resumes.table.link")}</TableHead>
                 <TableHead>{t("adminPages.resumes.table.job")}</TableHead>
                 <TableHead>{t("adminPages.resumes.table.company")}</TableHead>
                 <TableHead>{t("adminPages.resumes.table.priority")}</TableHead>
-                <TableHead>{t("adminPages.resumes.table.matchingScore")}</TableHead>
+                <TableHead>
+                  {t("adminPages.resumes.table.matchingScore")}
+                </TableHead>
                 <TableHead>{t("adminPages.resumes.table.status")}</TableHead>
                 <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-                <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
+                <TableHead className="text-right">
+                  {t("adminPages.shared.actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -103,23 +109,23 @@ export function ResumeTable({
                 </TableRow>
               ) : (
                 resumes.map((resume, index) => (
-                <ResumeTableRow
-                  key={resume._id}
-                  resume={resume}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  orderNumber={(currentPage - 1) * pageSize + index + 1}
-                  isSelected={selectedIds.has(resume._id as string)}
-                  onToggleSelect={onToggleSelect}
-                />
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </TooltipProvider>
-  </Access>
-);
+                  <ResumeTableRow
+                    key={resume._id}
+                    resume={resume}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    orderNumber={(currentPage - 1) * pageSize + index + 1}
+                    isSelected={selectedIds.has(resume._id as string)}
+                    onToggleSelect={onToggleSelect}
+                  />
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </TooltipProvider>
+    </Access>
+  );
 }
 
 // Tách component row để dễ maintain
@@ -132,43 +138,66 @@ interface ResumeTableRowProps {
   onToggleSelect: (id: string) => void;
 }
 
-function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onToggleSelect }: ResumeTableRowProps) {
+function ResumeTableRow({
+  resume,
+  onEdit,
+  onDelete,
+  orderNumber,
+  isSelected,
+  onToggleSelect,
+}: ResumeTableRowProps) {
   const { t, language } = useI18n();
 
   const getPriorityColor = () => {
     const priority = resume.priority?.toUpperCase() || "";
-    if (priority === "EXCELLENT") return "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400";
-    if (priority === "HIGH") return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
-    if (priority === "MEDIUM") return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
-    if (priority === "LOW") return "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400";
+    if (priority === "EXCELLENT")
+      return "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400";
+    if (priority === "HIGH")
+      return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+    if (priority === "MEDIUM")
+      return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
+    if (priority === "LOW")
+      return "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400";
     return "bg-gray-100 text-gray-700";
   };
-  
+
   // Get status badge color
   const getStatusColor = () => {
     const status = resume.status?.toUpperCase() || "";
-    if (status === "APPROVED") return "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
-    if (status === "REJECTED") return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
-    if (status === "REVIEWING") return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
-    if (status === "PENDING") return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
+    if (status === "APPROVED")
+      return "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
+    if (status === "REJECTED")
+      return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+    if (status === "REVIEWING")
+      return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
+    if (status === "PENDING")
+      return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
     return "bg-gray-100 text-gray-700";
   };
-  
+
   // Get score badge color
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
-    if (score >= 60) return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
-    if (score >= 40) return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
+    if (score >= 80)
+      return "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
+    if (score >= 60)
+      return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
+    if (score >= 40)
+      return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
     return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
   };
-  
+
   return (
-    <TableRow className="admin-table-row group" data-state={isSelected ? "selected" : undefined}>
+    <TableRow
+      className="admin-table-row group"
+      data-state={isSelected ? "selected" : undefined}
+    >
       <TableCell>
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onToggleSelect(resume._id as string)}
-          aria-label={t("adminPages.shared.selectItem", { resource: resume.email })}
+          aria-label={t("adminPages.shared.selectItem", {
+            resource: resume.email,
+          })}
         />
       </TableCell>
       <TableCell className="text-center font-medium text-gray-500">
@@ -189,7 +218,9 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
           className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
         >
           <ExternalLink className="h-4 w-4" />
-          <span className="hover:underline">{t("adminPages.resumes.table.viewResume")}</span>
+          <span className="hover:underline">
+            {t("adminPages.resumes.table.viewResume")}
+          </span>
         </a>
       </TableCell>
       <TableCell>
@@ -225,7 +256,9 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
         <div className="flex items-center gap-2">
           <Badge className={getPriorityColor()}>
             {resume.priority
-              ? t(`adminPages.resumes.priorities.${resume.priority.toLowerCase()}`)
+              ? t(
+                  `adminPages.resumes.priorities.${resume.priority.toLowerCase()}`
+                )
               : "-"}
           </Badge>
         </div>
@@ -250,7 +283,9 @@ function ResumeTableRow({ resume, onEdit, onDelete, orderNumber, isSelected, onT
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-sm">
-            {resume.createdAt ? formatLocaleDate(resume.createdAt, language) : "-"}
+            {resume.createdAt
+              ? formatLocaleDate(resume.createdAt, language)
+              : "-"}
           </span>
         </div>
       </TableCell>
@@ -308,7 +343,9 @@ function ResumeTableSkeleton() {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]" />
-            <TableHead className="w-[80px]">{t("adminPages.shared.number")}</TableHead>
+            <TableHead className="w-[80px]">
+              {t("adminPages.shared.number")}
+            </TableHead>
             <TableHead>{t("adminPages.resumes.table.email")}</TableHead>
             <TableHead>{t("adminPages.resumes.table.link")}</TableHead>
             <TableHead>{t("adminPages.resumes.table.job")}</TableHead>
@@ -317,7 +354,9 @@ function ResumeTableSkeleton() {
             <TableHead>{t("adminPages.resumes.table.matchingScore")}</TableHead>
             <TableHead>{t("adminPages.resumes.table.status")}</TableHead>
             <TableHead>{t("adminPages.shared.createdAt")}</TableHead>
-            <TableHead className="text-right">{t("adminPages.shared.actions")}</TableHead>
+            <TableHead className="text-right">
+              {t("adminPages.shared.actions")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

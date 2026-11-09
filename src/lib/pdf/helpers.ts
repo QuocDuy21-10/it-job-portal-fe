@@ -8,31 +8,39 @@
  * Handles Date objects, strings, and empty values
  * Empty string or missing date means "Present" (current job/position)
  */
-export const formatDateForDisplay = (date: Date | string | undefined): string => {
+export const formatDateForDisplay = (
+  date: Date | string | undefined
+): string => {
   if (!date) {
     return "Present";
   }
-  
+
   // If it's a Date object, convert to localized string
   if (date instanceof Date) {
-    return date.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit' });
+    return date.toLocaleDateString("vi-VN", {
+      year: "numeric",
+      month: "2-digit",
+    });
   }
-  
+
   // If it's an empty string, show "Present"
-  if (typeof date === 'string' && date.trim() === "") {
+  if (typeof date === "string" && date.trim() === "") {
     return "Present";
   }
-  
+
   // If it's a date string, format it
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     try {
       const dateObj = new Date(date);
-      return dateObj.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit' });
+      return dateObj.toLocaleDateString("vi-VN", {
+        year: "numeric",
+        month: "2-digit",
+      });
     } catch {
       return date;
     }
   }
-  
+
   return String(date);
 };
 
@@ -41,10 +49,14 @@ export const formatDateForDisplay = (date: Date | string | undefined): string =>
  */
 export const formatGender = (gender?: "male" | "female" | "other"): string => {
   switch (gender) {
-    case "male": return "Nam";
-    case "female": return "Nữ";
-    case "other": return "Khác";
-    default: return "Chưa cập nhật";
+    case "male":
+      return "Nam";
+    case "female":
+      return "Nữ";
+    case "other":
+      return "Khác";
+    default:
+      return "Chưa cập nhật";
   }
 };
 
@@ -54,11 +66,11 @@ export const formatGender = (gender?: "male" | "female" | "other"): string => {
  */
 export const getSkillLevel = (level: string): number => {
   const levelMap: Record<string, number> = {
-    "Beginner": 1,
-    "Intermediate": 2,
-    "Advanced": 3,
-    "Expert": 4,
-    "Master": 5,
+    Beginner: 1,
+    Intermediate: 2,
+    Advanced: 3,
+    Expert: 4,
+    Master: 5,
   };
   return levelMap[level] || 3; // Default to 3 if not found
 };
@@ -75,7 +87,7 @@ export const generateCVDataKey = (cvData: any, template: string): string => {
     cvData.experience?.length || 0,
     cvData.skills?.length || 0,
     cvData.projects?.length || 0,
-  ].join('-');
-  
+  ].join("-");
+
   return `${template}-${timestamp}-${itemsCount}`;
 };

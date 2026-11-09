@@ -67,8 +67,7 @@ export const useChat = () => {
     streamingContent,
     streamingMessageId,
     quota,
-  } =
-    useAppSelector((state) => state.chatBot);
+  } = useAppSelector((state) => state.chatBot);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const user = useAppSelector(selectUser);
   const hydratedMessageIdsRef = useRef(new Set<string>());
@@ -140,8 +139,9 @@ export const useChat = () => {
       );
 
       // Sắp xếp theo timestamp tăng dần (cũ -> mới) để hiển thị đúng thứ tự
-      const sortedMessages = formattedMessages.sort((a, b) => 
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      const sortedMessages = formattedMessages.sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
 
       dispatch(setMessages(sortedMessages));

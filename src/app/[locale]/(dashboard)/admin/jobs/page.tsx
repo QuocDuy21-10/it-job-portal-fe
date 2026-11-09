@@ -10,7 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetJobsQuery, useBulkDeleteJobsMutation } from "@/features/job/redux/job.api";
+import {
+  useGetJobsQuery,
+  useBulkDeleteJobsMutation,
+} from "@/features/job/redux/job.api";
 import { SearchBar } from "@/components/ui/search-bar";
 import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
@@ -35,7 +38,8 @@ export default function JobsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedSalary, setSelectedSalary] = useState<string>("all");
-  const [selectedApprovalStatus, setSelectedApprovalStatus] = useState<string>("all");
+  const [selectedApprovalStatus, setSelectedApprovalStatus] =
+    useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
@@ -44,27 +48,36 @@ export default function JobsPage() {
   const salaryRanges = [
     { label: t("adminPages.jobs.salaryRanges.all"), value: "all" },
     { label: t("adminPages.jobs.salaryRanges.under10m"), value: "0-10000000" },
-    { label: t("adminPages.jobs.salaryRanges.tenTo20m"), value: "10000000-20000000" },
-    { label: t("adminPages.jobs.salaryRanges.twentyTo50m"), value: "20000000-50000000" },
-    { label: t("adminPages.jobs.salaryRanges.above50m"), value: "50000000-999999999" },
+    {
+      label: t("adminPages.jobs.salaryRanges.tenTo20m"),
+      value: "10000000-20000000",
+    },
+    {
+      label: t("adminPages.jobs.salaryRanges.twentyTo50m"),
+      value: "20000000-50000000",
+    },
+    {
+      label: t("adminPages.jobs.salaryRanges.above50m"),
+      value: "50000000-999999999",
+    },
   ];
 
   // Construct filter queries with useMemo
   const filter = useMemo(() => {
     const filters: string[] = [];
-    
+
     if (searchQuery) {
       filters.push(`name=/${searchQuery}/i`);
     }
-    
+
     if (selectedStatus !== "all") {
       filters.push(`isActive=${selectedStatus}`);
     }
-    
+
     if (selectedLocation) {
       filters.push(`locationCode=${selectedLocation}`);
     }
-    
+
     if (selectedSalary !== "all") {
       const [min, max] = selectedSalary.split("-");
       filters.push(`salary>=${min}`);
@@ -74,9 +87,15 @@ export default function JobsPage() {
     if (selectedApprovalStatus !== "all") {
       filters.push(`approvalStatus=${selectedApprovalStatus}`);
     }
-    
+
     return filters.join("&");
-  }, [searchQuery, selectedStatus, selectedLocation, selectedSalary, selectedApprovalStatus]);
+  }, [
+    searchQuery,
+    selectedStatus,
+    selectedLocation,
+    selectedSalary,
+    selectedApprovalStatus,
+  ]);
 
   // Fetch jobs với RTK Query
   const { data: jobsData, isLoading } = useGetJobsQuery({
@@ -113,8 +132,15 @@ export default function JobsPage() {
     return jobsData?.data?.result || [];
   }, [jobsData]);
 
-  const { selectedIds, selectedCount, isAllSelected, isIndeterminate, toggle, toggleAll, clear } =
-    useTableSelection(jobs);
+  const {
+    selectedIds,
+    selectedCount,
+    isAllSelected,
+    isIndeterminate,
+    toggle,
+    toggleAll,
+    clear,
+  } = useTableSelection(jobs);
 
   const pagination = jobsData?.data?.meta?.pagination;
   const totalItems = pagination?.total || 0;
@@ -124,26 +150,35 @@ export default function JobsPage() {
       : t("adminPages.resources.jobs");
 
   // Handlers với useCallback để tránh re-render không cần thiết
-  const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-    clear();
-  }, [clear]);
-  
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setCurrentPage(newPage);
+      clear();
+    },
+    [clear]
+  );
+
   const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPageSize(newPageSize);
     setCurrentPage(1);
   }, []);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
-  
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
   const handleBulkDelete = useCallback(async () => {
     try {
       const result = await bulkDeleteJobs(Array.from(selectedIds)).unwrap();
-      const { deletedCount, requestedCount } = result.data ?? { deletedCount: 0, requestedCount: selectedIds.size };
+      const { deletedCount, requestedCount } = result.data ?? {
+        deletedCount: 0,
+        requestedCount: selectedIds.size,
+      };
       if (deletedCount < requestedCount) {
         toast.warning(
           t("adminPages.shared.bulkDeletePartial", {
@@ -176,17 +211,20 @@ export default function JobsPage() {
     }
   }, [bulkDeleteJobs, clear, selectedIds, t]);
 
-  const handleStatusChange = useCallback((value: string) => {
-    setSelectedStatus(value);
-    setCurrentPage(1);
-    clear();
-  }, [clear]);
-  
+  const handleStatusChange = useCallback(
+    (value: string) => {
+      setSelectedStatus(value);
+      setCurrentPage(1);
+      clear();
+    },
+    [clear]
+  );
+
   const handleLocationChange = useCallback((value: string) => {
     setSelectedLocation(value);
     setCurrentPage(1);
   }, []);
-  
+
   const handleSalaryChange = useCallback((value: string) => {
     setSelectedSalary(value);
     setCurrentPage(1);
@@ -244,13 +282,21 @@ export default function JobsPage() {
                 <SelectTrigger className="h-10">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue placeholder={t("adminPages.jobs.statusPlaceholder")} />
+                    <SelectValue
+                      placeholder={t("adminPages.jobs.statusPlaceholder")}
+                    />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">{t("adminPages.shared.allStatus")}</SelectItem>
-                    <SelectItem value="true">{t("adminPages.shared.active")}</SelectItem>
-                    <SelectItem value="false">{t("adminPages.shared.inactive")}</SelectItem>
+                  <SelectItem value="all">
+                    {t("adminPages.shared.allStatus")}
+                  </SelectItem>
+                  <SelectItem value="true">
+                    {t("adminPages.shared.active")}
+                  </SelectItem>
+                  <SelectItem value="false">
+                    {t("adminPages.shared.inactive")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -259,13 +305,15 @@ export default function JobsPage() {
             <div>
               <SingleSelect
                 options={[
-                    { label: t("adminPages.jobs.allLocations"), value: "" },
+                  { label: t("adminPages.jobs.allLocations"), value: "" },
                   ...LOCATION_OPTIONS,
                 ]}
                 value={selectedLocation}
                 onChange={handleLocationChange}
-                  placeholder={t("adminPages.jobs.locationFilterPlaceholder")}
-                  searchPlaceholder={t("adminPages.jobs.locationSearchPlaceholder")}
+                placeholder={t("adminPages.jobs.locationFilterPlaceholder")}
+                searchPlaceholder={t(
+                  "adminPages.jobs.locationSearchPlaceholder"
+                )}
                 leftIcon={<Briefcase className="h-4 w-4" />}
                 allowClear
               />
@@ -277,7 +325,9 @@ export default function JobsPage() {
                 <SelectTrigger className="h-10">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue placeholder={t("adminPages.jobs.salaryPlaceholder")} />
+                    <SelectValue
+                      placeholder={t("adminPages.jobs.salaryPlaceholder")}
+                    />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -301,14 +351,24 @@ export default function JobsPage() {
                 <SelectTrigger className="h-10">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue placeholder={t("adminPages.jobs.approvalPlaceholder")} />
+                    <SelectValue
+                      placeholder={t("adminPages.jobs.approvalPlaceholder")}
+                    />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t("adminPages.jobs.allApprovalStatuses")}</SelectItem>
-                  <SelectItem value="PENDING">{t("adminPages.jobs.table.pending")}</SelectItem>
-                  <SelectItem value="APPROVED">{t("adminPages.jobs.table.approved")}</SelectItem>
-                  <SelectItem value="REJECTED">{t("adminPages.jobs.table.rejected")}</SelectItem>
+                  <SelectItem value="all">
+                    {t("adminPages.jobs.allApprovalStatuses")}
+                  </SelectItem>
+                  <SelectItem value="PENDING">
+                    {t("adminPages.jobs.table.pending")}
+                  </SelectItem>
+                  <SelectItem value="APPROVED">
+                    {t("adminPages.jobs.table.approved")}
+                  </SelectItem>
+                  <SelectItem value="REJECTED">
+                    {t("adminPages.jobs.table.rejected")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -326,7 +386,12 @@ export default function JobsPage() {
             })}
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={clear} className="gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clear}
+              className="gap-1.5"
+            >
               <X className="h-4 w-4" />
               {t("adminPages.shared.clear")}
             </Button>

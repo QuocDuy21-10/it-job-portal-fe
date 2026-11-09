@@ -40,7 +40,10 @@ export async function generateMetadata({
     locale: resolvedLocale,
     namespace: "companyList",
   });
-  const meta = await getTranslations({ locale: resolvedLocale, namespace: "meta" });
+  const meta = await getTranslations({
+    locale: resolvedLocale,
+    namespace: "meta",
+  });
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,

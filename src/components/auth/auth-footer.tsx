@@ -19,7 +19,11 @@ interface AuthFooterProps {
  * AuthFooter - Unified footer for auth pages
  * Displays navigation links and legal information
  */
-export function AuthFooter({ message, link, showLegalLinks = true }: AuthFooterProps) {
+export function AuthFooter({
+  message,
+  link,
+  showLegalLinks = true,
+}: AuthFooterProps) {
   const { t } = useI18n();
 
   return (

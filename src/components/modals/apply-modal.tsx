@@ -44,7 +44,8 @@ export default function ApplyModal({
   const { user } = useSelector(selectAuth);
   const { t } = useI18n();
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const [createResumeWithUpload, { isLoading: isUploading }] = useCreateResumeWithUploadMutation();
+  const [createResumeWithUpload, { isLoading: isUploading }] =
+    useCreateResumeWithUploadMutation();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     phone: "",
@@ -135,7 +136,10 @@ export default function ApplyModal({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Name */}
       <div className="space-y-2">
-        <Label htmlFor="apply-name" className="text-sm font-medium text-foreground">
+        <Label
+          htmlFor="apply-name"
+          className="text-sm font-medium text-foreground"
+        >
           {t("applyModal.fields.name.label")}{" "}
           <span className="text-destructive">*</span>
         </Label>
@@ -153,7 +157,10 @@ export default function ApplyModal({
 
       {/* Phone */}
       <div className="space-y-2">
-        <Label htmlFor="apply-phone" className="text-sm font-medium text-foreground">
+        <Label
+          htmlFor="apply-phone"
+          className="text-sm font-medium text-foreground"
+        >
           {t("applyModal.fields.phone.label")}{" "}
           <span className="text-destructive">*</span>
         </Label>
@@ -171,7 +178,10 @@ export default function ApplyModal({
 
       {/* Email */}
       <div className="space-y-2">
-        <Label htmlFor="apply-email" className="text-sm font-medium text-foreground">
+        <Label
+          htmlFor="apply-email"
+          className="text-sm font-medium text-foreground"
+        >
           {t("applyModal.fields.email.label")}{" "}
           <span className="text-destructive">*</span>
         </Label>
@@ -209,7 +219,9 @@ export default function ApplyModal({
             <div className="flex items-center justify-center gap-3">
               <FileText className="w-6 h-6 text-primary shrink-0" />
               <div className="text-left min-w-0">
-                <p className="font-semibold text-sm truncate max-w-[240px]">{cvFile.name}</p>
+                <p className="font-semibold text-sm truncate max-w-[240px]">
+                  {cvFile.name}
+                </p>
                 <p className="text-xs text-muted-foreground">
                   {(cvFile.size / 1024).toFixed(2)} KB
                 </p>
@@ -256,7 +268,12 @@ export default function ApplyModal({
 
   if (isMobile) {
     return (
-      <Drawer open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <Drawer
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) onClose();
+        }}
+      >
         <DrawerContent className="max-h-[92vh] flex flex-col rounded-t-2xl border-t bg-background px-4 pb-6">
           <DrawerHeader className="text-left px-0 pb-2 pt-4">
             <DrawerTitle className="text-xl font-bold text-foreground">
@@ -275,7 +292,12 @@ export default function ApplyModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <DialogContent className="w-[calc(100%-2rem)] sm:max-w-md p-0 bg-background rounded-2xl border border-border/50 shadow-2xl overflow-hidden">
         <DialogHeader className="p-6 pb-4 border-b border-border">
           <DialogTitle className="text-xl font-bold text-foreground">

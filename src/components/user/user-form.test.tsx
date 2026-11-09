@@ -28,11 +28,15 @@ jest.mock("@/components/ui/select", () => ({
       {children}
     </select>
   ),
-  SelectTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  SelectTrigger: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
   SelectValue: ({ placeholder }: { placeholder?: string }) => (
     <option value="">{placeholder}</option>
   ),
-  SelectContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  SelectContent: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
   SelectItem: ({
     children,
     value,
@@ -150,7 +154,9 @@ describe("UserForm", () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByLabelText("company-combobox")).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("company-combobox")
+      ).not.toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole("button", { name: "Update User" }));

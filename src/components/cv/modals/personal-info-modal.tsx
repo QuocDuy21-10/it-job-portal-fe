@@ -4,12 +4,20 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X, Upload, AlertCircle } from "lucide-react";
-import { PersonalInfoSchema, PersonalInfo } from "@/features/cv-profile/schemas/cv-profile.schema";
+import {
+  PersonalInfoSchema,
+  PersonalInfo,
+} from "@/features/cv-profile/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
-
 
 interface PersonalInfoModalProps {
   isOpen: boolean;
@@ -79,14 +87,14 @@ export default function PersonalInfoModal({
         alert("Chỉ chấp nhận file ảnh định dạng JPEG, PNG, GIF, WEBP");
         return;
       }
-      
+
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB in bytes
       if (file.size > maxSize) {
         alert("Kích thước file không được vượt quá 5MB");
         return;
       }
-      
+
       setAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -110,7 +118,10 @@ export default function PersonalInfoModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 mt-4">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="space-y-6 mt-4"
+        >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
             {/* Left Column: Avatar Section */}
             <div className="md:col-span-4 flex flex-col items-center gap-4 p-5 bg-gradient-to-br from-secondary/30 to-secondary/10 rounded-xl border border-border/50">
@@ -126,7 +137,7 @@ export default function PersonalInfoModal({
                   />
                 </div>
               </div>
-              
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -134,7 +145,7 @@ export default function PersonalInfoModal({
                 onChange={handleAvatarUpload}
                 className="hidden"
               />
-              
+
               <Button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -142,7 +153,9 @@ export default function PersonalInfoModal({
                 className="w-full hover:bg-primary/10 hover:border-primary/30"
               >
                 <Upload className="w-4 h-4 mr-2" />
-                {hasAvatar ? t("cv.personalInfo.updateAvatar") : t("cv.personalInfo.uploadAvatar")}
+                {hasAvatar
+                  ? t("cv.personalInfo.updateAvatar")
+                  : t("cv.personalInfo.uploadAvatar")}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 {t("cv.personalInfo.avatarFormat")}
@@ -171,7 +184,8 @@ export default function PersonalInfoModal({
                     />
                     {errors.title && (
                       <p className="mt-1 text-xs text-destructive flex items-center gap-1">
-                        <span className="font-medium">⚠</span> {errors.title.message}
+                        <span className="font-medium">⚠</span>{" "}
+                        {errors.title.message}
                       </p>
                     )}
                   </div>
@@ -215,7 +229,6 @@ export default function PersonalInfoModal({
                     <label className="text-sm font-semibold text-foreground flex items-center gap-1 mb-1.5">
                       {t("cv.personalInfo.email")}
                       <span className="text-destructive">*</span>
-                    
                     </label>
                     <input
                       {...field}
@@ -231,7 +244,7 @@ export default function PersonalInfoModal({
                         errors.email ? "border-destructive" : "border-border"
                       }`}
                     />
-                    
+
                     {errors.email && (
                       <p className="text-xs text-destructive flex items-center gap-1 mt-1">
                         <AlertCircle className="w-3.5 h-3.5" />
@@ -281,8 +294,16 @@ export default function PersonalInfoModal({
                     </label>
                     <input
                       type="date"
-                      value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
-                      onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
+                      value={
+                        field.value
+                          ? new Date(field.value).toISOString().split("T")[0]
+                          : ""
+                      }
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? new Date(e.target.value) : undefined
+                        )
+                      }
                       className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                     />
                   </div>
@@ -303,8 +324,12 @@ export default function PersonalInfoModal({
                       className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                     >
                       <option value="male">{t("cv.personalInfo.male")}</option>
-                      <option value="female">{t("cv.personalInfo.female")}</option>
-                      <option value="other">{t("cv.personalInfo.other")}</option>
+                      <option value="female">
+                        {t("cv.personalInfo.female")}
+                      </option>
+                      <option value="other">
+                        {t("cv.personalInfo.other")}
+                      </option>
                     </select>
                   </div>
                 )}

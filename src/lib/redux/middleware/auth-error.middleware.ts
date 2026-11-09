@@ -28,7 +28,6 @@ const getTranslation = (key: string): string => {
   return typeof current === "string" ? current : key;
 };
 
-
 export const authErrorMiddleware: Middleware =
   (store) => (next) => (action: any) => {
     // Chỉ xử lý rejected actions từ RTK Query
@@ -40,12 +39,10 @@ export const authErrorMiddleware: Middleware =
 
       if (status === 403) {
         console.log("🚫 [Middleware] 403 Forbidden - User lacks permission");
-        
-        toast.error(
-          message || getTranslation("middleware.forbidden"),
-          { id: `forbidden-error-${message || ""}` }
-        );
 
+        toast.error(message || getTranslation("middleware.forbidden"), {
+          id: `forbidden-error-${message || ""}`,
+        });
       }
 
       if (status === 404) {
@@ -54,11 +51,10 @@ export const authErrorMiddleware: Middleware =
 
       if (status === 500) {
         console.error("💥 [Middleware] 500 Internal Server Error");
-        
-        toast.error(
-          message || getTranslation("middleware.serverError"),
-          { id: `server-error-${message || ""}` }
-        );
+
+        toast.error(message || getTranslation("middleware.serverError"), {
+          id: `server-error-${message || ""}`,
+        });
 
         // Optional: Có thể gửi error report về monitoring service
         // sendErrorToSentry(action.payload);
@@ -66,11 +62,10 @@ export const authErrorMiddleware: Middleware =
 
       if (action.payload?.message?.includes("Network Error")) {
         console.error("📡 [Middleware] Network Error");
-        
-        toast.error(
-          getTranslation("middleware.networkError"),
-          { id: "network-error" }
-        );
+
+        toast.error(getTranslation("middleware.networkError"), {
+          id: "network-error",
+        });
       }
 
       if (status === 400) {

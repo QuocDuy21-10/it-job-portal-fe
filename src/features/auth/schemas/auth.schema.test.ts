@@ -5,15 +5,13 @@ import { vi } from "@/locales/vi";
 type Messages = typeof en;
 
 function translate(messages: Messages, key: string): string {
-  const value = key
-    .split(".")
-    .reduce<unknown>((value, segment) => {
-      if (value && typeof value === "object" && segment in value) {
-        return (value as Record<string, unknown>)[segment];
-      }
+  const value = key.split(".").reduce<unknown>((value, segment) => {
+    if (value && typeof value === "object" && segment in value) {
+      return (value as Record<string, unknown>)[segment];
+    }
 
-      return key;
-    }, messages);
+    return key;
+  }, messages);
 
   return typeof value === "string" ? value : key;
 }

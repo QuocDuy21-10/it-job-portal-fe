@@ -67,19 +67,27 @@ export default function CompletionProgress({
         )}
 
         {/* Progress Indicator Badge */}
-        <div className={cn(
-          "w-14 h-14 rounded-full shadow-lg flex items-center justify-center",
-          "bg-gradient-to-br from-card to-card/95 border-2",
-          completion >= 80 ? "border-green-500" :
-          completion >= 50 ? "border-primary" :
-          "border-orange-500"
-        )}>
-          <span className={cn(
-            "text-xs font-bold",
-            completion >= 80 ? "text-green-600 dark:text-green-500" :
-            completion >= 50 ? "text-primary" :
-            "text-orange-600 dark:text-orange-500"
-          )}>
+        <div
+          className={cn(
+            "w-14 h-14 rounded-full shadow-lg flex items-center justify-center",
+            "bg-gradient-to-br from-card to-card/95 border-2",
+            completion >= 80
+              ? "border-green-500"
+              : completion >= 50
+                ? "border-primary"
+                : "border-orange-500"
+          )}
+        >
+          <span
+            className={cn(
+              "text-xs font-bold",
+              completion >= 80
+                ? "text-green-600 dark:text-green-500"
+                : completion >= 50
+                  ? "text-primary"
+                  : "text-orange-600 dark:text-orange-500"
+            )}
+          >
             {completion}%
           </span>
         </div>
@@ -128,23 +136,50 @@ export default function CompletionProgress({
           </p>
           <div className="space-y-2.5">
             {[
-              { key: 'personalInfo', label: t("cv.progress.personalInfo"), completed: cvData.personalInfo.fullName && cvData.personalInfo.email },
-              { key: 'education', label: t("cv.progress.education"), completed: cvData.education.length > 0 },
-              { key: 'experience', label: t("cv.progress.experience"), completed: cvData.experience.length > 0 },
-              { key: 'skills', label: t("cv.progress.skills"), completed: cvData.skills.length > 0 },
-              { key: 'languages', label: t("cv.progress.languages"), completed: cvData.languages.length > 0 },
+              {
+                key: "personalInfo",
+                label: t("cv.progress.personalInfo"),
+                completed:
+                  cvData.personalInfo.fullName && cvData.personalInfo.email,
+              },
+              {
+                key: "education",
+                label: t("cv.progress.education"),
+                completed: cvData.education.length > 0,
+              },
+              {
+                key: "experience",
+                label: t("cv.progress.experience"),
+                completed: cvData.experience.length > 0,
+              },
+              {
+                key: "skills",
+                label: t("cv.progress.skills"),
+                completed: cvData.skills.length > 0,
+              },
+              {
+                key: "languages",
+                label: t("cv.progress.languages"),
+                completed: cvData.languages.length > 0,
+              },
             ].map((item) => (
               <div key={item.key} className="flex items-center gap-3">
-                <div className={cn(
-                  "w-2.5 h-2.5 rounded-full flex-shrink-0 transition-all duration-300",
-                  item.completed ? "bg-primary" : "bg-gray-300 dark:bg-zinc-700"
-                )} />
-                <span className={cn(
-                  "text-sm transition-colors",
-                  item.completed 
-                    ? "text-gray-700 dark:text-gray-300 font-medium" 
-                    : "text-gray-400 dark:text-zinc-500 font-medium"
-                )}>
+                <div
+                  className={cn(
+                    "w-2.5 h-2.5 rounded-full flex-shrink-0 transition-all duration-300",
+                    item.completed
+                      ? "bg-primary"
+                      : "bg-gray-300 dark:bg-zinc-700"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "text-sm transition-colors",
+                    item.completed
+                      ? "text-gray-700 dark:text-gray-300 font-medium"
+                      : "text-gray-400 dark:text-zinc-500 font-medium"
+                  )}
+                >
                   {item.label}
                 </span>
               </div>
@@ -170,8 +205,8 @@ export default function CompletionProgress({
         className={cn(
           "w-full h-12 rounded-xl border-2 font-bold transition-all flex items-center justify-center gap-2",
           "shadow-sm hover:shadow-md active:scale-[0.99]",
-          canPreview 
-            ? "border-primary text-primary hover:bg-primary/5 bg-white dark:bg-card" 
+          canPreview
+            ? "border-primary text-primary hover:bg-primary/5 bg-white dark:bg-card"
             : "border-gray-200 text-gray-400 bg-gray-50/50 dark:bg-zinc-800/50 dark:border-zinc-700/60"
         )}
       >

@@ -25,7 +25,9 @@ export function useCertificateModal(
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"add" | "edit">("add");
-  const [currentCertificate, setCurrentCertificate] = useState<Certificate | undefined>(undefined);
+  const [currentCertificate, setCurrentCertificate] = useState<
+    Certificate | undefined
+  >(undefined);
 
   const openAddModal = () => {
     setMode("add");

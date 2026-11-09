@@ -3,12 +3,7 @@ import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
 type StatisticsKpiTone =
-  | "primary"
-  | "chart1"
-  | "chart2"
-  | "chart3"
-  | "chart4"
-  | "chart5";
+  "primary" | "chart1" | "chart2" | "chart3" | "chart4" | "chart5";
 
 interface StatisticsKpiItem {
   id: string;
