@@ -1,22 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useLocale } from "next-intl";
 import { SparklesIcon } from "@heroicons/react/24/outline";
-import { cn } from "@/lib/utils";
 import { HrRoute } from "@/components/hr-route";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import { AdminHeader } from "@/components/admin/admin-header";
-import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
+import { DashboardShell } from "@/components/admin/dashboard-shell";
 import HrChatAssistant from "@/components/chatbot/hr-chat-assistant";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { useLogoutMutation } from "@/features/auth/redux/auth.api";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
-import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
-import { getPathname } from "@/i18n/navigation";
-import type { AppLocale } from "@/i18n/routing";
 import { useI18n } from "@/hooks/use-i18n";
 
 export default function HrDashboardShellLayout({
@@ -24,105 +13,36 @@ export default function HrDashboardShellLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-  const locale = useLocale() as AppLocale;
   const { t } = useI18n();
-  const dispatch = useAppDispatch();
-  const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
-
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      setLoggingOutFlag(true);
-      await logoutMutation().unwrap();
-    } catch (err) {
-      console.error("Logout error:", err);
-    } finally {
-      dispatch(setLogoutAction());
-      router.push(getPathname({ locale, href: "/login" }));
-    }
-  };
-
-  const handleMobileMenuToggle = () => {
-    setIsAssistantOpen(false);
-    setIsMobileNavOpen(true);
-  };
-
-  const handleAssistantToggle = () => {
-    setIsMobileNavOpen(false);
-    setIsAssistantOpen((currentOpen) => !currentOpen);
-  };
 
   return (
     <HrRoute>
-      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
-        <AdminSidebar
-          isExpanded={isSidebarExpanded}
-          onToggle={() => setIsSidebarExpanded((prev) => !prev)}
-          onLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-        />
+      <DashboardShell
+        copyrightKey="footer.hrCopyright"
+        onMobileMenuOpen={() => setIsAssistantOpen(false)}
+        headerAction={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-10 gap-2"
+            onClick={() => setIsAssistantOpen((currentOpen) => !currentOpen)}
+            aria-pressed={isAssistantOpen}
+            aria-label={t("chatWidget.title")}
+          >
+            <SparklesIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("chatWidget.title")}</span>
+          </Button>
+        }
+      >
+        {children}
+      </DashboardShell>
 
-        <AdminMobileNav
-          isOpen={isMobileNavOpen}
-          onClose={() => setIsMobileNavOpen(false)}
-        />
-
-        <div
-          className={cn(
-            "flex flex-col flex-1 transition-all duration-300",
-            isSidebarExpanded ? "lg:pl-64" : "lg:pl-16"
-          )}
-        >
-          <AdminHeader
-            onMobileMenuToggle={handleMobileMenuToggle}
-            onLogout={handleLogout}
-            assistantTrigger={
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-10 gap-2"
-                onClick={handleAssistantToggle}
-                aria-pressed={isAssistantOpen}
-                aria-label={t("chatWidget.title")}
-              >
-                <SparklesIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">
-                  {t("chatWidget.title")}
-                </span>
-              </Button>
-            }
-          />
-
-          <section className="flex-1 pt-16">
-            <div className="py-6">
-              <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-                {children}
-              </div>
-            </div>
-          </section>
-
-          <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-              <p
-                className="text-center text-sm text-gray-500 dark:text-gray-400"
-                suppressHydrationWarning
-              >
-                {t("footer.hrCopyright", { year: new Date().getFullYear() })}
-              </p>
-            </div>
-          </footer>
-        </div>
-
-        <HrChatAssistant
-          isOpen={isAssistantOpen}
-          onOpenChange={setIsAssistantOpen}
-        />
-      </div>
+      <HrChatAssistant
+        isOpen={isAssistantOpen}
+        onOpenChange={setIsAssistantOpen}
+      />
     </HrRoute>
   );
 }
