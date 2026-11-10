@@ -5,6 +5,14 @@ export const en = {
     collapse: "Collapse",
     showMore: "Show more",
   },
+  pagination: {
+    showing: "Showing",
+    to: "to",
+    of: "of",
+    results: "results",
+    pageIndicator: "Page {page} / {total}",
+    pageSize: "Per page:",
+  },
   search: {
     suggest: {
       clear: "Clear search keyword",

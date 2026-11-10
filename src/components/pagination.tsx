@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   ChevronLeft,
   ChevronRight,
@@ -28,6 +29,7 @@ export function Pagination({
   onPageChange,
   onPageSizeChange,
 }: PaginationProps) {
+  const { t } = useI18n();
   const totalPages = Math.ceil(totalItems / pageSize);
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalItems);
@@ -100,19 +102,19 @@ export function Pagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-6 w-full">
       {/* Items info */}
       <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-        Hiển thị{" "}
+        {t("pagination.showing")}{" "}
         <span className="font-bold text-slate-900 dark:text-slate-100">
           {startItem}
         </span>{" "}
-        đến{" "}
+        {t("pagination.to")}{" "}
         <span className="font-bold text-slate-900 dark:text-slate-100">
           {endItem}
         </span>{" "}
-        trong tổng số{" "}
+        {t("pagination.of")}{" "}
         <span className="font-bold text-slate-900 dark:text-slate-100">
           {totalItems}
         </span>{" "}
-        kết quả
+        {t("pagination.results")}
       </div>
 
       {/* Pagination controls */}
@@ -166,7 +168,10 @@ export function Pagination({
         {/* Mobile page indicator */}
         <div className="md:hidden flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
           <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
-            Trang {currentPage} / {totalPages}
+            {t("pagination.pageIndicator", {
+              page: currentPage,
+              total: totalPages,
+            })}
           </span>
         </div>
 
@@ -186,7 +191,7 @@ export function Pagination({
       {/* Page size selector */}
       <div className="flex items-center gap-3">
         <span className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap font-medium">
-          Số lượng/trang:
+          {t("pagination.pageSize")}
         </span>
         <Select
           value={pageSize.toString()}

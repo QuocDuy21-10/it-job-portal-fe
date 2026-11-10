@@ -5,6 +5,14 @@ export const vi = {
     collapse: "Thu gọn",
     showMore: "Xem thêm",
   },
+  pagination: {
+    showing: "Hiển thị",
+    to: "đến",
+    of: "trong tổng số",
+    results: "kết quả",
+    pageIndicator: "Trang {page} / {total}",
+    pageSize: "Số lượng/trang:",
+  },
   search: {
     suggest: {
       clear: "Xóa từ khóa tìm kiếm",
