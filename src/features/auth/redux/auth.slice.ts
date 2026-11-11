@@ -1,4 +1,9 @@
-import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  PayloadAction,
+  createSelector,
+  isAnyOf,
+} from "@reduxjs/toolkit";
 import { authApi } from "./auth.api";
 import {
   AuthState,
@@ -50,19 +55,28 @@ function buildAuthUser(userData: AuthUserPayload) {
   };
 }
 
+const resetSession = (state: AuthState) => {
+  state.user = null;
+  state.isAuthenticated = false;
+  state.isLoading = false;
+  state.isRefreshToken = false;
+  state.errorRefreshToken = "";
+};
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    clearAuth: (state) => {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
-      state.isRefreshToken = false;
-      state.errorRefreshToken = "";
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("access_token");
-      }
+    // Side effects of ending a session (token, RTK Query cache) live in
+    // src/lib/redux/listeners/session.listener.ts so reducers stay pure.
+    sessionEnded: (state) => {
+      resetSession(state);
+    },
+
+    sessionExpired: (state, action: PayloadAction<string>) => {
+      resetSession(state);
+      state.isRefreshToken = true;
+      state.errorRefreshToken = action.payload;
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -101,17 +115,6 @@ const authSlice = createSlice({
       state.user.savedJobIds = savedJobIds;
       state.user.savedJobs = savedJobIds;
       state.user.jobFavorites = savedJobIds;
-    },
-
-    setLogoutAction: (state) => {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("access_token");
-      }
-      state.isAuthenticated = false;
-      state.user = null;
-      state.isLoading = false;
-      state.isRefreshToken = false;
-      state.errorRefreshToken = "";
     },
 
     setRefreshTokenAction: (
@@ -170,26 +173,13 @@ const authSlice = createSlice({
       .addMatcher(authApi.endpoints.logout.matchPending, (state) => {
         state.isLoading = true;
       })
-      .addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("access_token");
-        }
-        state.user = null;
-        state.isAuthenticated = false;
-        state.isLoading = false;
-        state.isRefreshToken = false;
-        state.errorRefreshToken = "";
-      })
-      .addMatcher(authApi.endpoints.logout.matchRejected, (state) => {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("access_token");
-        }
-        state.user = null;
-        state.isAuthenticated = false;
-        state.isLoading = false;
-        state.isRefreshToken = false;
-        state.errorRefreshToken = "";
-      })
+      .addMatcher(
+        isAnyOf(
+          authApi.endpoints.logout.matchFulfilled,
+          authApi.endpoints.logout.matchRejected
+        ),
+        resetSession
+      )
 
       // REGISTER
       .addMatcher(authApi.endpoints.register.matchPending, (state) => {
@@ -209,41 +199,17 @@ const authSlice = createSlice({
       )
       .addMatcher(authApi.endpoints.register.matchRejected, (state) => {
         state.isLoading = false;
-      })
-
-      // REFRESH TOKEN
-      .addMatcher(
-        authApi.endpoints.refreshToken?.matchPending ?? (() => {}),
-        (state) => {
-          state.isRefreshToken = true;
-          state.errorRefreshToken = "";
-        }
-      )
-      .addMatcher(
-        authApi.endpoints.refreshToken?.matchFulfilled ?? (() => {}),
-        (state) => {
-          state.isRefreshToken = false;
-          state.errorRefreshToken = "";
-        }
-      )
-      .addMatcher(
-        authApi.endpoints.refreshToken?.matchRejected ?? (() => {}),
-        (state, action) => {
-          state.isRefreshToken = false;
-          state.errorRefreshToken =
-            action.error?.message ?? "Refresh token failed";
-        }
-      );
+      });
   },
 });
 
 export const {
-  clearAuth,
+  sessionEnded,
+  sessionExpired,
   setLoading,
   setUserLoginInfo,
   addSavedJobId,
   removeSavedJobId,
-  setLogoutAction,
   setRefreshTokenAction,
 } = authSlice.actions;
 

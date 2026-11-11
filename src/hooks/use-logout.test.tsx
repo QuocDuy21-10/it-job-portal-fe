@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { useLogout } from "./use-logout";
 
 const mockPush = jest.fn();
@@ -39,7 +39,7 @@ describe("useLogout", () => {
 
     expect(mockSetLoggingOutFlag).toHaveBeenCalledWith(true);
     expect(mockLogoutMutation).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenCalledWith(setLogoutAction());
+    expect(mockDispatch).toHaveBeenCalledWith(sessionEnded());
     expect(mockPush).toHaveBeenCalledWith("/login");
   });
 
@@ -52,7 +52,7 @@ describe("useLogout", () => {
 
     await act(() => result.current.logout());
 
-    expect(mockDispatch).toHaveBeenCalledWith(setLogoutAction());
+    expect(mockDispatch).toHaveBeenCalledWith(sessionEnded());
     expect(mockPush).toHaveBeenCalledWith("/login");
     consoleError.mockRestore();
   });

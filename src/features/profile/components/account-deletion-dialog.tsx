@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRequestAccountDeletionMutation } from "@/features/auth/redux/auth.api";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { useI18n } from "@/hooks/use-i18n";
 import { useRouter } from "@/i18n/navigation";
 import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
@@ -88,7 +88,7 @@ export function AccountDeletionDialog({
         t("settings.deleteAccount.requestSuccess", { date: scheduledDate })
       );
       setLoggingOutFlag(true);
-      dispatch(setLogoutAction());
+      dispatch(sessionEnded());
       router.push("/login");
     } catch (error: any) {
       const msg =
@@ -107,7 +107,7 @@ export function AccountDeletionDialog({
         t("settings.deleteAccount.requestSuccess", { date: scheduledDate })
       );
       setLoggingOutFlag(true);
-      dispatch(setLogoutAction());
+      dispatch(sessionEnded());
       router.push("/login");
     } catch (error: any) {
       const msg =

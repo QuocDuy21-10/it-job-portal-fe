@@ -24,6 +24,7 @@ import chatBotReducer, {
 } from "@/features/chatbot/redux/chat-bot.slice";
 import notificationReducer from "@/features/notification/redux/notification.slice";
 import { authErrorMiddleware } from "./middleware/auth-error.middleware";
+import { sessionListener } from "./listeners/session.listener";
 
 // Redux Persist Configuration for auth slice
 const authPersistConfig = {
@@ -69,6 +70,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     })
+      .prepend(sessionListener.middleware)
       .concat(baseApi.middleware)
       .concat(authErrorMiddleware),
 });

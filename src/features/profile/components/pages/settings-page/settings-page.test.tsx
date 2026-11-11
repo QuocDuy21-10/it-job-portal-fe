@@ -5,7 +5,7 @@ import {
   useGetMeQuery,
   useSetPasswordMutation,
 } from "@/features/auth/redux/auth.api";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { sessionEnded } from "@/features/auth/redux/auth.slice";
 
 const mockDispatch = jest.fn();
 const mockPush = jest.fn();
@@ -134,7 +134,7 @@ describe("SettingsPage", () => {
       newPassword: "NewPass123!",
       confirmPassword: "NewPass123!",
     });
-    expect(mockDispatch).toHaveBeenCalledWith(setLogoutAction());
+    expect(mockDispatch).toHaveBeenCalledWith(sessionEnded());
   });
 
   it("shows the pending deletion banner instead of the delete button", () => {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Settings } from "lucide-react";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { AccountDeletionDialog } from "@/features/profile/components/account-deletion-dialog";
 import { AccountInfoSection } from "@/features/profile/components/pages/settings-page/account-info-section";
 import { ChangePasswordModal } from "@/features/profile/components/pages/settings-page/change-password-modal";
@@ -38,7 +38,7 @@ export default function SettingsPage({
   const isGoogleUser = user?.authProvider === "google";
 
   const handleAfterPasswordChange = () => {
-    dispatch(setLogoutAction());
+    dispatch(sessionEnded());
     router.push("/login");
   };
 
