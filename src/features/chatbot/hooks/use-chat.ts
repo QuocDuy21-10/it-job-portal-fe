@@ -33,7 +33,7 @@ import {
   selectUser,
 } from "@/features/auth/redux/auth.slice";
 import { IChatToolAction, IMessage } from "@/shared/types/chat";
-import { useStreamChat } from "@/hooks/use-stream-chat";
+import { useStreamChat } from "@/features/chatbot/hooks/use-stream-chat";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 

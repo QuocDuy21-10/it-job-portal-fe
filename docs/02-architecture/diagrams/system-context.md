@@ -25,5 +25,5 @@ flowchart LR
 - [`src/shared/constants/constant.ts`](../../../src/shared/constants/constant.ts): địa chỉ backend được viết cứng
 - [`src/lib/axios/axios-instance.ts`](../../../src/lib/axios/axios-instance.ts): kênh REST
 - [`src/lib/socket/socket-provider.tsx`](../../../src/lib/socket/socket-provider.tsx): kênh Socket.IO
-- [`src/hooks/use-stream-chat.ts`](../../../src/hooks/use-stream-chat.ts): kênh chat
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../../src/features/chatbot/hooks/use-stream-chat.ts): kênh chat
 - [`src/components/google-oauth-provider.tsx`](../../../src/components/google-oauth-provider.tsx): kết nối Google

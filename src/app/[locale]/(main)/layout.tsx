@@ -1,6 +1,6 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import ChatWidget from "@/components/chatbot/chat-widget";
+import ChatWidget from "@/features/chatbot/components/chat-widget";
 
 export default function MainLayout({
   children,

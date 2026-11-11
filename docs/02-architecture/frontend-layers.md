@@ -9,7 +9,7 @@ Mã nguồn trong `src/` được chia thành các lớp, mỗi lớp có một 
 | Trang và layout | `src/app/` | Route, layout, metadata, lấy dữ liệu ban đầu trên server |
 | Giao diện | `src/components/` | Hiển thị và tương tác; `ui/` là các thành phần nền kiểu shadcn/ui |
 | Hook | `src/hooks/` | Logic dùng lại cho giao diện, bọc các lời gọi API và state |
-| Module nghiệp vụ | `src/features/` | Endpoint RTK Query, slice Redux, schema Zod của từng miền. Miền `job` và `company` đã chuyển sang feature-first: có thêm `components/`, `hooks/` (riêng `job` có thêm `config/`, `utils/`) |
+| Module nghiệp vụ | `src/features/` | Endpoint RTK Query, slice Redux, schema Zod của từng miền. Miền `job`, `company` và `chatbot` đã chuyển sang feature-first: có thêm `components/`, `hooks/` (riêng `job` có thêm `config/`, `utils/`) |
 | Hạ tầng | `src/lib/` | Axios, Redux store, Socket.IO, CASL, tiện ích PDF |
 | Dùng chung | `src/shared/` | Hằng số, kiểu dữ liệu, cấu hình, dữ liệu tĩnh |
 | Đa ngôn ngữ | `src/i18n/`, `src/locales/` | Cấu hình `next-intl` và bản dịch |
@@ -41,7 +41,7 @@ Luồng này minh họa vì sao một chủ đề thường đi qua nhiều lớ
 | Bạn cần thêm | Đặt ở |
 | --- | --- |
 | Một trang mới | `src/app/[locale]/<nhóm>/<tên>/page.tsx` |
-| Một thành phần giao diện của một miền | `src/features/<miền>/components/` nếu miền đã chuyển sang feature-first (hiện có `job`, `company`), nếu chưa thì `src/components/<miền>/` |
+| Một thành phần giao diện của một miền | `src/features/<miền>/components/` nếu miền đã chuyển sang feature-first (hiện có `job`, `company`, `chatbot`), nếu chưa thì `src/components/<miền>/` |
 | Một endpoint API | `src/features/<miền>/redux/<miền>.api.ts` |
 | Schema kiểm tra dữ liệu | `src/features/<miền>/schemas/` |
 | Logic dùng lại giữa nhiều thành phần | `src/hooks/` |

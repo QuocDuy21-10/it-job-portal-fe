@@ -66,7 +66,7 @@ Các toast dùng `id` cố định theo nội dung để cùng một lỗi khôn
 | Nơi | Lý do khác biệt |
 | --- | --- |
 | `src/lib/utils/public-content.ts` | Chạy trên server, dùng `fetch` của Next.js có `revalidate`. Không có trình duyệt nên không có `localStorage` |
-| `src/hooks/use-stream-chat.ts` | Cần đọc luồng phản hồi từng đoạn nên dùng `fetch`; tự gắn `Authorization` và `credentials: "include"` |
+| `src/features/chatbot/hooks/use-stream-chat.ts` | Cần đọc luồng phản hồi từng đoạn nên dùng `fetch`; tự gắn `Authorization` và `credentials: "include"` |
 | Làm mới token trong `axios-instance.ts` | Dùng `axios.get` trần để không kích hoạt lại interceptor |
 | Socket.IO | Kết nối WebSocket riêng, xem [Giao tiếp thời gian thực](realtime-communication.md) |
 
@@ -81,4 +81,4 @@ Vì `fetch` của chat không đi qua interceptor, lỗi 401 ở đó không t�
 - [`src/shared/base/api-response.base.ts`](../../src/shared/base/api-response.base.ts): kiểu `ApiResponse`
 - [`src/shared/types/pagination.ts`](../../src/shared/types/pagination.ts): kiểu phân trang
 - [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): ví dụ một file khai báo endpoint
-- [`src/hooks/use-stream-chat.ts`](../../src/hooks/use-stream-chat.ts): lời gọi `fetch` cho chat
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../src/features/chatbot/hooks/use-stream-chat.ts): lời gọi `fetch` cho chat

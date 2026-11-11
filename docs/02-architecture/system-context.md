@@ -35,7 +35,7 @@ Biến `NEXT_PUBLIC_API_URL` có xuất hiện trong code nhưng chỉ dùng đ�
 
 - [`src/shared/constants/constant.ts`](../../src/shared/constants/constant.ts): địa chỉ backend được viết cứng
 - [`src/lib/socket/socket-provider.tsx`](../../src/lib/socket/socket-provider.tsx): kết nối Socket.IO
-- [`src/hooks/use-stream-chat.ts`](../../src/hooks/use-stream-chat.ts): gọi chat SSE
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../src/features/chatbot/hooks/use-stream-chat.ts): gọi chat SSE
 - [`src/components/google-oauth-provider.tsx`](../../src/components/google-oauth-provider.tsx): cấu hình Google
 - [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): proxy ảnh cho PDF
 - [`next.config.ts`](../../next.config.ts): danh sách máy chủ ảnh được phép
