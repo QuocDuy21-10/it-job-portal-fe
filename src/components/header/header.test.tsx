@@ -97,7 +97,7 @@ describe("Header", () => {
   });
 
   it("lists the account links without /admin for a normal user", () => {
-    localStorage.setItem("access_token", "token");
+    localStorage.setItem("devlink:has-session", "1");
     mockAuth = {
       user: signedInUser,
       isAuthenticated: true,
@@ -120,7 +120,7 @@ describe("Header", () => {
   });
 
   it("adds the admin link for admin roles", () => {
-    localStorage.setItem("access_token", "token");
+    localStorage.setItem("devlink:has-session", "1");
     mockRole = "SUPER ADMIN";
     mockAuth = {
       user: signedInUser,
@@ -135,7 +135,7 @@ describe("Header", () => {
   });
 
   it("signs out through useLogout", () => {
-    localStorage.setItem("access_token", "token");
+    localStorage.setItem("devlink:has-session", "1");
     mockAuth = {
       user: signedInUser,
       isAuthenticated: true,

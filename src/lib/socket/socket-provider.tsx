@@ -11,7 +11,11 @@ import React, {
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import { getAccessToken } from "@/lib/auth/session";
+import {
+  getAccessTokenAsync,
+  hasSession,
+  refreshAccessToken,
+} from "@/lib/auth/session";
 
 interface SocketContextValue {
   socket: Socket | null;
@@ -29,8 +33,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   const connect = useCallback(() => {
-    const token = getAccessToken();
-    if (!token) return;
+    if (!hasSession()) return;
 
     // Disconnect existing socket if any
     if (socketRef.current) {
@@ -39,7 +42,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }
 
     const socket = io(`${API_BASE_URL_IMAGE}/notifications`, {
-      auth: { token },
+      // A function, so every (re)connect sends the current token, including one restored after reload.
+      auth: (cb: (data: object) => void) => {
+        void getAccessTokenAsync().then((token) => cb({ token }));
+      },
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 5,
@@ -55,13 +61,13 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       setIsConnected(false);
       console.log("[Socket.IO] Disconnected:", reason);
 
-      // If server disconnected us (e.g., token expired), try to reconnect with fresh token
+      // The server dropped us (e.g. token expired): refresh, then reconnect; `auth` reads the new token.
       if (reason === "io server disconnect") {
-        const freshToken = getAccessToken();
-        if (freshToken) {
-          socket.auth = { token: freshToken };
-          socket.connect();
-        }
+        void refreshAccessToken().then((token) => {
+          if (token) {
+            socket.connect();
+          }
+        });
       }
     });
 

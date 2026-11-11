@@ -2,7 +2,7 @@
 
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useAuth } from "@/hooks/use-auth";
-import { getAccessToken } from "@/lib/auth/session";
+import { hasSession } from "@/lib/auth/session";
 
 /**
  * AuthInitializer Component
@@ -15,8 +15,9 @@ import { getAccessToken } from "@/lib/auth/session";
 export function AuthInitializer() {
   const { isRehydrated } = useAuth();
 
-  // Only fetch user data if token exists - prevent infinite 401 loop
-  const hasToken = getAccessToken() !== null;
+  // Skip getMe for guests to avoid a 401 loop; for a restorable session the request waits in the axios
+  // interceptor until the token is back.
+  const hasToken = hasSession();
 
   useGetMeQuery(undefined, {
     skip: !isRehydrated || !hasToken, // Skip query if no token or not rehydrated yet
