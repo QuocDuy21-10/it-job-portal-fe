@@ -340,3 +340,5 @@ export function useJobList({
     isDraftDirty,
   };
 }
+
+export type JobListState = ReturnType<typeof useJobList>;

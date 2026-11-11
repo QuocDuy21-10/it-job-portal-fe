@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React from "react";
 import { useJobList } from "@/features/job/hooks/use-job-list";
+import { useJobListUrlSync } from "@/features/job/hooks/use-job-list-url-sync";
+import { getJobFilterSummary } from "@/features/job/utils/job-filter-summary";
 import { SimplePagination } from "@/components/simple-pagination";
 import { Link } from "@/i18n/navigation";
 import {
@@ -41,9 +42,6 @@ import { useI18n } from "@/hooks/use-i18n";
 import { JobSearchCard } from "@/features/job/components/job-search-card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  DEFAULT_JOB_LIST_SORT,
-  buildJobListUrlSearchParams,
-  buildPathWithSearchParams,
   buildJobSearchParams,
   type JobListSearchState,
 } from "@/lib/utils/public-listing";
@@ -88,9 +86,6 @@ function JobsPageContent({
   initialData,
   initialSearchState,
 }: JobsPageClientProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { t } = useI18n();
 
   // UI state
@@ -124,20 +119,13 @@ function JobsPageContent({
     initialData,
     initialSearchState,
   });
-
-  const targetUrl = useMemo(() => {
-    return buildPathWithSearchParams(
-      pathname,
-      buildJobListUrlSearchParams(currentSearchState)
-    );
-  }, [currentSearchState, pathname]);
-
-  const currentUrl = useMemo(() => {
-    return buildPathWithSearchParams(
-      pathname,
-      new URLSearchParams(searchParams.toString())
-    );
-  }, [pathname, searchParams]);
+  const listingsRef = useJobListUrlSync(currentSearchState);
+  const {
+    activeFiltersCount,
+    hasAppliedFilters,
+    hasResettableState,
+    showExternalFilterHint,
+  } = getJobFilterSummary(currentSearchState, isDraftDirty);
 
   const {
     experience,
@@ -169,69 +157,12 @@ function JobsPageContent({
     [applyFilters]
   );
 
-  useEffect(() => {
-    if (currentUrl === targetUrl) {
-      return;
-    }
-
-    router.replace(targetUrl, { scroll: false });
-  }, [currentUrl, router, targetUrl]);
-
-  const listingsRef = useRef<HTMLDivElement>(null);
-  const isFirstMount = useRef(true);
-
-  useEffect(() => {
-    if (isFirstMount.current) {
-      isFirstMount.current = false;
-      return;
-    }
-
-    if (listingsRef.current) {
-      const elementPosition =
-        listingsRef.current.getBoundingClientRect().top + window.scrollY;
-      const offsetPosition = elementPosition - 84; // 64px header + 20px buffer
-      window.scrollTo({
-        top: offsetPosition >= 0 ? offsetPosition : 0,
-        behavior: "smooth",
-      });
-    }
-  }, [
-    currentSearchState.page,
-    currentSearchState.q,
-    currentSearchState.locationCode,
-    currentSearchState.type,
-    currentSearchState.experience,
-    currentSearchState.salary,
-    currentSearchState.sort,
-    currentSearchState.source,
-  ]);
-
   const clearAllFilters = () => {
     resetAllFilters();
   };
 
-  const hasAppliedFilters = Boolean(
-    searchQuery ||
-    locationQuery ||
-    jobType !== "all" ||
-    experience !== "all" ||
-    salaryRange !== "all" ||
-    sortBy !== DEFAULT_JOB_LIST_SORT ||
-    source !== "all"
-  );
-  // External jobs have no salary/form-of-work data, so these filters drop them.
-  const showExternalFilterHint =
-    source !== "internal" &&
-    (salaryRange !== "all" || (jobType !== "all" && jobType !== "Remote"));
-  const hasResettableState = hasAppliedFilters || isDraftDirty;
-
   // Mobile Filter Drawer States & Queries
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
-
-  let activeFiltersCount = 0;
-  if (jobType !== "all") activeFiltersCount++;
-  if (experience !== "all") activeFiltersCount++;
-  if (salaryRange !== "all") activeFiltersCount++;
 
   const { data: draftJobsData } = useSearchJobsQuery(
     buildJobSearchParams({
