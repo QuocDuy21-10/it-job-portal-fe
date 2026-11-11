@@ -93,11 +93,11 @@ Sơ đồ cho thấy việc lưu chỉ được thực hiện sau khi người d
 
 ## Source code liên quan
 
-- [`src/hooks/use-chat.ts`](../../../src/hooks/use-chat.ts): điều phối, dự phòng, tool action
-- [`src/hooks/use-stream-chat.ts`](../../../src/hooks/use-stream-chat.ts): gửi và đọc stream
+- [`src/features/chatbot/hooks/use-chat.ts`](../../../src/features/chatbot/hooks/use-chat.ts): điều phối, dự phòng, tool action
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../../src/features/chatbot/hooks/use-stream-chat.ts): gửi và đọc stream
 - [`src/features/chatbot/lib/chat-stream.utils.ts`](../../../src/features/chatbot/lib/chat-stream.utils.ts): đọc sự kiện SSE
 - [`src/features/chatbot/redux/chat-bot.slice.ts`](../../../src/features/chatbot/redux/chat-bot.slice.ts): state và các bước stream
-- [`src/components/chatbot/chat-surface.tsx`](../../../src/components/chatbot/chat-surface.tsx): giao diện hộp chat
+- [`src/features/chatbot/components/chat-surface.tsx`](../../../src/features/chatbot/components/chat-surface.tsx): giao diện hộp chat
 
 Backend: [Stream chat AI](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/06-workflows/sequences/ai-chat-streaming.md) và [Module AI chat](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/ai-chat.md).
 

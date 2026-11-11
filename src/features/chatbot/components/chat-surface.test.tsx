@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import ChatSurface from "@/components/chatbot/chat-surface";
+import ChatSurface from "@/features/chatbot/components/chat-surface";
 import { useAuthModal } from "@/contexts/auth-modal-context";
-import { useChat } from "@/hooks/use-chat";
+import { useChat } from "@/features/chatbot/hooks/use-chat";
 import { useI18n } from "@/hooks/use-i18n";
 import { useAppSelector } from "@/lib/redux/hooks";
 
@@ -31,7 +31,7 @@ jest.mock("@/contexts/auth-modal-context", () => ({
   useAuthModal: jest.fn(),
 }));
 
-jest.mock("@/hooks/use-chat", () => ({
+jest.mock("@/features/chatbot/hooks/use-chat", () => ({
   useChat: jest.fn(),
 }));
 

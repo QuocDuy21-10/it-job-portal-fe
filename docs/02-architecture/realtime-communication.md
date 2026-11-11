@@ -54,7 +54,7 @@ Dù gọi là SSE, code không dùng `EventSource` (không hỗ trợ POST kèm 
 - [`src/lib/socket/use-socket.ts`](../../src/lib/socket/use-socket.ts): `useSocket`, `useSocketEvent`
 - [`src/components/notification/notification-initializer.tsx`](../../src/components/notification/notification-initializer.tsx): xử lý `notification:new`
 - [`src/hooks/use-notification.ts`](../../src/hooks/use-notification.ts): số chưa đọc và đường dẫn đích
-- [`src/hooks/use-stream-chat.ts`](../../src/hooks/use-stream-chat.ts): gửi và đọc luồng chat
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../src/features/chatbot/hooks/use-stream-chat.ts): gửi và đọc luồng chat
 - [`src/features/chatbot/lib/chat-stream.utils.ts`](../../src/features/chatbot/lib/chat-stream.utils.ts): phân tích các sự kiện
-- [`src/hooks/use-chat.ts`](../../src/hooks/use-chat.ts): chọn giữa stream và REST
+- [`src/features/chatbot/hooks/use-chat.ts`](../../src/features/chatbot/hooks/use-chat.ts): chọn giữa stream và REST
 - [`src/features/chatbot/redux/chat-bot.slice.ts`](../../src/features/chatbot/redux/chat-bot.slice.ts): state của chat

@@ -15,7 +15,7 @@ Cách hai kênh hoạt động: [Giao tiếp thời gian thực](../02-architect
 | `uuid` | `^13.0.0` | Tạo mã cho tin nhắn đang stream |
 | `sonner` | `^2.0.7` | Toast thông báo |
 
-`react-markdown` và `remark-gfm` được import trong `src/components/chatbot/chat-surface.tsx`.
+`react-markdown` và `remark-gfm` được import trong `src/features/chatbot/components/chat-surface.tsx`.
 
 ## Frontend không gọi nhà cung cấp AI
 
@@ -27,11 +27,11 @@ Không có import hay tham chiếu tới SDK hoặc địa chỉ của nhà cung
 
 | Thành phần | Vị trí | Dùng ở |
 | --- | --- | --- |
-| `ChatWidget` | `src/components/chatbot/chat-widget.tsx` | Layout `(main)` và `(profile)` |
-| `HrChatAssistant` | `src/components/chatbot/hr-chat-assistant.tsx` | Layout `(hr-dashboard)` |
-| `ChatSurface` | `src/components/chatbot/chat-surface.tsx` | Khung hội thoại, hiển thị Markdown |
+| `ChatWidget` | `src/features/chatbot/components/chat-widget.tsx` | Layout `(main)` và `(profile)` |
+| `HrChatAssistant` | `src/features/chatbot/components/hr-chat-assistant.tsx` | Layout `(hr-dashboard)` |
+| `ChatSurface` | `src/features/chatbot/components/chat-surface.tsx` | Khung hội thoại, hiển thị Markdown |
 
-Logic dùng chung nằm trong `src/features/chatbot/` (slice, phân tích sự kiện luồng, chuẩn hóa tin nhắn) và hai hook `use-chat.ts`, `use-stream-chat.ts`.
+Toàn bộ module nằm trong `src/features/chatbot/`: slice, phân tích sự kiện luồng, chuẩn hóa tin nhắn, hai hook `use-chat.ts`, `use-stream-chat.ts` và các component giao diện.
 
 ## Lý do chọn
 
@@ -40,8 +40,8 @@ Chưa có ghi chép về lý do chọn Socket.IO hay cách đọc luồng bằng
 ## Source code liên quan
 
 - [`src/lib/socket/socket-provider.tsx`](../../src/lib/socket/socket-provider.tsx): kết nối Socket.IO
-- [`src/hooks/use-stream-chat.ts`](../../src/hooks/use-stream-chat.ts): đọc luồng chat
-- [`src/hooks/use-chat.ts`](../../src/hooks/use-chat.ts): chọn giữa luồng và REST
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../src/features/chatbot/hooks/use-stream-chat.ts): đọc luồng chat
+- [`src/features/chatbot/hooks/use-chat.ts`](../../src/features/chatbot/hooks/use-chat.ts): chọn giữa luồng và REST
 - [`src/features/chatbot/lib/chat-stream.utils.ts`](../../src/features/chatbot/lib/chat-stream.utils.ts): phân loại sự kiện `token`, `done`, `error`
-- [`src/components/chatbot/chat-surface.tsx`](../../src/components/chatbot/chat-surface.tsx): hiển thị Markdown
-- [`src/components/chatbot/chat-widget.tsx`](../../src/components/chatbot/chat-widget.tsx): nút chat nổi
+- [`src/features/chatbot/components/chat-surface.tsx`](../../src/features/chatbot/components/chat-surface.tsx): hiển thị Markdown
+- [`src/features/chatbot/components/chat-widget.tsx`](../../src/features/chatbot/components/chat-widget.tsx): nút chat nổi

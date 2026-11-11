@@ -12,20 +12,20 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
-import ChatAiDisclaimer from "@/components/chatbot/chat-ai-disclaimer";
-import ChatComposer from "@/components/chatbot/chat-composer";
+import ChatAiDisclaimer from "@/features/chatbot/components/chat-ai-disclaimer";
+import ChatComposer from "@/features/chatbot/components/chat-composer";
 import {
   ChatBatteryMeter,
   ChatQuotaWarning,
-} from "@/components/chatbot/chat-quota-meter";
-import ChatTypingIndicator from "@/components/chatbot/chat-typing-indicator";
-import ChatThinkingIndicator from "@/components/chatbot/chat-thinking-indicator";
-import JobCard from "@/components/chatbot/job-card";
+} from "@/features/chatbot/components/chat-quota-meter";
+import ChatTypingIndicator from "@/features/chatbot/components/chat-typing-indicator";
+import ChatThinkingIndicator from "@/features/chatbot/components/chat-thinking-indicator";
+import JobCard from "@/features/chatbot/components/chat-job-card";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { selectUser } from "@/features/auth/redux/auth.slice";
 import { getPendingToolActionForJob } from "@/features/chatbot/lib/chat-message.utils";
 import { getChatJobIdFromPathname } from "@/features/chatbot/lib/chat-route.utils";
-import { useChat } from "@/hooks/use-chat";
+import { useChat } from "@/features/chatbot/hooks/use-chat";
 import { useI18n } from "@/hooks/use-i18n";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { cn } from "@/lib/utils";

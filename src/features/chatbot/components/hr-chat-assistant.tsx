@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ChatSurface from "@/components/chatbot/chat-surface";
+import ChatSurface from "@/features/chatbot/components/chat-surface";
 import {
   Sheet,
   SheetContent,

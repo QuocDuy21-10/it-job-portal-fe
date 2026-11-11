@@ -68,7 +68,7 @@ Sơ đồ rút gọn, không theo đúng ký pháp UML. Ứng viên làm đượ
 
 - [`src/app/[locale]/(profile)/profile/page.tsx`](../../../src/app/[locale]/(profile)/profile/page.tsx): các tab hồ sơ
 - [`src/components/modals/apply-modal.tsx`](../../../src/components/modals/apply-modal.tsx): ứng tuyển
-- [`src/components/chatbot/chat-widget.tsx`](../../../src/components/chatbot/chat-widget.tsx): trợ lý AI
+- [`src/features/chatbot/components/chat-widget.tsx`](../../../src/features/chatbot/components/chat-widget.tsx): trợ lý AI
 - [`src/lib/casl/ability.ts`](../../../src/lib/casl/ability.ts): quyền của `NORMAL USER`
 - [`src/shared/constants/roles.ts`](../../../src/shared/constants/roles.ts): trang mặc định theo vai trò
 

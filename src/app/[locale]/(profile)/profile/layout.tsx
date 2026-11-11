@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import ChatWidget from "@/components/chatbot/chat-widget";
+import ChatWidget from "@/features/chatbot/components/chat-widget";
 import ProfileSidebar from "@/components/profile/profile-sidebar";
 import ProfileBottomNav from "@/components/profile/profile-bottom-nav";
 import { PendingDeletionBanner } from "@/components/profile/pending-deletion-banner";

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useChat } from "@/hooks/use-chat";
+import { useChat } from "@/features/chatbot/hooks/use-chat";
 import { useI18n } from "@/hooks/use-i18n";
 import { XMarkIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
-import ChatTooltip from "@/components/chatbot/chat-tooltip";
-import ChatSurface from "@/components/chatbot/chat-surface";
+import ChatTooltip from "@/features/chatbot/components/chat-tooltip";
+import ChatSurface from "@/features/chatbot/components/chat-surface";
 import {
   Sheet,
   SheetContent,

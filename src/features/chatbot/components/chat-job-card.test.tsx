@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import JobCard from "@/components/chatbot/job-card";
+import JobCard from "@/features/chatbot/components/chat-job-card";
 import { useI18n } from "@/hooks/use-i18n";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { IJob } from "@/shared/types/backend";

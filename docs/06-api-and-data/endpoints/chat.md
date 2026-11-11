@@ -10,16 +10,16 @@ Trợ lý trả lời từng chữ để người dùng không phải đợi c�
 
 | Hook RTK Query | Method và path | Tham số frontend gửi | Cache tag | Nơi dùng |
 | --- | --- | --- | --- | --- |
-| `useSendMessageMutation` | `POST /chat/message` | `ISendMessageRequest`: `message`, `jobId?` | Không | `hooks/use-chat.ts` (đường dự phòng) |
+| `useSendMessageMutation` | `POST /chat/message` | `ISendMessageRequest`: `message`, `jobId?` | Không | `features/chatbot/hooks/use-chat.ts` (đường dự phòng) |
 | `useGetChatHistoryQuery` | `GET /chat/history` | `params`: `page` (mặc định 1), `limit` (50) | Không | Chưa có nơi nào dùng |
-| `useLazyGetChatHistoryQuery` | `GET /chat/history` | Như trên | Không | `hooks/use-chat.ts` |
-| `useClearChatHistoryMutation` | `DELETE /chat/clear` | Không | Không | `hooks/use-chat.ts` |
-| `useConfirmToolActionMutation` | `POST /chat/tool-actions/:actionId/confirm` | `actionId: string` | Làm mất hiệu lực `Auth`, `User` | `hooks/use-chat.ts` |
-| `useCancelToolActionMutation` | `DELETE /chat/tool-actions/:actionId` | `actionId: string` | Không | `hooks/use-chat.ts` |
+| `useLazyGetChatHistoryQuery` | `GET /chat/history` | Như trên | Không | `features/chatbot/hooks/use-chat.ts` |
+| `useClearChatHistoryMutation` | `DELETE /chat/clear` | Không | Không | `features/chatbot/hooks/use-chat.ts` |
+| `useConfirmToolActionMutation` | `POST /chat/tool-actions/:actionId/confirm` | `actionId: string` | Làm mất hiệu lực `Auth`, `User` | `features/chatbot/hooks/use-chat.ts` |
+| `useCancelToolActionMutation` | `DELETE /chat/tool-actions/:actionId` | `actionId: string` | Không | `features/chatbot/hooks/use-chat.ts` |
 
 Các endpoint này dùng `transformResponse` để bóc `data` khỏi `ApiResponse`, nên hook trả thẳng dữ liệu (`IChatResponse`, `IChatHistoryResponse`, ...) chứ không phải `ApiResponse<...>`. Riêng hai endpoint tool action lấy `message` từ `data.message`, nếu không có thì từ `message` của phản hồi.
 
-`useChat` ở `hooks/use-chat.ts` bọc các hook trên cùng `useStreamChat`, kèm toast và cập nhật Redux.
+`useChat` ở `features/chatbot/hooks/use-chat.ts` bọc các hook trên cùng `useStreamChat`, kèm toast và cập nhật Redux.
 
 ## Gửi tin nhắn dạng stream
 
@@ -68,8 +68,8 @@ Trước khi gọi bất kỳ endpoint nào, `useChat` bỏ qua im lặng tin nh
 ## Source code liên quan
 
 - [`src/features/chatbot/redux/chat-bot.api.ts`](../../../src/features/chatbot/redux/chat-bot.api.ts): khai báo endpoint
-- [`src/hooks/use-stream-chat.ts`](../../../src/hooks/use-stream-chat.ts): gửi và đọc stream
-- [`src/hooks/use-chat.ts`](../../../src/hooks/use-chat.ts): điều phối, dự phòng, tool action
+- [`src/features/chatbot/hooks/use-stream-chat.ts`](../../../src/features/chatbot/hooks/use-stream-chat.ts): gửi và đọc stream
+- [`src/features/chatbot/hooks/use-chat.ts`](../../../src/features/chatbot/hooks/use-chat.ts): điều phối, dự phòng, tool action
 - [`src/features/chatbot/lib/chat-stream.utils.ts`](../../../src/features/chatbot/lib/chat-stream.utils.ts): đọc SSE
 - [`src/features/chatbot/lib/chat-route.utils.ts`](../../../src/features/chatbot/lib/chat-route.utils.ts): lấy mã việc làm từ đường dẫn
 

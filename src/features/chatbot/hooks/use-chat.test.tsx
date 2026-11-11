@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useChat } from "@/hooks/use-chat";
+import { useChat } from "@/features/chatbot/hooks/use-chat";
 import {
   useCancelToolActionMutation,
   useClearChatHistoryMutation,
@@ -8,7 +8,7 @@ import {
   useSendMessageMutation,
 } from "@/features/chatbot/redux/chat-bot.api";
 import { setMessages, setQuota } from "@/features/chatbot/redux/chat-bot.slice";
-import { useStreamChat } from "@/hooks/use-stream-chat";
+import { useStreamChat } from "@/features/chatbot/hooks/use-stream-chat";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 
 jest.mock("uuid", () => ({
@@ -33,7 +33,7 @@ jest.mock("@/features/chatbot/redux/chat-bot.api", () => ({
   useSendMessageMutation: jest.fn(),
 }));
 
-jest.mock("@/hooks/use-stream-chat", () => ({
+jest.mock("@/features/chatbot/hooks/use-stream-chat", () => ({
   useStreamChat: jest.fn(),
 }));
 

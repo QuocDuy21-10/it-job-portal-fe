@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { HrRoute } from "@/components/hr-route";
 import { DashboardShell } from "@/components/admin/dashboard-shell";
-import HrChatAssistant from "@/components/chatbot/hr-chat-assistant";
+import HrChatAssistant from "@/features/chatbot/components/hr-chat-assistant";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
 
