@@ -4,12 +4,10 @@ import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  CompanyLogo,
-  FavoriteButton,
-  SkillTags,
-  StatusIndicator,
-} from "@/features/job/components/job-card";
+import { CompanyLogo } from "@/features/job/components/job-card/company-logo";
+import { FavoriteButton } from "@/features/job/components/job-card/favorite-button";
+import { SkillTags } from "@/features/job/components/job-card/skill-tags";
+import { StatusIndicator } from "@/features/job/components/job-card/status-indicator";
 import {
   JOB_LEVEL_LABEL_KEYS,
   JOB_STATUS_LABEL_KEYS,
