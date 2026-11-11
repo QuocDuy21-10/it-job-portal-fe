@@ -1,0 +1,254 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { ArrowLeft, Loader2, FileText, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ICVProfile } from "@/shared/types/cv";
+import { useCV } from "@/features/cv-builder/hooks/use-cv";
+import { useI18n } from "@/hooks/use-i18n";
+import { useRouter } from "@/i18n/navigation";
+import DownloadPDFButton from "@/features/cv-builder/components/pdf/download-pdf-button";
+import PDFPreview from "@/features/cv-builder/components/pdf/pdf-preview";
+import { ClassicTemplate } from "@/features/cv-builder/components/templates/classic/ClassicTemplate";
+import { ModernTemplate } from "@/features/cv-builder/components/templates/modern/ModernTemplate";
+import { MinimalTemplate } from "@/features/cv-builder/components/templates/minimal/MinimalTemplate";
+import { cn } from "@/lib/utils";
+
+export default function CVPreviewPage() {
+  const router = useRouter();
+  const { t } = useI18n();
+  const [cvData, setCVData] = useState<ICVProfile | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState("classic");
+  const [showPDFPreview, setShowPDFPreview] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { fetchMyCVProfile } = useCV();
+
+  useEffect(() => {
+    const loadCVData = async () => {
+      setIsLoading(true);
+      const result = await fetchMyCVProfile();
+
+      if (result) {
+        setCVData({
+          _id: result._id,
+          userId: result.userId,
+          personalInfo: {
+            avatar: result.personalInfo.avatar || "",
+            title: result.personalInfo.title || "",
+            fullName: result.personalInfo.fullName,
+            phone: result.personalInfo.phone || "",
+            email: result.personalInfo.email,
+            birthday: result.personalInfo.birthday
+              ? new Date(result.personalInfo.birthday)
+              : undefined,
+            gender: result.personalInfo.gender as
+              "male" | "female" | "other" | undefined,
+            address: result.personalInfo.address || "",
+            personalLink: result.personalInfo.personalLink || "",
+            bio: result.personalInfo.bio || "",
+          },
+          education: result.education.map((edu: any) => ({
+            id: edu.id || "",
+            school: edu.school,
+            degree: edu.degree,
+            field: edu.field,
+            startDate: edu.startDate,
+            endDate: edu.endDate || "",
+            description: edu.description || "",
+          })),
+          experience: result.experience.map((exp: any) => ({
+            id: exp.id || "",
+            company: exp.company,
+            position: exp.position,
+            startDate: exp.startDate,
+            endDate: exp.endDate || "",
+            description: exp.description || "",
+          })),
+          skills: result.skills.map((skill: any) => ({
+            id: skill.id || "",
+            name: skill.name,
+            level: skill.level,
+          })),
+          languages: result.languages.map((lang: any) => ({
+            id: lang.id || "",
+            name: lang.name,
+            proficiency: lang.proficiency,
+          })),
+          projects: result.projects.map((proj: any) => ({
+            id: proj.id || "",
+            name: proj.name,
+            position: proj.position || "",
+            description: proj.description,
+            link: proj.link || "",
+          })),
+          certificates: result.certificates.map((cert: any) => ({
+            id: cert.id || "",
+            name: cert.name,
+            issuer: cert.issuer,
+            date: cert.date,
+          })),
+          awards: result.awards.map((award: any) => ({
+            id: award.id || "",
+            name: award.name,
+            date: award.date,
+            description: award.description || "",
+          })),
+          isActive: result.isActive,
+          lastUpdated: result.updatedAt,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+        });
+      }
+
+      setIsLoading(false);
+    };
+
+    loadCVData();
+  }, [fetchMyCVProfile]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+          <p className="text-muted-foreground">{t("cvPreviewPage.loading")}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cvData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <FileText className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+          <h2 className="text-xl font-semibold mb-2">
+            {t("cvPreviewPage.emptyTitle")}
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            {t("cvPreviewPage.emptyDescription")}
+          </p>
+          <Button onClick={() => router.push("/profile?tab=create-cv")}>
+            {t("cvPreviewPage.createButton")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-card border-b border-border sticky top-0 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/profile?tab=create-cv")}
+              className="flex items-center gap-2 text-foreground font-medium hover:text-primary transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t("cvPreviewPage.backToEdit")}
+            </Button>
+
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowPDFPreview(!showPDFPreview)}
+                className="flex items-center gap-2"
+              >
+                {showPDFPreview ? (
+                  <>
+                    <EyeOff className="w-4 h-4" />
+                    {t("cvPreviewPage.hidePdf")}
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4" />
+                    {t("cvPreviewPage.showPdf")}
+                  </>
+                )}
+              </Button>
+
+              <DownloadPDFButton
+                cvData={cvData}
+                template={selectedTemplate as "classic" | "modern" | "minimal"}
+                fileName={`CV_${cvData.personalInfo.fullName?.replace(/\s+/g, "_") || "CV"}`}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CV Preview & Controls */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 space-y-6">
+        {/* Template Selector Card */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6 bg-card border border-border/80 rounded-xl px-5 py-2 shadow-sm">
+            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              {t("cvPreviewPage.templateLabel")}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedTemplate("classic")}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-semibold rounded-lg transition-all cursor-pointer",
+                  selectedTemplate === "classic"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
+              >
+                {t("cvPreviewPage.templateClassic")}
+              </button>
+              <button
+                onClick={() => setSelectedTemplate("modern")}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-semibold rounded-lg transition-all cursor-pointer",
+                  selectedTemplate === "modern"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
+              >
+                {t("cvPreviewPage.templateModern")}
+              </button>
+              <button
+                onClick={() => setSelectedTemplate("minimal")}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-semibold rounded-lg transition-all cursor-pointer",
+                  selectedTemplate === "minimal"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
+              >
+                {t("cvPreviewPage.templateMinimal")}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {showPDFPreview ? (
+          <Card className="p-4 md:p-6 bg-white dark:bg-card border border-border shadow-lg">
+            <PDFPreview
+              cvData={cvData}
+              template={selectedTemplate as "classic" | "modern" | "minimal"}
+            />
+          </Card>
+        ) : (
+          <Card className="p-6 md:p-8 bg-white dark:bg-card border border-border shadow-lg">
+            {selectedTemplate === "classic" && (
+              <ClassicTemplate cvData={cvData} />
+            )}
+            {selectedTemplate === "modern" && (
+              <ModernTemplate cvData={cvData} />
+            )}
+            {selectedTemplate === "minimal" && (
+              <MinimalTemplate cvData={cvData} />
+            )}
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}

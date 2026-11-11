@@ -1295,6 +1295,10 @@ export const en = {
       languageAdded: "Added: {name}",
       languageEditSuccess: "Language updated successfully",
       languageUpdated: "Updated: {name}",
+      skillAddSuccess: "Skill added successfully",
+      skillAdded: "Added skill: {name}",
+      skillEditSuccess: "Skill updated successfully",
+      skillUpdated: "Updated: {name}",
 
       educationAddSuccess: "Education added successfully",
       educationAdded: "Added: {school} - {degree}",
@@ -1320,6 +1324,8 @@ export const en = {
     saveSuccess: "CV saved successfully!",
     saveError: "Error saving CV",
     genericError: "Something went wrong",
+    saveCv: "Save CV",
+    previewAndDownload: "Preview & Download PDF",
   },
   emailSubscription: {
     title: "Job alert subscriptions",

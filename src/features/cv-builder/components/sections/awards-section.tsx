@@ -1,0 +1,186 @@
+"use client";
+
+import { Plus, Trash2, Edit2, Trophy, Calendar } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import CVFormSection from "@/components/sections/cv-form-section";
+import AwardModal from "../modals/award-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
+import { type AwardRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
+import { useI18n } from "@/hooks/use-i18n";
+import { toast } from "sonner";
+import { formatLocaleDate } from "@/lib/utils/locale-formatters";
+
+interface Award extends AwardRequest {
+  id: string;
+}
+
+interface AwardsSectionProps {
+  awards: Award[];
+  onAdd: (award: Award) => void;
+  onUpdate: (id: string, field: string, value: string) => void;
+  onRemove: (id: string) => void;
+}
+
+export default function AwardsSection({
+  awards,
+  onAdd,
+  onUpdate,
+  onRemove,
+}: AwardsSectionProps) {
+  const { t, language } = useI18n();
+
+  const {
+    isOpen,
+    mode,
+    currentItem: currentAward,
+    openAddModal,
+    openEditModal,
+    closeModal,
+    handleSubmit,
+  } = useCvItemModal<AwardRequest, Award>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      name: data.name,
+      date: data.date,
+      description: data.description || "",
+    }),
+    addToast: (data) => ({
+      title: t("cv.toasts.awardAddSuccess"),
+      description: t("cv.toasts.awardAdded", { name: data.name }),
+    }),
+    editToast: (data) => ({
+      title: t("cv.toasts.awardEditSuccess"),
+      description: t("cv.toasts.awardUpdated", { name: data.name }),
+    }),
+  });
+
+  const handleDelete = (id: string, name: string) => {
+    onRemove(id);
+    toast.success("Xóa giải thưởng thành công", {
+      description: `Đã xóa: ${name}`,
+      duration: 2000,
+    });
+  };
+
+  const formatDate = (date: Date | string) => {
+    return formatLocaleDate(date, language, {
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  return (
+    <>
+      <CVFormSection
+        title={t("cv.awards.title")}
+        description={t("cv.awards.description")}
+        actionButton={
+          <Button
+            onClick={openAddModal}
+            className="gap-2 bg-primary hover:bg-primary/90"
+          >
+            <Plus className="w-4 h-4" />
+            {t("cv.awards.addButton")}
+          </Button>
+        }
+      >
+        {awards.length === 0 ? (
+          <div className="py-8 text-center rounded-xl border border-dashed border-border bg-secondary/10">
+            <p className="text-sm text-muted-foreground">
+              {t("cv.awards.noData")}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {awards.map((award) => (
+              <Card
+                key={award.id}
+                className="group relative p-5 bg-gradient-to-br from-card to-secondary/20 border border-border hover:border-primary/40 hover:shadow-lg transition-all duration-300"
+              >
+                {/* Card Header */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <Trophy className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground text-sm mb-1 truncate">
+                        {award.name}
+                      </h3>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{formatDate(award.date)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEditModal(award)}
+                            className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chỉnh sửa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(award.id, award.name)}
+                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Xóa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
+
+                {/* Description */}
+                {award.description && (
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 border-t border-border/50 pt-3">
+                    {award.description}
+                  </p>
+                )}
+              </Card>
+            ))}
+          </div>
+        )}
+      </CVFormSection>
+
+      <AwardModal
+        isOpen={isOpen}
+        mode={mode}
+        award={currentAward}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+      />
+    </>
+  );
+}

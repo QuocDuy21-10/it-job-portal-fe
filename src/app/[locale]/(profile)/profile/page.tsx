@@ -8,7 +8,7 @@ import MyJobsPage from "@/components/profile/pages/my-jobs-page";
 import EmailSubscriptionPage from "@/components/profile/pages/email-subscription-page";
 import NotificationsPage from "@/components/profile/pages/notifications-page";
 import SettingsPage from "@/components/profile/pages/settings-page";
-import CreateCVPage from "@/components/profile/pages/create-cv-page";
+import CreateCVPage from "@/features/cv-builder/components/create-cv-page";
 import { type PageType } from "@/components/profile/profile-sidebar";
 
 const VALID_TABS: PageType[] = [

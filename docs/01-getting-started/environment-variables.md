@@ -8,7 +8,7 @@ DevLink Frontend đọc bốn biến môi trường, trong đó chỉ `NEXT_PUBL
 | --- | --- | --- | --- |
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Trang đăng nhập và nút đăng nhập Google | `google-oauth-provider.tsx` | Xem bên dưới |
 | `NEXT_PUBLIC_SITE_URL` | Địa chỉ gốc của site trong canonical, sitemap, robots, Open Graph | `shared/constants/seo.ts` | Dùng `http://localhost:3000` |
-| `NEXT_PUBLIC_API_URL` | Mở rộng danh sách máy chủ ảnh được phép của proxy ảnh PDF | `api/proxy-image/route.ts`, `lib/pdf/image-helpers.ts` | Chỉ `localhost:8081` được phép |
+| `NEXT_PUBLIC_API_URL` | Mở rộng danh sách máy chủ ảnh được phép của proxy ảnh PDF | `api/proxy-image/route.ts`, `features/cv-builder/lib/pdf/image-helpers.ts` | Chỉ `localhost:8081` được phép |
 | `NODE_ENV` | Do Next.js tự đặt | `app/error.tsx` | Khi là `development`, trang lỗi hiện thêm chi tiết lỗi |
 
 Các biến có tiền tố `NEXT_PUBLIC_` được Next.js nhúng vào mã khi **build**, nên đổi giá trị cần chạy lại `npm run build` (hoặc khởi động lại `npm run dev`).
@@ -44,7 +44,7 @@ Khi đặt biến này (thử với một giá trị giả có dạng `xxx.apps.
 
 | Nơi | Cách xử lý |
 | --- | --- |
-| `lib/pdf/image-helpers.ts` | Lấy phần host bằng `new URL(...).host`, nên giá trị có đường dẫn như `/api/v1` vẫn dùng được |
+| `features/cv-builder/lib/pdf/image-helpers.ts` | Lấy phần host bằng `new URL(...).host`, nên giá trị có đường dẫn như `/api/v1` vẫn dùng được |
 | `app/api/proxy-image/route.ts` | Chỉ bỏ `http(s)://` rồi so cả chuỗi còn lại với host của ảnh, nên giá trị có đường dẫn sẽ không bao giờ khớp |
 
 Ví dụ trong `README.md` đặt `NEXT_PUBLIC_API_URL=http://localhost:8081/api/v1`. Vì `localhost:8081` luôn được cho phép sẵn nên giá trị này không gây khác biệt khi chạy cục bộ, nhưng với máy chủ thật nên đặt dạng chỉ có host, ví dụ `https://api.example.com`, thì proxy mới chấp nhận.
@@ -65,7 +65,7 @@ Muốn trỏ frontend tới backend khác, hiện phải sửa các file trên. 
 - [`src/components/google-oauth-provider.tsx`](../../src/components/google-oauth-provider.tsx): đọc `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
 - [`src/shared/constants/seo.ts`](../../src/shared/constants/seo.ts): đọc `NEXT_PUBLIC_SITE_URL`
 - [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): danh sách máy chủ ảnh được phép
-- [`src/lib/pdf/image-helpers.ts`](../../src/lib/pdf/image-helpers.ts): đổi địa chỉ ảnh sang proxy
+- [`src/features/cv-builder/lib/pdf/image-helpers.ts`](../../src/features/cv-builder/lib/pdf/image-helpers.ts): đổi địa chỉ ảnh sang proxy
 - [`src/app/error.tsx`](../../src/app/error.tsx): dùng `NODE_ENV`
 - [`src/shared/constants/constant.ts`](../../src/shared/constants/constant.ts): địa chỉ backend viết cứng
 - [`next.config.ts`](../../next.config.ts): máy chủ ảnh cho `next/image`
