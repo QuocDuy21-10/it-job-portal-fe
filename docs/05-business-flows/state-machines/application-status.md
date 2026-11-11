@@ -67,7 +67,7 @@ Chưa có ghi chép về lý do. Đây là chỗ frontend lệch backend; tài l
 - [`src/features/resume/schemas/resume.schema.ts`](../../../src/features/resume/schemas/resume.schema.ts): danh sách trạng thái của frontend
 - [`src/components/resume/resume-form.tsx`](../../../src/components/resume/resume-form.tsx): form đổi trạng thái
 - [`src/components/resume/resume-table.tsx`](../../../src/components/resume/resume-table.tsx): màu theo trạng thái
-- [`src/components/profile/pages/my-jobs-page.tsx`](../../../src/components/profile/pages/my-jobs-page.tsx): nhãn trạng thái cho ứng viên
+- [`src/features/profile/components/pages/my-jobs-page.tsx`](../../../src/features/profile/components/pages/my-jobs-page.tsx): nhãn trạng thái cho ứng viên
 - [`src/app/[locale]/(dashboard)/admin/resumes/page.tsx`](../../../src/app/[locale]/(dashboard)/admin/resumes/page.tsx): bộ lọc và đổi trạng thái
 - [`src/hooks/use-resume.ts`](../../../src/hooks/use-resume.ts): gọi cập nhật
 

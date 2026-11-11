@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   BarChart3,
@@ -19,18 +18,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { type PageType } from "@/features/profile/config/profile-tabs";
+import { useProfileTab } from "@/features/profile/hooks/use-profile-tab";
 import { useI18n } from "@/hooks/use-i18n";
-import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-
-export type PageType =
-  | "overview"
-  | "my-cv"
-  | "create-cv"
-  | "my-jobs"
-  | "email-subscription"
-  | "notifications"
-  | "settings";
 
 interface MenuItem {
   id: PageType;
@@ -40,16 +31,6 @@ interface MenuItem {
   description?: string;
 }
 
-const VALID_TABS: PageType[] = [
-  "overview",
-  "my-cv",
-  "create-cv",
-  "my-jobs",
-  "email-subscription",
-  "notifications",
-  "settings",
-];
-
 interface ProfileSidebarProps {
   onExpandedChange?: (isExpanded: boolean) => void;
 }
@@ -57,18 +38,8 @@ interface ProfileSidebarProps {
 export default function ProfileSidebar({
   onExpandedChange,
 }: ProfileSidebarProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { currentPage, goToPage: handlePageChange } = useProfileTab();
   const { t } = useI18n();
-
-  const currentPage: PageType = useMemo(() => {
-    const tab = searchParams.get("tab") as PageType;
-    return tab && VALID_TABS.includes(tab) ? tab : "overview";
-  }, [searchParams]);
-
-  const handlePageChange = (page: PageType) => {
-    router.push(`/profile?tab=${page}`, { scroll: false });
-  };
 
   // Auto-detect screen size và set initial state
   const [isExpanded, setIsExpanded] = useState(true);

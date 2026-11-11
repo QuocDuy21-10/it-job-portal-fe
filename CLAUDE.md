@@ -30,10 +30,10 @@ src/
 ├── components/                 # React components
 │   ├── ui/                     # Shadcn/Radix UI wrappers (Button, Dialog, Form, etc.)
 │   ├── admin/                  # Admin dashboard components
-│   └── ...                     # auth, profile, etc. (job, company, chatbot and CV UI live in features/)
+│   └── ...                     # auth, header, admin, etc. (job, company, chatbot, CV and profile UI live in features/)
 ├── features/                   # Feature modules: RTK Query API defs + Redux slices
 │   ├── {domain}/redux/         # slice.ts + api.ts per domain (auth, user, job, company, resume, ...)
-│   └── job/, company/, chatbot/, cv-builder/ # Feature-first: also components/, hooks/ (+ config/, utils/, lib/ where needed); no barrel
+│   └── job/, company/, chatbot/, cv-builder/, profile/ # Feature-first: also components/, hooks/ (+ config/, utils/, lib/ where needed); no barrel
 ├── hooks/                      # Custom hooks wrapping feature logic (use-auth, use-job, use-cv, ...)
 ├── lib/
 │   ├── redux/                  # Store config, base API, Redux provider

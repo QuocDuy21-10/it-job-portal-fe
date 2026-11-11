@@ -124,7 +124,8 @@ Chưa có test cho: luồng làm mới token, trang xác minh email, quên và �
 - [`src/contexts/auth-modal-context.tsx`](../../src/contexts/auth-modal-context.tsx): mở và đóng modal
 - [`src/hooks/use-verification.ts`](../../src/hooks/use-verification.ts): OTP và gửi lại mã
 - [`src/hooks/use-auth.ts`](../../src/hooks/use-auth.ts): trạng thái đăng nhập
-- [`src/components/profile/pages/settings-page.tsx`](../../src/components/profile/pages/settings-page.tsx): đổi và đặt mật khẩu
+- [`src/features/profile/components/pages/settings-page/change-password-modal.tsx`](../../src/features/profile/components/pages/settings-page/change-password-modal.tsx): đổi mật khẩu
+- [`src/features/profile/components/pages/settings-page/set-password-modal.tsx`](../../src/features/profile/components/pages/settings-page/set-password-modal.tsx): đặt mật khẩu
 - [`src/features/auth/schemas/auth.schema.ts`](../../src/features/auth/schemas/auth.schema.ts): quy tắc kiểm tra
 
 Tài liệu backend: [Auth và phiên](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/auth-and-sessions.md) và [Use case xác thực](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/06-workflows/use-cases/authentication.md).

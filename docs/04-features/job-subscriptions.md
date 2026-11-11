@@ -71,8 +71,8 @@ Chưa có test cho trang đăng ký nhận việc và danh sách đăng ký.
 
 ## Source code liên quan
 
-- [`src/components/profile/pages/email-subscription-page.tsx`](../../src/components/profile/pages/email-subscription-page.tsx): trang và form
-- [`src/components/profile/subscription-list.tsx`](../../src/components/profile/subscription-list.tsx): danh sách và xóa
+- [`src/features/profile/components/pages/email-subscription-page.tsx`](../../src/features/profile/components/pages/email-subscription-page.tsx): trang và form
+- [`src/features/profile/components/subscription-list.tsx`](../../src/features/profile/components/subscription-list.tsx): danh sách và xóa
 - [`src/features/subscriber/redux/subscriber.api.ts`](../../src/features/subscriber/redux/subscriber.api.ts): endpoint
 - [`src/features/subscriber/schemas/subscriber.schema.ts`](../../src/features/subscriber/schemas/subscriber.schema.ts): kiểu và kiểm tra
 - [`src/hooks/use-skill-catalog.ts`](../../src/hooks/use-skill-catalog.ts): danh mục kỹ năng

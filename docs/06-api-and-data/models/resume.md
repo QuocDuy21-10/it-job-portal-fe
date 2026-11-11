@@ -82,7 +82,7 @@ Endpoint và hook: [Endpoint Resumes](../endpoints/resumes.md). Luồng nộp: [
 - [`src/features/resume/schemas/resume.schema.ts`](../../../src/features/resume/schemas/resume.schema.ts): các schema và type
 - [`src/shared/types/backend.d.ts`](../../../src/shared/types/backend.d.ts): `IResume`
 - [`src/components/resume/resume-table.tsx`](../../../src/components/resume/resume-table.tsx): bảng hồ sơ quản trị
-- [`src/components/profile/pages/my-jobs-page.tsx`](../../../src/components/profile/pages/my-jobs-page.tsx): việc đã ứng tuyển
+- [`src/features/profile/components/pages/my-jobs-page.tsx`](../../../src/features/profile/components/pages/my-jobs-page.tsx): việc đã ứng tuyển
 
 Backend: collection [resumes](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/04-database/collections/resumes.md) và [enum trạng thái](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/resumes/enums/resume-status.enum.ts).
 

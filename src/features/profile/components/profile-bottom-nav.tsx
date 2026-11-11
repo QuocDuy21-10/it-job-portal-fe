@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import {
   LayoutGrid,
   FileText,
@@ -11,12 +10,10 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
+import { type PageType } from "@/features/profile/config/profile-tabs";
+import { useProfileTab } from "@/features/profile/hooks/use-profile-tab";
 import { useI18n } from "@/hooks/use-i18n";
-import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-
-export type PageType =
-  "overview" | "my-cv" | "create-cv" | "my-jobs" | "notifications" | "settings";
 
 interface NavItem {
   id: PageType;
@@ -28,28 +25,9 @@ interface ProfileBottomNavProps {
   className?: string;
 }
 
-const VALID_TABS: PageType[] = [
-  "overview",
-  "my-cv",
-  "create-cv",
-  "my-jobs",
-  "notifications",
-  "settings",
-];
-
 export default function ProfileBottomNav({ className }: ProfileBottomNavProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { currentPage, goToPage: handlePageChange } = useProfileTab();
   const { t } = useI18n();
-
-  const currentPage: PageType = useMemo(() => {
-    const tab = searchParams.get("tab") as PageType;
-    return tab && VALID_TABS.includes(tab) ? tab : "overview";
-  }, [searchParams]);
-
-  const handlePageChange = (page: PageType) => {
-    router.push(`/profile?tab=${page}`, { scroll: false });
-  };
 
   const navItems: NavItem[] = useMemo(
     () => [

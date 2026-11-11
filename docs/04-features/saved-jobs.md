@@ -77,7 +77,7 @@ Chưa có test cho: tab "đã lưu" của trang việc của tôi.
 ## Source code liên quan
 
 - [`src/features/job/hooks/use-job-favorite.ts`](../../src/features/job/hooks/use-job-favorite.ts): logic lưu và hoàn tác
-- [`src/components/profile/pages/my-jobs-page.tsx`](../../src/components/profile/pages/my-jobs-page.tsx): danh sách đã lưu
+- [`src/features/profile/components/pages/my-jobs-page.tsx`](../../src/features/profile/components/pages/my-jobs-page.tsx): danh sách đã lưu
 - [`src/features/user/redux/user.api.ts`](../../src/features/user/redux/user.api.ts): endpoint và cập nhật lạc quan
 - [`src/features/auth/redux/auth.slice.ts`](../../src/features/auth/redux/auth.slice.ts): `addSavedJobId`, `removeSavedJobId`
 - [`src/features/job/components/job-search-card.tsx`](../../src/features/job/components/job-search-card.tsx): nút lưu trên thẻ

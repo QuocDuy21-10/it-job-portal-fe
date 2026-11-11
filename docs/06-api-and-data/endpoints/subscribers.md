@@ -40,7 +40,7 @@ Form tạo kiểm tra tên (từ 2 ký tự), email, mã địa điểm bắt bu
 - [`src/features/subscriber/redux/subscriber.api.ts`](../../../src/features/subscriber/redux/subscriber.api.ts): khai báo endpoint
 - [`src/features/subscriber/schemas/subscriber.schema.ts`](../../../src/features/subscriber/schemas/subscriber.schema.ts): kiểu và kiểm tra
 - [`src/hooks/use-subscriber.ts`](../../../src/hooks/use-subscriber.ts): hook chưa được dùng
-- [`src/components/profile/pages/email-subscription-page.tsx`](../../../src/components/profile/pages/email-subscription-page.tsx): trang đăng ký nhận việc
+- [`src/features/profile/components/pages/email-subscription-page.tsx`](../../../src/features/profile/components/pages/email-subscription-page.tsx): trang đăng ký nhận việc
 
 Hợp đồng đầy đủ: [API Subscribers của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/subscribers.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/subscribers/subscribers.controller.ts).
 
