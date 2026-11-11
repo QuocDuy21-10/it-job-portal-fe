@@ -68,60 +68,16 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-
-type Translate = ReturnType<typeof useI18n>["t"];
-
-const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
-  all: "jobsPage.jobTypeOptions.all",
-  Internship: "jobsPage.jobTypeOptions.internship",
-  "Part-time": "jobsPage.jobTypeOptions.partTime",
-  "Full-time": "jobsPage.jobTypeOptions.fullTime",
-  Freelance: "jobsPage.jobTypeOptions.freelance",
-  Remote: "jobsPage.jobTypeOptions.remote",
-  Hybrid: "jobsPage.jobTypeOptions.hybrid",
-  Other: "jobsPage.jobTypeOptions.other",
-};
-
-const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
-  all: "jobsPage.jobLevelOptions.all",
-  Internship: "jobsPage.jobLevelOptions.internship",
-  Junior: "jobsPage.jobLevelOptions.junior",
-  Mid: "jobsPage.jobLevelOptions.mid",
-  Senior: "jobsPage.jobLevelOptions.senior",
-  Lead: "jobsPage.jobLevelOptions.lead",
-  Manager: "jobsPage.jobLevelOptions.manager",
-};
-
-const SORT_OPTIONS = [
-  { value: "-createdAt", labelKey: "jobsPage.sortOptions.newest" },
-  { value: "createdAt", labelKey: "jobsPage.sortOptions.oldest" },
-  { value: "-salary", labelKey: "jobsPage.sortOptions.salaryHighToLow" },
-  { value: "salary", labelKey: "jobsPage.sortOptions.salaryLowToHigh" },
-] as const;
-
-const SALARY_RANGE_OPTIONS = [
-  { value: "all", labelKey: "jobsPage.salaryRanges.all" },
-  { value: "0-10000000", labelKey: "jobsPage.salaryRanges.under10m" },
-  { value: "10000000-20000000", labelKey: "jobsPage.salaryRanges.tenTo20m" },
-  { value: "20000000-50000000", labelKey: "jobsPage.salaryRanges.twentyTo50m" },
-  { value: "50000000-999999999", labelKey: "jobsPage.salaryRanges.above50m" },
-] as const;
-
-const SOURCE_TABS: Array<{ value: JobSearchSource; labelKey: string }> = [
-  { value: "all", labelKey: "jobsPage.sourceTabs.all" },
-  { value: "internal", labelKey: "jobsPage.sourceTabs.internal" },
-  { value: "external", labelKey: "jobsPage.sourceTabs.external" },
-];
-
-function getTranslatedLabel(
-  value: string,
-  keyMap: Record<string, string>,
-  t: Translate
-) {
-  const key = keyMap[value];
-
-  return key ? t(key) : value;
-}
+import {
+  JOB_LEVEL_LABEL_KEYS,
+  JOB_TYPE_LABEL_KEYS,
+  getTranslatedLabel,
+} from "@/features/job/config/job-labels";
+import {
+  SALARY_RANGE_OPTIONS,
+  SORT_OPTIONS,
+  SOURCE_TABS,
+} from "@/features/job/config/job-search-options";
 
 type JobsPageClientProps = {
   initialData: PaginatedResult<JobSearchItem> | null;

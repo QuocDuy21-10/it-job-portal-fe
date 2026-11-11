@@ -7,13 +7,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   CompanyLogo,
   FavoriteButton,
+  SkillTags,
+  StatusIndicator,
+} from "@/features/job/components/job-card";
+import {
   JOB_LEVEL_LABEL_KEYS,
   JOB_STATUS_LABEL_KEYS,
   JOB_TYPE_LABEL_KEYS,
-  SkillTags,
-  StatusIndicator,
   getTranslatedLabel,
-} from "@/features/job/components/job-card";
+} from "@/features/job/config/job-labels";
 import type { JobSearchItem } from "@/features/job/schemas/job-search.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { useJobFavorite } from "@/features/job/hooks/use-job-favorite";

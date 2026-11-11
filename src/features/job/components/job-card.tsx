@@ -18,45 +18,12 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Link } from "@/i18n/navigation";
 import { useI18n } from "@/hooks/use-i18n";
 import { formatVndCurrency } from "@/lib/utils/locale-formatters";
-
-type Translate = ReturnType<typeof useI18n>["t"];
-
-export const JOB_TYPE_LABEL_KEYS: Record<string, string> = {
-  Internship: "jobsPage.jobTypeOptions.internship",
-  "Part-time": "jobsPage.jobTypeOptions.partTime",
-  "Full-time": "jobsPage.jobTypeOptions.fullTime",
-  Freelance: "jobsPage.jobTypeOptions.freelance",
-  Remote: "jobsPage.jobTypeOptions.remote",
-  Hybrid: "jobsPage.jobTypeOptions.hybrid",
-  Other: "jobsPage.jobTypeOptions.other",
-};
-
-export const JOB_LEVEL_LABEL_KEYS: Record<string, string> = {
-  Internship: "jobsPage.jobLevelOptions.internship",
-  Junior: "jobsPage.jobLevelOptions.junior",
-  Mid: "jobsPage.jobLevelOptions.mid",
-  Senior: "jobsPage.jobLevelOptions.senior",
-  Lead: "jobsPage.jobLevelOptions.lead",
-  Manager: "jobsPage.jobLevelOptions.manager",
-};
-
-export const JOB_STATUS_LABEL_KEYS: Record<
-  Exclude<JobStatusVariant, null>,
-  string
-> = {
-  new: "jobsPage.jobCard.statusNew",
-  closing: "jobsPage.jobCard.statusClosing",
-};
-
-export function getTranslatedLabel(
-  value: string,
-  keyMap: Record<string, string>,
-  t: Translate
-) {
-  const key = keyMap[value];
-
-  return key ? t(key) : value;
-}
+import {
+  JOB_LEVEL_LABEL_KEYS,
+  JOB_STATUS_LABEL_KEYS,
+  JOB_TYPE_LABEL_KEYS,
+  getTranslatedLabel,
+} from "@/features/job/config/job-labels";
 
 interface JobCardProps {
   job: Job;
