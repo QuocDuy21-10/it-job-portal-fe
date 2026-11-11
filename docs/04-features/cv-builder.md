@@ -98,7 +98,7 @@ Quy tắc từng field và giới hạn số lượng (tối đa 20 kỹ năng, 
 
 | Test | Nội dung |
 | --- | --- |
-| `src/features/cv-builder/components/create-cv-page.test.tsx` | Tải CV hiện tại và truyền dữ liệu vào các phần |
+| `src/features/cv-builder/components/create-cv-page/create-cv-page.test.tsx` | Tải CV hiện tại và truyền dữ liệu vào các phần |
 | `src/features/cv-builder/hooks/use-cv.test.tsx` | Trả hồ sơ nháp; ghi lỗi khi tải thất bại; lưu kèm file ảnh |
 | `src/features/cv-builder/schemas/cv-profile.schema.test.ts` | Nhận hồ sơ nháp không có `id`; nhận hồ sơ đã lưu; giữ kiểm tra chặt khi lưu |
 
@@ -106,7 +106,7 @@ Chưa có test cho: hộp thoại từng nhóm, mức hoàn thành, trang xem tr
 
 ## Source code liên quan
 
-- [`src/features/cv-builder/components/create-cv-page.tsx`](../../src/features/cv-builder/components/create-cv-page.tsx): trang tạo CV
+- [`src/features/cv-builder/components/create-cv-page/index.tsx`](../../src/features/cv-builder/components/create-cv-page/index.tsx): trang tạo CV
 - [`src/features/cv-builder/components/sections/`](../../src/features/cv-builder/components/sections): các nhóm nội dung
 - [`src/features/cv-builder/components/modals/`](../../src/features/cv-builder/components/modals): hộp thoại từng nhóm
 - [`src/features/cv-builder/components/completion-progress.tsx`](../../src/features/cv-builder/components/completion-progress.tsx): thanh hoàn thành và nút lưu

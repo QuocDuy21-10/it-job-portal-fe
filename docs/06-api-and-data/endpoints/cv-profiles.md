@@ -47,7 +47,7 @@ Trước khi gọi `upsert`, trang tạo CV kiểm tra bằng `UpsertCVProfileRe
 - [`src/features/cv-builder/redux/cv-profile.api.ts`](../../../src/features/cv-builder/redux/cv-profile.api.ts): khai báo endpoint
 - [`src/features/cv-builder/hooks/use-cv.ts`](../../../src/features/cv-builder/hooks/use-cv.ts): `useCV`
 - [`src/features/cv-builder/schemas/cv-profile.schema.ts`](../../../src/features/cv-builder/schemas/cv-profile.schema.ts): kiểu và kiểm tra
-- [`src/features/cv-builder/components/create-cv-page.tsx`](../../../src/features/cv-builder/components/create-cv-page.tsx): nơi gọi
+- [`src/features/cv-builder/components/create-cv-page/index.tsx`](../../../src/features/cv-builder/components/create-cv-page/index.tsx): nơi gọi
 
 Hợp đồng đầy đủ: [API CV Profiles của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/cv-profiles.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/cv-profiles/cv-profiles.controller.ts).
 

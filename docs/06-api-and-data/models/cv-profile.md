@@ -97,7 +97,8 @@ Endpoint: [Endpoint CV Profiles](../endpoints/cv-profiles.md). Giao diện: [T�
 - [`src/features/cv-builder/schemas/cv-profile.schema.ts`](../../../src/features/cv-builder/schemas/cv-profile.schema.ts): các schema và type
 - [`src/shared/types/cv.d.ts`](../../../src/shared/types/cv.d.ts): `ICVProfile`, `CVData`
 - [`src/features/cv-builder/utils/cv-helpers.ts`](../../../src/features/cv-builder/utils/cv-helpers.ts): `calculateCVCompletion`
-- [`src/features/cv-builder/components/create-cv-page.tsx`](../../../src/features/cv-builder/components/create-cv-page.tsx): chuẩn hóa và lưu
+- [`src/features/cv-builder/utils/cv-profile-mapper.ts`](../../../src/features/cv-builder/utils/cv-profile-mapper.ts): chuẩn hóa dữ liệu
+- [`src/features/cv-builder/hooks/use-cv-editor.ts`](../../../src/features/cv-builder/hooks/use-cv-editor.ts): tải và lưu
 
 Collection ở backend: [cv-profiles](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/04-database/collections/cv-profiles.md).
 

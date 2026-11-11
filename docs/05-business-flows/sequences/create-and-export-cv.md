@@ -64,7 +64,7 @@ Route chỉ cho phép tải từ `localhost:8081` và host lấy từ `NEXT_PUBL
 
 ## Source code liên quan
 
-- [`src/features/cv-builder/components/create-cv-page.tsx`](../../../src/features/cv-builder/components/create-cv-page.tsx): tải, kiểm tra, lưu
+- [`src/features/cv-builder/components/create-cv-page/index.tsx`](../../../src/features/cv-builder/components/create-cv-page/index.tsx): tải, kiểm tra, lưu
 - [`src/features/cv-builder/hooks/use-cv.ts`](../../../src/features/cv-builder/hooks/use-cv.ts): `fetchMyCVProfile`, `upsertCV`
 - [`src/features/cv-builder/components/cv-preview-page.tsx`](../../../src/features/cv-builder/components/cv-preview-page.tsx): xem trước và chọn mẫu
 - [`src/features/cv-builder/components/pdf/download-pdf-button.tsx`](../../../src/features/cv-builder/components/pdf/download-pdf-button.tsx): tải PDF
