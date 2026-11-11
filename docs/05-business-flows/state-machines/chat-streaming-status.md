@@ -65,7 +65,7 @@ Sơ đồ chỉ vẽ các chuyển trạng thái có trong `use-chat.ts`, `use-s
 - [`src/features/chatbot/hooks/use-stream-chat.ts`](../../../src/features/chatbot/hooks/use-stream-chat.ts): kết quả `started`, `handled_error`, `fallback`
 - [`src/features/chatbot/hooks/use-chat.ts`](../../../src/features/chatbot/hooks/use-chat.ts): dự phòng bằng `POST /chat/message`
 - [`src/features/chatbot/redux/chat-bot.slice.ts`](../../../src/features/chatbot/redux/chat-bot.slice.ts): `startStreaming`, `finalizeStream`, `abortStream`
-- [`src/features/chatbot/components/chat-surface.tsx`](../../../src/features/chatbot/components/chat-surface.tsx): giao diện theo trạng thái
+- [`src/features/chatbot/components/chat-surface/index.tsx`](../../../src/features/chatbot/components/chat-surface/index.tsx): giao diện theo trạng thái
 - [`src/features/chatbot/components/chat-typing-indicator.tsx`](../../../src/features/chatbot/components/chat-typing-indicator.tsx): chấm báo đang trả lời
 
 Đọc tiếp: [Stream chat AI](../sequences/ai-chat-streaming.md), [Endpoint Chat](../../06-api-and-data/endpoints/chat.md), [Model Chat Message](../../06-api-and-data/models/chat-message.md).

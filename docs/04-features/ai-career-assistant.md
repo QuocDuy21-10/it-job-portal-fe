@@ -89,7 +89,7 @@ Dạng dữ liệu ở [Model Chat Message](../06-api-and-data/models/chat-messa
 | Test | Nội dung |
 | --- | --- |
 | `src/features/chatbot/hooks/use-chat.test.tsx` | Lưu hạn mức kèm lịch sử |
-| `src/features/chatbot/components/chat-surface.test.tsx` | Lời nhắc AI; vô hiệu ô nhập khi hết hạn mức; bật lại sau giờ đặt lại; chú thích hạn mức mỗi ngày |
+| `src/features/chatbot/components/chat-surface/chat-surface.test.tsx` | Lời nhắc AI; vô hiệu ô nhập khi hết hạn mức; bật lại sau giờ đặt lại; chú thích hạn mức mỗi ngày |
 | `src/features/chatbot/components/chat-composer.test.tsx` | Gửi bằng Enter, không gửi bằng Shift Enter hoặc khi đang gõ tiếng Việt, đếm ký tự, nút dừng, trạng thái vô hiệu |
 | `src/features/chatbot/components/chat-quota-meter.test.tsx` | Hiển thị đồng hồ, không giới hạn, cảnh báo, định dạng giờ đặt lại |
 | `src/features/chatbot/components/chat-typing-indicator.test.tsx` | Chỉ báo đang trả lời |
@@ -105,7 +105,7 @@ Chưa có test cho: luồng gửi tin và dự phòng trong `use-chat`, `use-str
 
 - [`src/features/chatbot/components/chat-widget.tsx`](../../src/features/chatbot/components/chat-widget.tsx): nút nổi, bảng và ngăn kéo
 - [`src/features/chatbot/components/hr-chat-assistant.tsx`](../../src/features/chatbot/components/hr-chat-assistant.tsx): trợ lý của HR
-- [`src/features/chatbot/components/chat-surface.tsx`](../../src/features/chatbot/components/chat-surface.tsx): phần chat dùng chung
+- [`src/features/chatbot/components/chat-surface/index.tsx`](../../src/features/chatbot/components/chat-surface/index.tsx): phần chat dùng chung
 - [`src/features/chatbot/components/chat-composer.tsx`](../../src/features/chatbot/components/chat-composer.tsx): ô nhập
 - [`src/features/chatbot/components/chat-quota-meter.tsx`](../../src/features/chatbot/components/chat-quota-meter.tsx): đồng hồ hạn mức
 - [`src/features/chatbot/components/chat-job-card.tsx`](../../src/features/chatbot/components/chat-job-card.tsx): thẻ việc làm gợi ý
