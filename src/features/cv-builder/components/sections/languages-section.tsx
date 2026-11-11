@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import LanguageModal from "@/features/cv-builder/components/modals/language-modal";
-import { useLanguageModal } from "@/features/cv-builder/hooks/use-language-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
+import type { LanguageRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { toast } from "sonner";
 
 interface Language {
@@ -42,7 +43,22 @@ export default function LanguagesSection({
   onRemove,
 }: LanguagesSectionProps) {
   const { t } = useI18n();
-  const languageModal = useLanguageModal(languages, onAdd, onUpdate);
+  const languageModal = useCvItemModal<LanguageRequest, Language>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      name: data.name,
+      proficiency: data.proficiency,
+    }),
+    addToast: (data) => ({
+      title: t("cv.toasts.languageAddSuccess"),
+      description: t("cv.toasts.languageAdded", { name: data.name }),
+    }),
+    editToast: (data) => ({
+      title: t("cv.toasts.languageEditSuccess"),
+      description: t("cv.toasts.languageUpdated", { name: data.name }),
+    }),
+  });
 
   const handleRemove = (id: string, name: string) => {
     toast.success(t("cv.languages.deleteSuccess"), {
@@ -154,7 +170,7 @@ export default function LanguagesSection({
         isOpen={languageModal.isOpen}
         onClose={languageModal.closeModal}
         onSubmit={languageModal.handleSubmit}
-        initialData={languageModal.currentLanguage}
+        initialData={languageModal.currentItem}
         mode={languageModal.mode}
       />
     </>

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import EducationModal from "../modals/education-modal";
-import { useEducationModal } from "@/features/cv-builder/hooks/use-education-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
 import { type EducationRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
@@ -39,12 +39,34 @@ export default function EducationSection({
   const {
     isOpen,
     mode,
-    currentEducation,
+    currentItem: currentEducation,
     openAddModal,
     openEditModal,
     closeModal,
     handleSubmit,
-  } = useEducationModal(education, onAdd, onUpdate);
+  } = useCvItemModal<EducationRequest, Education>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      school: data.school,
+      degree: data.degree,
+      field: data.field,
+      startDate: data.startDate,
+      endDate: data.endDate || "",
+      description: data.description || "",
+    }),
+    addToast: (data) => ({
+      title: t("cv.toasts.educationAddSuccess"),
+      description: t("cv.toasts.educationAdded", {
+        school: data.school,
+        degree: data.degree,
+      }),
+    }),
+    editToast: (data) => ({
+      title: t("cv.toasts.educationEditSuccess"),
+      description: t("cv.toasts.educationUpdated", { school: data.school }),
+    }),
+  });
 
   const handleDelete = (id: string, school: string) => {
     onRemove(id);

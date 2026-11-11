@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import ProjectModal from "../modals/project-modal";
-import { useProjectModal } from "@/features/cv-builder/hooks/use-project-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
 import { type ProjectRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
@@ -39,12 +39,29 @@ export default function ProjectsSection({
   const {
     isOpen,
     mode,
-    currentProject,
+    currentItem: currentProject,
     openAddModal,
     openEditModal,
     closeModal,
     handleSubmit,
-  } = useProjectModal(projects, onAdd, onUpdate);
+  } = useCvItemModal<ProjectRequest, Project>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      name: data.name,
+      position: data.position,
+      description: data.description,
+      link: data.link || "",
+    }),
+    addToast: (data) => ({
+      title: t("cv.toasts.projectAddSuccess"),
+      description: t("cv.toasts.projectAdded", { name: data.name }),
+    }),
+    editToast: (data) => ({
+      title: t("cv.toasts.projectEditSuccess"),
+      description: t("cv.toasts.projectUpdated", { name: data.name }),
+    }),
+  });
 
   const handleDelete = (id: string, name: string) => {
     onRemove(id);

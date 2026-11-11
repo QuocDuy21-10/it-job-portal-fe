@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import AwardModal from "../modals/award-modal";
-import { useAwardModal } from "@/features/cv-builder/hooks/use-award-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
 import { type AwardRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
@@ -39,12 +39,28 @@ export default function AwardsSection({
   const {
     isOpen,
     mode,
-    currentAward,
+    currentItem: currentAward,
     openAddModal,
     openEditModal,
     closeModal,
     handleSubmit,
-  } = useAwardModal(awards, onAdd, onUpdate);
+  } = useCvItemModal<AwardRequest, Award>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      name: data.name,
+      date: data.date,
+      description: data.description || "",
+    }),
+    addToast: (data) => ({
+      title: t("cv.toasts.awardAddSuccess"),
+      description: t("cv.toasts.awardAdded", { name: data.name }),
+    }),
+    editToast: (data) => ({
+      title: t("cv.toasts.awardEditSuccess"),
+      description: t("cv.toasts.awardUpdated", { name: data.name }),
+    }),
+  });
 
   const handleDelete = (id: string, name: string) => {
     onRemove(id);

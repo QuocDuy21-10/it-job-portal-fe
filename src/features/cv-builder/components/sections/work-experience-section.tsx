@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import WorkExperienceModal from "../modals/work-experience-modal";
-import { useWorkExperienceModal } from "@/features/cv-builder/hooks/use-work-experience-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
 import { type ExperienceRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
@@ -39,12 +39,30 @@ export default function WorkExperienceSection({
   const {
     isOpen,
     mode,
-    currentExperience,
+    currentItem: currentExperience,
     openAddModal,
     openEditModal,
     closeModal,
     handleSubmit,
-  } = useWorkExperienceModal(experience, onAdd, onUpdate);
+  } = useCvItemModal<ExperienceRequest, Experience>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      company: data.company,
+      position: data.position,
+      startDate: data.startDate,
+      endDate: data.endDate || "",
+      description: data.description || "",
+    }),
+    addToast: (data) => ({
+      title: t("cv.workExperience.addSuccess"),
+      description: `${t("cv.workExperience.addSuccessDesc")}: ${data.company} - ${data.position}`,
+    }),
+    editToast: (data) => ({
+      title: t("cv.workExperience.updateSuccess"),
+      description: `${t("cv.workExperience.updateSuccessDesc")}: ${data.company}`,
+    }),
+  });
 
   const handleDelete = (id: string, company: string) => {
     onRemove(id);

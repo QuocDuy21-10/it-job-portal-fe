@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import CertificateModal from "../modals/certificate-modal";
-import { useCertificateModal } from "@/features/cv-builder/hooks/use-certificate-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
 import { type CertificateRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
@@ -45,12 +45,28 @@ export default function CertificatesSection({
   const {
     isOpen,
     mode,
-    currentCertificate,
+    currentItem: currentCertificate,
     openAddModal,
     openEditModal,
     closeModal,
     handleSubmit,
-  } = useCertificateModal(certificates, onAdd, onUpdate);
+  } = useCvItemModal<CertificateRequest, Certificate>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      name: data.name,
+      issuer: data.issuer,
+      date: data.date,
+    }),
+    addToast: (data) => ({
+      title: t("cv.toasts.certificateAddSuccess"),
+      description: t("cv.toasts.certificateAdded", { name: data.name }),
+    }),
+    editToast: (data) => ({
+      title: t("cv.toasts.certificateEditSuccess"),
+      description: t("cv.toasts.certificateUpdated", { name: data.name }),
+    }),
+  });
 
   const handleDelete = (id: string, name: string) => {
     onRemove(id);

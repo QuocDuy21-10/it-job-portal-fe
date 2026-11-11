@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/tooltip";
 import CVFormSection from "@/components/sections/cv-form-section";
 import SkillModal from "@/features/cv-builder/components/modals/skill-modal";
-import { useSkillModal } from "@/features/cv-builder/hooks/use-skill-modal";
+import { useCvItemModal } from "@/features/cv-builder/hooks/use-cv-item-modal";
+import type { SkillRequest } from "@/features/cv-builder/schemas/cv-profile.schema";
 import { toast } from "sonner";
 
 interface Skill {
@@ -42,7 +43,22 @@ export default function SkillsSection({
   onRemove,
 }: SkillsSectionProps) {
   const { t } = useI18n();
-  const skillModal = useSkillModal(skills, onAdd, onUpdate);
+  const skillModal = useCvItemModal<SkillRequest, Skill>({
+    onAdd,
+    onUpdate,
+    toFieldUpdates: (data) => ({
+      name: data.name,
+      level: data.level,
+    }),
+    addToast: (data) => ({
+      title: "Thêm kỹ năng thành công",
+      description: `Đã thêm kỹ năng: ${data.name}`,
+    }),
+    editToast: (data) => ({
+      title: "Cập nhật kỹ năng thành công",
+      description: `Đã cập nhật: ${data.name}`,
+    }),
+  });
 
   const handleRemove = (id: string, name: string) => {
     toast.success(t("cv.skills.deleteSuccess"), {
@@ -145,7 +161,7 @@ export default function SkillsSection({
         isOpen={skillModal.isOpen}
         onClose={skillModal.closeModal}
         onSubmit={skillModal.handleSubmit}
-        initialData={skillModal.currentSkill}
+        initialData={skillModal.currentItem}
         mode={skillModal.mode}
       />
     </>
