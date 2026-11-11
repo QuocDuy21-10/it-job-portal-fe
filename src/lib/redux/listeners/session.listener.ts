@@ -31,8 +31,12 @@ sessionListener.startListening({
     authApi.endpoints.logout.matchFulfilled,
     authApi.endpoints.logout.matchRejected
   ),
-  effect: (_action, listenerApi) => {
-    endSession();
+  effect: (action, listenerApi) => {
+    // A session ended by another tab or a failed restore must not be broadcast back.
+    const broadcast = !(
+      sessionEnded.match(action) && action.payload?.broadcast === false
+    );
+    endSession({ broadcast });
     listenerApi.dispatch(baseApi.util.resetApiState());
   },
 });

@@ -69,7 +69,11 @@ const authSlice = createSlice({
   reducers: {
     // Side effects of ending a session (token, RTK Query cache) live in
     // src/lib/redux/listeners/session.listener.ts so reducers stay pure.
-    sessionEnded: (state) => {
+    // broadcast: false when another tab (or a failed restore) ended it; the listener reads it.
+    sessionEnded: (
+      state,
+      _action: PayloadAction<{ broadcast?: boolean } | undefined>
+    ) => {
       resetSession(state);
     },
 

@@ -13,8 +13,12 @@ import {
 import storage from "redux-persist/lib/storage";
 import { baseApi } from "./api";
 import authSlice from "@/features/auth/redux/auth.slice";
-import { onSessionExpired } from "@/lib/auth/session";
-import { sessionExpired } from "@/features/auth/redux/auth.slice";
+import {
+  onRemoteSessionEnded,
+  onSessionExpired,
+  onSessionRestoreFailed,
+} from "@/lib/auth/session";
+import { sessionEnded, sessionExpired } from "@/features/auth/redux/auth.slice";
 import companyReducer from "@/features/company/redux/company.slice";
 import userReducer from "@/features/user/redux/user.slice";
 import jobReducer from "@/features/job/redux/job.slice";
@@ -78,6 +82,16 @@ export const store = configureStore({
 // Refresh failed for a signed-in user: reset state; ClientLayout shows the toast and redirects.
 onSessionExpired((message) => {
   store.dispatch(sessionExpired(message));
+});
+
+// Restoring on page load failed (cookie gone or network down): end quietly, only in this tab.
+onSessionRestoreFailed(() => {
+  store.dispatch(sessionEnded({ broadcast: false }));
+});
+
+// Another tab signed out: follow it without echoing the broadcast.
+onRemoteSessionEnded(() => {
+  store.dispatch(sessionEnded({ broadcast: false }));
 });
 
 export const persistor = persistStore(store);
