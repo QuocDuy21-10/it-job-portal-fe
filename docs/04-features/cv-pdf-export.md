@@ -23,9 +23,9 @@ Trang xem trước: chọn mẫu, bật tắt xem trước PDF và nút tải xu
 
 | Mẫu | Giá trị | Bản xem trước trên trang | Bản PDF |
 | --- | --- | --- | --- |
-| Cổ điển | `classic` | `components/cv/templates/classic/ClassicTemplate.tsx` | `components/pdf/templates/classic/ClassicTemplate.tsx` |
-| Hiện đại | `modern` | `components/cv/templates/modern/ModernTemplate.tsx` | `components/pdf/templates/modern/ModernTemplate.tsx` |
-| Tối giản | `minimal` | `components/cv/templates/minimal/MinimalTemplate.tsx` | `components/pdf/templates/minimal/MinimalTemplate.tsx` |
+| Cổ điển | `classic` | `features/cv-builder/components/templates/classic/ClassicTemplate.tsx` | `features/cv-builder/components/pdf/templates/classic/ClassicTemplate.tsx` |
+| Hiện đại | `modern` | `features/cv-builder/components/templates/modern/ModernTemplate.tsx` | `features/cv-builder/components/pdf/templates/modern/ModernTemplate.tsx` |
+| Tối giản | `minimal` | `features/cv-builder/components/templates/minimal/MinimalTemplate.tsx` | `features/cv-builder/components/pdf/templates/minimal/MinimalTemplate.tsx` |
 
 Mẫu mặc định là `classic`. Khổ giấy là A4. `CVPdfDocument` chọn mẫu PDF theo giá trị `template`; giá trị lạ rơi về `classic`.
 
@@ -57,7 +57,7 @@ Sơ đồ rút gọn; trình tự kỹ thuật, kể cả xử lý ảnh, xem [T
 Proxy ảnh trả ảnh với `Cache-Control: public, max-age=31536000, immutable` và `Access-Control-Allow-Origin: *`. Route chỉ cho tải từ `localhost:8081` và host lấy từ `NEXT_PUBLIC_API_URL` sau khi bỏ `http://` hoặc `https://`. Nếu biến này chứa đường dẫn (ví dụ `/api/v1`) thì chuỗi sau khi bỏ giao thức vẫn có đường dẫn và sẽ không khớp với `url.host`; chưa kiểm tra giá trị thật trên môi trường triển khai.
 
 > [!NOTE]
-> `src/components/pdf/CVTemplateRenderer.tsx` cũng chọn mẫu theo loại nhưng không được import ở đâu; luồng tải PDF dùng `CVPdfDocument`.
+> `src/features/cv-builder/components/pdf/CVTemplateRenderer.tsx` cũng chọn mẫu theo loại nhưng không được import ở đâu; luồng tải PDF dùng `CVPdfDocument`.
 
 ## API liên quan
 
@@ -81,21 +81,21 @@ Dữ liệu vào mẫu là `ICVProfile`, xem [Model CV Profile](../06-api-and-da
 
 | Test | Nội dung |
 | --- | --- |
-| `src/lib/pdf/image-helpers.test.ts` | Hàm xử lý địa chỉ ảnh cho PDF |
+| `src/features/cv-builder/lib/pdf/image-helpers.test.ts` | Hàm xử lý địa chỉ ảnh cho PDF |
 
 Chưa có test cho: các mẫu PDF, nút tải, trang xem trước, route `proxy-image`.
 
 ## Source code liên quan
 
-- [`src/components/profile/pages/cv-preview-page.tsx`](../../src/components/profile/pages/cv-preview-page.tsx): trang xem trước, chọn mẫu
-- [`src/components/pdf/download-pdf-button.tsx`](../../src/components/pdf/download-pdf-button.tsx): tải PDF
-- [`src/components/pdf/cv-pdf-document.tsx`](../../src/components/pdf/cv-pdf-document.tsx): chọn mẫu PDF
-- [`src/components/pdf/pdf-preview.tsx`](../../src/components/pdf/pdf-preview.tsx): xem trước PDF
-- [`src/components/pdf/templates/`](../../src/components/pdf/templates): ba mẫu PDF
-- [`src/components/cv/templates/`](../../src/components/cv/templates): ba mẫu xem trước HTML
-- [`src/lib/pdf/fonts.ts`](../../src/lib/pdf/fonts.ts): đăng ký font
-- [`src/lib/pdf/helpers.ts`](../../src/lib/pdf/helpers.ts): `generateCVDataKey`
-- [`src/lib/pdf/image-helpers.ts`](../../src/lib/pdf/image-helpers.ts): xử lý ảnh
+- [`src/features/cv-builder/components/cv-preview-page.tsx`](../../src/features/cv-builder/components/cv-preview-page.tsx): trang xem trước, chọn mẫu
+- [`src/features/cv-builder/components/pdf/download-pdf-button.tsx`](../../src/features/cv-builder/components/pdf/download-pdf-button.tsx): tải PDF
+- [`src/features/cv-builder/components/pdf/cv-pdf-document.tsx`](../../src/features/cv-builder/components/pdf/cv-pdf-document.tsx): chọn mẫu PDF
+- [`src/features/cv-builder/components/pdf/pdf-preview.tsx`](../../src/features/cv-builder/components/pdf/pdf-preview.tsx): xem trước PDF
+- [`src/features/cv-builder/components/pdf/templates/`](../../src/features/cv-builder/components/pdf/templates): ba mẫu PDF
+- [`src/features/cv-builder/components/templates/`](../../src/features/cv-builder/components/templates): ba mẫu xem trước HTML
+- [`src/features/cv-builder/lib/pdf/fonts.ts`](../../src/features/cv-builder/lib/pdf/fonts.ts): đăng ký font
+- [`src/features/cv-builder/lib/pdf/helpers.ts`](../../src/features/cv-builder/lib/pdf/helpers.ts): `generateCVDataKey`
+- [`src/features/cv-builder/lib/pdf/image-helpers.ts`](../../src/features/cv-builder/lib/pdf/image-helpers.ts): xử lý ảnh
 - [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): proxy ảnh
 
 Đọc tiếp: [Tạo CV](cv-builder.md), [Tạo và xuất CV](../05-business-flows/sequences/create-and-export-cv.md), [Giao tiếp API](../02-architecture/api-communication.md).

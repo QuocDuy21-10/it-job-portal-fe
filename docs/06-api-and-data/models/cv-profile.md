@@ -94,10 +94,10 @@ Endpoint: [Endpoint CV Profiles](../endpoints/cv-profiles.md). Giao diện: [T�
 
 ## Source code liên quan
 
-- [`src/features/cv-profile/schemas/cv-profile.schema.ts`](../../../src/features/cv-profile/schemas/cv-profile.schema.ts): các schema và type
+- [`src/features/cv-builder/schemas/cv-profile.schema.ts`](../../../src/features/cv-builder/schemas/cv-profile.schema.ts): các schema và type
 - [`src/shared/types/cv.d.ts`](../../../src/shared/types/cv.d.ts): `ICVProfile`, `CVData`
-- [`src/lib/utils/cv-helpers.ts`](../../../src/lib/utils/cv-helpers.ts): `calculateCVCompletion`
-- [`src/components/profile/pages/create-cv-page.tsx`](../../../src/components/profile/pages/create-cv-page.tsx): chuẩn hóa và lưu
+- [`src/features/cv-builder/utils/cv-helpers.ts`](../../../src/features/cv-builder/utils/cv-helpers.ts): `calculateCVCompletion`
+- [`src/features/cv-builder/components/create-cv-page.tsx`](../../../src/features/cv-builder/components/create-cv-page.tsx): chuẩn hóa và lưu
 
 Collection ở backend: [cv-profiles](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/04-database/collections/cv-profiles.md).
 

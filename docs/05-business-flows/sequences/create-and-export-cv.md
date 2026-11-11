@@ -64,13 +64,13 @@ Route chỉ cho phép tải từ `localhost:8081` và host lấy từ `NEXT_PUBL
 
 ## Source code liên quan
 
-- [`src/components/profile/pages/create-cv-page.tsx`](../../../src/components/profile/pages/create-cv-page.tsx): tải, kiểm tra, lưu
-- [`src/hooks/use-cv.ts`](../../../src/hooks/use-cv.ts): `fetchMyCVProfile`, `upsertCV`
-- [`src/components/profile/pages/cv-preview-page.tsx`](../../../src/components/profile/pages/cv-preview-page.tsx): xem trước và chọn mẫu
-- [`src/components/pdf/download-pdf-button.tsx`](../../../src/components/pdf/download-pdf-button.tsx): tải PDF
-- [`src/lib/pdf/image-helpers.ts`](../../../src/lib/pdf/image-helpers.ts): `getProxiedImageUrl`
+- [`src/features/cv-builder/components/create-cv-page.tsx`](../../../src/features/cv-builder/components/create-cv-page.tsx): tải, kiểm tra, lưu
+- [`src/features/cv-builder/hooks/use-cv.ts`](../../../src/features/cv-builder/hooks/use-cv.ts): `fetchMyCVProfile`, `upsertCV`
+- [`src/features/cv-builder/components/cv-preview-page.tsx`](../../../src/features/cv-builder/components/cv-preview-page.tsx): xem trước và chọn mẫu
+- [`src/features/cv-builder/components/pdf/download-pdf-button.tsx`](../../../src/features/cv-builder/components/pdf/download-pdf-button.tsx): tải PDF
+- [`src/features/cv-builder/lib/pdf/image-helpers.ts`](../../../src/features/cv-builder/lib/pdf/image-helpers.ts): `getProxiedImageUrl`
 - [`src/app/api/proxy-image/route.ts`](../../../src/app/api/proxy-image/route.ts): proxy ảnh
-- [`src/lib/utils/cv-helpers.ts`](../../../src/lib/utils/cv-helpers.ts): mức hoàn thành
+- [`src/features/cv-builder/utils/cv-helpers.ts`](../../../src/features/cv-builder/utils/cv-helpers.ts): mức hoàn thành
 
 Backend: [Use case quản lý CV](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/06-workflows/use-cases/cv-management.md).
 

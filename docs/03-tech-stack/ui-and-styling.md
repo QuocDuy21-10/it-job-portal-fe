@@ -47,7 +47,7 @@ Phần lớn code dùng Lucide (143 file). `@heroicons/react` còn ở 5 file, c
 
 ## Xuất CV ra PDF
 
-CV được dựng bằng `@react-pdf/renderer` (`^4.3.1`) với ba mẫu Modern, Classic, Minimal. Có hai cây thư mục liên quan: `src/components/cv/` (giao diện biên tập CV, có thư mục `templates/`) và `src/components/pdf/` (bộ dựng tài liệu PDF, cũng có `templates/`). Hàm trong `src/lib/pdf/image-helpers.ts` đổi địa chỉ ảnh sang `/api/proxy-image?url=...` để tránh lỗi CORS khi dựng PDF. Quy trình xuất CV sẽ được mô tả ở nhóm tính năng của Giai đoạn 2.
+CV được dựng bằng `@react-pdf/renderer` (`^4.3.1`) với ba mẫu Modern, Classic, Minimal. Có hai cây thư mục liên quan: `src/features/cv-builder/components/` (giao diện biên tập CV, có thư mục `templates/`) và `src/features/cv-builder/components/pdf/` (bộ dựng tài liệu PDF, cũng có `templates/`). Hàm trong `src/features/cv-builder/lib/pdf/image-helpers.ts` đổi địa chỉ ảnh sang `/api/proxy-image?url=...` để tránh lỗi CORS khi dựng PDF. Quy trình xuất CV sẽ được mô tả ở nhóm tính năng của Giai đoạn 2.
 
 ## Source code liên quan
 
@@ -58,4 +58,4 @@ CV được dựng bằng `@react-pdf/renderer` (`^4.3.1`) với ba mẫu Modern
 - [`src/components/theme-provider.tsx`](../../src/components/theme-provider.tsx): chế độ sáng, tối
 - [`src/lib/utils.ts`](../../src/lib/utils.ts): hàm `cn`
 - [`src/components/rich-text-editor.tsx`](../../src/components/rich-text-editor.tsx): trình soạn thảo Quill
-- [`src/components/pdf/`](../../src/components/pdf/): bộ dựng PDF
+- [`src/features/cv-builder/components/pdf/`](../../src/features/cv-builder/components/pdf/): bộ dựng PDF

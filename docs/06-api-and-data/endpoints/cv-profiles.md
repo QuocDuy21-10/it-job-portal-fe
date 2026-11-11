@@ -10,9 +10,9 @@ Mỗi người dùng chỉ có một CV, và trình tạo CV lưu toàn bộ CV 
 
 | Hook RTK Query | Method và path | Tham số frontend gửi | Cache tag | Nơi dùng |
 | --- | --- | --- | --- | --- |
-| `useUpsertCVProfileMutation` | `POST /cv-profiles/upsert` | `FormData` gồm `cvData` (chuỗi JSON của `UpsertCVProfileRequest`) và `avatar` (file, tùy chọn) | Làm mất hiệu lực `CVProfile` | `hooks/use-cv.ts` |
+| `useUpsertCVProfileMutation` | `POST /cv-profiles/upsert` | `FormData` gồm `cvData` (chuỗi JSON của `UpsertCVProfileRequest`) và `avatar` (file, tùy chọn) | Làm mất hiệu lực `CVProfile` | `features/cv-builder/hooks/use-cv.ts` |
 | `useGetMyCVProfileQuery` | `GET /cv-profiles/me` | Không | Cung cấp `CVProfile` | Chưa có nơi nào dùng |
-| `useLazyGetMyCVProfileQuery` | `GET /cv-profiles/me` | Không | Cung cấp `CVProfile` | `hooks/use-cv.ts` |
+| `useLazyGetMyCVProfileQuery` | `GET /cv-profiles/me` | Không | Cung cấp `CVProfile` | `features/cv-builder/hooks/use-cv.ts` |
 
 Giao diện không dùng hook cache trực tiếp mà qua `useCV`, hook này bọc hai thao tác và giữ lỗi bằng `useState`:
 
@@ -44,10 +44,10 @@ Trước khi gọi `upsert`, trang tạo CV kiểm tra bằng `UpsertCVProfileRe
 
 ## Source code liên quan
 
-- [`src/features/cv-profile/redux/cv-profile.api.ts`](../../../src/features/cv-profile/redux/cv-profile.api.ts): khai báo endpoint
-- [`src/hooks/use-cv.ts`](../../../src/hooks/use-cv.ts): `useCV`
-- [`src/features/cv-profile/schemas/cv-profile.schema.ts`](../../../src/features/cv-profile/schemas/cv-profile.schema.ts): kiểu và kiểm tra
-- [`src/components/profile/pages/create-cv-page.tsx`](../../../src/components/profile/pages/create-cv-page.tsx): nơi gọi
+- [`src/features/cv-builder/redux/cv-profile.api.ts`](../../../src/features/cv-builder/redux/cv-profile.api.ts): khai báo endpoint
+- [`src/features/cv-builder/hooks/use-cv.ts`](../../../src/features/cv-builder/hooks/use-cv.ts): `useCV`
+- [`src/features/cv-builder/schemas/cv-profile.schema.ts`](../../../src/features/cv-builder/schemas/cv-profile.schema.ts): kiểu và kiểm tra
+- [`src/features/cv-builder/components/create-cv-page.tsx`](../../../src/features/cv-builder/components/create-cv-page.tsx): nơi gọi
 
 Hợp đồng đầy đủ: [API CV Profiles của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/cv-profiles.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/cv-profiles/cv-profiles.controller.ts).
 

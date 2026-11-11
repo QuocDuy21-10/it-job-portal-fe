@@ -23,7 +23,7 @@ Trang này ghi lại **vì sao** dự án chọn các công nghệ hiện tại,
 | `next-intl` với `as-needed` | `src/i18n/routing.ts`, `middleware.ts` | Chưa có ghi chép về lý do |
 | Socket.IO cho thông báo | `socket-provider.tsx` | Chưa có ghi chép về lý do |
 | `fetch` đọc luồng thay cho `EventSource` | `use-stream-chat.ts` | Chưa có ghi chép về lý do |
-| `@react-pdf/renderer` cho xuất CV | `src/components/pdf/` | README chỉ mô tả: "template-driven CV generation" |
+| `@react-pdf/renderer` cho xuất CV | `src/features/cv-builder/components/pdf/` | README chỉ mô tả: "template-driven CV generation" |
 | Jest và React Testing Library | `jest.config.js` | Chưa có ghi chép về lý do |
 
 ## Bảng 2: ý định được ghi ngay trong code

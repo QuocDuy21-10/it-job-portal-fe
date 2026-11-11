@@ -98,20 +98,20 @@ Quy tắc từng field và giới hạn số lượng (tối đa 20 kỹ năng, 
 
 | Test | Nội dung |
 | --- | --- |
-| `src/components/profile/pages/create-cv-page.test.tsx` | Tải CV hiện tại và truyền dữ liệu vào các phần |
-| `src/hooks/use-cv.test.tsx` | Trả hồ sơ nháp; ghi lỗi khi tải thất bại; lưu kèm file ảnh |
-| `src/features/cv-profile/schemas/cv-profile.schema.test.ts` | Nhận hồ sơ nháp không có `id`; nhận hồ sơ đã lưu; giữ kiểm tra chặt khi lưu |
+| `src/features/cv-builder/components/create-cv-page.test.tsx` | Tải CV hiện tại và truyền dữ liệu vào các phần |
+| `src/features/cv-builder/hooks/use-cv.test.tsx` | Trả hồ sơ nháp; ghi lỗi khi tải thất bại; lưu kèm file ảnh |
+| `src/features/cv-builder/schemas/cv-profile.schema.test.ts` | Nhận hồ sơ nháp không có `id`; nhận hồ sơ đã lưu; giữ kiểm tra chặt khi lưu |
 
 Chưa có test cho: hộp thoại từng nhóm, mức hoàn thành, trang xem trước, tab "CV của tôi".
 
 ## Source code liên quan
 
-- [`src/components/profile/pages/create-cv-page.tsx`](../../src/components/profile/pages/create-cv-page.tsx): trang tạo CV
-- [`src/components/cv/sections/`](../../src/components/cv/sections): các nhóm nội dung
-- [`src/components/cv/modals/`](../../src/components/cv/modals): hộp thoại từng nhóm
-- [`src/components/cv/completion-progress.tsx`](../../src/components/cv/completion-progress.tsx): thanh hoàn thành và nút lưu
-- [`src/lib/utils/cv-helpers.ts`](../../src/lib/utils/cv-helpers.ts): `calculateCVCompletion`
-- [`src/hooks/use-cv.ts`](../../src/hooks/use-cv.ts): tải và lưu
+- [`src/features/cv-builder/components/create-cv-page.tsx`](../../src/features/cv-builder/components/create-cv-page.tsx): trang tạo CV
+- [`src/features/cv-builder/components/sections/`](../../src/features/cv-builder/components/sections): các nhóm nội dung
+- [`src/features/cv-builder/components/modals/`](../../src/features/cv-builder/components/modals): hộp thoại từng nhóm
+- [`src/features/cv-builder/components/completion-progress.tsx`](../../src/features/cv-builder/components/completion-progress.tsx): thanh hoàn thành và nút lưu
+- [`src/features/cv-builder/utils/cv-helpers.ts`](../../src/features/cv-builder/utils/cv-helpers.ts): `calculateCVCompletion`
+- [`src/features/cv-builder/hooks/use-cv.ts`](../../src/features/cv-builder/hooks/use-cv.ts): tải và lưu
 - [`src/components/profile/pages/my-cv-page.tsx`](../../src/components/profile/pages/my-cv-page.tsx): tab "CV của tôi"
 
 Tài liệu backend: [CV Profiles](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/cv-profiles.md).
