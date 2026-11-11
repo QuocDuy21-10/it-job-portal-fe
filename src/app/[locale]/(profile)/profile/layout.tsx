@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import ChatWidget from "@/features/chatbot/components/chat-widget";
-import ProfileSidebar from "@/components/profile/profile-sidebar";
-import ProfileBottomNav from "@/components/profile/profile-bottom-nav";
-import { PendingDeletionBanner } from "@/components/profile/pending-deletion-banner";
+import ProfileSidebar from "@/features/profile/components/profile-sidebar";
+import ProfileBottomNav from "@/features/profile/components/profile-bottom-nav";
+import { PendingDeletionBanner } from "@/features/profile/components/pending-deletion-banner";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { cn } from "@/lib/utils";
 

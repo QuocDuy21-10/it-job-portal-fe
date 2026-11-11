@@ -79,10 +79,10 @@ Chưa có test cho `OverviewPage`, `SettingsPage`, thanh bên và thanh dưới.
 
 - [`src/app/[locale]/(profile)/profile/layout.tsx`](../../src/app/[locale]/(profile)/profile/layout.tsx): khung, banner chờ xóa
 - [`src/app/[locale]/(profile)/profile/page.tsx`](../../src/app/[locale]/(profile)/profile/page.tsx): chọn tab theo URL
-- [`src/components/profile/profile-sidebar.tsx`](../../src/components/profile/profile-sidebar.tsx): thanh bên
-- [`src/components/profile/profile-bottom-nav.tsx`](../../src/components/profile/profile-bottom-nav.tsx): thanh dưới
-- [`src/components/profile/pages/overview-page.tsx`](../../src/components/profile/pages/overview-page.tsx): tổng quan
-- [`src/components/profile/pages/settings-page.tsx`](../../src/components/profile/pages/settings-page.tsx): cài đặt
+- [`src/features/profile/components/profile-sidebar.tsx`](../../src/features/profile/components/profile-sidebar.tsx): thanh bên
+- [`src/features/profile/components/profile-bottom-nav.tsx`](../../src/features/profile/components/profile-bottom-nav.tsx): thanh dưới
+- [`src/features/profile/components/pages/overview-page.tsx`](../../src/features/profile/components/pages/overview-page.tsx): tổng quan
+- [`src/features/profile/components/pages/settings-page.tsx`](../../src/features/profile/components/pages/settings-page.tsx): cài đặt
 
 Tài liệu backend: [Users](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/users.md).
 

@@ -64,8 +64,8 @@ Chưa có test cho trang "Việc của tôi" và tab "đã ứng tuyển".
 
 ## Source code liên quan
 
-- [`src/components/profile/pages/my-jobs-page.tsx`](../../src/components/profile/pages/my-jobs-page.tsx): danh sách và nhãn trạng thái
-- [`src/components/profile/pages/overview-page.tsx`](../../src/components/profile/pages/overview-page.tsx): số hồ sơ đã nộp
+- [`src/features/profile/components/pages/my-jobs-page.tsx`](../../src/features/profile/components/pages/my-jobs-page.tsx): danh sách và nhãn trạng thái
+- [`src/features/profile/components/pages/overview-page.tsx`](../../src/features/profile/components/pages/overview-page.tsx): số hồ sơ đã nộp
 - [`src/features/resume/redux/resume.api.ts`](../../src/features/resume/redux/resume.api.ts): `takeOutAppliedJob`
 - [`src/features/resume/schemas/resume.schema.ts`](../../src/features/resume/schemas/resume.schema.ts): `ResumeAppliedJob`
 

@@ -16,7 +16,7 @@ import {
 } from "@/features/subscriber/redux/subscriber.api";
 import { Subscriber } from "@/features/subscriber/schemas/subscriber.schema";
 import { toast } from "sonner";
-import { SubscriptionList } from "@/components/profile/subscription-list";
+import { SubscriptionList } from "@/features/profile/components/subscription-list";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 

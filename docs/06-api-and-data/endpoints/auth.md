@@ -27,8 +27,8 @@ Mọi endpoint dùng `baseApi`; địa chỉ gốc là `API_BASE_URL`.
 | `useSetPasswordMutation` | `POST /auth/set-password` | `newPassword` | Làm mất hiệu lực `Auth` | `settings-page.tsx` |
 | `useForgotPasswordMutation` | `POST /auth/forgot-password` | `email` | Không | `(auth)/forgot-password/page.tsx` |
 | `useResetPasswordMutation` | `POST /auth/reset-password` | `token`, `email`, `newPassword` | Không | `(auth)/reset-password/page.tsx` |
-| `useRequestAccountDeletionMutation` | `DELETE /auth/account` | `password` (tùy chọn) | Làm mất hiệu lực `Auth`, `User` | `components/profile/account-deletion-dialog.tsx` |
-| `useCancelAccountDeletionMutation` | `POST /auth/account/cancel-deletion` | Không | Làm mất hiệu lực `Auth`, `User` | `components/profile/pending-deletion-banner.tsx` |
+| `useRequestAccountDeletionMutation` | `DELETE /auth/account` | `password` (tùy chọn) | Làm mất hiệu lực `Auth`, `User` | `features/profile/components/account-deletion-dialog.tsx` |
+| `useCancelAccountDeletionMutation` | `POST /auth/account/cancel-deletion` | Không | Làm mất hiệu lực `Auth`, `User` | `features/profile/components/pending-deletion-banner.tsx` |
 | `useCancelAccountDeletionByTokenMutation` | `POST /auth/account/cancel-deletion-by-token` | `token` | Không | `account/cancel-deletion/page.tsx` |
 
 Hook `useLazyGetMeQuery` cũng được export nhưng chưa có nơi nào dùng.

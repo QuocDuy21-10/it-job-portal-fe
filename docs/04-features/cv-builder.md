@@ -112,7 +112,7 @@ Chưa có test cho: hộp thoại từng nhóm, mức hoàn thành, trang xem tr
 - [`src/features/cv-builder/components/completion-progress.tsx`](../../src/features/cv-builder/components/completion-progress.tsx): thanh hoàn thành và nút lưu
 - [`src/features/cv-builder/utils/cv-helpers.ts`](../../src/features/cv-builder/utils/cv-helpers.ts): `calculateCVCompletion`
 - [`src/features/cv-builder/hooks/use-cv.ts`](../../src/features/cv-builder/hooks/use-cv.ts): tải và lưu
-- [`src/components/profile/pages/my-cv-page.tsx`](../../src/components/profile/pages/my-cv-page.tsx): tab "CV của tôi"
+- [`src/features/profile/components/pages/my-cv-page.tsx`](../../src/features/profile/components/pages/my-cv-page.tsx): tab "CV của tôi"
 
 Tài liệu backend: [CV Profiles](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/cv-profiles.md).
 

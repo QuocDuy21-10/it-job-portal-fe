@@ -73,7 +73,7 @@ Chưa có test cho chuông, trang thông báo, `use-notification` và `Notificat
 
 - [`src/components/notification/notification-bell.tsx`](../../src/components/notification/notification-bell.tsx): chuông
 - [`src/components/notification/notification-initializer.tsx`](../../src/components/notification/notification-initializer.tsx): nhận `notification:new`
-- [`src/components/profile/pages/notifications-page.tsx`](../../src/components/profile/pages/notifications-page.tsx): trang thông báo
+- [`src/features/profile/components/pages/notifications-page.tsx`](../../src/features/profile/components/pages/notifications-page.tsx): trang thông báo
 - [`src/hooks/use-notification.ts`](../../src/hooks/use-notification.ts): số chưa đọc, đánh dấu đã đọc, liên kết
 - [`src/features/notification/redux/notification.slice.ts`](../../src/features/notification/redux/notification.slice.ts): số chưa đọc trong Redux
 - [`src/lib/socket/socket-provider.tsx`](../../src/lib/socket/socket-provider.tsx): kết nối socket
