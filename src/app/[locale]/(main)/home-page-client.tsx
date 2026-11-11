@@ -15,7 +15,7 @@ import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.
 import { Job } from "@/features/job/schemas/job.schema";
 import { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import { JobCard } from "@/components/job/job-card";
+import { JobCard } from "@/features/job/components/job-card";
 import { CompanyCard } from "@/components/company/company-card";
 import { SimplePagination } from "@/components/simple-pagination";
 import { SectionHeader } from "@/components/sections/section-header";

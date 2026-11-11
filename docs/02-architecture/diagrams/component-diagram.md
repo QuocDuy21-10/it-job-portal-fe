@@ -40,5 +40,5 @@ flowchart TB
 - [`src/app/layout.tsx`](../../../src/app/layout.tsx): Redux, CASL, Google OAuth, giao diện sáng/tối
 - [`src/app/[locale]/layout.tsx`](../../../src/app/[locale]/layout.tsx): dịch thuật, modal đăng nhập, Socket.IO
 - [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): ngoại lệ `app` gọi `lib`
-- [`src/hooks/use-job-list.ts`](../../../src/hooks/use-job-list.ts): ví dụ lớp hook
+- [`src/features/job/hooks/use-job-list.ts`](../../../src/features/job/hooks/use-job-list.ts): ví dụ lớp hook
 - [`src/features/job/redux/job.api.ts`](../../../src/features/job/redux/job.api.ts): ví dụ lớp module nghiệp vụ

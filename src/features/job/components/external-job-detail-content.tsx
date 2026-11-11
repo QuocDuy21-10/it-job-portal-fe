@@ -10,12 +10,12 @@ import {
   MapPin,
   XCircle,
 } from "lucide-react";
+import { CompanyLogo } from "@/features/job/components/job-card/company-logo";
+import { SkillTags } from "@/features/job/components/job-card/skill-tags";
 import {
-  CompanyLogo,
   JOB_LEVEL_LABEL_KEYS,
-  SkillTags,
   getTranslatedLabel,
-} from "@/components/job/job-card";
+} from "@/features/job/config/job-labels";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,

@@ -72,7 +72,7 @@ Route `/api/proxy-image` trả ảnh với `Cache-Control: public, max-age=31536
 - [`src/lib/redux/api.ts`](../../src/lib/redux/api.ts): danh sách thẻ cache RTK Query
 - [`src/features/skill/redux/skill.api.ts`](../../src/features/skill/redux/skill.api.ts): endpoint đặt `keepUnusedDataFor` riêng
 - [`src/lib/redux/store.ts`](../../src/lib/redux/store.ts): cấu hình Redux Persist
-- [`src/hooks/use-job-list.ts`](../../src/hooks/use-job-list.ts): bỏ qua truy vấn khi dùng dữ liệu từ server
+- [`src/features/job/hooks/use-job-list.ts`](../../src/features/job/hooks/use-job-list.ts): bỏ qua truy vấn khi dùng dữ liệu từ server
 - [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): ví dụ `providesTags` và `invalidatesTags`
 - [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): header cache của ảnh
 

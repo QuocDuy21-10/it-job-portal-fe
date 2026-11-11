@@ -62,15 +62,15 @@ Dạng tin và các field duyệt (`approvalStatus`, `approvalNote`, `approvedBy
 
 ## Test cases
 
-Chưa có test cho hộp thoại duyệt, bảng tin quản trị và trang quản trị tin. Test của `getJobStatus` (nhãn "mới", "sắp hết hạn") nằm ở `src/lib/utils/job-status.test.ts`.
+Chưa có test cho hộp thoại duyệt, bảng tin quản trị và trang quản trị tin. Test của `getJobStatus` (nhãn "mới", "sắp hết hạn") nằm ở `src/features/job/utils/job-status.test.ts`.
 
 ## Source code liên quan
 
 - [`src/app/[locale]/(dashboard)/admin/jobs/page.tsx`](../../src/app/[locale]/(dashboard)/admin/jobs/page.tsx): trang quản trị tin
-- [`src/components/job/job-table.tsx`](../../src/components/job/job-table.tsx): bảng tin, nút duyệt
-- [`src/components/job/job-approval-dialog.tsx`](../../src/components/job/job-approval-dialog.tsx): hộp thoại duyệt
-- [`src/components/job/job-dialog.tsx`](../../src/components/job/job-dialog.tsx), [`src/components/job/job-form.tsx`](../../src/components/job/job-form.tsx): đăng và sửa tin
-- [`src/hooks/use-job.ts`](../../src/hooks/use-job.ts): thao tác kèm toast
+- [`src/features/job/components/job-table.tsx`](../../src/features/job/components/job-table.tsx): bảng tin, nút duyệt
+- [`src/features/job/components/job-approval-dialog.tsx`](../../src/features/job/components/job-approval-dialog.tsx): hộp thoại duyệt
+- [`src/features/job/components/job-dialog.tsx`](../../src/features/job/components/job-dialog.tsx), [`src/features/job/components/job-form.tsx`](../../src/features/job/components/job-form.tsx): đăng và sửa tin
+- [`src/features/job/hooks/use-job.ts`](../../src/features/job/hooks/use-job.ts): thao tác kèm toast
 - [`src/features/job/schemas/job.schema.ts`](../../src/features/job/schemas/job.schema.ts): kiểu và kiểm tra
 
 Backend: [Use case đăng và duyệt tin](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/06-workflows/use-cases/job-posting-and-approval.md).

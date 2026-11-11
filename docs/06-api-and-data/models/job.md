@@ -86,7 +86,7 @@ Chưa có ghi chép về lý do của các khác biệt này. Chưa đối chi�
 - [`src/features/job/schemas/job.schema.ts`](../../../src/features/job/schemas/job.schema.ts): `JobSchema`, `JobEntitySchema`, `ApproveJobSchema`
 - [`src/shared/types/backend.d.ts`](../../../src/shared/types/backend.d.ts): `IJob`
 - [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): `fetchPublicJobById`
-- [`src/components/job/job-form.tsx`](../../../src/components/job/job-form.tsx): form tạo và sửa
+- [`src/features/job/components/job-form.tsx`](../../../src/features/job/components/job-form.tsx): form tạo và sửa
 
 Collection ở backend: [jobs](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/04-database/collections/jobs.md).
 

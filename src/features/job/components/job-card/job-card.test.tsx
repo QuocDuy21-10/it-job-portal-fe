@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type { ImgHTMLAttributes, ReactNode } from "react";
-import { JobCard } from "./job-card";
+import { JobCard } from ".";
 
 let favoriteState = {
   isSaved: false,
@@ -25,7 +25,7 @@ jest.mock("@radix-ui/react-tooltip", () => ({
   Arrow: () => null,
 }));
 
-jest.mock("@/hooks/use-job-favorite", () => ({
+jest.mock("@/features/job/hooks/use-job-favorite", () => ({
   useJobFavorite: () => ({
     ...favoriteState,
     toggleSaveJob: jest.fn(),
@@ -115,5 +115,29 @@ describe("JobCard", () => {
     expect(
       screen.getByRole("button", { name: "Remove saved job" })
     ).toBeEnabled();
+  });
+
+  it("renders the detailed variant with an apply link and no salary when hidden", () => {
+    render(
+      <JobCard
+        job={job}
+        variant="detailed"
+        hideSalary
+        actionLayout="inverted"
+      />
+    );
+
+    expect(screen.getByRole("link", { name: "Apply now" })).toHaveAttribute(
+      "href",
+      "/jobs/job-1"
+    );
+    expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
+    expect(screen.queryByText(/25[.,]000[.,]000/)).toBeNull();
+  });
+
+  it("does not accept the removed compact variant", () => {
+    // @ts-expect-error compact was removed in phase 3C
+    render(<JobCard job={job} variant="compact" />);
+    expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
   });
 });

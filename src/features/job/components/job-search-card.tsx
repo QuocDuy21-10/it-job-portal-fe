@@ -4,22 +4,22 @@ import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CompanyLogo } from "@/features/job/components/job-card/company-logo";
+import { FavoriteButton } from "@/features/job/components/job-card/favorite-button";
+import { SkillTags } from "@/features/job/components/job-card/skill-tags";
+import { StatusIndicator } from "@/features/job/components/job-card/status-indicator";
 import {
-  CompanyLogo,
-  FavoriteButton,
   JOB_LEVEL_LABEL_KEYS,
   JOB_STATUS_LABEL_KEYS,
   JOB_TYPE_LABEL_KEYS,
-  SkillTags,
-  StatusIndicator,
   getTranslatedLabel,
-} from "@/components/job/job-card";
+} from "@/features/job/config/job-labels";
 import type { JobSearchItem } from "@/features/job/schemas/job-search.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import { useJobFavorite } from "@/hooks/use-job-favorite";
+import { useJobFavorite } from "@/features/job/hooks/use-job-favorite";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { getJobStatus } from "@/lib/utils/job-status";
+import { getJobStatus } from "@/features/job/utils/job-status";
 import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 import { timeAgo } from "@/lib/utils/time-ago";
 

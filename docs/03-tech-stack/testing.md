@@ -62,6 +62,6 @@ Vì vậy bộ test hiện tại nên được hiểu là kiểm thử đơn v�
 
 - [`jest.config.js`](../../jest.config.js): cấu hình Jest
 - [`jest.setup.ts`](../../jest.setup.ts): thiết lập môi trường và giả lập
-- [`src/hooks/use-job-list.test.tsx`](../../src/hooks/use-job-list.test.tsx): ví dụ test hook
+- [`src/features/job/hooks/use-job-list.test.tsx`](../../src/features/job/hooks/use-job-list.test.tsx): ví dụ test hook
 - [`src/features/auth/redux/auth.slice.test.ts`](../../src/features/auth/redux/auth.slice.test.ts): ví dụ test slice
-- [`src/components/job/job-search-card.test.tsx`](../../src/components/job/job-search-card.test.tsx): ví dụ test component
+- [`src/features/job/components/job-search-card.test.tsx`](../../src/features/job/components/job-search-card.test.tsx): ví dụ test component

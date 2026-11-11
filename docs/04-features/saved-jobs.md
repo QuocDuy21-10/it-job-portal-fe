@@ -68,19 +68,19 @@ Dạng một tin đã lưu (`SavedJob`): `_id`, `name`, `skills`, `company`, `lo
 
 | Test | Nội dung |
 | --- | --- |
-| `src/hooks/use-job-favorite.test.tsx` | Đọc trạng thái từ `savedJobIds`; nút chưa lưu trước khi hydrate; không gửi trước khi hydrate; lưu lạc quan và hoàn tác khi lỗi; bỏ lưu |
+| `src/features/job/hooks/use-job-favorite.test.tsx` | Đọc trạng thái từ `savedJobIds`; nút chưa lưu trước khi hydrate; không gửi trước khi hydrate; lưu lạc quan và hoàn tác khi lỗi; bỏ lưu |
 | `src/features/auth/redux/auth.slice.test.ts` | Hợp nhất danh sách việc đã lưu |
-| `src/components/job/job-card.test.tsx` | Nhãn lưu trước và sau khi hydrate |
+| `src/features/job/components/job-card.test.tsx` | Nhãn lưu trước và sau khi hydrate |
 
 Chưa có test cho: tab "đã lưu" của trang việc của tôi.
 
 ## Source code liên quan
 
-- [`src/hooks/use-job-favorite.ts`](../../src/hooks/use-job-favorite.ts): logic lưu và hoàn tác
+- [`src/features/job/hooks/use-job-favorite.ts`](../../src/features/job/hooks/use-job-favorite.ts): logic lưu và hoàn tác
 - [`src/components/profile/pages/my-jobs-page.tsx`](../../src/components/profile/pages/my-jobs-page.tsx): danh sách đã lưu
 - [`src/features/user/redux/user.api.ts`](../../src/features/user/redux/user.api.ts): endpoint và cập nhật lạc quan
 - [`src/features/auth/redux/auth.slice.ts`](../../src/features/auth/redux/auth.slice.ts): `addSavedJobId`, `removeSavedJobId`
-- [`src/components/job/job-search-card.tsx`](../../src/components/job/job-search-card.tsx): nút lưu trên thẻ
+- [`src/features/job/components/job-search-card.tsx`](../../src/features/job/components/job-search-card.tsx): nút lưu trên thẻ
 
 Tài liệu backend: [Users](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/users.md).
 

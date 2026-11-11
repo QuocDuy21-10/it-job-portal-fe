@@ -36,7 +36,7 @@ jest.mock("@/hooks/use-i18n", () => ({
   }),
 }));
 
-jest.mock("@/hooks/use-job-favorite", () => ({
+jest.mock("@/features/job/hooks/use-job-favorite", () => ({
   useJobFavorite: () => ({
     isSaved,
     toggleSaveJob: mockToggleSaveJob,

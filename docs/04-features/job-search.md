@@ -86,10 +86,10 @@ Kiểu dữ liệu kết quả ở [Model JobSearchItem](../06-api-and-data/mode
 
 | Test | Nội dung |
 | --- | --- |
-| `src/hooks/use-job-list.test.tsx` | Bản nháp, áp dụng, đặt lại, đổi nguồn, cập nhật khi trạng thái ban đầu đổi |
+| `src/features/job/hooks/use-job-list.test.tsx` | Bản nháp, áp dụng, đặt lại, đổi nguồn, cập nhật khi trạng thái ban đầu đổi |
 | `src/lib/utils/public-listing.test.ts` | Chuẩn hóa địa điểm, nguồn, dựng tham số API và chuỗi query |
-| `src/components/job/job-search-card.test.tsx` | Thẻ tin nội bộ có lương và nút lưu; tin ngoài không có; trạng thái sắp hết hạn |
-| `src/components/job/job-card.test.tsx` | Nhãn lưu việc trước và sau khi hydrate |
+| `src/features/job/components/job-search-card.test.tsx` | Thẻ tin nội bộ có lương và nút lưu; tin ngoài không có; trạng thái sắp hết hạn |
+| `src/features/job/components/job-card.test.tsx` | Nhãn lưu việc trước và sau khi hydrate |
 | `src/components/ui/search-suggest-input.test.tsx` | Từ khóa gần đây, xóa một mục, chọn một mục |
 | `src/app/[locale]/(main)/jobs/[id]/job-detail-page-client.test.tsx` | Trang chi tiết phía client |
 
@@ -101,8 +101,8 @@ Chưa có test cho: `jobs-page-client.tsx` (ghi URL, ngăn lọc trên điện t
 - [`src/app/[locale]/(main)/jobs/jobs-page-client.tsx`](../../src/app/[locale]/(main)/jobs/jobs-page-client.tsx): giao diện danh sách
 - [`src/app/[locale]/(main)/jobs/[id]/page.tsx`](../../src/app/[locale]/(main)/jobs/[id]/page.tsx): trang chi tiết, dữ liệu có cấu trúc
 - [`src/app/[locale]/(main)/jobs/[id]/job-detail-page-client.tsx`](../../src/app/[locale]/(main)/jobs/[id]/job-detail-page-client.tsx): nút ứng tuyển và lưu
-- [`src/hooks/use-job-list.ts`](../../src/hooks/use-job-list.ts): trạng thái bộ lọc
-- [`src/components/job/job-search-card.tsx`](../../src/components/job/job-search-card.tsx): thẻ kết quả
+- [`src/features/job/hooks/use-job-list.ts`](../../src/features/job/hooks/use-job-list.ts): trạng thái bộ lọc
+- [`src/features/job/components/job-search-card.tsx`](../../src/features/job/components/job-search-card.tsx): thẻ kết quả
 - [`src/components/search/job-search-box.tsx`](../../src/components/search/job-search-box.tsx): ô tìm kiếm
 - [`src/components/ui/search-suggest-input.tsx`](../../src/components/ui/search-suggest-input.tsx): gợi ý và lịch sử tìm kiếm
 - [`src/lib/utils/public-listing.ts`](../../src/lib/utils/public-listing.ts): đọc URL, dựng tham số

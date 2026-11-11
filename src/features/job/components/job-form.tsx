@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import jobTypes from "@/shared/data/job-type.json";
-import { DatePicker } from "../date-picker";
+import { DatePicker } from "@/components/date-picker";
 import {
   CreateJobFormData,
   JobSchema,
@@ -28,12 +28,12 @@ import {
 import { useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
-import { Combobox } from "../combo-box";
-import { RichTextEditor } from "../rich-text-editor";
-import { MultiSelect } from "../multi-select";
+import { Combobox } from "@/components/combo-box";
+import { RichTextEditor } from "@/components/rich-text-editor";
+import { MultiSelect } from "@/components/multi-select";
 import jobLevels from "@/shared/data/job-level.json";
 import { useSkillCatalog } from "@/hooks/use-skill-catalog";
-import { SingleSelect } from "../single-select";
+import { SingleSelect } from "@/components/single-select";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
 interface JobFormProps {

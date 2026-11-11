@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { ExternalJobDetailContent } from "@/components/job/external-job-detail-content";
+import { ExternalJobDetailContent } from "@/features/job/components/external-job-detail-content";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { fetchPublicExternalJobById } from "@/lib/utils/public-content";
 import {

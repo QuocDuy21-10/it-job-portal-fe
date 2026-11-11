@@ -1540,6 +1540,8 @@ export const en = {
     applyFilters: "Apply",
     loadingShort: "Loading...",
     resultsCount: "{count} jobs",
+    resultsFoundSuffix:
+      "{count, plural, one {Job found} other {IT Jobs found}}",
     dailyUpdate: "Updated daily",
     sortLabel: "Sort:",
     searchingJobs: "Searching for matching jobs...",
