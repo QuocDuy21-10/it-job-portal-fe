@@ -84,7 +84,7 @@ Chưa có test cho hộp thoại xóa, banner chờ xóa và trang hủy.
 - [`src/features/profile/components/account-deletion-dialog.tsx`](../../src/features/profile/components/account-deletion-dialog.tsx): hộp thoại xóa
 - [`src/features/profile/components/pending-deletion-banner.tsx`](../../src/features/profile/components/pending-deletion-banner.tsx): banner và nút hủy
 - [`src/app/[locale]/account/cancel-deletion/page.tsx`](../../src/app/[locale]/account/cancel-deletion/page.tsx): trang hủy bằng liên kết
-- [`src/features/profile/components/pages/settings-page.tsx`](../../src/features/profile/components/pages/settings-page.tsx): nơi đặt khu vực xóa
+- [`src/features/profile/components/pages/settings-page/delete-account-section.tsx`](../../src/features/profile/components/pages/settings-page/delete-account-section.tsx): nơi đặt khu vực xóa
 - [`src/features/auth/redux/auth.api.ts`](../../src/features/auth/redux/auth.api.ts): endpoint
 
 Backend: [Use case xóa tài khoản](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/06-workflows/use-cases/account-deletion.md).

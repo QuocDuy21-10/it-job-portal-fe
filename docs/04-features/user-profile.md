@@ -57,8 +57,8 @@ Layout `(profile)` gọi `GET /auth/me`; nếu có `scheduledDeletionAt` thì hi
 
 | Hook | Endpoint | Dùng ở |
 | --- | --- | --- |
-| `useGetMeQuery` | `GET /auth/me` | `profile/layout.tsx`, `overview-page.tsx`, `settings-page.tsx` |
-| `useChangePasswordMutation`, `useSetPasswordMutation` | `POST /auth/change-password`, `POST /auth/set-password` | `settings-page.tsx` |
+| `useGetMeQuery` | `GET /auth/me` | `profile/layout.tsx`, `overview-page.tsx`, `settings-page/index.tsx` |
+| `useChangePasswordMutation`, `useSetPasswordMutation` | `POST /auth/change-password`, `POST /auth/set-password` | `settings-page/change-password-modal.tsx`, `settings-page/set-password-modal.tsx` |
 
 ## Dữ liệu và kiểm tra
 
@@ -82,7 +82,7 @@ Chưa có test cho `OverviewPage`, `SettingsPage`, thanh bên và thanh dưới.
 - [`src/features/profile/components/profile-sidebar.tsx`](../../src/features/profile/components/profile-sidebar.tsx): thanh bên
 - [`src/features/profile/components/profile-bottom-nav.tsx`](../../src/features/profile/components/profile-bottom-nav.tsx): thanh dưới
 - [`src/features/profile/components/pages/overview-page.tsx`](../../src/features/profile/components/pages/overview-page.tsx): tổng quan
-- [`src/features/profile/components/pages/settings-page.tsx`](../../src/features/profile/components/pages/settings-page.tsx): cài đặt
+- [`src/features/profile/components/pages/settings-page/index.tsx`](../../src/features/profile/components/pages/settings-page/index.tsx): cài đặt
 
 Tài liệu backend: [Users](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/users.md).
 

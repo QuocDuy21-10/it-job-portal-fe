@@ -16,15 +16,15 @@ Mọi endpoint dùng `baseApi`; địa chỉ gốc là `API_BASE_URL`.
 | Hook RTK Query | Method và path | Dữ liệu frontend gửi | Cache tag | Nơi dùng |
 | --- | --- | --- | --- | --- |
 | `useLoginMutation` | `POST /auth/login` | `LoginFormData`: `email`, `password` | Làm mất hiệu lực `Auth` | `(auth)/login/page.tsx`, `components/modals/login-form.tsx` |
-| `useGetMeQuery` | `GET /auth/me` | Không | Cung cấp `Auth` | `components/auth-initializer.tsx`, `(profile)/profile/layout.tsx`, `overview-page.tsx`, `settings-page.tsx` |
+| `useGetMeQuery` | `GET /auth/me` | Không | Cung cấp `Auth` | `components/auth-initializer.tsx`, `(profile)/profile/layout.tsx`, `overview-page.tsx`, `settings-page/index.tsx` |
 | `useRegisterMutation` | `POST /auth/register` | `RegisterFormData`: `name`, `email`, `password`, `confirmPassword`, `acceptTerms` | Làm mất hiệu lực `Auth` | `(auth)/register/page.tsx`, `components/modals/register-form.tsx` |
 | `useVerifyEmailMutation` | `POST /auth/verify` | `email`, `code` | Không | `hooks/use-verification.ts` |
 | `useResendCodeMutation` | `POST /auth/resend-code` | `email` | Không | `hooks/use-verification.ts` |
 | `useLogoutMutation` | `POST /auth/logout` | Không | Làm mất hiệu lực `Auth`, `User`, `Company`, `Job`, `Resume` | `components/header.tsx`, layout quản trị, layout HR |
 | `useRefreshTokenMutation` | `GET /auth/refresh` | Không (cookie tự gửi) | Không | Chưa có nơi nào gọi; việc làm mới dùng `axios` trần trong interceptor |
 | `useGoogleLoginMutation` | `POST /auth/google/login` | `idToken` | Làm mất hiệu lực `Auth` | `(auth)/login/page.tsx`, `login-form.tsx`, `google-one-tap.tsx` |
-| `useChangePasswordMutation` | `POST /auth/change-password` | `ChangePasswordFormData`: `currentPassword`, `newPassword`, `confirmPassword` | Làm mất hiệu lực `Auth` | `settings-page.tsx`, `(dashboard)/admin/change-password/page.tsx` |
-| `useSetPasswordMutation` | `POST /auth/set-password` | `newPassword` | Làm mất hiệu lực `Auth` | `settings-page.tsx` |
+| `useChangePasswordMutation` | `POST /auth/change-password` | `ChangePasswordFormData`: `currentPassword`, `newPassword`, `confirmPassword` | Làm mất hiệu lực `Auth` | `settings-page/change-password-modal.tsx`, `(dashboard)/admin/change-password/page.tsx` |
+| `useSetPasswordMutation` | `POST /auth/set-password` | `newPassword` | Làm mất hiệu lực `Auth` | `settings-page/set-password-modal.tsx` |
 | `useForgotPasswordMutation` | `POST /auth/forgot-password` | `email` | Không | `(auth)/forgot-password/page.tsx` |
 | `useResetPasswordMutation` | `POST /auth/reset-password` | `token`, `email`, `newPassword` | Không | `(auth)/reset-password/page.tsx` |
 | `useRequestAccountDeletionMutation` | `DELETE /auth/account` | `password` (tùy chọn) | Làm mất hiệu lực `Auth`, `User` | `features/profile/components/account-deletion-dialog.tsx` |
