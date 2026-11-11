@@ -74,7 +74,7 @@ Endpoint: [Endpoint Companies](../endpoints/companies.md). Collection ở backen
 
 - [`src/features/company/schemas/company.schema.ts`](../../../src/features/company/schemas/company.schema.ts): schema và type
 - [`src/shared/types/backend.d.ts`](../../../src/shared/types/backend.d.ts): `ICompany`
-- [`src/components/company/company-form.tsx`](../../../src/components/company/company-form.tsx): form quản trị
-- [`src/components/company/company-card.tsx`](../../../src/components/company/company-card.tsx): thẻ công ty
+- [`src/features/company/components/company-form.tsx`](../../../src/features/company/components/company-form.tsx): form quản trị
+- [`src/features/company/components/company-card.tsx`](../../../src/features/company/components/company-card.tsx): thẻ công ty
 
 Đọc tiếp: [Endpoint Companies](../endpoints/companies.md), [Model Job](job.md), [Tham chiếu dữ liệu backend](../backend-data-reference.md).

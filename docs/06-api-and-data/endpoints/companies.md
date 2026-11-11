@@ -12,9 +12,9 @@ Công ty vừa có phần công khai (khách xem danh sách, chi tiết) vừa c
 | --- | --- | --- | --- | --- |
 | `useGetCompaniesQuery` | `GET /companies?page=..&limit=..` | `PaginatedQueryParams`: `page` (1), `limit` (10), `filter`, `sort`; xem [Phân trang và lọc](../pagination-filtering.md) | Cung cấp `Company` | `companies-page-client.tsx`, `(dashboard)/admin/companies/page.tsx`, `user-form.tsx`, `job-form.tsx` |
 | `useGetCompanyQuery` | `GET /companies/:id` | `id: string` | Cung cấp `{ Company, id }` | Chưa có nơi nào dùng; trang chi tiết dùng `fetchPublicCompanyById` |
-| `useCreateCompanyMutation` | `POST /companies` | `CreateCompanyFormData` | Làm mất hiệu lực `Company` | `hooks/use-company.ts` |
-| `useUpdateCompanyMutation` | `PATCH /companies/:id` | `{ id, data: UpdateCompanyFormData }` | Làm mất hiệu lực `{ Company, id }` và `Company` | `hooks/use-company.ts` |
-| `useDeleteCompanyMutation` | `DELETE /companies/:id` | `id: string` | Làm mất hiệu lực `Company` | `hooks/use-company.ts` |
+| `useCreateCompanyMutation` | `POST /companies` | `CreateCompanyFormData` | Làm mất hiệu lực `Company` | `features/company/hooks/use-company.ts` |
+| `useUpdateCompanyMutation` | `PATCH /companies/:id` | `{ id, data: UpdateCompanyFormData }` | Làm mất hiệu lực `{ Company, id }` và `Company` | `features/company/hooks/use-company.ts` |
+| `useDeleteCompanyMutation` | `DELETE /companies/:id` | `id: string` | Làm mất hiệu lực `Company` | `features/company/hooks/use-company.ts` |
 | `useBulkDeleteCompaniesMutation` | `DELETE /companies/bulk` | `string[]`, gửi trong body dạng `{ ids }` | Làm mất hiệu lực `Company` | `(dashboard)/admin/companies/page.tsx` |
 | `useGetTopHiringCompaniesQuery` | `GET /companies/top-hiring` | `{ limit? }`, thêm `?limit=` khi có | Cung cấp `Company` | `home-page-client.tsx` |
 
@@ -39,7 +39,7 @@ Form kiểm tra bằng `CompanySchema`; quy tắc từng field xem [Model Compan
 ## Source code liên quan
 
 - [`src/features/company/redux/company.api.ts`](../../../src/features/company/redux/company.api.ts): khai báo endpoint
-- [`src/hooks/use-company.ts`](../../../src/hooks/use-company.ts): thao tác quản trị kèm toast
+- [`src/features/company/hooks/use-company.ts`](../../../src/features/company/hooks/use-company.ts): thao tác quản trị kèm toast
 - [`src/lib/utils/public-listing.ts`](../../../src/lib/utils/public-listing.ts): `buildCompanyListQueryArgs`
 - [`src/features/company/schemas/company.schema.ts`](../../../src/features/company/schemas/company.schema.ts): kiểu và kiểm tra
 

@@ -16,8 +16,8 @@ import {
   CreateCompanyFormData,
 } from "@/features/company/schemas/company.schema";
 import { useEffect } from "react";
-import { RichTextEditor } from "../rich-text-editor";
-import { LogoUpload } from "../logo-upload";
+import { RichTextEditor } from "@/components/rich-text-editor";
+import { LogoUpload } from "@/components/logo-upload";
 
 interface CompanyFormProps {
   initialData?: Partial<CreateCompanyFormData>;

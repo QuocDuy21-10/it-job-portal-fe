@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import JobListing from "@/components/company/section/job-listing";
+import JobListing from "@/features/company/components/section/job-listing";
 import { useI18n } from "@/hooks/use-i18n";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 import type { PaginatedResult } from "@/shared/types/pagination";

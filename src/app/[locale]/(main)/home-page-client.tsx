@@ -16,7 +16,7 @@ import { Job } from "@/features/job/schemas/job.schema";
 import { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard } from "@/features/job/components/job-card";
-import { CompanyCard } from "@/components/company/company-card";
+import { CompanyCard } from "@/features/company/components/company-card";
 import { SimplePagination } from "@/components/simple-pagination";
 import { SectionHeader } from "@/components/sections/section-header";
 import { SectionContainer } from "@/components/sections/section-container";

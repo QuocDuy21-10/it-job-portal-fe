@@ -42,7 +42,7 @@ Sơ đồ rút gọn hành vi của hook `useCompanyFollow`.
 
 | Hook | Endpoint | Dùng ở |
 | --- | --- | --- |
-| `useFollowCompanyMutation`, `useUnfollowCompanyMutation` | `POST` và `DELETE /users/follow-company` | `hooks/use-company-follow.ts` |
+| `useFollowCompanyMutation`, `useUnfollowCompanyMutation` | `POST` và `DELETE /users/follow-company` | `features/company/hooks/use-company-follow.ts` |
 
 Bảng đầy đủ: [Endpoint Users](../06-api-and-data/endpoints/users.md). Backend trả lỗi nếu theo dõi một công ty đã theo dõi rồi (`BadRequest`); frontend sẽ hiện thông điệp đó và hoàn tác nút.
 
@@ -61,14 +61,14 @@ Tên danh sách công ty đang theo dõi khác nhau giữa người dùng đang 
 
 | Test | Nội dung |
 | --- | --- |
-| `src/hooks/use-company-follow.test.tsx` | Trạng thái chưa theo dõi trước khi hydrate rồi cập nhật sau đó; không gửi trước khi hydrate; theo dõi lạc quan và hoàn tác khi lỗi |
+| `src/features/company/hooks/use-company-follow.test.tsx` | Trạng thái chưa theo dõi trước khi hydrate rồi cập nhật sau đó; không gửi trước khi hydrate; theo dõi lạc quan và hoàn tác khi lỗi |
 
 Chưa có test cho: nút theo dõi ở trang chi tiết công ty.
 
 ## Source code liên quan
 
-- [`src/hooks/use-company-follow.ts`](../../src/hooks/use-company-follow.ts): logic theo dõi
-- [`src/components/company/company-follow-button.tsx`](../../src/components/company/company-follow-button.tsx): nút theo dõi
+- [`src/features/company/hooks/use-company-follow.ts`](../../src/features/company/hooks/use-company-follow.ts): logic theo dõi
+- [`src/features/company/components/company-follow-button.tsx`](../../src/features/company/components/company-follow-button.tsx): nút theo dõi
 - [`src/features/user/redux/user.api.ts`](../../src/features/user/redux/user.api.ts): endpoint và cập nhật lạc quan
 - [`src/app/[locale]/(main)/companies/[id]/page.tsx`](../../src/app/[locale]/(main)/companies/[id]/page.tsx): nơi đặt nút
 

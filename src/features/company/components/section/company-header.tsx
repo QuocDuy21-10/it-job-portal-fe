@@ -4,7 +4,7 @@ import Image from "next/image";
 import parse from "html-react-parser";
 import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-import { useCompanyFollow } from "@/hooks/use-company-follow";
+import { useCompanyFollow } from "@/features/company/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useI18n } from "@/hooks/use-i18n";

@@ -46,7 +46,7 @@ Cấu hình cũng ánh xạ file CSS và ảnh tới `test/styleMock.js` và `te
 | --- | --- | --- |
 | `components/` | 16 | Chatbot (5), job (3), statistics (2), modals (2), company, profile, ui, user |
 | `features/` | 8 | Slice và schema của `auth`, `chatbot`, `cv-profile`, `user`; tiện ích chat |
-| `hooks/` | 5 | `use-chat`, `use-company-follow`, `use-cv`, `use-job-favorite`, `use-job-list` |
+| `hooks/` | 5 | `use-chat`, `use-cv`, `use-job-favorite`, `use-job-list` |
 | `lib/` | 4 | Ảnh PDF, kiểm tra URL an toàn, trạng thái việc làm, tham số danh sách công khai |
 | `app/` | 3 | Trang chủ, danh sách công ty, chi tiết việc làm (phần client) |
 

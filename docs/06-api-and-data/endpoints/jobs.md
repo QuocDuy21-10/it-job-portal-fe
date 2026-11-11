@@ -10,7 +10,7 @@ Hai nhóm phục vụ hai việc khác nhau. `jobs` là CRUD cho HR và quản t
 
 | Hook RTK Query | Method và path | Tham số frontend gửi | Cache tag | Nơi dùng |
 | --- | --- | --- | --- | --- |
-| `useGetJobsQuery` | `GET /jobs?page=..&limit=..` | `PaginatedQueryParams`: `page` (mặc định 1), `limit` (10), `filter`, `sort`, `keyword`; xem [Phân trang và lọc](../pagination-filtering.md) | Cung cấp `Job` | `home-page-client.tsx`, `(dashboard)/admin/jobs/page.tsx`, `components/company/section/job-listing.tsx` |
+| `useGetJobsQuery` | `GET /jobs?page=..&limit=..` | `PaginatedQueryParams`: `page` (mặc định 1), `limit` (10), `filter`, `sort`, `keyword`; xem [Phân trang và lọc](../pagination-filtering.md) | Cung cấp `Job` | `home-page-client.tsx`, `(dashboard)/admin/jobs/page.tsx`, `features/company/components/section/job-listing.tsx` |
 | `useGetJobQuery` | `GET /jobs/:id` | `id: string` | Cung cấp `{ Job, id }` | Hook chưa có nơi nào dùng; endpoint được gọi bằng `jobApi.endpoints.getJob.initiate` trong `chat-message.utils.ts` để lấy việc làm gợi ý của trợ lý AI. Trang chi tiết dùng `fetchPublicJobById` |
 | `useCreateJobMutation` | `POST /jobs` | `CreateJobFormData` | Làm mất hiệu lực `Job` | `hooks/use-job.ts` |
 | `useUpdateJobMutation` | `PATCH /jobs/:id` | `{ id, data: UpdateJobFormData }` | Làm mất hiệu lực `{ Job, id }` và `Job` | `hooks/use-job.ts` |

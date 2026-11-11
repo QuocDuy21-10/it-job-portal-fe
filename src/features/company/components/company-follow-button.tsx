@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCompanyFollow } from "@/hooks/use-company-follow";
+import { useCompanyFollow } from "@/features/company/hooks/use-company-follow";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/hooks/use-i18n";
 
