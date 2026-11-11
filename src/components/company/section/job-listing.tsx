@@ -5,7 +5,7 @@ import { Briefcase } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useI18n } from "@/hooks/use-i18n";
-import { JobCard } from "@/components/job/job-card";
+import { JobCard } from "@/features/job/components/job-card";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import type { Job } from "@/features/job/schemas/job.schema";
 

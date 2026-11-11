@@ -22,7 +22,8 @@ const eslintConfig = [
   },
   ...compat.extends("next/core-web-vitals"),
   {
-    // Layer boundaries: shared -> (nothing above) ; features -> (no UI/app layers) ; app is never imported.
+    // Layer boundaries: shared -> (nothing above) ; features data/config/utils -> (no UI/app layers) ;
+    // features components/hooks -> (no app) ; app is never imported.
     // lib/ is excluded on purpose: lib/redux/store.ts is the composition root that wires feature slices.
     files: ["src/**/*.{ts,tsx}"],
     ignores: ["**/*.test.{ts,tsx}"],
@@ -44,7 +45,11 @@ const eslintConfig = [
               message: "shared/ must not depend on higher layers.",
             },
             {
-              target: "./src/features",
+              // Data/config layers of a feature stay UI-free; feature UI lives in components/ and hooks/.
+              target: [
+                "./src/features/*/{redux,schemas,config,utils,lib}/**",
+                "./src/features/*/*.{ts,tsx}",
+              ],
               from: [
                 "./src/components",
                 "./src/hooks",
@@ -52,7 +57,12 @@ const eslintConfig = [
                 "./src/app",
               ],
               message:
-                "features/ must not depend on UI, hooks, contexts or app.",
+                "features/ data, config and utils must not depend on UI, hooks, contexts or app.",
+            },
+            {
+              target: "./src/features/*/{components,hooks}/**",
+              from: "./src/app",
+              message: "Nothing outside app/ may import from app/.",
             },
             ...[
               "components",

@@ -25,7 +25,7 @@ jest.mock("@radix-ui/react-tooltip", () => ({
   Arrow: () => null,
 }));
 
-jest.mock("@/hooks/use-job-favorite", () => ({
+jest.mock("@/features/job/hooks/use-job-favorite", () => ({
   useJobFavorite: () => ({
     ...favoriteState,
     toggleSaveJob: jest.fn(),

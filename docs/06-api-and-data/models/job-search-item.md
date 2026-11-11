@@ -105,8 +105,8 @@ Danh sách field của `JobSearchItem` ở frontend và `IJobSearchItem` ở bac
 ## Source code liên quan
 
 - [`src/features/job/schemas/job-search.schema.ts`](../../../src/features/job/schemas/job-search.schema.ts): `JobSearchItem`, `ExternalJobDetail`, `JobSearchParams`
-- [`src/components/job/job-search-card.tsx`](../../../src/components/job/job-search-card.tsx): thẻ kết quả
-- [`src/components/job/external-job-detail-content.tsx`](../../../src/components/job/external-job-detail-content.tsx): trang chi tiết tin ngoài
+- [`src/features/job/components/job-search-card.tsx`](../../../src/features/job/components/job-search-card.tsx): thẻ kết quả
+- [`src/features/job/components/external-job-detail-content.tsx`](../../../src/features/job/components/external-job-detail-content.tsx): trang chi tiết tin ngoài
 
 Backend: [interface `IJobSearchItem`](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/job-search/interfaces/job-search-item.interface.ts) và collection [external-jobs](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/04-database/collections/external-jobs.md).
 

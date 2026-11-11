@@ -15,7 +15,7 @@ import {
   JOB_LEVEL_LABEL_KEYS,
   SkillTags,
   getTranslatedLabel,
-} from "@/components/job/job-card";
+} from "@/features/job/components/job-card";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,

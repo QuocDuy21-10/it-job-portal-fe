@@ -96,7 +96,7 @@ Hai component cùng tồn tại:
 
 - [`src/shared/types/pagination.ts`](../../src/shared/types/pagination.ts): `PaginatedResult`, `PaginatedQueryParams`
 - [`src/lib/utils/public-listing.ts`](../../src/lib/utils/public-listing.ts): đọc URL, dựng tham số API và URL
-- [`src/hooks/use-job-list.ts`](../../src/hooks/use-job-list.ts): trạng thái bộ lọc và truy vấn
+- [`src/features/job/hooks/use-job-list.ts`](../../src/features/job/hooks/use-job-list.ts): trạng thái bộ lọc và truy vấn
 - [`src/features/job/schemas/job-search.schema.ts`](../../src/features/job/schemas/job-search.schema.ts): `JobSearchParams`
 - [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): `getJobs`, `searchJobs`
 - [`src/features/company/redux/company.api.ts`](../../src/features/company/redux/company.api.ts): `getCompanies`

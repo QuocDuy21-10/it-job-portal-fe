@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { useSearchJobsQuery } from "@/features/job/redux/job.api";
-import { useJobList } from "@/hooks/use-job-list";
+import { useJobList } from "@/features/job/hooks/use-job-list";
 import type { JobSearchItem } from "@/features/job/schemas/job-search.schema";
 import {
   DEFAULT_JOB_LIST_SORT,

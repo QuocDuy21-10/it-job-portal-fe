@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useJobList } from "@/hooks/use-job-list";
+import { useJobList } from "@/features/job/hooks/use-job-list";
 import { SimplePagination } from "@/components/simple-pagination";
 import { Link } from "@/i18n/navigation";
 import {
@@ -38,7 +38,7 @@ import type {
   JobSearchSource,
 } from "@/features/job/schemas/job-search.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import { JobSearchCard } from "@/components/job/job-search-card";
+import { JobSearchCard } from "@/features/job/components/job-search-card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DEFAULT_JOB_LIST_SORT,

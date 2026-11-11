@@ -52,7 +52,7 @@ Quy tắc form và dạng dữ liệu: [Model User](../models/user.md). Hợp nh
 
 - [`src/features/user/redux/user.api.ts`](../../../src/features/user/redux/user.api.ts): khai báo endpoint, cập nhật lạc quan
 - [`src/hooks/use-user.ts`](../../../src/hooks/use-user.ts): thao tác quản trị
-- [`src/hooks/use-job-favorite.ts`](../../../src/hooks/use-job-favorite.ts): lưu việc
+- [`src/features/job/hooks/use-job-favorite.ts`](../../../src/features/job/hooks/use-job-favorite.ts): lưu việc
 - [`src/hooks/use-company-follow.ts`](../../../src/hooks/use-company-follow.ts): theo dõi công ty
 - [`src/features/user/schemas/user.schema.ts`](../../../src/features/user/schemas/user.schema.ts): kiểu và kiểm tra
 

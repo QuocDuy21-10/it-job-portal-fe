@@ -54,9 +54,9 @@ Ngoài duyệt, tin còn có `isActive` và `endDate`. Backend tự đặt `isAc
 ## Source code liên quan
 
 - [`src/features/job/schemas/job.schema.ts`](../../../src/features/job/schemas/job.schema.ts): `EJobApprovalStatus`, `ApproveJobSchema`
-- [`src/components/job/job-approval-dialog.tsx`](../../../src/components/job/job-approval-dialog.tsx): hộp thoại duyệt
-- [`src/components/job/job-table.tsx`](../../../src/components/job/job-table.tsx): nút duyệt và nhãn trạng thái
-- [`src/hooks/use-job.ts`](../../../src/hooks/use-job.ts): gọi `approveJob`
+- [`src/features/job/components/job-approval-dialog.tsx`](../../../src/features/job/components/job-approval-dialog.tsx): hộp thoại duyệt
+- [`src/features/job/components/job-table.tsx`](../../../src/features/job/components/job-table.tsx): nút duyệt và nhãn trạng thái
+- [`src/features/job/hooks/use-job.ts`](../../../src/features/job/hooks/use-job.ts): gọi `approveJob`
 - [`src/lib/casl/ability.ts`](../../../src/lib/casl/ability.ts): quyền `approve`
 - [`src/app/[locale]/(dashboard)/admin/jobs/page.tsx`](../../../src/app/[locale]/(dashboard)/admin/jobs/page.tsx): bộ lọc
 

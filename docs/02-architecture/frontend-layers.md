@@ -28,7 +28,7 @@ app  →  components  →  hooks  →  features  →  lib  →  shared
 
 1. [`jobs/page.tsx`](../../src/app/[locale]/(main)/jobs/page.tsx) (Server Component) đọc tham số tìm kiếm và gọi `fetchPublicJobSearch` để lấy dữ liệu ban đầu.
 2. Nó truyền dữ liệu đó xuống [`jobs-page-client.tsx`](../../src/app/[locale]/(main)/jobs/jobs-page-client.tsx) (Client Component).
-3. Phần giao diện dùng hook [`use-job-list.ts`](../../src/hooks/use-job-list.ts) để quản lý bộ lọc và phân trang.
+3. Phần giao diện dùng hook [`use-job-list.ts`](../../src/features/job/hooks/use-job-list.ts) để quản lý bộ lọc và phân trang.
 4. Hook gọi `useSearchJobsQuery` được khai báo trong [`job.api.ts`](../../src/features/job/redux/job.api.ts). Khi bộ lọc vẫn trùng với trạng thái ban đầu, hook bỏ qua lời gọi và dùng dữ liệu từ server.
 5. Endpoint dùng chung `baseApi` trong `src/lib/redux/api.ts`, gửi request qua Axios.
 
@@ -48,7 +48,7 @@ Luồng này minh họa vì sao một chủ đề thường đi qua nhiều lớ
 ## Source code liên quan
 
 - [`src/app/[locale]/(main)/jobs/page.tsx`](../../src/app/[locale]/(main)/jobs/page.tsx): lớp trang, lấy dữ liệu ban đầu
-- [`src/hooks/use-job-list.ts`](../../src/hooks/use-job-list.ts): lớp hook
+- [`src/features/job/hooks/use-job-list.ts`](../../src/features/job/hooks/use-job-list.ts): lớp hook
 - [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): lớp module nghiệp vụ
 - [`src/lib/redux/api.ts`](../../src/lib/redux/api.ts): `baseApi` dùng chung
 - [`src/lib/utils/public-content.ts`](../../src/lib/utils/public-content.ts): fetch phía server

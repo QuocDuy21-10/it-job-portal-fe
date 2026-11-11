@@ -94,7 +94,7 @@ jest.mock("@/components/single-select", () => ({
   ),
 }));
 
-jest.mock("@/components/job/job-card", () => ({
+jest.mock("@/features/job/components/job-card", () => ({
   JobCard: () => <div data-testid="job-card" />,
 }));
 

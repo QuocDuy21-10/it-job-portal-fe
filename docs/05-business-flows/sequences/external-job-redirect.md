@@ -67,8 +67,8 @@ Kiểm tra an toàn bằng `isSafeHttpUrl`: chỉ chấp nhận giao thức `htt
 ## Source code liên quan
 
 - [`src/app/[locale]/(main)/jobs/external/[id]/page.tsx`](../../../src/app/[locale]/(main)/jobs/external/[id]/page.tsx): metadata `noindex`, `notFound`
-- [`src/components/job/external-job-detail-content.tsx`](../../../src/components/job/external-job-detail-content.tsx): giao diện và điều kiện hiển thị
-- [`src/components/job/job-search-card.tsx`](../../../src/components/job/job-search-card.tsx): chọn đường dẫn theo `sourceType`
+- [`src/features/job/components/external-job-detail-content.tsx`](../../../src/features/job/components/external-job-detail-content.tsx): giao diện và điều kiện hiển thị
+- [`src/features/job/components/job-search-card.tsx`](../../../src/features/job/components/job-search-card.tsx): chọn đường dẫn theo `sourceType`
 - [`src/lib/utils/is-safe-http-url.ts`](../../../src/lib/utils/is-safe-http-url.ts): kiểm tra URL
 - [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): `fetchPublicExternalJobById`
 

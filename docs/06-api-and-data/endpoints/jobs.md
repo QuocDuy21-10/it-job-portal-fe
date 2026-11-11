@@ -40,7 +40,7 @@ Form tạo và sửa kiểm tra trước khi gửi bằng `JobSchema`; các quy 
 ## Source code liên quan
 
 - [`src/features/job/redux/job.api.ts`](../../../src/features/job/redux/job.api.ts): khai báo endpoint
-- [`src/hooks/use-job.ts`](../../../src/hooks/use-job.ts): bọc tạo, sửa, xóa, duyệt kèm toast và hộp thoại
+- [`src/features/job/hooks/use-job.ts`](../../../src/features/job/hooks/use-job.ts): bọc tạo, sửa, xóa, duyệt kèm toast và hộp thoại
 - [`src/app/[locale]/(dashboard)/admin/jobs/page.tsx`](../../../src/app/[locale]/(dashboard)/admin/jobs/page.tsx): trang quản trị tin
 - [`src/features/job/schemas/job.schema.ts`](../../../src/features/job/schemas/job.schema.ts): kiểu và quy tắc kiểm tra
 

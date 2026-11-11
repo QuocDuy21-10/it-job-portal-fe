@@ -69,7 +69,7 @@ Backend trộn tin nội bộ và tin ngoài, sắp xếp và phân trang; phầ
 
 - [`src/app/[locale]/(main)/jobs/page.tsx`](../../../src/app/[locale]/(main)/jobs/page.tsx): tải dữ liệu đầu trên server
 - [`src/app/[locale]/(main)/jobs/jobs-page-client.tsx`](../../../src/app/[locale]/(main)/jobs/jobs-page-client.tsx): giao diện, ghi URL
-- [`src/hooks/use-job-list.ts`](../../../src/hooks/use-job-list.ts): bản nháp, trạng thái áp dụng, `skip`
+- [`src/features/job/hooks/use-job-list.ts`](../../../src/features/job/hooks/use-job-list.ts): bản nháp, trạng thái áp dụng, `skip`
 - [`src/lib/utils/public-listing.ts`](../../../src/lib/utils/public-listing.ts): đọc URL, dựng tham số
 - [`src/features/job/redux/job.api.ts`](../../../src/features/job/redux/job.api.ts): `searchJobs`
 - [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): `fetchPublicJobSearch`

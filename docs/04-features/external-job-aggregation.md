@@ -74,17 +74,17 @@ Kiểu dữ liệu ở [Model JobSearchItem](../06-api-and-data/models/job-searc
 
 | Test | Nội dung |
 | --- | --- |
-| `src/components/job/external-job-detail-content.test.tsx` | Liên kết ứng tuyển mở tab mới; ẩn nút khi tin đóng; không hiển thị liên kết giao thức lạ; hiện hoặc ẩn lương; không khẳng định làm tại chỗ khi nguồn không có cờ remote; chỉ về bài gốc khi mô tả bị giữ lại |
+| `src/features/job/components/external-job-detail-content.test.tsx` | Liên kết ứng tuyển mở tab mới; ẩn nút khi tin đóng; không hiển thị liên kết giao thức lạ; hiện hoặc ẩn lương; không khẳng định làm tại chỗ khi nguồn không có cờ remote; chỉ về bài gốc khi mô tả bị giữ lại |
 | `src/lib/utils/is-safe-http-url.test.ts` | Kiểm tra URL an toàn |
-| `src/components/job/job-search-card.test.tsx` | Thẻ tin ngoài không có lương số và nút lưu |
+| `src/features/job/components/job-search-card.test.tsx` | Thẻ tin ngoài không có lương số và nút lưu |
 
 Chưa có test cho: trang `external/[id]/page.tsx` (`noindex`, `notFound`), thông báo nguồn theo `sourceKey`.
 
 ## Source code liên quan
 
 - [`src/app/[locale]/(main)/jobs/external/[id]/page.tsx`](../../src/app/[locale]/(main)/jobs/external/[id]/page.tsx): metadata `noindex`, `notFound`
-- [`src/components/job/external-job-detail-content.tsx`](../../src/components/job/external-job-detail-content.tsx): giao diện
-- [`src/components/job/job-search-card.tsx`](../../src/components/job/job-search-card.tsx): thẻ kết quả
+- [`src/features/job/components/external-job-detail-content.tsx`](../../src/features/job/components/external-job-detail-content.tsx): giao diện
+- [`src/features/job/components/job-search-card.tsx`](../../src/features/job/components/job-search-card.tsx): thẻ kết quả
 - [`src/lib/utils/is-safe-http-url.ts`](../../src/lib/utils/is-safe-http-url.ts): kiểm tra URL
 - [`src/features/job/schemas/job-search.schema.ts`](../../src/features/job/schemas/job-search.schema.ts): `ExternalJobDetail`
 - [`src/app/sitemap.ts`](../../src/app/sitemap.ts): chỉ liệt kê tin nội bộ

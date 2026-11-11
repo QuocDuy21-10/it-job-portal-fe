@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { selectIsAuthenticated } from "@/features/auth/redux/auth.slice";
 import { useI18n } from "@/hooks/use-i18n";
-import { useJobFavorite } from "@/hooks/use-job-favorite";
+import { useJobFavorite } from "@/features/job/hooks/use-job-favorite";
 import { cn } from "@/lib/utils";
 
 type JobDetailPageClientProps = {

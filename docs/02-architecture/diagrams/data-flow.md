@@ -66,7 +66,7 @@ sequenceDiagram
 
 - [`src/app/[locale]/(main)/jobs/page.tsx`](../../../src/app/[locale]/(main)/jobs/page.tsx): Server Component lấy dữ liệu ban đầu
 - [`src/app/[locale]/(main)/jobs/jobs-page-client.tsx`](../../../src/app/[locale]/(main)/jobs/jobs-page-client.tsx): Client Component
-- [`src/hooks/use-job-list.ts`](../../../src/hooks/use-job-list.ts): quyết định dùng dữ liệu server hay truy vấn
+- [`src/features/job/hooks/use-job-list.ts`](../../../src/features/job/hooks/use-job-list.ts): quyết định dùng dữ liệu server hay truy vấn
 - [`src/features/job/redux/job.api.ts`](../../../src/features/job/redux/job.api.ts): endpoint `searchJobs`
 - [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): `fetchPublicJobSearch`
 - [`src/lib/axios/axios-instance.ts`](../../../src/lib/axios/axios-instance.ts): interceptor và làm mới token
