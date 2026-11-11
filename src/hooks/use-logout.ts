@@ -2,7 +2,6 @@
 
 import { useLogoutMutation } from "@/features/auth/redux/auth.api";
 import { sessionEnded } from "@/features/auth/redux/auth.slice";
-import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import { useRouter } from "@/i18n/navigation";
 import { useAppDispatch } from "@/lib/redux/hooks";
 
@@ -13,7 +12,6 @@ export function useLogout() {
 
   const logout = async () => {
     try {
-      setLoggingOutFlag(true);
       await logoutMutation().unwrap();
     } catch (err) {
       console.error("Logout error:", err);

@@ -20,7 +20,6 @@ import { useRequestAccountDeletionMutation } from "@/features/auth/redux/auth.ap
 import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { useI18n } from "@/hooks/use-i18n";
 import { useRouter } from "@/i18n/navigation";
-import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 type LocalDeletionFormData = {
@@ -87,7 +86,6 @@ export function AccountDeletionDialog({
       toast.success(
         t("settings.deleteAccount.requestSuccess", { date: scheduledDate })
       );
-      setLoggingOutFlag(true);
       dispatch(sessionEnded());
       router.push("/login");
     } catch (error: any) {
@@ -106,7 +104,6 @@ export function AccountDeletionDialog({
       toast.success(
         t("settings.deleteAccount.requestSuccess", { date: scheduledDate })
       );
-      setLoggingOutFlag(true);
       dispatch(sessionEnded());
       router.push("/login");
     } catch (error: any) {

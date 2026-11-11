@@ -13,8 +13,8 @@ import {
 import storage from "redux-persist/lib/storage";
 import { baseApi } from "./api";
 import authSlice from "@/features/auth/redux/auth.slice";
-import { setRefreshTokenFailedCallback } from "@/lib/axios/axios-instance";
-import { setRefreshTokenAction } from "@/features/auth/redux/auth.slice";
+import { onSessionExpired } from "@/lib/auth/session";
+import { sessionExpired } from "@/features/auth/redux/auth.slice";
 import companyReducer from "@/features/company/redux/company.slice";
 import userReducer from "@/features/user/redux/user.slice";
 import jobReducer from "@/features/job/redux/job.slice";
@@ -75,14 +75,9 @@ export const store = configureStore({
       .concat(authErrorMiddleware),
 });
 
-// SET REFRESH TOKEN FAILED CALLBACK
-setRefreshTokenFailedCallback((message: string) => {
-  store.dispatch(
-    setRefreshTokenAction({
-      status: true,
-      message,
-    })
-  );
+// Refresh failed for a signed-in user: reset state; ClientLayout shows the toast and redirects.
+onSessionExpired((message) => {
+  store.dispatch(sessionExpired(message));
 });
 
 export const persistor = persistStore(store);
