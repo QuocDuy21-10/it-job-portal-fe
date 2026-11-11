@@ -37,30 +37,31 @@ sequenceDiagram
 sequenceDiagram
     participant C as Thành phần
     participant A as axiosInstance
-    participant M as Mutex
+    participant S as session.ts
     participant B as Backend
 
-    C->>A: Gọi API (đọc access_token từ localStorage)
+    C->>A: Gọi API
+    A->>S: getAccessToken()
     A->>B: Request kèm Authorization
     B-->>A: 401
-    Note over A: Bỏ qua nếu là login, register,<br/>đã có x-no-retry, đang đăng xuất<br/>hoặc không còn token
-    A->>M: handleRefreshToken
-    M->>B: GET /auth/refresh (axios trần, kèm cookie)
+    Note over A: Bỏ qua nếu là login, register,<br/>đã có x-no-retry hoặc request không có token
+    A->>S: refreshAccessToken() (dùng chung cho mọi 401 đang chờ)
+    S->>B: GET /auth/refresh (axios trần, kèm cookie)
     alt Có access_token mới
-        B-->>M: access_token
-        M-->>A: Lưu vào localStorage
+        B-->>S: access_token
+        S-->>A: Token mới (đã lưu)
         A->>B: Gửi lại request, đánh dấu x-no-retry
         B-->>A: Kết quả
         A-->>C: Dữ liệu
     else Thất bại
-        B-->>M: Lỗi
-        M-->>A: null
-        Note over A: Xóa access_token
+        B-->>S: Lỗi
+        Note over S: onSessionExpired → sessionExpired<br/>→ xóa token và cache, ClientLayout chuyển về /login
+        S-->>A: null
         A-->>C: Từ chối request ban đầu
     end
 ```
 
-*Hình 2: Nhánh "Thất bại" chỉ chắc chắn xóa token và từ chối request. Chuỗi thông báo hết phiên và chuyển về trang đăng nhập có trong code nhưng đường kích hoạt từ interceptor cần được kiểm chứng khi chạy thật, xem mục "Điểm cần lưu ý" của [Xác thực](../authentication.md).*
+*Hình 2: Mọi request 401 cùng lúc dùng chung một lần làm mới. Khi thất bại, session báo hết phiên: token và cache RTK Query bị xóa, `ClientLayout` hiện thông báo và chuyển về trang đăng nhập, xem [Xác thực](../authentication.md).*
 
 ## Source code liên quan
 

@@ -25,7 +25,7 @@ features:
     details: Phân lớp chặt chẽ giữa Server Components tối ưu SEO và Client Components tương tác. Quản lý trạng thái bằng RTK Query kết hợp Redux Persist.
   - icon: { src: /icons/shield.svg }
     title: Xác thực & Phân quyền bảo mật
-    details: Cơ chế Access Token ngắn hạn, Refresh Token với Mutex Guard chống race condition, tích hợp CASL Ability kiểm soát quyền người dùng.
+    details: Cơ chế Access Token ngắn hạn, Refresh Token làm mới single-flight chống race condition, tích hợp CASL Ability kiểm soát quyền người dùng.
   - icon: { src: /icons/book.svg }
     title: Hai lớp hiển thị tài liệu
     details: Đọc trực tiếp chuẩn đẹp trên GitHub repository (Markdown + Mermaid) hoặc duyệt website với VitePress, tìm kiếm tức thì và Dark Mode.

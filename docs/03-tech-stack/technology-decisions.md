@@ -15,7 +15,7 @@ Trang này ghi lại **vì sao** dự án chọn các công nghệ hiện tại,
 | Next.js App Router | Cây `src/app/[locale]/`, `generateMetadata`, `sitemap.ts` | Chưa có ghi chép về lý do |
 | Tách `page.tsx` (server) và `*-page-client.tsx` | Các trang công khai trong `(main)` | Chưa có ghi chép về lý do |
 | Redux Toolkit và RTK Query | `src/lib/redux/store.ts`, `*.api.ts` | Chưa có ghi chép về lý do |
-| Axios bên dưới RTK Query | `axios-base-query.ts` | README chỉ mô tả: "automatic token refresh interceptor & async-mutex guard" |
+| Axios bên dưới RTK Query | `axios-base-query.ts` | README chỉ mô tả: interceptor tự động làm mới token |
 | Redux Persist cho `auth` và `chatBot` | `store.ts` | Chú thích trong code: chỉ lưu `user` và trạng thái đăng nhập |
 | Tailwind CSS và shadcn/ui | `components.json`, `src/components/ui/` | Chưa có ghi chép về lý do |
 | React Hook Form và Zod | `login-form.tsx`, `*.schema.ts` | Chưa có ghi chép về lý do |
