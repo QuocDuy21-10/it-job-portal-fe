@@ -26,7 +26,7 @@ Cấu hình trong `src/lib/axios/axios-instance.ts`:
 | `timeout` | 10 000 ms |
 | `withCredentials` | `true`, để trình duyệt gửi cookie kèm request |
 
-**Request interceptor** đọc `access_token` từ `localStorage` và gắn `Authorization: Bearer <token>`. Nó đặt `Content-Type: application/json` trừ khi dữ liệu là `FormData`.
+**Request interceptor** chờ `getAccessTokenAsync()` (khôi phục phiên hoặc lần làm mới đang chạy) rồi gắn `Authorization: Bearer <token>`. Nó đặt `Content-Type: application/json` trừ khi dữ liệu là `FormData`.
 
 **Response interceptor** trả thẳng `response.data`, nên kết quả RTK Query chính là phần thân phản hồi của backend. Khi gặp lỗi 401 nó thử làm mới phiên rồi gửi lại request; cơ chế này mô tả ở [Xác thực](authentication.md).
 

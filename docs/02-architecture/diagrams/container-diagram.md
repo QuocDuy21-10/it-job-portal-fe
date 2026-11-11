@@ -10,7 +10,7 @@ flowchart TB
         Axios["Axios instance<br/>(gắn token, làm mới phiên)"]
         Sock["Socket.IO client"]
         Stream["fetch đọc luồng chat"]
-        LS[("localStorage<br/>access_token, persist:auth")]
+        LS[("localStorage<br/>devlink:has-session, persist:auth")]
     end
 
     subgraph Next["Máy chủ Next.js"]
@@ -27,9 +27,6 @@ flowchart TB
     Store --> Axios
     UI --> Sock
     UI --> Stream
-    Axios <--> LS
-    Sock --> LS
-    Stream --> LS
 
     Browser -->|"yêu cầu trang"| MW
     MW --> SC
@@ -43,7 +40,7 @@ flowchart TB
     Proxy -->|"fetch ảnh"| BE
 ```
 
-*Hình: Hai nơi chạy code. Lời gọi `fetchPublic*` chạy trên máy chủ nên không có token; mọi lời gọi từ trình duyệt đọc `access_token` trong `localStorage`.*
+*Hình: Hai nơi chạy code. Lời gọi `fetchPublic*` chạy trên máy chủ nên không có token; mọi lời gọi từ trình duyệt lấy access token từ memory qua `src/lib/auth/session.ts`.*
 
 ## Cách đọc
 

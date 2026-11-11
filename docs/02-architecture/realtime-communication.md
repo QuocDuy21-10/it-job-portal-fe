@@ -9,18 +9,18 @@ DevLink có hai kênh nhận dữ liệu ngay khi backend có: Socket.IO để �
 | Công nghệ | Socket.IO Client | `fetch` đọc luồng phản hồi |
 | Địa chỉ | `API_BASE_URL_IMAGE` + `/notifications` | `API_BASE_URL` + `/chat/message/stream` |
 | Hướng dữ liệu | Server đẩy xuống | Gửi một tin, nhận một luồng trả lời |
-| Xác thực | `auth: { token }` lấy từ `localStorage` lúc kết nối | Header `Authorization` và `credentials: "include"` |
+| Xác thực | `auth` là hàm gọi `getAccessTokenAsync()` mỗi lần (re)connect | Header `Authorization` (token từ `getAccessTokenAsync()`) và `credentials: "include"` |
 | Khi nào hoạt động | Lúc `isAuthenticated` là `true` | Mỗi lần người dùng gửi tin |
 
 ## Thông báo bằng Socket.IO
 
 **Kết nối.** `SocketProvider` (trong layout theo ngôn ngữ) theo dõi `isAuthenticated`:
 
-- Đăng nhập: đọc `access_token`; nếu có thì mở `io(<API_BASE_URL_IMAGE>/notifications)` với `auth: { token }`, `transports: ["websocket", "polling"]`, tối đa 5 lần thử nối lại, cách nhau 1 giây.
+- Đăng nhập: nếu `hasSession()` là `true` thì mở `io(<API_BASE_URL_IMAGE>/notifications)` với `auth` là một hàm lấy token mới nhất qua `getAccessTokenAsync()`, `transports: ["websocket", "polling"]`, tối đa 5 lần thử nối lại, cách nhau 1 giây.
 - Đăng xuất: ngắt kết nối và dọn dẹp.
-- Nếu server chủ động ngắt (`io server disconnect`, ví dụ token hết hạn), provider lấy token mới nhất từ `localStorage` rồi nối lại.
+- Nếu server chủ động ngắt (`io server disconnect`, ví dụ token hết hạn), provider gọi `refreshAccessToken()` rồi nối lại; hàm `auth` gửi token mới.
 
-Token chỉ được đọc lúc kết nối. Socket không tự làm mới token; việc làm mới nằm ở Axios, xem [Xác thực](authentication.md).
+Token được đọc ở mỗi lần kết nối hoặc nối lại. Việc làm mới token nằm ở `session.ts`, xem [Xác thực](authentication.md).
 
 **Nhận sự kiện.** Hook `useSocketEvent(event, callback)` đăng ký và hủy đăng ký lắng nghe. Hiện chỉ có một sự kiện được dùng: `notification:new`, xử lý trong `NotificationInitializer`. Khi sự kiện đến, thành phần này:
 

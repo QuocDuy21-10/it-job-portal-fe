@@ -34,7 +34,7 @@ const customJestConfig = {
     "./src/app/api/": { lines: 98, branches: 92 },
     "./src/lib/security/": { lines: 98, branches: 88 },
     // Phase 4A session layer; floors just under the measured baseline.
-    "./src/lib/auth/": { lines: 99, branches: 93 },
+    "./src/lib/auth/": { lines: 99, branches: 99 },
   },
   testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
   watchman: false,
