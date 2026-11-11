@@ -32,7 +32,7 @@ Tải lên trả `{ fileName }`; xóa trả `{ deleted }`.
 - [`src/features/file/redux/file.api.ts`](../../../src/features/file/redux/file.api.ts): khai báo endpoint
 - [`src/hooks/use-file.ts`](../../../src/hooks/use-file.ts): `useFileOperations`
 - [`src/components/logo-upload.tsx`](../../../src/components/logo-upload.tsx): tải logo, kiểm tra loại và dung lượng
-- [`src/components/company/company-dialog.tsx`](../../../src/components/company/company-dialog.tsx): xóa file thừa
+- [`src/features/company/components/company-dialog.tsx`](../../../src/features/company/components/company-dialog.tsx): xóa file thừa
 
 Hợp đồng đầy đủ: [API Files của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/files.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/files/files.controller.ts).
 

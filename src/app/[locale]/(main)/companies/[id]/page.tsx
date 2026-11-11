@@ -7,10 +7,10 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Building2, ChevronRight, Globe, MapPin, Users } from "lucide-react";
-import CompanyFollowButton from "../../../../../components/company/company-follow-button";
+import CompanyFollowButton from "@/features/company/components/company-follow-button";
 import CompanyDetailPageClient from "./company-detail-page-client";
-import CompanyContact from "@/components/company/section/company-contact";
-import ShareCompany from "@/components/company/section/share-company";
+import CompanyContact from "@/features/company/components/section/company-contact";
+import ShareCompany from "@/features/company/components/section/share-company";
 import {
   Breadcrumb,
   BreadcrumbItem,

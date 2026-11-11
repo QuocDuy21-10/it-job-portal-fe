@@ -98,7 +98,7 @@ jest.mock("@/features/job/components/job-card", () => ({
   JobCard: () => <div data-testid="job-card" />,
 }));
 
-jest.mock("@/components/company/company-card", () => ({
+jest.mock("@/features/company/components/company-card", () => ({
   CompanyCard: () => <div data-testid="company-card" />,
 }));
 

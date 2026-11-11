@@ -7,13 +7,13 @@ import {
   useGetCompaniesQuery,
   useBulkDeleteCompaniesMutation,
 } from "@/features/company/redux/company.api";
-import { useCompanyOperations } from "@/hooks/use-company";
+import { useCompanyOperations } from "@/features/company/hooks/use-company";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { SearchBar } from "@/components/ui/search-bar";
 import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
-import { CompanyTable } from "@/components/company/company-table";
-import { CompanyDialog } from "@/components/company/company-dialog";
+import { CompanyTable } from "@/features/company/components/company-table";
+import { CompanyDialog } from "@/features/company/components/company-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Company } from "@/features/company/schemas/company.schema";

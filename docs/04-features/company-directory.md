@@ -82,7 +82,7 @@ Dạng dữ liệu: [Model Company](../06-api-and-data/models/company.md).
 | Test | Nội dung |
 | --- | --- |
 | `src/app/[locale]/(main)/companies/companies-page-client.test.tsx` | Chữ ở phần đầu trang; URL không đổi khi đang gõ; URL đổi sau khi bấm tìm |
-| `src/components/company/company-card.test.tsx` | Thẻ ưu tiên mô tả, số vị trí đang mở, không có nút theo dõi |
+| `src/features/company/components/company-card.test.tsx` | Thẻ ưu tiên mô tả, số vị trí đang mở, không có nút theo dõi |
 
 Chưa có test cho: trang chi tiết công ty, `JobListing`, các phần giới thiệu.
 
@@ -91,8 +91,8 @@ Chưa có test cho: trang chi tiết công ty, `JobListing`, các phần giới 
 - [`src/app/[locale]/(main)/companies/page.tsx`](../../src/app/[locale]/(main)/companies/page.tsx): danh sách trên server
 - [`src/app/[locale]/(main)/companies/companies-page-client.tsx`](../../src/app/[locale]/(main)/companies/companies-page-client.tsx): giao diện danh sách
 - [`src/app/[locale]/(main)/companies/[id]/page.tsx`](../../src/app/[locale]/(main)/companies/[id]/page.tsx): trang chi tiết
-- [`src/components/company/company-card.tsx`](../../src/components/company/company-card.tsx): thẻ công ty
-- [`src/components/company/section/job-listing.tsx`](../../src/components/company/section/job-listing.tsx): tin đang mở
+- [`src/features/company/components/company-card.tsx`](../../src/features/company/components/company-card.tsx): thẻ công ty
+- [`src/features/company/components/section/job-listing.tsx`](../../src/features/company/components/section/job-listing.tsx): tin đang mở
 - [`src/lib/utils/public-listing.ts`](../../src/lib/utils/public-listing.ts): tham số URL và truy vấn
 
 Tài liệu backend: [Companies](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/03-modules/companies.md).

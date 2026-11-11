@@ -21,8 +21,8 @@ Backend gom mọi thao tác trên người dùng vào `/users`: quản trị vi�
 | `useSaveJobMutation` | `POST /users/save-job` | body `{ jobId }` | `Auth`, `User`; cập nhật lạc quan `getMe` | `hooks/use-job-favorite.ts` |
 | `useUnsaveJobMutation` | `DELETE /users/save-job` | body `{ jobId }` | `Auth`, `User`; cập nhật lạc quan | `hooks/use-job-favorite.ts` |
 | `useGetSavedJobsQuery` | `GET /users/saved-jobs?page=..&limit=..` | `page`, `limit` | Cung cấp `User` | `profile/pages/my-jobs-page.tsx` |
-| `useFollowCompanyMutation` | `POST /users/follow-company` | body `{ companyId }` | `Auth`, `User`; cập nhật lạc quan | `hooks/use-company-follow.ts` |
-| `useUnfollowCompanyMutation` | `DELETE /users/follow-company` | body `{ companyId }` | `Auth`, `User`; cập nhật lạc quan | `hooks/use-company-follow.ts` |
+| `useFollowCompanyMutation` | `POST /users/follow-company` | body `{ companyId }` | `Auth`, `User`; cập nhật lạc quan | `features/company/hooks/use-company-follow.ts` |
+| `useUnfollowCompanyMutation` | `DELETE /users/follow-company` | body `{ companyId }` | `Auth`, `User`; cập nhật lạc quan | `features/company/hooks/use-company-follow.ts` |
 | `useGetFollowingCompaniesQuery` | `GET /users/following-companies?page=..&limit=..` | `page`, `limit` | Cung cấp `User` | Chưa có nơi nào dùng |
 
 Bốn mutation lưu việc và theo dõi công ty sửa ngay bản `getMe` trong `onQueryStarted` và hoàn tác nếu request thất bại.
@@ -53,7 +53,7 @@ Quy tắc form và dạng dữ liệu: [Model User](../models/user.md). Hợp nh
 - [`src/features/user/redux/user.api.ts`](../../../src/features/user/redux/user.api.ts): khai báo endpoint, cập nhật lạc quan
 - [`src/hooks/use-user.ts`](../../../src/hooks/use-user.ts): thao tác quản trị
 - [`src/features/job/hooks/use-job-favorite.ts`](../../../src/features/job/hooks/use-job-favorite.ts): lưu việc
-- [`src/hooks/use-company-follow.ts`](../../../src/hooks/use-company-follow.ts): theo dõi công ty
+- [`src/features/company/hooks/use-company-follow.ts`](../../../src/features/company/hooks/use-company-follow.ts): theo dõi công ty
 - [`src/features/user/schemas/user.schema.ts`](../../../src/features/user/schemas/user.schema.ts): kiểu và kiểm tra
 
 Hợp đồng đầy đủ: [API Users của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/users.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/users/users.controller.ts).
