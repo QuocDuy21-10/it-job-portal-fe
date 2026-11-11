@@ -128,6 +128,15 @@ describe("auth slice session reset", () => {
     expect(localStorage.getItem("access_token")).toBe("token");
   });
 
+  it("resets the same way when another tab ended the session", () => {
+    const state = authReducer(
+      signedInState(),
+      sessionEnded({ broadcast: false })
+    );
+
+    expect(state).toEqual(createBaseState());
+  });
+
   it("clears the user and keeps the expiry message on sessionExpired", () => {
     const state = authReducer(signedInState(), sessionExpired("expired"));
 

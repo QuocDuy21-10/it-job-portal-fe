@@ -32,7 +32,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { getAccessToken } from "@/lib/auth/session";
+import { hasSession } from "@/lib/auth/session";
 
 type HomeSearchBoxProps = {
   onSearch: (query: string, locationCode: string) => void;
@@ -86,7 +86,7 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      setHasToken(getAccessToken() !== null);
+      setHasToken(hasSession());
     } catch {
       setHasToken(false);
     }

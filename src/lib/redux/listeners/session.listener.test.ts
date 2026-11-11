@@ -6,13 +6,18 @@ import authReducer, {
   sessionEnded,
   sessionExpired,
 } from "@/features/auth/redux/auth.slice";
-import { getAccessToken, setAccessToken } from "@/lib/auth/session";
+import { endSession, getAccessToken, setAccessToken } from "@/lib/auth/session";
 import { sessionListener } from "./session.listener";
 
 jest.mock("@/shared/constants/roles", () => ({
   isAdminRole: jest.fn(() => false),
   isSuperAdmin: jest.fn(() => false),
 }));
+
+jest.mock("@/lib/auth/session", () => {
+  const actual = jest.requireActual("@/lib/auth/session");
+  return { ...actual, endSession: jest.fn(actual.endSession) };
+});
 
 jest.mock("@/lib/axios/axios-instance", () => ({
   __esModule: true,
@@ -105,5 +110,21 @@ describe("session listener", () => {
     await store.dispatch(authApi.endpoints.logout.initiate());
 
     expect(getAccessToken()).toBeNull();
+  });
+
+  it.each([
+    ["sessionEnded()", sessionEnded(), true],
+    ["sessionExpired", sessionExpired("expired"), true],
+    [
+      "sessionEnded({ broadcast: false })",
+      sessionEnded({ broadcast: false }),
+      false,
+    ],
+  ])("ends the session with broadcast for %s", (_name, action, broadcast) => {
+    const store = createStore();
+
+    store.dispatch(action);
+
+    expect(endSession).toHaveBeenLastCalledWith({ broadcast });
   });
 });

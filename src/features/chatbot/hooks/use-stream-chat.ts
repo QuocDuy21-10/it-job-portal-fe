@@ -21,7 +21,7 @@ import { API_BASE_URL } from "@/shared/constants/constant";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
-import { getAccessToken } from "@/lib/auth/session";
+import { getAccessTokenAsync } from "@/lib/auth/session";
 
 const STREAM_ENDPOINT = `${API_BASE_URL}/chat/message/stream`;
 
@@ -208,7 +208,7 @@ export const useStreamChat = () => {
       closeStream(true);
       dispatch(setIsTyping(true));
 
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessTokenAsync();
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 

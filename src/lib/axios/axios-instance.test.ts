@@ -3,11 +3,11 @@ import {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
-import { getAccessToken, refreshAccessToken } from "@/lib/auth/session";
+import { getAccessTokenAsync, refreshAccessToken } from "@/lib/auth/session";
 import axiosInstance from "./axios-instance";
 
 jest.mock("@/lib/auth/session", () => ({
-  getAccessToken: jest.fn(),
+  getAccessTokenAsync: jest.fn(),
   refreshAccessToken: jest.fn(),
 }));
 
@@ -15,8 +15,8 @@ jest.mock("@/shared/constants/constant", () => ({
   API_BASE_URL: "http://api.test/api/v1",
 }));
 
-const mockGetAccessToken = getAccessToken as jest.MockedFunction<
-  typeof getAccessToken
+const mockGetToken = getAccessTokenAsync as jest.MockedFunction<
+  typeof getAccessTokenAsync
 >;
 const mockRefresh = refreshAccessToken as jest.MockedFunction<
   typeof refreshAccessToken
@@ -56,6 +56,8 @@ const queue = (...replies: Reply[]) => {
 const sentHeader = (call: number, name: string) =>
   adapter.mock.calls[call][0].headers.get(name);
 
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
 describe("axiosInstance", () => {
   beforeAll(() => {
     axiosInstance.defaults.adapter = adapter;
@@ -66,15 +68,34 @@ describe("axiosInstance", () => {
   });
 
   it("attaches the bearer token and unwraps response data", async () => {
-    mockGetAccessToken.mockReturnValue("token");
+    mockGetToken.mockResolvedValue("token");
     queue({ status: 200, data: { ok: true } });
 
     await expect(axiosInstance.get("/jobs")).resolves.toEqual({ ok: true });
     expect(sentHeader(0, "Authorization")).toBe("Bearer token");
   });
 
+  it("holds the request until a session restore finishes", async () => {
+    let resolveToken: (token: string | null) => void = () => {};
+    mockGetToken.mockReturnValue(
+      new Promise((resolve) => {
+        resolveToken = resolve;
+      })
+    );
+    queue({ status: 200, data: { ok: true } });
+
+    const pending = axiosInstance.get("/profile");
+    await flush();
+    expect(adapter).not.toHaveBeenCalled();
+
+    resolveToken("restored");
+
+    await expect(pending).resolves.toEqual({ ok: true });
+    expect(sentHeader(0, "Authorization")).toBe("Bearer restored");
+  });
+
   it("refreshes once on 401 and retries with the new token", async () => {
-    mockGetAccessToken.mockReturnValueOnce("old").mockReturnValue("new");
+    mockGetToken.mockResolvedValueOnce("old").mockResolvedValue("new");
     mockRefresh.mockResolvedValue("new");
     queue({ status: 401 }, { status: 200, data: { ok: true } });
 
@@ -86,7 +107,7 @@ describe("axiosInstance", () => {
   });
 
   it("does not refresh for a guest request", async () => {
-    mockGetAccessToken.mockReturnValue(null);
+    mockGetToken.mockResolvedValue(null);
     queue({ status: 401 });
 
     await expect(axiosInstance.get("/jobs")).rejects.toMatchObject({
@@ -96,7 +117,7 @@ describe("axiosInstance", () => {
   });
 
   it("does not refresh for a failed login", async () => {
-    mockGetAccessToken.mockReturnValue("token");
+    mockGetToken.mockResolvedValue("token");
     queue({ status: 401 });
 
     await expect(axiosInstance.post("/auth/login", {})).rejects.toMatchObject({
@@ -106,7 +127,7 @@ describe("axiosInstance", () => {
   });
 
   it("rejects the original error when refresh fails", async () => {
-    mockGetAccessToken.mockReturnValue("old");
+    mockGetToken.mockResolvedValue("old");
     mockRefresh.mockResolvedValue(null);
     queue({ status: 401 });
 
@@ -117,7 +138,7 @@ describe("axiosInstance", () => {
   });
 
   it("gives up when the retried request is still unauthorized", async () => {
-    mockGetAccessToken.mockReturnValue("old");
+    mockGetToken.mockResolvedValue("old");
     mockRefresh.mockResolvedValue("new");
     queue({ status: 401 }, { status: 401 });
 
