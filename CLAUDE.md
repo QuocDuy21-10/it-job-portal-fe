@@ -32,10 +32,10 @@ src/
 │   ├── admin/                  # Admin dashboard components
 │   ├── cv/                     # CV builder UI
 │   ├── pdf/                    # PDF templates (Modern, Classic, Minimal)
-│   └── ...                     # auth, company, profile, chatbot, etc. (job UI lives in features/job)
+│   └── ...                     # auth, profile, chatbot, etc. (job and company UI live in features/)
 ├── features/                   # Feature modules: RTK Query API defs + Redux slices
 │   ├── {domain}/redux/         # slice.ts + api.ts per domain (auth, user, job, company, resume, ...)
-│   └── job/                    # Feature-first template: also components/, hooks/, config/, utils/ (no barrel)
+│   └── job/, company/          # Feature-first: also components/, hooks/ (+ config/, utils/ for job); no barrel
 ├── hooks/                      # Custom hooks wrapping feature logic (use-auth, use-job, use-cv, ...)
 ├── lib/
 │   ├── redux/                  # Store config, base API, Redux provider
