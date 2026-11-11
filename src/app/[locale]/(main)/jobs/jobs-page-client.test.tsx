@@ -191,4 +191,17 @@ describe("JobsPageClient", () => {
     );
     expect(list.resetAllFilters).toHaveBeenCalled();
   });
+
+  it.each([
+    [1, "1 jobsPage.resultsFoundSuffix:1"],
+    [2, "2 jobsPage.resultsFoundSuffix:2"],
+  ])("renders the translated result count for %i job(s)", (count, text) => {
+    renderPage(
+      createJobListState({ jobs: twoJobs.slice(0, count), totalItems: count })
+    );
+
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading).toHaveTextContent(text);
+    expect(heading).not.toHaveTextContent(/IT Jobs|Job found/);
+  });
 });

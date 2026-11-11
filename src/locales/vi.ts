@@ -1546,6 +1546,7 @@ export const vi = {
     applyFilters: "Áp dụng",
     loadingShort: "Đang tải...",
     resultsCount: "{count} việc làm",
+    resultsFoundSuffix: "việc làm IT được tìm thấy",
     dailyUpdate: "Cập nhật liên tục mỗi ngày",
     sortLabel: "Sắp xếp:",
     searchingJobs: "Đang tìm kiếm công việc phù hợp...",

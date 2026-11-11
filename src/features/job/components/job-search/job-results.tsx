@@ -52,7 +52,7 @@ export function JobResults({ list, summary }: JobResultsProps) {
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h2 className="text-lg font-medium text-foreground">
           <span className="font-bold">{totalItems.toLocaleString()}</span>{" "}
-          {totalItems === 1 ? "Job" : "IT Jobs"} found
+          {t("jobsPage.resultsFoundSuffix", { count: totalItems })}
         </h2>
 
         <div className="flex w-full sm:w-auto sm:justify-end">
