@@ -1,3 +1,4 @@
+import { sessionEnded, sessionExpired } from "@/features/auth/redux/auth.slice";
 import chatBotReducer, {
   addMessage,
   appendStreamToken,
@@ -7,6 +8,11 @@ import chatBotReducer, {
   setQuota,
   startStreaming,
 } from "@/features/chatbot/redux/chat-bot.slice";
+
+jest.mock("@/shared/constants/roles", () => ({
+  isAdminRole: jest.fn(() => false),
+  isSuperAdmin: jest.fn(() => false),
+}));
 
 describe("chat bot slice", () => {
   const quota = {
@@ -41,14 +47,14 @@ describe("chat bot slice", () => {
     expect(clearedState.quota).toEqual(quota);
   });
 
-  it("clears quota on auth reset actions", () => {
+  it("clears quota on session reset actions", () => {
     const stateWithQuota = chatBotReducer(undefined, setQuota(quota));
 
     expect(
-      chatBotReducer(stateWithQuota, { type: "auth/clearAuth" }).quota
+      chatBotReducer(stateWithQuota, sessionEnded()).quota
     ).toBeUndefined();
     expect(
-      chatBotReducer(stateWithQuota, { type: "auth/setLogoutAction" }).quota
+      chatBotReducer(stateWithQuota, sessionExpired("expired")).quota
     ).toBeUndefined();
   });
 

@@ -72,15 +72,6 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["Auth", "User", "Company", "Job", "Resume"],
     }),
 
-    refreshToken: builder.mutation<ApiResponse<{ access_token: string }>, void>(
-      {
-        query: () => ({
-          url: "/auth/refresh",
-          method: "GET",
-        }),
-      }
-    ),
-
     googleLogin: builder.mutation<
       ApiResponse<LoginResponse>,
       { idToken: string }
@@ -183,7 +174,6 @@ export const {
   useVerifyEmailMutation,
   useResendCodeMutation,
   useLogoutMutation,
-  useRefreshTokenMutation,
   useGoogleLoginMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,

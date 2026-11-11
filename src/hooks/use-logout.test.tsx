@@ -1,10 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { useLogout } from "./use-logout";
 
 const mockPush = jest.fn();
 const mockDispatch = jest.fn();
-const mockSetLoggingOutFlag = jest.fn();
 const mockUnwrap = jest.fn();
 const mockLogoutMutation = jest.fn(() => ({ unwrap: mockUnwrap }));
 let mutationState = { isLoading: false };
@@ -15,10 +14,6 @@ jest.mock("@/i18n/navigation", () => ({
 
 jest.mock("@/lib/redux/hooks", () => ({
   useAppDispatch: () => mockDispatch,
-}));
-
-jest.mock("@/lib/axios/axios-instance", () => ({
-  setLoggingOutFlag: (flag: boolean) => mockSetLoggingOutFlag(flag),
 }));
 
 jest.mock("@/features/auth/redux/auth.api", () => ({
@@ -37,9 +32,8 @@ describe("useLogout", () => {
 
     await act(() => result.current.logout());
 
-    expect(mockSetLoggingOutFlag).toHaveBeenCalledWith(true);
     expect(mockLogoutMutation).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenCalledWith(setLogoutAction());
+    expect(mockDispatch).toHaveBeenCalledWith(sessionEnded());
     expect(mockPush).toHaveBeenCalledWith("/login");
   });
 
@@ -52,7 +46,7 @@ describe("useLogout", () => {
 
     await act(() => result.current.logout());
 
-    expect(mockDispatch).toHaveBeenCalledWith(setLogoutAction());
+    expect(mockDispatch).toHaveBeenCalledWith(sessionEnded());
     expect(mockPush).toHaveBeenCalledWith("/login");
     consoleError.mockRestore();
   });

@@ -11,6 +11,7 @@ import React, {
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+import { getAccessToken } from "@/lib/auth/session";
 
 interface SocketContextValue {
   socket: Socket | null;
@@ -28,10 +29,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   const connect = useCallback(() => {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("access_token")
-        : null;
+    const token = getAccessToken();
     if (!token) return;
 
     // Disconnect existing socket if any
@@ -59,7 +57,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
       // If server disconnected us (e.g., token expired), try to reconnect with fresh token
       if (reason === "io server disconnect") {
-        const freshToken = localStorage.getItem("access_token");
+        const freshToken = getAccessToken();
         if (freshToken) {
           socket.auth = { token: freshToken };
           socket.connect();

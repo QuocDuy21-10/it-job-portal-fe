@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, Eye, EyeOff, Check, Info } from "lucide-react";
 import { useAppDispatch } from "@/lib/redux/hooks";
-import { setLogoutAction } from "@/features/auth/redux/auth.slice";
+import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { useChangePasswordMutation } from "@/features/auth/redux/auth.api";
 import {
   ChangePasswordSchema,
@@ -65,7 +65,7 @@ export default function ChangePasswordPage() {
       form.reset();
 
       // Clear auth and navigate to login
-      dispatch(setLogoutAction());
+      dispatch(sessionEnded());
       router.push("/login");
     } catch (error: any) {
       console.error("Change password error:", error);

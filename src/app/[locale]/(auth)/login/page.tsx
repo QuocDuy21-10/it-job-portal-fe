@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
-import { setLoggingOutFlag } from "@/lib/axios/axios-instance";
 import {
   LoginFormData,
   createLoginSchema,
@@ -91,11 +90,6 @@ function LoginContent() {
       const response = await login(data).unwrap();
 
       if (response.statusCode === 201) {
-        if (response.data?.access_token) {
-          localStorage.setItem("access_token", response.data.access_token);
-          setLoggingOutFlag(false);
-        }
-
         if (response.data?.user) {
           dispatch(
             setUserLoginInfo({
@@ -140,11 +134,6 @@ function LoginContent() {
       }).unwrap();
 
       if (response.statusCode === 201) {
-        if (response.data?.access_token) {
-          localStorage.setItem("access_token", response.data.access_token);
-          setLoggingOutFlag(false);
-        }
-
         if (response.data?.user) {
           dispatch(
             setUserLoginInfo({

@@ -43,7 +43,7 @@ Sơ đồ rút gọn; chi tiết xử lý ở backend nằm ở tài liệu back
 | 2 | Tài khoản Google (`isGoogleUser`) xác nhận bằng cách gõ đúng chữ `DELETE`; tài khoản còn lại nhập mật khẩu (bắt buộc ít nhất 1 ký tự ở form) |
 | 3 | Frontend gửi `{ password }` hoặc `{}` |
 | 4 | Backend yêu cầu mật khẩu cho tài khoản đăng ký bằng email và từ chối với 401 nếu sai; từ chối với 409 nếu đã có yêu cầu chờ |
-| 8 | Trước khi chuyển trang, frontend đặt cờ `isLoggingOut` để interceptor không cố làm mới token |
+| 8 | Trước khi chuyển trang, frontend dispatch `sessionEnded`, listener xóa token và cache RTK Query |
 | 10 | Trang `/account/cancel-deletion?token=...` có bốn trạng thái: rảnh, đang xử lý, thành công, lỗi; thiếu `token` thì báo lỗi ngay |
 
 ## Hủy bằng nút trong ứng dụng

@@ -3,6 +3,8 @@ import authReducer, {
   removeSavedJobId,
   selectSavedJobIds,
   selectUserRole,
+  sessionEnded,
+  sessionExpired,
   setUserLoginInfo,
 } from "./auth.slice";
 import type { AuthState, UserInfo } from "../schemas/auth.schema";
@@ -106,5 +108,33 @@ describe("auth slice saved jobs", () => {
     };
 
     expect(selectUserRole(state)).toBe("HR");
+  });
+});
+
+describe("auth slice session reset", () => {
+  const signedInState = () =>
+    authReducer(createBaseState(), setUserLoginInfo(createUser()));
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it("clears the user on sessionEnded without touching storage", () => {
+    localStorage.setItem("access_token", "token");
+
+    const state = authReducer(signedInState(), sessionEnded());
+
+    expect(state).toEqual(createBaseState());
+    expect(localStorage.getItem("access_token")).toBe("token");
+  });
+
+  it("clears the user and keeps the expiry message on sessionExpired", () => {
+    const state = authReducer(signedInState(), sessionExpired("expired"));
+
+    expect(state).toEqual({
+      ...createBaseState(),
+      isRefreshToken: true,
+      errorRefreshToken: "expired",
+    });
   });
 });

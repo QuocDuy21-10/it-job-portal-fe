@@ -8,7 +8,7 @@ A job portal web application. Job seekers can search and apply for jobs, build C
 - **Styling**: Tailwind CSS 3, Radix UI (via shadcn/ui), Lucide icons
 - **State**: Redux Toolkit + RTK Query, Redux Persist (auth hydration)
 - **Forms**: React Hook Form + Zod validation
-- **HTTP**: Axios with interceptors (auto token refresh on 401, mutex-guarded)
+- **HTTP**: Axios with interceptors (auto token refresh on 401, single-flight in `src/lib/auth/session.ts`)
 - **Auth**: JWT (access + refresh token), Google OAuth
 - **PDF**: @react-pdf/renderer (CV export), with `/api/proxy-image` route for CORS
 - **Testing**: Jest + React Testing Library (jsdom)

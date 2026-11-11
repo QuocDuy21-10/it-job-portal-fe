@@ -41,8 +41,8 @@ Chỉ lo hai trường hợp, cả hai đều thuộc luồng xác thực:
 
 | Trường hợp | Hành vi |
 | --- | --- |
-| `401` trên request không phải đăng nhập hoặc đăng ký | Gọi làm mới token, được `async-mutex` bảo vệ; thành công thì gửi lại request gốc |
-| `400` trên `/auth/refresh` | Xem refresh token là hết hạn: gọi callback báo thất bại và xóa `access_token` |
+| `401` trên request không phải đăng nhập hoặc đăng ký | Chỉ khi request có gửi token: gọi `refreshAccessToken()` (single-flight); thành công thì gửi lại request gốc |
+| Làm mới token thất bại (người dùng đang có token) | `session.ts` gọi `onSessionExpired`: dispatch `sessionExpired`, xóa token và cache RTK Query, `ClientLayout` chuyển về `/login` |
 
 Việc làm mới dùng `axios` trần nên lỗi của nó không đi qua interceptor; nhánh `400` trên `/auth/refresh` vì vậy chỉ chạy khi có request qua `axiosInstance` tới đúng đường dẫn đó. Chi tiết và các điểm cần chạy thử xem [Xác thực](../02-architecture/authentication.md).
 

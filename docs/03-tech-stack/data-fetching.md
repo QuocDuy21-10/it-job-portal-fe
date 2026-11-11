@@ -10,7 +10,6 @@
 | --- | --- | --- |
 | RTK Query | thuộc `@reduxjs/toolkit` `^2.8.2` | Khai báo endpoint, cache, gắn thẻ làm mới |
 | Axios | `^1.13.2` | Gửi request ở trình duyệt, gắn token, làm mới phiên |
-| `async-mutex` | `^0.5.0` | Xếp hàng các lần làm mới token |
 | `fetch` của Next.js | tích hợp trong Next.js | Lấy dữ liệu công khai trên máy chủ, có `revalidate` |
 | `cache()` của React | tích hợp trong React | Gộp lời gọi trùng trong một lần render |
 

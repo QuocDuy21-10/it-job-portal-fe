@@ -6,10 +6,10 @@ DevLink dùng hai token: access token do trình duyệt tự lưu và gửi kèm
 
 | Token | Nơi lưu | Cách dùng |
 | --- | --- | --- |
-| Access token | `localStorage`, khóa `access_token` | Gắn `Authorization: Bearer ...` ở mọi request Axios, ở request chat, và gửi trong `auth` khi kết nối Socket.IO |
+| Access token | `localStorage`, khóa `access_token`, chỉ đọc/ghi qua `src/lib/auth/session.ts` | Gắn `Authorization: Bearer ...` ở mọi request Axios, ở request chat, và gửi trong `auth` khi kết nối Socket.IO |
 | Refresh token | Cookie `refresh_token` do backend đặt | Trình duyệt tự gửi nhờ `withCredentials: true`; code frontend không đọc hay ghi cookie này |
 
-Đây **không** phải mô hình chỉ dùng cookie: access token nằm trong `localStorage`, nên mọi script chạy trên trang đều đọc được nó. Đây là đánh đổi cần biết khi xem xét bảo mật, xem thêm ở nhóm tài liệu bảo mật của Giai đoạn 3.
+Đây **không** phải mô hình chỉ dùng cookie: access token nằm trong `localStorage`, nên mọi script chạy trên trang đều đọc được nó. Đây là đánh đổi cần biết khi xem xét bảo mật, xem thêm ở nhóm tài liệu bảo mật của Giai đoạn 3. Giai đoạn 4B sẽ chuyển access token vào memory.
 
 ## Trạng thái đăng nhập trong Redux
 
@@ -19,14 +19,14 @@ Vai trò người dùng có thể là chuỗi hoặc đối tượng `{ name }` 
 
 ## Khởi tạo phiên khi mở ứng dụng
 
-`AuthInitializer` (đặt trong layout theo ngôn ngữ) gọi `getMe` (`GET /auth/me`) nếu cả hai điều kiện đúng: Redux Persist đã nạp xong (`isRehydrated`) và `localStorage` có `access_token`. Nếu không có token, nó bỏ qua để tránh vòng lặp 401. Kết quả `getMe` cập nhật hoặc xóa người dùng trong slice `auth`.
+`AuthInitializer` (đặt trong layout theo ngôn ngữ) gọi `getMe` (`GET /auth/me`) nếu cả hai điều kiện đúng: Redux Persist đã nạp xong (`isRehydrated`) và `getAccessToken()` trả về token. Nếu không có token, nó bỏ qua để tránh vòng lặp 401. Kết quả `getMe` cập nhật hoặc xóa người dùng trong slice `auth`.
 
 ## Đăng nhập
 
 | Cách | Luồng |
 | --- | --- |
-| Email và mật khẩu | `POST /auth/login`; nếu `statusCode` là 201, form lưu `access_token` vào `localStorage`, đặt lại cờ đăng xuất, gọi `setUserLoginInfo`, rồi chuyển tới trang mặc định theo vai trò |
-| Google (nút) | Form nhận `credential` từ Google, gửi `POST /auth/google/login` với `{ idToken }`, rồi lưu token như trên |
+| Email và mật khẩu | `POST /auth/login`; nếu `statusCode` là 201, form gọi `setUserLoginInfo` rồi chuyển tới trang mặc định theo vai trò. Token được listener `session.listener.ts` lưu khi `login`/`googleLogin` thành công |
+| Google (nút) | Form nhận `credential` từ Google, gửi `POST /auth/google/login` với `{ idToken }`, rồi lưu token qua listener như trên |
 | Google One Tap | Thành phần `GoogleOneTap` có sẵn, làm cùng luồng bằng `useGoogleOneTapLogin`, nhưng tại thời điểm viết không có nơi nào render nó nên tính năng này chưa hoạt động |
 | Đăng ký | `POST /auth/register`; slice cập nhật người dùng nếu phản hồi có thông tin người dùng. Xác minh email dùng `POST /auth/verify` và `POST /auth/resend-code` |
 
@@ -34,39 +34,29 @@ Các endpoint xác thực khác: `POST /auth/logout`, `GET /auth/refresh`, `POST
 
 ## Làm mới phiên khi gặp 401
 
-Khi một request nhận 401, response interceptor trong `axios-instance.ts` làm như sau:
+Khi một request nhận 401, response interceptor trong `axios-instance.ts`:
 
-1. Bỏ qua nếu URL chứa `/login` hoặc `/register`, hoặc request đã mang header `x-no-retry`.
-2. Bỏ qua nếu đang đăng xuất hoặc không còn `access_token`.
-3. Gọi `handleRefreshToken`, chạy trong `Mutex` của `async-mutex`: `GET /auth/refresh` bằng `axios` trần, kèm cookie và header `x-no-retry`.
-4. Nếu nhận được `access_token` mới thì lưu vào `localStorage`, gắn vào request ban đầu, đánh dấu `x-no-retry` rồi gửi lại.
-5. Nếu thất bại thì xóa `access_token` và từ chối request ban đầu.
+1. Bỏ qua nếu URL chứa `/login` hoặc `/register`, request đã mang `x-no-retry`, hoặc request không gửi `Authorization` (khách gặp 401 thì không làm mới).
+2. Gọi `refreshAccessToken()` trong `src/lib/auth/session.ts`. Hàm này single-flight: mọi request 401 cùng lúc dùng chung một lời gọi `GET /auth/refresh` (axios trần, kèm cookie). Backend xoay vòng refresh cookie mỗi lần gọi, nên gọi song song sẽ lãng phí một lần xoay vòng.
+3. Có token mới thì lưu lại, gắn vào request ban đầu, đánh dấu `x-no-retry` rồi gửi lại đúng một lần.
+4. Thất bại thì từ chối request ban đầu. Nếu trước đó người dùng có token, session gọi callback `onSessionExpired`; `store.ts` dispatch `sessionExpired`, listener xóa token và toàn bộ cache RTK Query, còn `ClientLayout` hiện toast "phiên hết hạn" và chuyển về `/login?returnUrl=...`.
 
-`Mutex` xếp các lần làm mới thành hàng đợi, không chạy song song. Code không chia sẻ kết quả của một lần làm mới cho các request đang chờ, nên mỗi request 401 vẫn có thể gọi `/auth/refresh` riêng theo thứ tự.
-
-### Điểm cần lưu ý (đọc từ code, chưa chạy thử)
-
-- Việc làm mới dùng `axios` trần, nên lỗi của nó không đi qua response interceptor. Nhánh "400 trên `/auth/refresh`" trong interceptor, nhánh duy nhất gọi `onRefreshTokenFailed`, thực tế chỉ kích hoạt nếu có request đi qua `axiosInstance` tới `/auth/refresh`. Endpoint RTK Query `refreshToken` có khai báo nhưng không có nơi nào gọi nó.
-- Vì vậy chuỗi `setRefreshTokenAction` → `ClientLayout` (hiện toast "phiên hết hạn" và chuyển về `/login?returnUrl=...`) có trong code nhưng đường kích hoạt từ interceptor có vẻ không chạy tới. Khi làm mới thất bại, hiện chỉ chắc chắn là `access_token` bị xóa và request bị từ chối.
-- Redux Persist vẫn có thể giữ `isAuthenticated: true` cho đến khi một lời gọi `getMe` thất bại hoặc người dùng đăng xuất, vì `AuthInitializer` không gọi `getMe` khi không còn token.
-
-Nên chạy thử trường hợp refresh token hết hạn trước khi coi các điểm trên là hành vi chính thức.
+`endSession()` tăng một bộ đếm (epoch). Lần làm mới nào bắt đầu trước khi phiên kết thúc thì kết quả bị bỏ, nên đăng xuất giữa chừng không hồi sinh phiên.
 
 ## Đăng xuất
 
-Header, layout quản trị và layout HR đều đặt cờ `isLoggingOut` bằng `setLoggingOutFlag(true)` rồi gọi `POST /auth/logout`. Cờ này làm interceptor không cố làm mới token trong lúc đăng xuất; mọi luồng đăng nhập đặt lại cờ về `false`.
+Header và `DashboardShell` (layout quản trị, HR) dùng `useLogout`: gọi `POST /auth/logout`, rồi trong `finally` dispatch `sessionEnded` và chuyển tới `/login`, nên phiên cục bộ luôn kết thúc dù lời gọi thành công hay lỗi. Đổi mật khẩu, đặt mật khẩu và yêu cầu xóa tài khoản cũng dispatch `sessionEnded`.
 
-Phần dọn dẹp thì khác nhau đôi chút:
-
-- Layout quản trị và layout HR dispatch `setLogoutAction` (xóa `access_token` và người dùng) trong khối `finally`, rồi chuyển tới `/login`, nên phiên cục bộ luôn bị xóa dù lời gọi thành công hay lỗi.
-- Header không dispatch trực tiếp mà dựa vào slice `auth`: cả khi `logout` thành công lẫn bị từ chối, slice đều xóa `access_token` và người dùng. Nếu lời gọi lỗi, header chỉ đặt lại cờ `isLoggingOut` về `false` và ghi log, không chuyển trang.
+Reducer chỉ xóa người dùng khỏi slice `auth`. Listener `src/lib/redux/listeners/session.listener.ts` lo phần còn lại cho mọi cách kết thúc phiên (`sessionEnded`, `sessionExpired`, `logout` thành công hoặc lỗi): `endSession()` xóa token, rồi `resetApiState()` xóa cache RTK Query để người dùng sau không thấy dữ liệu của người trước.
 
 ## Source code liên quan
 
-- [`src/lib/axios/axios-instance.ts`](../../src/lib/axios/axios-instance.ts): interceptor, `Mutex`, làm mới token
+- [`src/lib/axios/axios-instance.ts`](../../src/lib/axios/axios-instance.ts): interceptor gắn token, làm mới khi 401
+- [`src/lib/auth/session.ts`](../../src/lib/auth/session.ts): lưu token, làm mới single-flight, epoch
+- [`src/lib/redux/listeners/session.listener.ts`](../../src/lib/redux/listeners/session.listener.ts): lưu token sau đăng nhập, dọn token và cache khi hết phiên
 - [`src/features/auth/redux/auth.slice.ts`](../../src/features/auth/redux/auth.slice.ts): trạng thái và selector đăng nhập
 - [`src/features/auth/redux/auth.api.ts`](../../src/features/auth/redux/auth.api.ts): các endpoint xác thực
-- [`src/features/auth/redux/auth.helpers.ts`](../../src/features/auth/redux/auth.helpers.ts): hàm đọc, ghi, xóa token
+- [`src/features/auth/redux/auth.helpers.ts`](../../src/features/auth/redux/auth.helpers.ts): hàm cập nhật thông tin người dùng
 - [`src/components/auth-initializer.tsx`](../../src/components/auth-initializer.tsx): khởi tạo phiên bằng `getMe`
 - [`src/components/modals/login-form.tsx`](../../src/components/modals/login-form.tsx): đăng nhập email và Google
 - [`src/components/auth/social-auth-buttons.tsx`](../../src/components/auth/social-auth-buttons.tsx): nút đăng nhập Google

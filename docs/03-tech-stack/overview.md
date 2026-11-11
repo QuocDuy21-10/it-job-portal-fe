@@ -21,7 +21,6 @@ Phiên bản lấy từ [`package.json`](../../package.json). Dấu `^` nghĩa l
 | | Redux Persist | `^6.0.0` | [State](state-management.md) |
 | Dữ liệu | RTK Query (trong Redux Toolkit) | như trên | [Lấy dữ liệu](data-fetching.md) |
 | | Axios | `^1.13.2` | [Lấy dữ liệu](data-fetching.md) |
-| | async-mutex | `^0.5.0` | [Lấy dữ liệu](data-fetching.md) |
 | Form | React Hook Form | `^7.53.0` | [Form](forms-and-validation.md) |
 | | Zod | `^4.0.16` | [Form](forms-and-validation.md) |
 | | @hookform/resolvers | `^5.2.1` | [Form](forms-and-validation.md) |

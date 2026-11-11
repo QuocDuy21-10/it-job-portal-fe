@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, isAnyOf, PayloadAction } from "@reduxjs/toolkit";
 import {
   IChatQuotaStatus,
   IChatRecommendationMetadata,
   IMessage,
 } from "@/shared/types/chat";
+import { sessionEnded, sessionExpired } from "@/features/auth/redux/auth.slice";
 
 export interface ChatBotState {
   messages: IMessage[];
@@ -240,10 +241,7 @@ const chatBotSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase("auth/clearAuth", (state) => {
-        state.quota = undefined;
-      })
-      .addCase("auth/setLogoutAction", (state) => {
+      .addMatcher(isAnyOf(sessionEnded, sessionExpired), (state) => {
         state.quota = undefined;
       })
       .addMatcher(isLogoutMutationSettled, (state) => {
