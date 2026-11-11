@@ -1,7 +1,7 @@
 "use client";
 
 import { FileText, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import CompletionProgress from "@/features/cv-builder/components/completion-progress";
 import MobileCompletionCard from "@/features/cv-builder/components/create-cv-page/mobile-completion-card";
 import MobileSaveBar from "@/features/cv-builder/components/create-cv-page/mobile-save-bar";

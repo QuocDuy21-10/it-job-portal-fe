@@ -51,12 +51,12 @@ export default function SkillsSection({
       level: data.level,
     }),
     addToast: (data) => ({
-      title: "Thêm kỹ năng thành công",
-      description: `Đã thêm kỹ năng: ${data.name}`,
+      title: t("cv.toasts.skillAddSuccess"),
+      description: t("cv.toasts.skillAdded", { name: data.name }),
     }),
     editToast: (data) => ({
-      title: "Cập nhật kỹ năng thành công",
-      description: `Đã cập nhật: ${data.name}`,
+      title: t("cv.toasts.skillEditSuccess"),
+      description: t("cv.toasts.skillUpdated", { name: data.name }),
     }),
   });
 

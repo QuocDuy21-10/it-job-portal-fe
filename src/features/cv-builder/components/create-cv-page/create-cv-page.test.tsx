@@ -18,7 +18,7 @@ jest.mock("@/hooks/use-i18n", () => ({
   }),
 }));
 
-jest.mock("next/navigation", () => ({
+jest.mock("@/i18n/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),

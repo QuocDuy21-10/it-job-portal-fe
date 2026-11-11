@@ -1302,6 +1302,10 @@ export const vi = {
       languageAdded: "Đã thêm: {name}",
       languageEditSuccess: "Cập nhật ngôn ngữ thành công",
       languageUpdated: "Đã cập nhật: {name}",
+      skillAddSuccess: "Thêm kỹ năng thành công",
+      skillAdded: "Đã thêm kỹ năng: {name}",
+      skillEditSuccess: "Cập nhật kỹ năng thành công",
+      skillUpdated: "Đã cập nhật: {name}",
 
       educationAddSuccess: "Thêm học vấn thành công",
       educationAdded: "Đã thêm: {school} - {degree}",
@@ -1327,6 +1331,8 @@ export const vi = {
     saveSuccess: "Lưu CV thành công!",
     saveError: "Lỗi khi lưu CV",
     genericError: "Có lỗi xảy ra",
+    saveCv: "Lưu CV",
+    previewAndDownload: "Xem trước & Tải PDF",
   },
   emailSubscription: {
     title: "Đăng ký nhận công việc",
