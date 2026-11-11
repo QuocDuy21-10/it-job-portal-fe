@@ -30,10 +30,6 @@ export function ClientLayout() {
         errorRefreshToken
       );
 
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("access_token");
-      }
-
       toast.error(
         errorRefreshToken ||
           "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."

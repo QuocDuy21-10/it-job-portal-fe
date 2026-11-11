@@ -19,6 +19,7 @@ import { MobileNavDrawer } from "./mobile-nav-drawer";
 import { MobileUserDrawer } from "./mobile-user-drawer";
 import { UserMenu } from "./user-menu";
 import { isNavActive, MAIN_NAV_ITEMS, type HeaderAuthView } from "./nav-config";
+import { getAccessToken } from "@/lib/auth/session";
 
 export function Header() {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
@@ -28,8 +29,7 @@ export function Header() {
   const label = (key: string, fallback: string) =>
     i18nMounted ? t(key) : fallback;
   const { user, isAuthenticated, isRehydrated } = useAuth();
-  const hasToken =
-    typeof window !== "undefined" && !!localStorage.getItem("access_token");
+  const hasToken = getAccessToken() !== null;
   const pathname = usePathname();
   const isAdmin = isAdminRole(useAppSelector(selectUserRole));
   const { logout } = useLogout();
