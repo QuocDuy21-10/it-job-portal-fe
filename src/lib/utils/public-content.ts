@@ -1,5 +1,8 @@
 import { cache } from "react";
-import type { Company } from "@/features/company/schemas/company.schema";
+import type {
+  Company,
+  TopHiringCompany,
+} from "@/features/company/schemas/company.schema";
 import type { Job } from "@/features/job/schemas/job.schema";
 import type {
   ExternalJobDetail,
@@ -14,12 +17,19 @@ import type {
   PaginatedResult,
 } from "@/shared/types/pagination";
 
-const PUBLIC_CONTENT_REVALIDATE_SECONDS = 300;
+// How long Next.js reuses a cached response before asking the backend again.
+// Jobs change often; companies and aggregated external jobs rarely do.
+const JOBS_REVALIDATE_SECONDS = 60;
+const COMPANIES_REVALIDATE_SECONDS = 3600;
+const EXTERNAL_JOBS_REVALIDATE_SECONDS = 3600;
 
-async function fetchPublicEntity<T>(pathname: string): Promise<T | null> {
+async function fetchPublicEntity<T>(
+  pathname: string,
+  revalidate: number
+): Promise<T | null> {
   try {
     const response = await fetch(`${API_BASE_URL}${pathname}`, {
-      next: { revalidate: PUBLIC_CONTENT_REVALIDATE_SECONDS },
+      next: { revalidate },
     });
 
     if (!response.ok) {
@@ -59,19 +69,39 @@ const buildPublicListQuery = ({
 };
 
 const fetchPublicJobsByQuery = cache((query: string) => {
-  return fetchPublicEntity<PaginatedResult<Job>>(`/jobs?${query}`);
+  return fetchPublicEntity<PaginatedResult<Job>>(
+    `/jobs?${query}`,
+    JOBS_REVALIDATE_SECONDS
+  );
 });
 
 const fetchPublicCompaniesByQuery = cache((query: string) => {
-  return fetchPublicEntity<PaginatedResult<Company>>(`/companies?${query}`);
+  return fetchPublicEntity<PaginatedResult<Company>>(
+    `/companies?${query}`,
+    COMPANIES_REVALIDATE_SECONDS
+  );
 });
 
 export const fetchPublicJobById = cache((id: string) => {
-  return fetchPublicEntity<Job>(`/jobs/${encodeURIComponent(id)}`);
+  return fetchPublicEntity<Job>(
+    `/jobs/${encodeURIComponent(id)}`,
+    JOBS_REVALIDATE_SECONDS
+  );
 });
 
 export const fetchPublicCompanyById = cache((id: string) => {
-  return fetchPublicEntity<Company>(`/companies/${encodeURIComponent(id)}`);
+  return fetchPublicEntity<Company>(
+    `/companies/${encodeURIComponent(id)}`,
+    COMPANIES_REVALIDATE_SECONDS
+  );
+});
+
+// Same URL as getTopHiringCompanies in company.api.ts, so both sides read one list.
+export const fetchPublicTopHiringCompanies = cache((limit: number) => {
+  return fetchPublicEntity<TopHiringCompany[]>(
+    `/companies/top-hiring?limit=${limit}`,
+    COMPANIES_REVALIDATE_SECONDS
+  );
 });
 
 export const fetchPublicJobs = (params: PaginatedQueryParams) => {
@@ -84,7 +114,8 @@ export const fetchPublicCompanies = (params: PaginatedQueryParams) => {
 
 const fetchPublicJobSearchByQuery = cache((query: string) => {
   return fetchPublicEntity<PaginatedResult<JobSearchItem>>(
-    `/job-search?${query}`
+    `/job-search?${query}`,
+    JOBS_REVALIDATE_SECONDS
   );
 });
 
@@ -94,6 +125,7 @@ export const fetchPublicJobSearch = (params: JobSearchParams) => {
 
 export const fetchPublicExternalJobById = cache((id: string) => {
   return fetchPublicEntity<ExternalJobDetail>(
-    `/job-search/external/${encodeURIComponent(id)}`
+    `/job-search/external/${encodeURIComponent(id)}`,
+    EXTERNAL_JOBS_REVALIDATE_SECONDS
   );
 });
