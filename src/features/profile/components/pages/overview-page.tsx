@@ -33,8 +33,14 @@ export default function OverviewPage() {
   const user = meData?.data?.user;
   const savedJobIds = useAppSelector(selectSavedJobIds);
   const companyFollowing = useAppSelector(selectCompanyFollowing);
-  const jobFavoritesCount = savedJobIds.length;
-  const companyFollowingCount = companyFollowing.length;
+  // Both lists come from persisted state the server never has. Show 0 until hydration is done,
+  // so the first client render matches the server HTML.
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+  const jobFavoritesCount = isHydrated ? savedJobIds.length : 0;
+  const companyFollowingCount = isHydrated ? companyFollowing.length : 0;
 
   // Fetch applied jobs on component mount
   useEffect(() => {
