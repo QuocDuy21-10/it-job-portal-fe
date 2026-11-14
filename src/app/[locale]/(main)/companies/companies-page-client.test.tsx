@@ -36,10 +36,6 @@ jest.mock("@/hooks/use-i18n", () => ({
   }),
 }));
 
-jest.mock("@/components/sections/page-breadcrumb", () => ({
-  PageBreadcrumb: () => <div data-testid="breadcrumb" />,
-}));
-
 jest.mock("@/components/simple-pagination", () => ({
   SimplePagination: () => <div data-testid="pagination" />,
 }));
