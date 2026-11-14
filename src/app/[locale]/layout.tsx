@@ -10,7 +10,7 @@ import { notFound } from "next/navigation";
 import { AuthInitializer } from "@/components/auth-initializer";
 import { ClientLayout } from "@/components/client-layout";
 import { NotificationInitializer } from "@/components/notification/notification-initializer";
-import { AuthModal } from "@/components/modals/auth-modal";
+import { AuthModalLazy } from "@/components/modals/auth-modal-lazy";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
 import { routing } from "@/i18n/routing";
@@ -90,7 +90,7 @@ export default async function LocaleLayout({
             <NotificationInitializer />
             <ClientLayout />
             <div className="flex-1">{children}</div>
-            <AuthModal />
+            <AuthModalLazy />
           </SocketProvider>
         </AuthModalProvider>
       </I18nProvider>

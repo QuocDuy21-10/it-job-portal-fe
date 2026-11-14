@@ -105,6 +105,7 @@ Quy tắc kiểm tra dữ liệu ở form, gồm mật khẩu 8 đến 128 ký t
 | Test | Nội dung |
 | --- | --- |
 | `src/components/modals/auth-modal.test.tsx` | Modal hiện đúng ngôn ngữ cho tab đăng nhập và đăng ký; đăng ký xong thì quay về tab đăng nhập |
+| `src/components/modals/auth-modal-lazy.test.tsx` | Modal chưa được tải và chưa render trước lần mở đầu tiên; mở thì tải và render, đóng vẫn giữ lại |
 | `src/app/[locale]/(auth)/login/page.test.tsx` | Sau khi đăng nhập: đi theo `returnUrl` nội bộ, bỏ qua `returnUrl` trỏ ra ngoài site |
 | `src/features/auth/redux/auth.slice.test.ts` | Hợp nhất danh sách việc đã lưu; chọn vai trò từ state |
 | `src/features/auth/schemas/auth.schema.test.ts` | Quy tắc kiểm tra dữ liệu của schema xác thực |
@@ -121,6 +122,7 @@ Chưa có test cho: luồng làm mới token, trang xác minh email, quên và �
 - [`src/app/[locale]/(auth)/reset-password/page.tsx`](../../src/app/[locale]/(auth)/reset-password/page.tsx): đặt lại mật khẩu
 - [`src/app/[locale]/(auth)/layout.tsx`](../../src/app/[locale]/(auth)/layout.tsx): chuyển người đã đăng nhập đi nơi khác
 - [`src/components/modals/auth-modal.tsx`](../../src/components/modals/auth-modal.tsx): modal đăng nhập và đăng ký
+- [`src/components/modals/auth-modal-lazy.tsx`](../../src/components/modals/auth-modal-lazy.tsx): tải modal bằng `next/dynamic` ở lần mở đầu tiên
 - [`src/components/modals/login-form.tsx`](../../src/components/modals/login-form.tsx): form đăng nhập trong modal
 - [`src/components/modals/register-form.tsx`](../../src/components/modals/register-form.tsx): form đăng ký trong modal
 - [`src/contexts/auth-modal-context.tsx`](../../src/contexts/auth-modal-context.tsx): mở và đóng modal
