@@ -9,6 +9,7 @@ Trang này giải thích từng lệnh npm trong dự án làm gì thật sự, 
 | `npm run dev` | `next dev --turbopack` | Phát triển hằng ngày; Turbopack biên dịch theo yêu cầu, tự tải lại khi sửa file |
 | `npm run build` | `next build` | Kiểm tra bản production; biên dịch, kiểm tra kiểu và tạo trang tĩnh |
 | `npm run start` | `next start` | Chạy bản đã build; phải `npm run build` trước |
+| `ANALYZE=true npm run build` | `next build` kèm `@next/bundle-analyzer` | Xem từng chunk JS chứa gì; mở báo cáo HTML trong `.next/analyze/` |
 | `npm run lint` | `eslint .` | Kiểm tra quy tắc mã nguồn |
 | `npm test` | `jest` | Chạy kiểm thử |
 | `npm run docs:dev` | `vitepress dev docs` | Khởi động máy chủ tài liệu cục bộ tại `http://localhost:5173` |

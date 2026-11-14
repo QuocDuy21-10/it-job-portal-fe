@@ -1468,7 +1468,6 @@ export const vi = {
     },
   },
   downloadPdfButton: {
-    preparing: "Đang chuẩn bị...",
     error: "Lỗi tạo PDF",
     generating: "Đang tạo PDF...",
     download: "Tải PDF",

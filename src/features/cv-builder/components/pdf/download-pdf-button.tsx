@@ -1,22 +1,10 @@
-/**
- * Download PDF Button Component
- * Sử dụng PDFDownloadLink từ @react-pdf/renderer
- *
- * LƯU Ý:
- * - PDFDownloadLink chỉ render trên client (CSR)
- * - Có thể lag nếu CV data lớn → Cần loading state tốt
- * - Document được generate khi component mount
- */
-
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import React, { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import CVPdfDocument from "@/features/cv-builder/components/pdf/cv-pdf-document";
 import { ICVProfile } from "@/shared/types/cv";
-import { generateCVDataKey } from "@/features/cv-builder/lib/pdf/helpers";
 import { useI18n } from "@/hooks/use-i18n";
 
 interface DownloadPDFButtonProps {
@@ -28,10 +16,7 @@ interface DownloadPDFButtonProps {
   className?: string;
 }
 
-/**
- * Button để download PDF CV
- * Tự động generate PDF khi click
- */
+// The PDF renderer (~500 kB) loads only when the user asks for the file.
 const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
   cvData,
   fileName = "CV",
@@ -41,78 +26,57 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
   className = "",
 }) => {
   const { t } = useI18n();
-  const [isClient, setIsClient] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  // PDFDownloadLink chỉ hoạt động trên client
-  React.useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const handleDownload = async () => {
+    setIsGenerating(true);
+    try {
+      const [{ pdf }, { default: CVPdfDocument }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/features/cv-builder/components/pdf/cv-pdf-document"),
+      ]);
+      const blob = await pdf(
+        <CVPdfDocument cvData={cvData} template={template} />
+      ).toBlob();
 
-  // Generate stable key based on data content to fix "Eo is not a function" bug
-  // Solution from: https://github.com/diegomura/react-pdf/issues/3178
-  const renderKey = useMemo(() => {
-    return generateCVDataKey(cvData, template);
-  }, [cvData, template]);
-
-  if (!isClient) {
-    // Hiển thị loading button khi chưa mount
-    return (
-      <Button variant={variant} size={size} className={className} disabled>
-        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-        {t("downloadPdfButton.preparing")}
-      </Button>
-    );
-  }
-
-  // Generate filename with timestamp
-  const generateFileName = () => {
-    const timestamp = new Date().toISOString().split("T")[0];
-    const name = cvData.personalInfo.fullName.replace(/\s+/g, "_");
-    return `${fileName}_${name}_${timestamp}.pdf`;
+      const timestamp = new Date().toISOString().split("T")[0];
+      const name = cvData.personalInfo.fullName.replace(/\s+/g, "_");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${fileName}_${name}_${timestamp}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      // Revoke on the next tick so the browser has started the download.
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    } catch {
+      toast.error(t("downloadPdfButton.error"));
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
-    <PDFDownloadLink
-      key={renderKey}
-      document={<CVPdfDocument cvData={cvData} template={template} />}
-      fileName={generateFileName()}
+    <Button
+      variant={variant}
+      size={size}
+      className={className}
+      disabled={isGenerating}
+      onClick={handleDownload}
     >
-      {({ blob, url, loading, error }) => {
-        if (error) {
-          return (
-            <Button
-              variant="destructive"
-              size={size}
-              className={className}
-              disabled
-            >
-              {t("downloadPdfButton.error")}
-            </Button>
-          );
-        }
-
-        return (
-          <Button
-            variant={variant}
-            size={size}
-            className={className}
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {t("downloadPdfButton.generating")}
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4 mr-2" />
-                {t("downloadPdfButton.download")}
-              </>
-            )}
-          </Button>
-        );
-      }}
-    </PDFDownloadLink>
+      {isGenerating ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          {t("downloadPdfButton.generating")}
+        </>
+      ) : (
+        <>
+          <Download className="w-4 h-4 mr-2" />
+          {t("downloadPdfButton.download")}
+        </>
+      )}
+    </Button>
   );
 };
 

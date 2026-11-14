@@ -10,7 +10,8 @@ import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
 
 const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
-  weight: ["100", "300", "400", "500", "700", "900"],
+  // One variable file covers every weight, including 600 for font-semibold.
+  weight: "variable",
   variable: "--font-roboto",
   display: "swap",
 });

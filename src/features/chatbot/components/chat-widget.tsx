@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useChat } from "@/features/chatbot/hooks/use-chat";
 import { useI18n } from "@/hooks/use-i18n";
 import { XMarkIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
 import ChatTooltip from "@/features/chatbot/components/chat-tooltip";
-import ChatSurface from "@/features/chatbot/components/chat-surface";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +14,12 @@ import {
 } from "@/components/ui/sheet";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/features/auth/redux/auth.slice";
+
+// ChatSurface brings react-markdown; fetch it only once the user opens the chat.
+const ChatSurface = dynamic(
+  () => import("@/features/chatbot/components/chat-surface"),
+  { ssr: false }
+);
 
 const BUTTON_SIZE = 56; // w-14 = 56px
 const CHAT_WIDTH = 400;
@@ -29,6 +35,10 @@ const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
+  if (isOpen && !hasOpened) {
+    setHasOpened(true);
+  }
 
   // === Drag State ===
   const [position, setPosition] = useState<{ x: number; y: number } | null>(
@@ -175,7 +185,7 @@ const ChatWidget = () => {
 
   return (
     <>
-      {!isMobile && (
+      {!isMobile && hasOpened && (
         <ChatSurface
           isVisible={isOpen}
           onClose={() => setIsOpen(false)}

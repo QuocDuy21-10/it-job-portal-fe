@@ -11,37 +11,22 @@
 export const formatDateForDisplay = (
   date: Date | string | undefined
 ): string => {
-  if (!date) {
+  if (!date || (typeof date === "string" && date.trim() === "")) {
     return "Present";
   }
 
-  // If it's a Date object, convert to localized string
-  if (date instanceof Date) {
-    return date.toLocaleDateString("vi-VN", {
-      year: "numeric",
-      month: "2-digit",
-    });
+  const dateObj = date instanceof Date ? date : new Date(date);
+
+  // new Date() does not throw on bad input; it yields an Invalid Date.
+  if (isNaN(dateObj.getTime())) {
+    // Text such as "Present" is shown as written.
+    return typeof date === "string" ? date : "Present";
   }
 
-  // If it's an empty string, show "Present"
-  if (typeof date === "string" && date.trim() === "") {
-    return "Present";
-  }
-
-  // If it's a date string, format it
-  if (typeof date === "string") {
-    try {
-      const dateObj = new Date(date);
-      return dateObj.toLocaleDateString("vi-VN", {
-        year: "numeric",
-        month: "2-digit",
-      });
-    } catch {
-      return date;
-    }
-  }
-
-  return String(date);
+  return dateObj.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+  });
 };
 
 /**

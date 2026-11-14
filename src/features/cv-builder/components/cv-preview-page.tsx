@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { ArrowLeft, Loader2, FileText, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,11 +10,23 @@ import { useCV } from "@/features/cv-builder/hooks/use-cv";
 import { useI18n } from "@/hooks/use-i18n";
 import { useRouter } from "@/i18n/navigation";
 import DownloadPDFButton from "@/features/cv-builder/components/pdf/download-pdf-button";
-import PDFPreview from "@/features/cv-builder/components/pdf/pdf-preview";
 import { ClassicTemplate } from "@/features/cv-builder/components/templates/classic/ClassicTemplate";
 import { ModernTemplate } from "@/features/cv-builder/components/templates/modern/ModernTemplate";
 import { MinimalTemplate } from "@/features/cv-builder/components/templates/minimal/MinimalTemplate";
 import { cn } from "@/lib/utils";
+
+// PDFViewer pulls in @react-pdf/renderer; load it only when the user turns the preview on.
+const PDFPreview = dynamic(
+  () => import("@/features/cv-builder/components/pdf/pdf-preview"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[calc(100vh-10px)] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    ),
+  }
+);
 
 export default function CVPreviewPage() {
   const router = useRouter();
