@@ -16,7 +16,7 @@ Công ty vừa có phần công khai (khách xem danh sách, chi tiết) vừa c
 | `useUpdateCompanyMutation` | `PATCH /companies/:id` | `{ id, data: UpdateCompanyFormData }` | Làm mất hiệu lực `{ Company, id }` và `Company` | `features/company/hooks/use-company.ts` |
 | `useDeleteCompanyMutation` | `DELETE /companies/:id` | `id: string` | Làm mất hiệu lực `Company` | `features/company/hooks/use-company.ts` |
 | `useBulkDeleteCompaniesMutation` | `DELETE /companies/bulk` | `string[]`, gửi trong body dạng `{ ids }` | Làm mất hiệu lực `Company` | `(dashboard)/admin/companies/page.tsx` |
-| `useGetTopHiringCompaniesQuery` | `GET /companies/top-hiring` | `{ limit? }`, thêm `?limit=` khi có | Cung cấp `Company` | `home-page-client.tsx` |
+| `useGetTopHiringCompaniesQuery` | `GET /companies/top-hiring` | `{ limit? }`, thêm `?limit=` khi có | Cung cấp `Company` | `home-page-client.tsx`, chỉ khi server không gửi sẵn dữ liệu (server gọi `fetchPublicTopHiringCompanies`) |
 
 Danh sách công ty công khai lọc theo tên bằng `filter` dạng `name=/<từ khóa>/i` (đã mã hóa), xem `buildCompanyListQueryArgs`.
 

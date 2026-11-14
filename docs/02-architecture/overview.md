@@ -20,10 +20,10 @@ Không phải trang nào cũng đi qua Redux. Code hiện có hai đường:
 
 | Đường | Dùng ở đâu | Cách hoạt động |
 | --- | --- | --- |
-| **Server fetch** | Các trang công khai cần SEO: danh sách việc làm, chi tiết việc làm, việc làm bên ngoài, danh sách và chi tiết công ty, sitemap | Hàm trong `src/lib/utils/public-content.ts` gọi `fetch` trên server, cache 300 giây |
+| **Server fetch** | Các trang công khai cần SEO: trang chủ, danh sách việc làm, chi tiết việc làm, việc làm bên ngoài, danh sách và chi tiết công ty, sitemap | Hàm trong `src/lib/utils/public-content.ts` gọi `fetch` trên server, cache 60 giây (việc làm) hoặc 1 giờ (công ty, việc làm bên ngoài) |
 | **RTK Query + Axios** | Phần tương tác ở trình duyệt: lọc, phân trang, đăng nhập, hồ sơ, CV, trang quản trị | Endpoint khai báo trong `src/features/*/redux/*.api.ts`, đi qua Axios |
 
-Ở trang danh sách việc làm, hai đường này nối nhau: server lấy dữ liệu ban đầu và truyền xuống phần giao diện chạy ở trình duyệt, phần này chỉ gọi RTK Query khi người dùng đổi bộ lọc. Chi tiết ở [Giao tiếp API](api-communication.md) và [Server Component và Client Component](server-client-components.md).
+Ở trang chủ và trang danh sách việc làm, hai đường này nối nhau: server lấy dữ liệu ban đầu và truyền xuống phần giao diện chạy ở trình duyệt, phần này chỉ gọi RTK Query khi người dùng đổi bộ lọc hoặc chuyển trang. Chi tiết ở [Giao tiếp API](api-communication.md) và [Server Component và Client Component](server-client-components.md).
 
 ## Các trang trong nhóm kiến trúc
 

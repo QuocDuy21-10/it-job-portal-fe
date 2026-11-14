@@ -10,7 +10,7 @@ Tính năng cho phép ứng viên tìm tin tuyển dụng theo từ khóa, đị
 
 **Đánh đổi:**
 
-- Trang đầu của danh sách và trang chi tiết được render trên server và giữ trong cache Next.js khoảng 5 phút, nên tin mới hoặc vừa đóng có thể chưa hiện ngay; xem [Chiến lược cache](../02-architecture/caching-strategy.md).
+- Trang đầu của danh sách và trang chi tiết được render trên server và giữ trong cache Next.js khoảng 1 phút (1 giờ với trang chi tiết tin ngoài), nên tin mới hoặc vừa đóng có thể chưa hiện ngay; xem [Chiến lược cache](../02-architecture/caching-strategy.md).
 - Tin từ nguồn ngoài chỉ hiển thị thông tin hạn chế và dẫn người dùng sang website gốc; xem [Việc làm từ nguồn ngoài](external-job-aggregation.md).
 
 ## Giao diện

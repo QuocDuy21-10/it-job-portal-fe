@@ -35,7 +35,7 @@ Sơ đồ cho thấy người dùng rời DevLink bằng liên kết mở ở ta
 | Bước | Giải thích |
 | --- | --- |
 | 2 | Thẻ kết quả chọn `/jobs/external/<id>` chỉ dựa vào `sourceType` |
-| 3 | Lời gọi phía server, bọc `cache()`, `revalidate` 300 giây |
+| 3 | Lời gọi phía server, bọc `cache()`, `revalidate` 3600 giây |
 | 5 | `fetchPublicEntity` trả `null` cho mọi lỗi, nên server không phân biệt 404 với lỗi mạng |
 | 6 | Trang đặt `robots: { index: false, follow: false }` |
 | 8 | Liên kết có `target="_blank"` và `rel="noopener noreferrer nofollow"` |
@@ -48,14 +48,14 @@ Sơ đồ cho thấy người dùng rời DevLink bằng liên kết mở ở ta
 | `applyUrl` không phải `http:` hoặc `https:` | Ẩn nút ứng tuyển |
 | `sourceUrl` không an toàn | Ẩn liên kết "xem bài gốc" |
 | `descriptionHtml` rỗng | Hiện câu hướng dẫn xem đầy đủ ở nguồn, kèm liên kết gốc nếu an toàn |
-| `descriptionHtml` có nội dung | Hiển thị mô tả bằng `html-react-parser` |
+| `descriptionHtml` có nội dung | Hiển thị mô tả đã được `page.tsx` làm sạch trên server |
 | `sourceKey` là `topdev` hoặc `itviec` | Thông báo nguồn nêu tên website; còn lại nêu tên công ty |
 | `isRemote` là `false` | Mục nơi làm việc ghi "chưa rõ", không khẳng định làm tại chỗ |
 
 Kiểm tra an toàn bằng `isSafeHttpUrl`: chỉ chấp nhận giao thức `http:` và `https:`, để chặn `javascript:` hay `data:` từ dữ liệu bên thứ ba.
 
-> [!WARNING]
-> Mô tả được hiển thị qua `html-react-parser`, và code ghi chú rằng backend đã làm sạch HTML lúc nhập. Frontend không tự làm sạch thêm lần nào. Chưa kiểm tra phía backend trong tài liệu này.
+> [!NOTE]
+> `page.tsx` làm sạch `descriptionHtml` bằng `sanitizeRichText` rồi chuyển thành phần tử React bằng `html-react-parser`, cả hai đều chạy trên server. `ExternalJobDetailContent` nhận kết quả qua prop `description` và không import hai thư viện này, nên chúng không nằm trong JavaScript gửi xuống trình duyệt. Frontend làm sạch lại dù code ghi chú rằng backend đã làm sạch HTML lúc nhập.
 
 ## Nhánh lỗi
 
@@ -66,10 +66,11 @@ Kiểm tra an toàn bằng `isSafeHttpUrl`: chỉ chấp nhận giao thức `htt
 
 ## Source code liên quan
 
-- [`src/app/[locale]/(main)/jobs/external/[id]/page.tsx`](../../../src/app/[locale]/(main)/jobs/external/[id]/page.tsx): metadata `noindex`, `notFound`
+- [`src/app/[locale]/(main)/jobs/external/[id]/page.tsx`](../../../src/app/[locale]/(main)/jobs/external/[id]/page.tsx): metadata `noindex`, `notFound`, làm sạch mô tả
 - [`src/features/job/components/external-job-detail-content.tsx`](../../../src/features/job/components/external-job-detail-content.tsx): giao diện và điều kiện hiển thị
 - [`src/features/job/components/job-search-card.tsx`](../../../src/features/job/components/job-search-card.tsx): chọn đường dẫn theo `sourceType`
 - [`src/lib/utils/is-safe-http-url.ts`](../../../src/lib/utils/is-safe-http-url.ts): kiểm tra URL
+- [`src/lib/security/sanitize-html.ts`](../../../src/lib/security/sanitize-html.ts): danh sách thẻ và thuộc tính HTML được giữ lại
 - [`src/lib/utils/public-content.ts`](../../../src/lib/utils/public-content.ts): `fetchPublicExternalJobById`
 
 Backend: [Vòng đời tin ngoài](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/06-workflows/state-machines/external-job-lifecycle.md) và [service tìm kiếm](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/job-search/job-search.service.ts).

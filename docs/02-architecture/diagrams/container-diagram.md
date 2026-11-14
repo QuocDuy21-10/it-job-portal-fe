@@ -16,7 +16,7 @@ flowchart TB
     subgraph Next["Máy chủ Next.js"]
         MW["Middleware<br/>(tiền tố ngôn ngữ)"]
         SC["Server Component<br/>(page.tsx, generateMetadata)"]
-        PC["fetchPublic*<br/>(cache 300 giây)"]
+        PC["fetchPublic*<br/>(cache 60 giây hoặc 1 giờ)"]
         Proxy["/api/proxy-image"]
         SEO["sitemap.ts, robots.ts"]
     end

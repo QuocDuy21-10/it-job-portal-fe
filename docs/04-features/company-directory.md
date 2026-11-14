@@ -8,7 +8,7 @@ Tính năng cho phép mọi người xem danh sách công ty đang tuyển, tìm
 
 **Đối tượng:** mọi người, kể cả khách. Theo dõi công ty cần đăng nhập, xem [Theo dõi công ty](company-following.md).
 
-**Đánh đổi:** cả danh sách và chi tiết được render trên server và giữ trong cache Next.js khoảng 5 phút, nên công ty hay tin mới có thể chưa hiện ngay; xem [Chiến lược cache](../02-architecture/caching-strategy.md).
+**Đánh đổi:** cả danh sách và chi tiết được render trên server. Dữ liệu công ty được giữ trong cache Next.js tới 1 giờ, còn tin đang mở của công ty tới 1 phút, nên công ty mới hoặc thông tin vừa sửa có thể chưa hiện ngay; xem [Chiến lược cache](../02-architecture/caching-strategy.md).
 
 ## Giao diện
 

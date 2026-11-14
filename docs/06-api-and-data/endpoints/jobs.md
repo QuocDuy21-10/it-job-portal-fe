@@ -22,7 +22,7 @@ Hook `useGetJobsQuery` được dùng với ba kiểu lọc khác nhau:
 
 | Nơi gọi | `filter` | `sort` | `limit` |
 | --- | --- | --- | --- |
-| Trang chủ | `isActive=true` | `sort=-createdAt` | `ITEMS_PER_PAGE` |
+| Trang chủ | `isActive=true` | `sort=-createdAt` | 6 (`getHomeJobsQuery` trong `home-query.ts`) |
 | Trang quản trị tin | `name=/<từ khóa>/i` và `isActive=<trạng thái>` khi người dùng chọn | Không | Theo `pageSize` |
 | Danh sách việc của công ty | `isActive=true`, thêm `company._id=<id>`, `name=/<từ khóa>/i` và `locationCode=<mã>` khi có | Không | 20 |
 
