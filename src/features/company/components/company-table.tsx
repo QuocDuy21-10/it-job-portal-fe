@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Company } from "@/features/company/schemas/company.schema";
+import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
@@ -186,14 +187,20 @@ function CompanyTableRow({
         {company.website ? (
           <div className="flex items-center gap-2">
             <Globe className="h-4 w-4 text-gray-400" />
-            <a
-              href={company.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors"
-            >
-              {t("adminPages.companies.table.visit")}
-            </a>
+            {isSafeHttpUrl(company.website) ? (
+              <a
+                href={company.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors"
+              >
+                {t("adminPages.companies.table.visit")}
+              </a>
+            ) : (
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {company.website}
+              </span>
+            )}
           </div>
         ) : (
           <span className="text-gray-400">-</span>

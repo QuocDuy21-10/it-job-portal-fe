@@ -36,10 +36,8 @@ jobs:
       - run: npm run build
 
   audit:
-    name: Dependency audit (report only)
+    name: Dependency audit
     runs-on: ubuntu-latest
-    # Report-only until Phase 2 patches next/axios/zod/query-string; then remove this line.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

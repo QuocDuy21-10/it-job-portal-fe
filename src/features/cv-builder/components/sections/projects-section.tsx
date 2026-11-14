@@ -16,6 +16,7 @@ import { type ProjectRequest } from "@/features/cv-builder/schemas/cv-profile.sc
 import { useI18n } from "@/hooks/use-i18n";
 import { toast } from "sonner";
 import { formatLocaleDate } from "@/lib/utils/locale-formatters";
+import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 
 interface Project extends ProjectRequest {
   id: string;
@@ -123,16 +124,21 @@ export default function ProjectsSection({
                           {project.position}
                         </p>
                       )}
-                      {project.link && (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary font-medium hover:underline truncate block"
-                        >
-                          {project.link}
-                        </a>
-                      )}
+                      {project.link &&
+                        (isSafeHttpUrl(project.link) ? (
+                          <a
+                            href={project.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary font-medium hover:underline truncate block"
+                          >
+                            {project.link}
+                          </a>
+                        ) : (
+                          <span className="text-xs text-muted-foreground truncate block">
+                            {project.link}
+                          </span>
+                        ))}
                     </div>
                   </div>
 

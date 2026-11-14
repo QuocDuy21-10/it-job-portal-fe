@@ -55,7 +55,6 @@ Middleware bắt các action RTK Query bị từ chối:
 | `status === 403` | Toast lỗi, ưu tiên `data.message`, nếu không có thì dùng chuỗi `middleware.forbidden` |
 | `status === 500` | Toast lỗi, ưu tiên `data.message`, nếu không có thì dùng chuỗi `middleware.serverError` |
 | `message` chứa `Network Error` | Toast `middleware.networkError` |
-| `status === 400` hoặc `404` | Chỉ ghi `console.log`, không có toast |
 
 Toast được gắn `id` để không hiện lặp. Ngoài ra middleware không xử lý `401` hay các mã khác.
 

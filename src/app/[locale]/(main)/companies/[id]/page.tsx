@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import parse from "html-react-parser";
 import { sanitizeRichText } from "@/lib/security/sanitize-html";
+import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -275,17 +276,23 @@ export default async function CompanyDetailPage({
                       <MapPin className="h-5 w-5" />
                       <span className="font-medium">{company.address}</span>
                     </div>
-                    {company.website && (
-                      <a
-                        href={company.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
-                      >
-                        <Globe className="h-5 w-5" />
-                        {company.website.replace(/^https?:\/\//, "")}
-                      </a>
-                    )}
+                    {company.website &&
+                      (isSafeHttpUrl(company.website) ? (
+                        <a
+                          href={company.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                        >
+                          <Globe className="h-5 w-5" />
+                          {company.website.replace(/^https?:\/\//, "")}
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
+                          <Globe className="h-5 w-5" />
+                          <span className="font-medium">{company.website}</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUserLoginInfo } from "@/features/auth/redux/auth.slice";
 import { getLocalizedDefaultRoute } from "@/shared/constants/roles";
+import { safeInternalPath } from "@/lib/security/safe-url";
 import {
   LoginFormData,
   createLoginSchema,
@@ -57,17 +58,13 @@ function LoginContent() {
     }
   }, [searchParams, t]);
 
-  /**
-   * Helper function to determine redirect route after login
-   * Priority: returnUrl > role-based default route
-   */
-  const getRedirectUrl = (userRole?: string): string => {
-    const returnUrl = searchParams?.get("returnUrl");
-    if (returnUrl) {
-      return returnUrl;
-    }
-    return getLocalizedDefaultRoute(userRole, locale);
-  };
+  // returnUrl comes from the query string: only a path on this site is honoured,
+  // anything else falls back to the default route of the role.
+  const getRedirectUrl = (userRole?: string): string =>
+    safeInternalPath(
+      searchParams?.get("returnUrl"),
+      getLocalizedDefaultRoute(userRole, locale)
+    );
 
   const {
     register,

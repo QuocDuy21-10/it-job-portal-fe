@@ -34,7 +34,7 @@ Sơ đồ rút gọn luồng của trang `/login`; modal đăng nhập làm tư�
 | 3 | Backend đặt cookie `refresh_token`; code frontend không đọc cookie này |
 | 4 | Listener chỉ lưu token khi `login`/`googleLogin` thành công và có `access_token` |
 | 5 | Redux Persist lưu `user` và `isAuthenticated` |
-| 7 | Trang `/login` chờ 100 ms để Redux Persist kịp ghi, rồi chuyển tới `returnUrl` nếu có, nếu không thì tới trang mặc định theo vai trò |
+| 7 | Trang `/login` chờ 100 ms để Redux Persist kịp ghi, rồi chuyển tới `returnUrl` nếu đó là đường dẫn trong site (bắt đầu bằng đúng một dấu `/`), nếu không thì tới trang mặc định theo vai trò |
 
 Trang mặc định theo vai trò: `SUPER ADMIN` về `/admin`, `HR` về `/admin/resumes`, `NORMAL USER` về `/`.
 
@@ -109,6 +109,7 @@ Theo `auth-session.service.ts`, mỗi lần làm mới backend xóa phiên cũ, 
 - [`src/features/auth/redux/auth.slice.ts`](../../../src/features/auth/redux/auth.slice.ts): phản ứng với `login`, `getMe`, `logout`
 - [`src/components/auth-initializer.tsx`](../../../src/components/auth-initializer.tsx): khôi phục phiên
 - [`src/app/[locale]/(auth)/login/page.tsx`](../../../src/app/[locale]/(auth)/login/page.tsx): đăng nhập, `returnUrl`
+- [`src/lib/security/safe-url.ts`](../../../src/lib/security/safe-url.ts): lọc `returnUrl`
 - [`src/shared/constants/roles.ts`](../../../src/shared/constants/roles.ts): trang mặc định theo vai trò
 - [`src/components/client-layout.tsx`](../../../src/components/client-layout.tsx): xử lý khi làm mới thất bại
 
