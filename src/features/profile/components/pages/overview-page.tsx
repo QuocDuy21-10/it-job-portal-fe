@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -74,12 +75,13 @@ export default function OverviewPage() {
       {/* Profile Header */}
       <Card className="p-6 bg-gradient-to-br from-primary/5 via-card to-card border border-border hover:border-primary/30 transition-all duration-300">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 overflow-hidden bg-gradient-to-br from-primary to-primary/70">
-            <img
+          <div className="relative w-20 h-20 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 overflow-hidden bg-gradient-to-br from-primary to-primary/70">
+            <Image
               src={user?.avatar || "/images/avatar-default.jpg"}
               alt={user?.name || "Avatar"}
-              className="w-full h-full object-cover"
-              loading="lazy"
+              fill
+              sizes="80px"
+              className="object-cover"
             />
           </div>
           <div className="flex-1 text-center md:text-left">
