@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { ReactNode } from "react";
 import type { ExternalJobDetail } from "@/features/job/schemas/job-search.schema";
 import { ExternalJobDetailContent } from "./external-job-detail-content";
@@ -39,21 +41,53 @@ const job: ExternalJobDetail = {
   status: "ACTIVE",
 };
 
+// Differs from job.descriptionHtml on purpose: the component must render only this prop.
+const description = <p>Sanitized on the server</p>;
+
+const renderContent = (overrides: Partial<ExternalJobDetail> = {}) =>
+  render(
+    <ExternalJobDetailContent
+      job={{ ...job, ...overrides }}
+      description={description}
+    />
+  );
+
 const applyLink = () =>
   screen.queryByRole("link", { name: "externalJobPage.applyAtSource" });
 
 describe("ExternalJobDetailContent", () => {
   it("links to the original application page in a new tab", () => {
-    render(<ExternalJobDetailContent job={job} />);
+    renderContent();
 
     const link = applyLink();
     expect(link).toHaveAttribute("href", job.applyUrl);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link?.getAttribute("rel")).toContain("noopener");
-    expect(screen.getByText("Build reliable services")).toBeInTheDocument();
     expect(
       screen.getByText("externalJobPage.sourceNotice")
     ).toBeInTheDocument();
+  });
+
+  it("renders the description it is given", () => {
+    renderContent();
+
+    expect(screen.getByText("Sanitized on the server")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Build reliable services")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("externalJobPage.fullContentAtSource")
+    ).not.toBeInTheDocument();
+  });
+
+  it("leaves sanitizing and parsing to the server page", () => {
+    const source = readFileSync(
+      join(__dirname, "external-job-detail-content.tsx"),
+      "utf8"
+    );
+
+    expect(source).not.toContain("sanitize-html");
+    expect(source).not.toContain("html-react-parser");
   });
 
   it.each([
@@ -62,7 +96,7 @@ describe("ExternalJobDetailContent", () => {
   ])(
     "names the aggregator in the notice for %s listings",
     (sourceKey, sourceName) => {
-      render(<ExternalJobDetailContent job={{ ...job, sourceKey }} />);
+      renderContent({ sourceKey });
 
       expect(
         screen.getByText(`externalJobPage.sourceNoticeAggregator:${sourceName}`)
@@ -71,7 +105,7 @@ describe("ExternalJobDetailContent", () => {
   );
 
   it("hides the apply link and shows a notice for closed jobs", () => {
-    render(<ExternalJobDetailContent job={{ ...job, status: "CLOSED" }} />);
+    renderContent({ status: "CLOSED" });
 
     expect(applyLink()).not.toBeInTheDocument();
     expect(
@@ -83,15 +117,10 @@ describe("ExternalJobDetailContent", () => {
   });
 
   it("does not render links with unsafe schemes", () => {
-    render(
-      <ExternalJobDetailContent
-        job={{
-          ...job,
-          applyUrl: "javascript:alert(1)",
-          sourceUrl: "data:text/html,x",
-        }}
-      />
-    );
+    renderContent({
+      applyUrl: "javascript:alert(1)",
+      sourceUrl: "data:text/html,x",
+    });
 
     expect(applyLink()).not.toBeInTheDocument();
     expect(
@@ -100,18 +129,14 @@ describe("ExternalJobDetailContent", () => {
   });
 
   it("shows the salary row when salary text is provided", () => {
-    render(
-      <ExternalJobDetailContent
-        job={{ ...job, salaryText: "20.000.000 – 30.000.000 VND" }}
-      />
-    );
+    renderContent({ salaryText: "20.000.000 – 30.000.000 VND" });
 
     expect(screen.getByText("externalJobPage.salary")).toBeInTheDocument();
     expect(screen.getByText("20.000.000 – 30.000.000 VND")).toBeInTheDocument();
   });
 
   it("hides the salary row when there is no salary text", () => {
-    render(<ExternalJobDetailContent job={job} />);
+    renderContent();
 
     expect(
       screen.queryByText("externalJobPage.salary")
@@ -119,7 +144,7 @@ describe("ExternalJobDetailContent", () => {
   });
 
   it("does not claim on-site work when the source gives no remote flag", () => {
-    render(<ExternalJobDetailContent job={job} />);
+    renderContent();
 
     expect(
       screen.getByText("externalJobPage.workplaceUnknown")
@@ -130,15 +155,16 @@ describe("ExternalJobDetailContent", () => {
   });
 
   it("shows Remote when the job is remote", () => {
-    render(<ExternalJobDetailContent job={{ ...job, isRemote: true }} />);
+    renderContent({ isRemote: true });
 
     expect(screen.getByText("externalJobPage.remote")).toBeInTheDocument();
   });
 
-  it("points to the original posting when the description is withheld", () => {
+  it("points to the original posting when there is no description", () => {
     render(
       <ExternalJobDetailContent
         job={{ ...job, descriptionHtml: "", displayPolicy: "LINK_ONLY" }}
+        description={null}
       />
     );
 
@@ -149,7 +175,7 @@ describe("ExternalJobDetailContent", () => {
       screen.getAllByRole("link", { name: "externalJobPage.viewOriginal" })
     ).toHaveLength(2);
     expect(
-      screen.queryByText("Build reliable services")
+      screen.queryByText("Sanitized on the server")
     ).not.toBeInTheDocument();
   });
 });

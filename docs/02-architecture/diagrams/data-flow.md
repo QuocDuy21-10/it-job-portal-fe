@@ -14,7 +14,7 @@ sequenceDiagram
     participant Q as RTK Query + Axios
 
     U->>S: Mở /jobs?q=...
-    S->>B: GET /job-search (fetch, cache 300 giây)
+    S->>B: GET /job-search (fetch, cache 60 giây)
     B-->>S: Danh sách phân trang
     S-->>C: HTML + initialData
     C->>H: Khởi tạo với initialData

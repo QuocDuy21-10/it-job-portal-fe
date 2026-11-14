@@ -10,7 +10,7 @@ Công ty xuất hiện ở trang công khai (danh sách, chi tiết), ở form q
 | --- | --- | --- |
 | Bản ghi đầy đủ | `Company` suy ra từ `CompanyEntitySchema` | `getCompanies`, `getCompany`, `fetchPublicCompanyById`, `fetchPublicCompanies` |
 | Dữ liệu form | `CreateCompanyFormData` từ `CompanySchema`; `UpdateCompanyFormData` là bản `Partial` | Form tạo và sửa công ty |
-| Công ty tuyển nhiều | `TopHiringCompany` (interface) | `getTopHiringCompanies`, trang chủ |
+| Công ty tuyển nhiều | `TopHiringCompany` (interface) | `getTopHiringCompanies`, `fetchPublicTopHiringCompanies`, trang chủ |
 | Interface cũ | `ICompany` trong `src/shared/types/backend.d.ts` | Xem "Điểm chưa đồng nhất" |
 
 **Type chính:** `Company`.

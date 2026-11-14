@@ -11,13 +11,13 @@ Mỗi lớp giải quyết một việc khác nhau:
 - Người dùng tải lại trang vẫn cần thấy trạng thái đăng nhập và hạn mức chat, nên một phần state được lưu vào `localStorage`.
 
 > [!WARNING]
-> Đánh đổi của cache là dữ liệu có thể cũ. Trang công khai có thể hiển thị bản cũ trong khoảng 5 phút sau khi dữ liệu đổi. Frontend chưa có cơ chế làm mới theo yêu cầu: `src` không gọi `revalidateTag` hay `revalidatePath`.
+> Đánh đổi của cache là dữ liệu có thể cũ. Sau khi dữ liệu đổi, trang công khai có thể hiển thị bản cũ tới 1 phút với việc làm, và tới 1 giờ với công ty và việc làm bên ngoài. Frontend chưa có cơ chế làm mới theo yêu cầu: `src` không gọi `revalidateTag` hay `revalidatePath`.
 
 ## Hai đường đi của dữ liệu
 
 ```mermaid
 flowchart TD
-    Server["Trang công khai render trên server"] --> NextCache{"Cache Next.js còn hạn 300 giây?"}
+    Server["Trang công khai render trên server"] --> NextCache{"Cache Next.js còn hạn?<br/>(60 giây hoặc 1 giờ, tùy loại dữ liệu)"}
     NextCache -- "Còn" --> ServerData["Dùng dữ liệu đã lưu"]
     NextCache -- "Hết hạn hoặc chưa có" --> BE["Backend API"]
     Browser["Component trên trình duyệt"] --> RTK{"RTK Query đã có kết quả?"}
@@ -33,13 +33,23 @@ Sơ đồ cho thấy hai đường độc lập: request từ trình duyệt kh�
 
 | Lớp | Giữ gì | Thời gian sống |
 | --- | --- | --- |
-| Cache phía server (Next.js `fetch` và `cache()` của React) | Phản hồi của các lời gọi `fetchPublic*` | 300 giây (`revalidate`); `cache()` chỉ gộp lời gọi trùng trong một lần render |
+| Cache phía server (Next.js `fetch` và `cache()` của React) | Phản hồi của các lời gọi `fetchPublic*` | 60 giây cho việc làm, 3600 giây cho công ty và việc làm bên ngoài (`revalidate`); `cache()` chỉ gộp lời gọi trùng trong một lần render |
 | RTK Query (trình duyệt) | Kết quả các endpoint, gắn thẻ để làm mới | Mặc định 60 giây sau khi không còn component nào dùng; mất khi tải lại trang |
 | Redux Persist (trình duyệt) | Một phần state của `auth` và `chatBot` | Lưu lâu dài trong `localStorage` |
 
 ### Lớp 1: cache phía server
 
-`fetchPublicEntity` trong `src/lib/utils/public-content.ts` gọi `fetch` với `next: { revalidate: 300 }`. Dữ liệu việc làm hoặc công ty mà trang công khai thấy ban đầu có thể cũ khoảng 5 phút. Khi lời gọi lỗi hoặc backend trả mã không thành công, hàm trả về `null` thay vì ném lỗi, và trang xử lý như không có dữ liệu.
+`fetchPublicEntity` trong `src/lib/utils/public-content.ts` gọi `fetch` với `next: { revalidate }`. Mỗi hàm truyền thời gian giữ theo loại dữ liệu:
+
+| Hàm | Thời gian giữ |
+| --- | --- |
+| `fetchPublicJobs`, `fetchPublicJobSearch`, `fetchPublicJobById` | 60 giây |
+| `fetchPublicCompanies`, `fetchPublicCompanyById`, `fetchPublicTopHiringCompanies` | 3600 giây |
+| `fetchPublicExternalJobById` | 3600 giây |
+
+Dữ liệu mà trang công khai thấy ban đầu có thể cũ đúng bằng khoảng thời gian đó. Khi lời gọi lỗi hoặc backend trả mã không thành công, hàm trả về `null` thay vì ném lỗi, và trang xử lý như không có dữ liệu.
+
+`sitemap.xml` gọi `fetchPublicJobs` và `fetchPublicCompanies`, nên Next.js làm mới nó theo thời gian ngắn hơn trong hai hàm: 60 giây.
 
 Các hàm như `fetchPublicJobById` được bọc thêm `cache()` của React, để cùng một lần render, `generateMetadata` và component trang gọi cùng một địa chỉ mà chỉ phát sinh một lời gọi.
 
@@ -50,6 +60,8 @@ Các hàm như `fetchPublicJobById` được bọc thêm `cache()` của React, 
 Code không đặt thời gian giữ riêng cho từng endpoint, ngoại trừ hai endpoint danh mục kỹ năng trong `skill.api.ts` (1 giờ và 1 ngày). Code cũng không gọi `setupListeners`, nên RTK Query không tự tải lại khi cửa sổ lấy lại tiêu điểm hoặc có mạng trở lại.
 
 Ở trang danh sách việc làm, hook `useJobList` bỏ qua RTK Query khi bộ lọc còn trùng với trạng thái ban đầu và dùng luôn dữ liệu từ server. Chỉ khi người dùng đổi bộ lọc hoặc trang thì mới có lời gọi RTK Query.
+
+Trang chủ làm tương tự. Server lấy trang 1 của việc làm nổi bật và danh sách công ty tuyển nhiều; `home-page-client.tsx` bỏ qua hai truy vấn tương ứng khi đã có dữ liệu đó, và chỉ gọi RTK Query khi người dùng sang trang 2 trở đi. Với `HR` và `SUPER ADMIN` đang đăng nhập, truy vấn việc làm vẫn chạy ở trình duyệt sau khi trang hydrate xong: backend trả `GET /jobs` cho hai vai trò này khác với danh sách công khai mà server đã lấy.
 
 ### Lớp 3: Redux Persist
 
@@ -68,11 +80,12 @@ Route `/api/proxy-image` trả ảnh với `Cache-Control: public, max-age=31536
 
 ## Source code liên quan
 
-- [`src/lib/utils/public-content.ts`](../../src/lib/utils/public-content.ts): `revalidate` 300 giây và `cache()`
+- [`src/lib/utils/public-content.ts`](../../src/lib/utils/public-content.ts): thời gian `revalidate` theo loại dữ liệu và `cache()`
 - [`src/lib/redux/api.ts`](../../src/lib/redux/api.ts): danh sách thẻ cache RTK Query
 - [`src/features/skill/redux/skill.api.ts`](../../src/features/skill/redux/skill.api.ts): endpoint đặt `keepUnusedDataFor` riêng
 - [`src/lib/redux/store.ts`](../../src/lib/redux/store.ts): cấu hình Redux Persist
 - [`src/features/job/hooks/use-job-list.ts`](../../src/features/job/hooks/use-job-list.ts): bỏ qua truy vấn khi dùng dữ liệu từ server
+- [`src/app/[locale]/(main)/home-page-client.tsx`](../../src/app/[locale]/(main)/home-page-client.tsx): trang chủ bỏ qua truy vấn khi dùng dữ liệu từ server
 - [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): ví dụ `providesTags` và `invalidatesTags`
 - [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): header cache của ảnh
 

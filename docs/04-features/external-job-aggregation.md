@@ -74,7 +74,8 @@ Kiểu dữ liệu ở [Model JobSearchItem](../06-api-and-data/models/job-searc
 
 | Test | Nội dung |
 | --- | --- |
-| `src/features/job/components/external-job-detail-content.test.tsx` | Liên kết ứng tuyển mở tab mới; ẩn nút khi tin đóng; không hiển thị liên kết giao thức lạ; hiện hoặc ẩn lương; không khẳng định làm tại chỗ khi nguồn không có cờ remote; chỉ về bài gốc khi mô tả bị giữ lại |
+| `src/features/job/components/external-job-detail-content.test.tsx` | Liên kết ứng tuyển mở tab mới; ẩn nút khi tin đóng; không hiển thị liên kết giao thức lạ; hiện hoặc ẩn lương; không khẳng định làm tại chỗ khi nguồn không có cờ remote; chỉ về bài gốc khi không có mô tả; component không import thư viện làm sạch HTML |
+| `src/app/[locale]/(main)/jobs/external/[id]/page.test.tsx` | Mô tả được làm sạch trên server trước khi tới component; mô tả rỗng thì truyền `null`; tin không tồn tại thì trả 404 |
 | `src/lib/utils/is-safe-http-url.test.ts` | Kiểm tra URL an toàn |
 | `src/features/job/components/job-search-card.test.tsx` | Thẻ tin ngoài không có lương số và nút lưu |
 

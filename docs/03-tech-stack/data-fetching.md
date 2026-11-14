@@ -18,7 +18,7 @@
 - **RTK Query dùng Axios làm tầng gửi.** Cầu nối `axiosBaseQuery` thay cho `fetchBaseQuery` mặc định, nên request đi qua interceptor của Axios (gắn token, làm mới khi 401). Đây là lý do mọi endpoint chỉ khai báo `url`, `method`, `data`.
 - **Thời gian chờ 10 giây** cho mọi request Axios (`timeout: 10000`).
 - **Cookie gửi kèm** (`withCredentials: true`) để backend nhận refresh token.
-- **Dữ liệu công khai phía máy chủ cache 300 giây**, và khi lỗi thì trả `null` thay vì ném lỗi, để trang xử lý như không có dữ liệu.
+- **Dữ liệu công khai phía máy chủ được cache 60 giây (việc làm) hoặc 1 giờ (công ty, việc làm bên ngoài)**, và khi lỗi thì trả `null` thay vì ném lỗi, để trang xử lý như không có dữ liệu.
 - **Thẻ cache tập trung** ở `baseApi`: `Auth`, `User`, `Company`, `Job`, `Resume`, `CVProfile`, `Subscriber`, `Statistics`, `Notification`, `Skill`.
 - **Hai endpoint danh mục kỹ năng** đặt `keepUnusedDataFor` riêng (1 giờ và 1 ngày); phần còn lại dùng mặc định của RTK Query.
 

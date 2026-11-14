@@ -33,6 +33,10 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { hasSession } from "@/lib/auth/session";
+import { selectIsAdmin } from "@/features/auth/redux/auth.slice";
+import { useAppSelector } from "@/lib/redux/hooks";
+import type { PaginatedResult } from "@/shared/types/pagination";
+import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
 
 type HomeSearchBoxProps = {
   onSearch: (query: string, locationCode: string) => void;
@@ -55,7 +59,12 @@ function HomeSearchBox({ onSearch }: HomeSearchBoxProps) {
   );
 }
 
-export default function Home() {
+type HomeProps = {
+  initialJobs: PaginatedResult<Job> | null;
+  initialCompanies: TopHiringCompany[] | null;
+};
+
+export default function Home({ initialJobs, initialCompanies }: HomeProps) {
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
 
@@ -97,32 +106,41 @@ export default function Home() {
   // Pagination states
   const [jobsPage, setJobsPage] = useState(1);
 
-  const ITEMS_PER_PAGE = 6; // 6 items per page for cleaner layout
+  // The backend scopes GET /jobs by role: HR and Super Admin get a different list than
+  // the public one the server fetched, so they keep fetching it themselves.
+  // hasToken turns true only after mount, so the first client render still matches the
+  // server HTML even though the persisted role is already in the store by then.
+  const isStaff = useAppSelector(selectIsAdmin) && hasToken;
+  const hasServerJobs = jobsPage === 1 && initialJobs !== null && !isStaff;
 
   const {
     data: jobsData,
     isLoading: jobsInitialLoading,
     isFetching: jobsFetching,
     error: jobsError,
-  } = useGetJobsQuery({
-    page: jobsPage,
-    limit: ITEMS_PER_PAGE,
-    filter: "isActive=true",
-    sort: "sort=-createdAt",
-  });
+  } = useGetJobsQuery(getHomeJobsQuery(jobsPage), { skip: hasServerJobs });
 
   const jobsLoading = jobsInitialLoading || jobsFetching;
+
+  // Top hiring companies are the same for every role.
+  const hasServerCompanies = initialCompanies !== null;
 
   const {
     data: companiesData,
     isLoading: companiesLoading,
     error: companiesError,
-  } = useGetTopHiringCompaniesQuery({ limit: 8 });
+  } = useGetTopHiringCompaniesQuery(
+    { limit: HOME_TOP_COMPANIES_LIMIT },
+    { skip: hasServerCompanies }
+  );
 
-  const featuredJobsToRender = jobsData?.data?.result ?? [];
-  const jobsTotalPages = jobsData?.data?.meta?.pagination?.total_pages ?? 1;
+  const jobsResult = hasServerJobs ? initialJobs : jobsData?.data;
+  const featuredJobsToRender = jobsResult?.result ?? [];
+  const jobsTotalPages = jobsResult?.meta?.pagination?.total_pages ?? 1;
 
-  const topCompaniesToRender = companiesData?.data ?? [];
+  const topCompaniesToRender = hasServerCompanies
+    ? initialCompanies
+    : (companiesData?.data ?? []);
 
   const handleSearch = (query: string, locationCode: string) => {
     const params = new URLSearchParams();

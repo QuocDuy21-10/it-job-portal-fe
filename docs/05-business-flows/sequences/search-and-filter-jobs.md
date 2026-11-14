@@ -40,7 +40,7 @@ Sơ đồ rút gọn: URL là nguồn của trạng thái ban đầu, và mỗi 
 | Bước | Giải thích |
 | --- | --- |
 | 2 | Giá trị lạ hoặc không hợp lệ trong URL bị thay bằng mặc định; chi tiết bảng tham số ở [Phân trang và lọc](../../06-api-and-data/pagination-filtering.md) |
-| 3 | Lời gọi phía server dùng `fetch` với `revalidate` 300 giây; nếu lỗi trả `null` |
+| 3 | Lời gọi phía server dùng `fetch` với `revalidate` 60 giây; nếu lỗi trả `null` |
 | 5 | `shouldUseInitialData` đúng khi trạng thái hiện tại bằng trạng thái ban đầu, khi đó `useSearchJobsQuery` được `skip` |
 | 8 | `applyFilters` luôn đưa `page` về 1 |
 | 9 | Ghi URL bằng `router.replace`, nên không thêm mục vào lịch sử trình duyệt |

@@ -40,8 +40,10 @@ Tham số nhận vào là `PaginatedQueryParams`:
 `getJobs` và `getCompanies` dựng `page=..&limit=..`, rồi nối `filter` và `sort` nguyên văn. Ví dụ từ trang chủ:
 
 ```ts
-useGetJobsQuery({ page: jobsPage, limit: ITEMS_PER_PAGE, filter: "isActive=true", sort: "sort=-createdAt" });
-// GET /jobs?page=1&limit=..&isActive=true&sort=-createdAt
+// home-query.ts: getHomeJobsQuery(page) trả về
+// { page, limit: 6, filter: "isActive=true", sort: "sort=-createdAt" }
+useGetJobsQuery(getHomeJobsQuery(jobsPage));
+// GET /jobs?page=1&limit=6&isActive=true&sort=-createdAt
 ```
 
 Danh sách công ty công khai lọc theo tên bằng `name=/<từ khóa>/i`, do `buildCompanyListQueryArgs` dựng và có `encodeURIComponent`.

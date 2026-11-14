@@ -14,6 +14,14 @@ Tiêu đề và mô tả đến từ bản dịch (`getTranslations`) hoặc t�
 
 Layout theo ngôn ngữ đặt metadata mặc định cho cả site, với `robots: { index: true, follow: true }`.
 
+## Trang được render lúc nào
+
+Mọi trang dưới `src/app/[locale]/` được render theo từng request; không trang nào được dựng sẵn thành HTML lúc build. Sau khi build, `.next/prerender-manifest.json` chỉ có `sitemap.xml`, `robots.txt` và `favicon.ico`. Ký hiệu `●` mà `next build` in cạnh các route `[locale]` vì vậy không có nghĩa là HTML của trang được cache.
+
+Thứ được cache là dữ liệu: các hàm `fetchPublic*` giữ phản hồi của backend trong 60 giây hoặc 1 giờ tùy loại, xem [Chiến lược cache](caching-strategy.md).
+
+Trang chủ lấy sẵn dữ liệu trên server. `(main)/page.tsx` gọi song song `fetchPublicJobs` (trang 1 của việc làm nổi bật) và `fetchPublicTopHiringCompanies`, rồi truyền kết quả cho `home-page-client.tsx` qua hai prop `initialJobs` và `initialCompanies`. Nhờ vậy HTML trả về đã có danh sách việc làm và công ty, công cụ tìm kiếm đọc được mà không cần chạy JavaScript. Khi backend không trả lời, hai prop này là `null` và trình duyệt tự gọi API.
+
 ## Địa chỉ gốc của site
 
 Hàm `getSiteUrl` đọc biến `NEXT_PUBLIC_SITE_URL`. Khi biến này trống, nó dùng `http://localhost:3000`. Vì vậy môi trường triển khai cần đặt biến này, nếu không canonical, sitemap và Open Graph sẽ trỏ về `localhost`. Xem [Biến môi trường](../01-getting-started/environment-variables.md).
@@ -56,4 +64,5 @@ Hàm `serializeJsonLd` trong `seo.ts` biến dữ liệu thành chuỗi JSON-LD 
 - [`src/app/sitemap.ts`](../../src/app/sitemap.ts): tạo sitemap
 - [`src/app/robots.ts`](../../src/app/robots.ts): quy tắc robots
 - [`src/app/[locale]/layout.tsx`](../../src/app/[locale]/layout.tsx): metadata mặc định cho cả site
+- [`src/app/[locale]/(main)/page.tsx`](../../src/app/[locale]/(main)/page.tsx): trang chủ lấy sẵn dữ liệu trên server
 - [`src/app/[locale]/(main)/jobs/external/[id]/page.tsx`](../../src/app/[locale]/(main)/jobs/external/[id]/page.tsx): cấu hình `noindex`

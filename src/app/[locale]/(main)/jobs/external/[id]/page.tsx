@@ -1,9 +1,11 @@
+import parse from "html-react-parser";
 import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ExternalJobDetailContent } from "@/features/job/components/external-job-detail-content";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { sanitizeRichText } from "@/lib/security/sanitize-html";
 import { fetchPublicExternalJobById } from "@/lib/utils/public-content";
 import {
   buildLocalizedPageMetadata,
@@ -64,5 +66,12 @@ export default async function ExternalJobPage({
     notFound();
   }
 
-  return <ExternalJobDetailContent job={job} />;
+  // Sanitized here on the server: the frontend does not trust descriptionHtml even if the
+  // backend sanitizes at ingest. LINK_ONLY sources send an empty description.
+  const description =
+    job.descriptionHtml.trim().length > 0
+      ? parse(sanitizeRichText(job.descriptionHtml))
+      : null;
+
+  return <ExternalJobDetailContent job={job} description={description} />;
 }

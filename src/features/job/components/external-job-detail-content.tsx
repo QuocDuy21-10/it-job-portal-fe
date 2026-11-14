@@ -1,7 +1,6 @@
 "use client";
 
-import parse from "html-react-parser";
-import { sanitizeRichText } from "@/lib/security/sanitize-html";
+import type { ReactNode } from "react";
 import {
   ArrowUpRight,
   Calendar,
@@ -56,7 +55,17 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
+type ExternalJobDetailContentProps = {
+  job: ExternalJobDetail;
+  // Sanitized and parsed on the server by the page, so the sanitizer stays out of the
+  // client bundle. null when the source gives no description.
+  description: ReactNode;
+};
+
+export function ExternalJobDetailContent({
+  job,
+  description,
+}: ExternalJobDetailContentProps) {
   const { t, language } = useI18n();
   const isClosed = job.status === "CLOSED";
   const canApply = !isClosed && isSafeHttpUrl(job.applyUrl);
@@ -66,7 +75,7 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
     : null;
   const postedLabel = timeAgo(job.postedAt, language);
   const aggregatorName = AGGREGATOR_SOURCE_NAMES[job.sourceKey];
-  const hasDescription = job.descriptionHtml.trim().length > 0;
+  const hasDescription = description !== null;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
@@ -182,9 +191,8 @@ export function ExternalJobDetailContent({ job }: { job: ExternalJobDetail }) {
               {t("externalJobPage.description")}
             </h2>
             {hasDescription ? (
-              // Sanitized again here: the frontend does not trust descriptionHtml even if the backend sanitizes at ingest.
               <div className="prose max-w-none dark:prose-invert">
-                {parse(sanitizeRichText(job.descriptionHtml))}
+                {description}
               </div>
             ) : (
               // LINK_ONLY sources: DevLink may not republish the text.

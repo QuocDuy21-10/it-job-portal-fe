@@ -17,7 +17,7 @@ Các trang công khai được tách làm hai file:
 | Danh sách công ty | `companies/page.tsx` | `companies-page-client.tsx` |
 | Chi tiết công ty | `companies/[id]/page.tsx` | `company-detail-page-client.tsx` |
 
-Trang việc làm bên ngoài (`jobs/external/[id]`) là ngoại lệ: server lấy dữ liệu rồi render thẳng `ExternalJobDetailContent`, không có file `*-page-client.tsx` đi kèm.
+Trang việc làm bên ngoài (`jobs/external/[id]`) là ngoại lệ: server lấy dữ liệu, làm sạch mô tả HTML rồi render thẳng `ExternalJobDetailContent`, không có file `*-page-client.tsx` đi kèm.
 
 ## Việc server làm trong `page.tsx`
 

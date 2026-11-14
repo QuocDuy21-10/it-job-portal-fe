@@ -19,14 +19,14 @@ Trong `jobs-page-client.tsx`, `useSearchJobsQuery` còn được gọi lần hai
 
 ## Lời gọi fetch phía server
 
-Các hàm trong `src/lib/utils/public-content.ts` dùng `fetch` với `next: { revalidate: 300 }`. Khi lỗi hoặc mã không thành công, chúng trả `null`, không ném lỗi.
+Các hàm trong `src/lib/utils/public-content.ts` dùng `fetch` với `next: { revalidate }`: 60 giây cho việc làm, 3600 giây cho việc làm bên ngoài (xem [Chiến lược cache](../../02-architecture/caching-strategy.md)). Khi lỗi hoặc mã không thành công, chúng trả `null`, không ném lỗi.
 
 | Hàm | Đường dẫn gọi | Nơi dùng |
 | --- | --- | --- |
 | `fetchPublicJobSearch` | `/job-search?<query>` | `(main)/jobs/page.tsx` |
 | `fetchPublicExternalJobById` | `/job-search/external/:id` | `(main)/jobs/external/[id]/page.tsx` |
 | `fetchPublicJobById` | `/jobs/:id` | `(main)/jobs/[id]/page.tsx` |
-| `fetchPublicJobs` | `/jobs?<query>` | `sitemap.ts`, `(main)/companies/[id]/page.tsx` |
+| `fetchPublicJobs` | `/jobs?<query>` | `sitemap.ts`, `(main)/page.tsx`, `(main)/companies/[id]/page.tsx` |
 
 `fetchPublicJobSearch`, `fetchPublicExternalJobById` và `fetchPublicJobById` được bọc `cache()` của React để `generateMetadata` và trang cùng một lần render chỉ gọi một lần.
 
