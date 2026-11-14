@@ -1464,7 +1464,6 @@ export const en = {
     },
   },
   downloadPdfButton: {
-    preparing: "Preparing...",
     error: "PDF generation failed",
     generating: "Generating PDF...",
     download: "Download PDF",

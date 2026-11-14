@@ -47,9 +47,9 @@ Sơ đồ rút gọn; trình tự kỹ thuật, kể cả xử lý ảnh, xem [T
 
 | Hạng mục | Cách làm trong code |
 | --- | --- |
-| Tải file | `PDFDownloadLink` của `@react-pdf/renderer`; nút hiện trạng thái đang chuẩn bị cho tới khi component mount trên client |
+| Tải file | PDF chỉ được dựng khi bấm nút: nút tải `@react-pdf/renderer` và `CVPdfDocument` bằng `import()`, gọi `pdf(...).toBlob()` rồi tải file qua object URL. Trong lúc dựng, nút hiện spinner và không bấm được |
 | Tên file | `CV_<họ tên, khoảng trắng thành _>_<ngày YYYY-MM-DD>.pdf` |
-| Xem trước PDF | `PDFViewer`, bật tắt bằng nút; chỉ chạy trên client |
+| Xem trước PDF | `PDFViewer`, bật tắt bằng nút; chỉ chạy trên client và được tải bằng `next/dynamic` khi bật lần đầu |
 | Khóa dựng lại | `generateCVDataKey` ghép mẫu, thời điểm cập nhật và số mục học vấn, kinh nghiệm, kỹ năng, dự án để buộc dựng lại PDF khi dữ liệu đổi; code ghi chú đây là cách tránh lỗi `Eo is not a function` của `react-pdf` |
 | Font | Roboto, đăng ký từ `/fonts/Roboto-Regular.ttf`, `-Medium`, `-Bold`, `-Italic` trong `public/fonts/` |
 | Ảnh đại diện | `getProxiedImageUrl` đổi ảnh của backend sang `/api/proxy-image?url=...` để tránh CORS |
@@ -69,7 +69,7 @@ Dữ liệu vào mẫu là `ICVProfile`, xem [Model CV Profile](../06-api-and-da
 | Tình huống | Hành vi |
 | --- | --- |
 | Chưa có CV | Thông báo và nút tạo CV |
-| Dựng PDF lỗi | Nút tải đổi thành nút lỗi, không bấm được |
+| Dựng PDF lỗi | Hiện toast lỗi; nút tải bấm lại được |
 | Ảnh không tải được | Proxy trả lỗi; ảnh không hiện (chưa kiểm tra cách mẫu xử lý ảnh lỗi) |
 | URL ảnh nằm ngoài danh sách cho phép | Proxy trả 403 |
 | Thiếu tham số `url` | Proxy trả 400 |
@@ -79,8 +79,9 @@ Dữ liệu vào mẫu là `ICVProfile`, xem [Model CV Profile](../06-api-and-da
 | Test | Nội dung |
 | --- | --- |
 | `src/features/cv-builder/lib/pdf/image-helpers.test.ts` | Hàm xử lý địa chỉ ảnh cho PDF |
+| `src/features/cv-builder/components/pdf/download-pdf-button.test.tsx` | Chưa bấm thì chưa dựng PDF; bấm thì dựng đúng mẫu và tải file; lỗi thì hiện toast và nút bấm lại được |
 
-Chưa có test cho: các mẫu PDF, nút tải, trang xem trước, route `proxy-image`.
+Chưa có test cho: các mẫu PDF, trang xem trước, route `proxy-image`.
 
 ## Source code liên quan
 

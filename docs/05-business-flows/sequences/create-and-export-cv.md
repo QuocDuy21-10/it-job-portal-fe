@@ -60,7 +60,7 @@ Route chỉ cho phép tải từ `localhost:8081` và host lấy từ `NEXT_PUBL
 | Dữ liệu không hợp lệ | Toast "dữ liệu không hợp lệ" kèm lỗi đầu tiên, không lưu |
 | Backend từ chối lúc lưu | `upsertCV` trả `null` và ghi lỗi vào `error` |
 | Chưa có CV ở trang xem trước | Hiện thông báo và nút quay lại tạo CV |
-| Tạo PDF lỗi | Nút tải đổi thành nút lỗi, không bấm được |
+| Tạo PDF lỗi | Hiện toast lỗi; nút tải bấm lại được |
 
 ## Source code liên quan
 
