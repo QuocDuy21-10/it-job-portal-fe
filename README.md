@@ -94,7 +94,7 @@
 | --- | --- |
 | **Framework** | [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/) (App Router, Turbopack), [<u><font color="blue">React 18</font></u>](https://react.dev/), [<u><font color="blue">TypeScript 5</font></u>](https://www.typescriptlang.org/) |
 | **Quản lý state** | [<u><font color="blue">Redux Toolkit</font></u>](https://redux-toolkit.js.org/), [<u><font color="blue">Redux Persist</font></u>](https://github.com/rt2xx/redux-persist) (hydrate xác thực), [<u><font color="blue">RTK Query</font></u>](https://redux-toolkit.js.org/rtk-query/overview) |
-| **Phân quyền** | [<u><font color="blue">@casl/ability</font></u>](https://casl.js.org/) & [<u><font color="blue">@casl/react</font></u>](https://casl.js.org/) (cấu hình trong `src/lib/casl/`) - xử lý phân quyền và kiểm soát truy cập ở frontend, cho phép ẩn/hiện hoặc vô hiệu hóa các thành phần UI (như nút, menu, liên kết) dựa trên quyền của người dùng |
+| **Phân quyền** | [<u><font color="blue">@casl/ability</font></u>](https://casl.js.org/) (cấu hình trong `src/lib/casl/`) - xử lý phân quyền và kiểm soát truy cập ở frontend, cho phép ẩn/hiện hoặc vô hiệu hóa các thành phần UI (như nút, menu, liên kết) dựa trên quyền của người dùng |
 | **HTTP Client** | [<u><font color="blue">Axios</font></u>](https://axios-http.com/) (với interceptor tự động làm mới token, single-flight) |
 | **Styling & UI** | [<u><font color="blue">Tailwind CSS 3</font></u>](https://tailwindcss.com/), các primitive của [<u><font color="blue">Radix UI</font></u>](https://www.radix-ui.com/), component [<u><font color="blue">shadcn/ui</font></u>](https://ui.shadcn.com/), [<u><font color="blue">Lucide Icons</font></u>](https://lucide.dev/) |
 | **Form & Validation** | [<u><font color="blue">React Hook Form</font></u>](https://react-hook-form.com/), schema [<u><font color="blue">Zod</font></u>](https://zod.dev/) |
@@ -143,7 +143,7 @@ src/
 ```
 
 ### Nguyên tắc triển khai chính
-* **Bảo vệ route**: `AdminRoute` và `HrRoute` bảo vệ khu vực admin và HR, còn layout `(auth)` chuyển hướng người dùng đã đăng nhập đi nơi khác. `ProtectedRoute` và `GuestGuard` có tồn tại nhưng không được sử dụng. `/profile` không có guard ở frontend. Các guard này chỉ điều hướng giao diện; backend mới là nơi thực thi quyền truy cập.
+* **Bảo vệ route**: `AdminRoute` và `HrRoute` bảo vệ khu vực admin và HR, còn layout `(auth)` chuyển hướng người dùng đã đăng nhập đi nơi khác. `/profile` không có guard ở frontend. Các guard này chỉ điều hướng giao diện; backend mới là nơi thực thi quyền truy cập.
 * **API tập trung**: RTK Query làm việc với `src/lib/redux/api.ts` để điều phối cache, tag và invalidation.
 * **Phân quyền chặt chẽ**: Phía client dùng các quy tắc CASL để bật/tắt có điều kiện các thành phần tương tác dựa trên quyền của vai trò người dùng.
 

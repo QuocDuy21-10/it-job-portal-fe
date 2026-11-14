@@ -11,9 +11,7 @@ Cách ứng dụng dùng App Router được mô tả ở [Routing và layout](.
 | Next.js | `^15.4.10` | Đang cài `15.4.10` |
 | React, React DOM | `18.2.0` | Ghim đúng phiên bản |
 | TypeScript | `5.2.2` | Ghim đúng phiên bản |
-| `@next/env` | `^15.5.6` | Khai báo là dependency |
 | `eslint-config-next` | `^13.5.1` | Cũ hơn Next.js hai phiên bản chính |
-| `@next/swc-wasm-nodejs` | `^13.5.1` | Gói biên dịch WASM, ở devDependencies |
 
 ## Lệnh liên quan
 

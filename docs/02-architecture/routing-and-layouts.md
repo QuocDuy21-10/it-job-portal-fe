@@ -66,7 +66,6 @@ src/app/layout.tsx                      Redux, CASL, Google OAuth, giao diện s
 | `AdminRoute` | Layout `(dashboard)` | Chưa đăng nhập thì chuyển tới `/login`; đăng nhập nhưng không phải `SUPER ADMIN` hoặc `HR` thì về `/` |
 | `HrRoute` | Layout `(hr-dashboard)` | Chưa đăng nhập thì tới `/login`; không phải `HR` thì `SUPER ADMIN` về `/admin`, vai trò khác về `/` |
 | Logic trong `(auth)/layout.tsx` | Nhóm `(auth)` | Người đã đăng nhập bị chuyển về trang mặc định theo vai trò |
-| `ProtectedRoute`, `GuestGuard` | Không đâu | Có file định nghĩa nhưng không có nơi nào import tại thời điểm viết |
 
 Vì vậy `HR` vào được cả `/admin/*` lẫn `/hr/dashboard`. Trang mặc định sau đăng nhập theo vai trò: `SUPER ADMIN` tới `/admin`, `HR` tới `/admin/resumes`, người dùng thường tới `/`.
 

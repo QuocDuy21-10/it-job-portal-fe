@@ -12,10 +12,10 @@ Nhóm này có hai điểm dễ gây nhầm: hook `updateSubscriber` gọi cùng
 | --- | --- | --- | --- | --- |
 | `useGetSubscribersQuery` | `GET /subscribers?page=..&limit=..` | `page` (1), `limit` (10), `filter`, `sort` dưới dạng tham số tên `filter` và `sort` | Cung cấp từng `{ Subscriber, id }` và `LIST` | Chưa có nơi nào dùng |
 | `useGetSubscriberQuery` | `GET /subscribers/:id` | `id` | Cung cấp `{ Subscriber, id }` | Chưa có nơi nào dùng |
-| `useGetSubscriberSkillsQuery` | `POST /subscribers/skills` | Không | Cung cấp `{ Subscriber, id: "SKILLS" }` | `hooks/use-subscriber.ts`, hook này chưa có nơi nào dùng |
+| `useGetSubscriberSkillsQuery` | `POST /subscribers/skills` | Không | Cung cấp `{ Subscriber, id: "SKILLS" }` | Chưa có nơi nào dùng |
 | `useGetSubscribersByUserQuery` | `GET /subscribers/by-user` | Không | Cung cấp từng `{ Subscriber, id }` và `LIST` | `profile/pages/email-subscription-page.tsx` |
 | `useCreateSubscriberMutation` | `POST /subscribers` | `CreateSubscriberFormData`: `name`, `email`, `locationCode`, `skills` | Làm mất hiệu lực `LIST` | `profile/pages/email-subscription-page.tsx` |
-| `useUpdateSubscriberMutation` | `POST /subscribers` | `UpdateSubscriberFormData` (bản `Partial` của form tạo) | Làm mất hiệu lực `SKILLS` và `LIST` | `hooks/use-subscriber.ts`, hook này chưa có nơi nào dùng |
+| `useUpdateSubscriberMutation` | `POST /subscribers` | `UpdateSubscriberFormData` (bản `Partial` của form tạo) | Làm mất hiệu lực `SKILLS` và `LIST` | Chưa có nơi nào dùng |
 | `useDeleteSubscriberMutation` | `DELETE /subscribers/:id` | `id` | Làm mất hiệu lực `LIST` | `profile/pages/email-subscription-page.tsx` |
 
 Giao diện thực sự dùng ba thao tác: xem đăng ký của tôi (`by-user`), tạo và xóa.
@@ -39,7 +39,6 @@ Form tạo kiểm tra tên (từ 2 ký tự), email, mã địa điểm bắt bu
 
 - [`src/features/subscriber/redux/subscriber.api.ts`](../../../src/features/subscriber/redux/subscriber.api.ts): khai báo endpoint
 - [`src/features/subscriber/schemas/subscriber.schema.ts`](../../../src/features/subscriber/schemas/subscriber.schema.ts): kiểu và kiểm tra
-- [`src/hooks/use-subscriber.ts`](../../../src/hooks/use-subscriber.ts): hook chưa được dùng
 - [`src/features/profile/components/pages/email-subscription-page.tsx`](../../../src/features/profile/components/pages/email-subscription-page.tsx): trang đăng ký nhận việc
 
 Hợp đồng đầy đủ: [API Subscribers của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/subscribers.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/subscribers/subscribers.controller.ts).

@@ -51,7 +51,6 @@ Các chú thích sau là phần hiếm hoi nêu rõ mục đích:
 | `eslint-config-next` bản 13 trên Next.js 15 | Quy tắc lint có thể không theo kịp Next.js 15 |
 | Bảng quyền CASL viết riêng ở frontend | Khi quyền ở backend đổi, phải cập nhật thủ công cả hai nơi. Xem [Phân quyền](../02-architecture/authorization.md) |
 | Bốn slice được đăng ký nhưng không dùng | State thừa trong store. Xem [Quản lý state](../02-architecture/state-management.md) |
-| Thư viện khai báo nhưng chưa dùng | `@supabase/supabase-js`, `query-string`, `@casl/react` làm tăng bề mặt phụ thuộc mà không có tác dụng |
 | Không có E2E, độ phủ hay CI | Hồi quy ở các luồng đầy đủ không được phát hiện tự động. Xem [Kiểm thử](testing.md) |
 
 ## Cách bổ sung lý do
