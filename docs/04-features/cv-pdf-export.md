@@ -56,9 +56,6 @@ Sơ đồ rút gọn; trình tự kỹ thuật, kể cả xử lý ảnh, xem [T
 
 Proxy ảnh trả ảnh với `Cache-Control: public, max-age=31536000, immutable` và `Access-Control-Allow-Origin: *`. Route chỉ cho tải từ `localhost:8081` và host lấy từ `NEXT_PUBLIC_API_URL` sau khi bỏ `http://` hoặc `https://`. Nếu biến này chứa đường dẫn (ví dụ `/api/v1`) thì chuỗi sau khi bỏ giao thức vẫn có đường dẫn và sẽ không khớp với `url.host`; chưa kiểm tra giá trị thật trên môi trường triển khai.
 
-> [!NOTE]
-> `src/features/cv-builder/components/pdf/CVTemplateRenderer.tsx` cũng chọn mẫu theo loại nhưng không được import ở đâu; luồng tải PDF dùng `CVPdfDocument`.
-
 ## API liên quan
 
 Không có endpoint riêng: PDF dựng hoàn toàn ở trình duyệt. Dữ liệu đầu vào lấy bằng `GET /cv-profiles/me`, xem [Endpoint CV Profiles](../06-api-and-data/endpoints/cv-profiles.md). Ảnh đi qua route nội bộ `GET /api/proxy-image`.

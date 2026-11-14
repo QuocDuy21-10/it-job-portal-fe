@@ -22,10 +22,6 @@ Frontend không gọi trực tiếp nhà cung cấp AI nào. Mọi lời gọi c
 
 Biến `NEXT_PUBLIC_API_URL` có xuất hiện trong code nhưng chỉ dùng để mở rộng danh sách máy chủ ảnh được phép của proxy ảnh, không dùng làm địa chỉ API. Xem [Biến môi trường](../01-getting-started/environment-variables.md).
 
-## Thư viện khai báo nhưng chưa thấy dùng
-
-`@supabase/supabase-js` có trong `package.json` nhưng không có chỗ nào trong `src/` nhắc tới Supabase tại thời điểm viết. Vì vậy Supabase không được xem là một hệ thống liên quan.
-
 ## Frontend không làm gì
 
 - Không lưu trữ dữ liệu nghiệp vụ. Backend dùng MongoDB với Mongoose; schema được mô tả ở tài liệu của repo backend.

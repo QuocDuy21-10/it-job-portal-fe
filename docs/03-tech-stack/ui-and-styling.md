@@ -17,7 +17,7 @@ Giao diện dùng Tailwind CSS 3.3.3, các thành phần theo kiểu shadcn/ui x
 
 ## Cách ghép với nhau
 
-**shadcn/ui là mã nguồn, không phải thư viện.** Các file trong `src/components/ui/` (khoảng 50 thành phần như `button`, `dialog`, `form`, `table`, `select`, `sheet`, `tabs`) là bản sao đã chỉnh sửa. Cấu hình trong [`components.json`](../../components.json): kiểu `default`, màu nền `neutral`, dùng biến CSS, hỗ trợ RSC, thư viện biểu tượng `lucide`.
+**shadcn/ui là mã nguồn, không phải thư viện.** Các file trong `src/components/ui/` (khoảng 30 thành phần như `button`, `dialog`, `form`, `table`, `select`, `sheet`, `tabs`) là bản sao đã chỉnh sửa. Cấu hình trong [`components.json`](../../components.json): kiểu `default`, màu nền `neutral`, dùng biến CSS, hỗ trợ RSC, thư viện biểu tượng `lucide`.
 
 **Hợp nhất lớp CSS.** Hàm `cn` trong [`src/lib/utils.ts`](../../src/lib/utils.ts) dùng `tailwind-merge` để gộp các lớp Tailwind mà không bị xung đột.
 
@@ -40,8 +40,6 @@ Phần lớn code dùng Lucide (143 file). `@heroicons/react` còn ở 5 file, c
 | `cmdk` | Hộp lệnh (`command.tsx`) và `combo-box.tsx` |
 | `vaul` | Ngăn kéo (drawer) |
 | `embla-carousel-react` | Băng chuyền |
-| `react-resizable-panels` | Khung chia kích thước được |
-| `input-otp` | Ô nhập mã xác minh |
 | `react-quill-new` | Trình soạn thảo văn bản giàu định dạng, nạp động trong `rich-text-editor.tsx` |
 | `html-react-parser` | Hiển thị mô tả HTML của việc làm và công ty |
 

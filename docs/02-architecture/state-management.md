@@ -19,7 +19,7 @@ Store cấu hình trong `src/lib/redux/store.ts` có tám phần:
 | `job` | Slice | Cấu trúc tương tự `company` (chưa có nơi dùng) | Không |
 | `resume` | Slice | Cấu trúc tương tự `company` (chưa có nơi dùng) | Không |
 
-Các miền `file`, `subscriber` và `cv-profile` cũng có file slice nhưng không được đưa vào store tại thời điểm viết (`cv-profile.slice.ts` đang rỗng).
+Miền `cv-profile` cũng có file slice nhưng không được đưa vào store tại thời điểm viết (`cv-profile.slice.ts` đang rỗng).
 
 ## Ranh giới giữa slice và RTK Query
 

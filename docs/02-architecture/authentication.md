@@ -35,7 +35,6 @@ Lần đầu chạy bản mới, nếu `localStorage` còn `access_token` của 
 | --- | --- |
 | Email và mật khẩu | `POST /auth/login`; nếu `statusCode` là 201, form gọi `setUserLoginInfo` rồi chuyển tới trang mặc định theo vai trò. Token được listener `session.listener.ts` lưu khi `login`/`googleLogin` thành công |
 | Google (nút) | Form nhận `credential` từ Google, gửi `POST /auth/google/login` với `{ idToken }`, rồi lưu token qua listener như trên |
-| Google One Tap | Thành phần `GoogleOneTap` có sẵn, làm cùng luồng bằng `useGoogleOneTapLogin`, nhưng tại thời điểm viết không có nơi nào render nó nên tính năng này chưa hoạt động |
 | Đăng ký | `POST /auth/register`; slice cập nhật người dùng nếu phản hồi có thông tin người dùng. Xác minh email dùng `POST /auth/verify` và `POST /auth/resend-code` |
 
 Các endpoint xác thực khác: `POST /auth/logout`, `GET /auth/refresh`, `POST /auth/change-password`, `POST /auth/set-password`, `POST /auth/forgot-password`, `POST /auth/reset-password`, `DELETE /auth/account`.
@@ -75,6 +74,5 @@ Reducer chỉ xóa người dùng khỏi slice `auth`. Listener `src/lib/redux/l
 - [`src/lib/socket/socket-provider.tsx`](../../src/lib/socket/socket-provider.tsx): Socket.IO lấy token qua `getAccessTokenAsync()` mỗi lần kết nối
 - [`src/components/modals/login-form.tsx`](../../src/components/modals/login-form.tsx): đăng nhập email và Google
 - [`src/components/auth/social-auth-buttons.tsx`](../../src/components/auth/social-auth-buttons.tsx): nút đăng nhập Google
-- [`src/components/google-one-tap.tsx`](../../src/components/google-one-tap.tsx): Google One Tap (chưa được render)
 - [`src/components/client-layout.tsx`](../../src/components/client-layout.tsx): xử lý khi làm mới phiên thất bại
 - [`src/hooks/use-auth.ts`](../../src/hooks/use-auth.ts): cờ `isRehydrated`

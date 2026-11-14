@@ -52,7 +52,7 @@ Chỉ file [`package-lock.json`](../../package-lock.json) mới là nguồn chí
 ## Những điểm lệch cần biết
 
 - **`eslint-config-next` lệch phiên bản Next.js.** Khai báo `^13.5.1` (đang cài `13.5.11`) trong khi Next.js là `15.4.10`.
-- **Khai báo nhưng không thấy dùng.** Tại thời điểm viết, không có import nào trong `src/` cho `@supabase/supabase-js`, `query-string` và `@casl/react`. Gói `ts-jest` cũng không được `jest.config.js` tham chiếu.
+- **Khai báo nhưng không thấy dùng.** Tại thời điểm viết, gói `ts-jest` không được `jest.config.js` tham chiếu.
 - **Hai bộ biểu tượng.** Lucide được dùng ở 143 file; `@heroicons/react` còn ở 5 file (chủ yếu trong các thành phần chatbot).
 
 ## Lý do chọn công nghệ

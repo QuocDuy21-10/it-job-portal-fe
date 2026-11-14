@@ -45,7 +45,7 @@ src/
 └── locales/                    # Translation files (en.ts, vi.ts)
 ```
 
-**Route protection**: `AdminRoute` (SUPER ADMIN or HR) guards `(dashboard)`, `HrRoute` (HR only) guards `(hr-dashboard)`, and `(auth)/layout.tsx` redirects signed-in users. `ProtectedRoute` and `GuestGuard` exist but are not used anywhere. `/profile` has no frontend guard. These guards only steer the UI; the backend enforces access.  
+**Route protection**: `AdminRoute` (SUPER ADMIN or HR) guards `(dashboard)`, `HrRoute` (HR only) guards `(hr-dashboard)`, and `(auth)/layout.tsx` redirects signed-in users. `/profile` has no frontend guard. These guards only steer the UI; the backend enforces access.  
 **Path alias**: `@/*` → `src/*`
 
 ## Common Commands

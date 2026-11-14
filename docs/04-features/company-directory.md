@@ -36,7 +36,7 @@ Trang chi tiết: thông tin công ty, nút theo dõi, các tin đang mở, liê
 | --- | --- |
 | Dữ liệu | `fetchPublicCompanyById` và `fetchPublicJobs` (tin còn mở của công ty, 20 tin) chạy song song trên server; không có công ty thì trang 404 |
 | SEO | Metadata theo công ty và dữ liệu có cấu trúc `Organization` dạng `application/ld+json` |
-| Giới thiệu | Phần đầu, tổng quan, mô tả (`company-header`, `company-overview`, `company-description`) |
+| Giới thiệu | Phần đầu, tổng quan và mô tả được dựng ngay trong `page.tsx` |
 | Tin đang mở | `JobListing` lọc tin còn mở của công ty; có thể lọc thêm theo tên tin và địa điểm, khi đó gọi `GET /jobs` bằng RTK Query |
 | Liên hệ, chia sẻ | `CompanyContact`, `ShareCompany` |
 | Theo dõi | `CompanyFollowButton` |
