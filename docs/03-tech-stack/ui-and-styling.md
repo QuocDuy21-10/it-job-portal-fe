@@ -49,7 +49,7 @@ CV được dựng bằng `@react-pdf/renderer` (`^4.3.1`) với ba mẫu Modern
 
 ## Source code liên quan
 
-- [`tailwind.config.ts`](../../tailwind.config.ts): màu, bo góc, plugin
+- [`tailwind.config.ts`](../../tailwind.config.ts): màu, bo góc, plugin; `content` quét `src/components`, `src/app` và `src/features` (thư mục chứa `className` mà không nằm trong `content` thì class không được sinh ra)
 - [`components.json`](../../components.json): cấu hình shadcn/ui
 - [`src/app/globals.css`](../../src/app/globals.css): biến màu sáng và tối
 - [`src/components/ui/`](../../src/components/ui/): các thành phần nền
