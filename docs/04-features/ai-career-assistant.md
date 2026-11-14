@@ -90,6 +90,7 @@ Dạng dữ liệu ở [Model Chat Message](../06-api-and-data/models/chat-messa
 | --- | --- |
 | `src/features/chatbot/hooks/use-chat.test.tsx` | Lưu hạn mức kèm lịch sử |
 | `src/features/chatbot/components/chat-surface/chat-surface.test.tsx` | Lời nhắc AI; vô hiệu ô nhập khi hết hạn mức; bật lại sau giờ đặt lại; chú thích hạn mức mỗi ngày |
+| `src/features/chatbot/components/chat-widget.test.tsx` | Khung chat chỉ được tải và render sau lần mở đầu tiên, và được giữ lại sau khi đóng |
 | `src/features/chatbot/components/chat-composer.test.tsx` | Gửi bằng Enter, không gửi bằng Shift Enter hoặc khi đang gõ tiếng Việt, đếm ký tự, nút dừng, trạng thái vô hiệu |
 | `src/features/chatbot/components/chat-quota-meter.test.tsx` | Hiển thị đồng hồ, không giới hạn, cảnh báo, định dạng giờ đặt lại |
 | `src/features/chatbot/components/chat-typing-indicator.test.tsx` | Chỉ báo đang trả lời |
