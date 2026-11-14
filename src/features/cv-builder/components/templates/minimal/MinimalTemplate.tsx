@@ -6,6 +6,7 @@
 import React from "react";
 import { ICVProfile } from "@/shared/types/cv";
 import { formatDateDisplay } from "@/lib/cv/helpers";
+import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 
 interface MinimalTemplateProps {
   cvData: ICVProfile;
@@ -47,16 +48,19 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
                     : "Khác"}
               </span>
             )}
-            {cvData.personalInfo.personalLink && (
-              <a
-                href={cvData.personalInfo.personalLink}
-                className="text-blue-600 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {cvData.personalInfo.personalLink}
-              </a>
-            )}
+            {cvData.personalInfo.personalLink &&
+              (isSafeHttpUrl(cvData.personalInfo.personalLink) ? (
+                <a
+                  href={cvData.personalInfo.personalLink}
+                  className="text-blue-600 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {cvData.personalInfo.personalLink}
+                </a>
+              ) : (
+                <span>{cvData.personalInfo.personalLink}</span>
+              ))}
           </div>
         </div>
         <img
@@ -178,16 +182,21 @@ export const MinimalTemplate: React.FC<MinimalTemplateProps> = ({ cvData }) => {
                 <p className="text-sm text-gray-700 mt-2 leading-relaxed">
                   {project.description}
                 </p>
-                {project.link && (
-                  <a
-                    href={project.link}
-                    className="text-sm text-blue-600 hover:underline mt-1 inline-block"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {project.link}
-                  </a>
-                )}
+                {project.link &&
+                  (isSafeHttpUrl(project.link) ? (
+                    <a
+                      href={project.link}
+                      className="text-sm text-blue-600 hover:underline mt-1 inline-block"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {project.link}
+                    </a>
+                  ) : (
+                    <span className="text-sm text-gray-700 mt-1 inline-block">
+                      {project.link}
+                    </span>
+                  ))}
               </div>
             ))}
           </div>

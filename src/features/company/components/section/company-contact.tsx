@@ -3,6 +3,7 @@
 import { Globe, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "@/hooks/use-i18n";
+import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
 interface CompanyContactProps {
@@ -59,7 +60,7 @@ export default function CompanyContact({ company }: CompanyContactProps) {
                   <div className="rounded-lg bg-white p-2 shadow-sm dark:bg-card">
                     <Globe className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  {company?.website ? (
+                  {isSafeHttpUrl(company?.website) ? (
                     <a
                       href={company.website}
                       target="_blank"
@@ -70,7 +71,7 @@ export default function CompanyContact({ company }: CompanyContactProps) {
                     </a>
                   ) : (
                     <span className="flex-1 font-medium text-slate-900 dark:text-slate-100">
-                      {t("companyDetailPage.notUpdated")}
+                      {company?.website || t("companyDetailPage.notUpdated")}
                     </span>
                   )}
                 </div>

@@ -6,6 +6,7 @@
 import React from "react";
 import { ICVProfile } from "@/shared/types/cv";
 import { formatDateDisplay } from "@/lib/cv/helpers";
+import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 import {
   EmailIconHTML,
   PhoneIconHTML,
@@ -83,14 +84,18 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
           {cvData.personalInfo.personalLink && (
             <div className="flex items-center gap-2">
               <LinkIconHTML className="w-4 h-4 text-gray-600" />
-              <a
-                href={cvData.personalInfo.personalLink}
-                className="text-blue-600 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {cvData.personalInfo.personalLink}
-              </a>
+              {isSafeHttpUrl(cvData.personalInfo.personalLink) ? (
+                <a
+                  href={cvData.personalInfo.personalLink}
+                  className="text-blue-600 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {cvData.personalInfo.personalLink}
+                </a>
+              ) : (
+                <span>{cvData.personalInfo.personalLink}</span>
+              )}
             </div>
           )}
         </div>
@@ -206,16 +211,21 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ cvData }) => {
                 <p className="text-sm text-gray-600 mt-2 leading-relaxed text-justify">
                   {project.description}
                 </p>
-                {project.link && (
-                  <a
-                    href={project.link}
-                    className="text-sm text-blue-600 hover:underline mt-1 inline-block"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Link: {project.link}
-                  </a>
-                )}
+                {project.link &&
+                  (isSafeHttpUrl(project.link) ? (
+                    <a
+                      href={project.link}
+                      className="text-sm text-blue-600 hover:underline mt-1 inline-block"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Link: {project.link}
+                    </a>
+                  ) : (
+                    <span className="text-sm text-gray-700 mt-1 inline-block">
+                      Link: {project.link}
+                    </span>
+                  ))}
               </div>
             ))}
           </div>
