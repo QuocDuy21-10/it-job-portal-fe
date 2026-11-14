@@ -28,7 +28,7 @@ Cùng một nghiệp vụ được đưa ra bằng hai giao diện:
 | --- | --- | --- |
 | Mở bằng | Vào `/login`, `/register` | `openModal("signin" hoặc "signup")` từ `AuthModalContext` |
 | Dùng khi | Người dùng chủ động đăng nhập, hoặc bị chuyển về do phiên hết hạn | Đang ở giữa một thao tác cần đăng nhập, ví dụ nộp đơn, theo dõi công ty, dùng chatbot |
-| Sau khi đăng nhập | Chuyển tới `returnUrl` nếu có, nếu không thì tới trang mặc định theo vai trò | Gọi callback `onSuccess` đã truyền khi mở modal (ví dụ mở hộp thoại ứng tuyển) |
+| Sau khi đăng nhập | Chuyển tới `returnUrl` nếu đó là đường dẫn trong site (bắt đầu bằng đúng một dấu `/`), nếu không thì tới trang mặc định theo vai trò | Gọi callback `onSuccess` đã truyền khi mở modal (ví dụ mở hộp thoại ứng tuyển) |
 | Sau khi đăng ký | Chuyển sang `/verify-email?email=...` | Quay về tab đăng nhập của modal |
 
 Các trang `(auth)` chỉ dành cho khách: `layout.tsx` chuyển người đã đăng nhập tới trang mặc định của họ.
@@ -105,6 +105,7 @@ Quy tắc kiểm tra dữ liệu ở form, gồm mật khẩu 8 đến 128 ký t
 | Test | Nội dung |
 | --- | --- |
 | `src/components/modals/auth-modal.test.tsx` | Modal hiện đúng ngôn ngữ cho tab đăng nhập và đăng ký; đăng ký xong thì quay về tab đăng nhập |
+| `src/app/[locale]/(auth)/login/page.test.tsx` | Sau khi đăng nhập: đi theo `returnUrl` nội bộ, bỏ qua `returnUrl` trỏ ra ngoài site |
 | `src/features/auth/redux/auth.slice.test.ts` | Hợp nhất danh sách việc đã lưu; chọn vai trò từ state |
 | `src/features/auth/schemas/auth.schema.test.ts` | Quy tắc kiểm tra dữ liệu của schema xác thực |
 
@@ -113,6 +114,7 @@ Chưa có test cho: luồng làm mới token, trang xác minh email, quên và �
 ## Source code liên quan
 
 - [`src/app/[locale]/(auth)/login/page.tsx`](../../src/app/[locale]/(auth)/login/page.tsx): trang đăng nhập, `returnUrl`
+- [`src/lib/security/safe-url.ts`](../../src/lib/security/safe-url.ts): lọc `returnUrl`
 - [`src/app/[locale]/(auth)/register/page.tsx`](../../src/app/[locale]/(auth)/register/page.tsx): trang đăng ký
 - [`src/app/[locale]/(auth)/verify-email/page.tsx`](../../src/app/[locale]/(auth)/verify-email/page.tsx): xác minh email
 - [`src/app/[locale]/(auth)/forgot-password/page.tsx`](../../src/app/[locale]/(auth)/forgot-password/page.tsx): quên mật khẩu
