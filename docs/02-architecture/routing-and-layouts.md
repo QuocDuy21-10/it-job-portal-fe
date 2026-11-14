@@ -25,6 +25,7 @@ Các địa chỉ dưới đây là dạng không tiền tố ngôn ngữ.
 | `/jobs/external/[id]` | `(main)` | Công khai, `noindex` |
 | `/companies` | `(main)` | Công khai |
 | `/companies/[id]` | `(main)` | Công khai |
+| `/terms`, `/privacy` | `(main)` | Công khai (nội dung mẫu, chưa phải văn bản chính thức) |
 | `/login` | `(auth)` | Chỉ khách |
 | `/register` | `(auth)` | Chỉ khách |
 | `/forgot-password` | `(auth)` | Chỉ khách |
