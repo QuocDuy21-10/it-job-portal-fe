@@ -16,9 +16,11 @@ DevLink có hai kênh nhận dữ liệu ngay khi backend có: Socket.IO để �
 
 **Kết nối.** `SocketProvider` (trong layout theo ngôn ngữ) theo dõi `isAuthenticated`:
 
-- Đăng nhập: nếu `hasSession()` là `true` thì mở `io(<API_BASE_URL_IMAGE>/notifications)` với `auth` là một hàm lấy token mới nhất qua `getAccessTokenAsync()`, `transports: ["websocket", "polling"]`, tối đa 5 lần thử nối lại, cách nhau 1 giây.
+- Đăng nhập: nếu `hasSession()` là `true` thì tải thư viện `socket.io-client` bằng `import()`, rồi mở `io(<API_BASE_URL_IMAGE>/notifications)` với `auth` là một hàm lấy token mới nhất qua `getAccessTokenAsync()`, `transports: ["websocket", "polling"]`, tối đa 5 lần thử nối lại, cách nhau 1 giây.
 - Đăng xuất: ngắt kết nối và dọn dẹp.
 - Nếu server chủ động ngắt (`io server disconnect`, ví dụ token hết hạn), provider gọi `refreshAccessToken()` rồi nối lại; hàm `auth` gửi token mới.
+
+Thư viện `socket.io-client` nằm trong một chunk riêng và chỉ được tải sau khi đăng nhập; khách chưa đăng nhập không tải nó. Khi chunk về, provider kiểm tra lại `hasSession()` và việc effect đã bị dọn hay chưa. Nếu người dùng đã đăng xuất, hoặc provider đã unmount, trong lúc chờ thì không mở kết nối.
 
 Token được đọc ở mỗi lần kết nối hoặc nối lại. Việc làm mới token nằm ở `session.ts`, xem [Xác thực](authentication.md).
 
