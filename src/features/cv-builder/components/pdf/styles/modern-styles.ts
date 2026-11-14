@@ -23,6 +23,9 @@ export const modernStyles = StyleSheet.create({
     width: "35%",
     backgroundColor: "#E9ECEC",
     padding: 20,
+    // No bottom padding: the last section and its last item already end with their own margins.
+    // Padding on top of those pushed a column that just fit onto a blank second page.
+    paddingBottom: 0,
     gap: 16,
   },
   sidebarHeader: {
@@ -169,6 +172,8 @@ export const modernStyles = StyleSheet.create({
     width: "65%",
     backgroundColor: "#FFFFFF",
     padding: 20,
+    // Same as the sidebar: the last section's margins are the bottom spacing.
+    paddingBottom: 0,
     gap: 14,
   },
 
