@@ -54,12 +54,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     socket.on("connect", () => {
       setIsConnected(true);
-      console.log("[Socket.IO] Connected to /notifications");
     });
 
     socket.on("disconnect", (reason) => {
       setIsConnected(false);
-      console.log("[Socket.IO] Disconnected:", reason);
 
       // The server dropped us (e.g. token expired): refresh, then reconnect; `auth` reads the new token.
       if (reason === "io server disconnect") {

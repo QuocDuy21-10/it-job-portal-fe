@@ -22,6 +22,13 @@ const eslintConfig = [
   },
   ...compat.extends("next/core-web-vitals"),
   {
+    // console.log must not ship; warn and error stay for real problems.
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-console": ["error", { allow: ["warn", "error"] }],
+    },
+  },
+  {
     // Layer boundaries: shared -> (nothing above) ; features data/config/utils -> (no UI/app layers) ;
     // features components/hooks -> (no app) ; app is never imported.
     // lib/ is excluded on purpose: lib/redux/store.ts is the composition root that wires feature slices.

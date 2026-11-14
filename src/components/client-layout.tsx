@@ -25,11 +25,6 @@ export function ClientLayout() {
   useEffect(() => {
     // Khi refresh token thất bại
     if (isRefreshToken && errorRefreshToken) {
-      console.log(
-        "❌ [ClientLayout] Refresh token failed, handling redirect...",
-        errorRefreshToken
-      );
-
       toast.error(
         errorRefreshToken ||
           "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."

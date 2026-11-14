@@ -25,9 +25,6 @@ export function GoogleOAuthProvider({ children }: GoogleOAuthProviderProps) {
       onScriptLoadError={() =>
         console.error("Failed to load Google Sign-In script")
       }
-      onScriptLoadSuccess={() =>
-        console.log("Google Sign-In script loaded successfully")
-      }
     >
       {children}
     </GoogleProvider>

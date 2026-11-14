@@ -35,18 +35,10 @@ export const authErrorMiddleware: Middleware =
       const status = action.payload?.status;
       const message = action.payload?.data?.message;
 
-      console.log("[Middleware] API Error:", { status, message });
-
       if (status === 403) {
-        console.log("🚫 [Middleware] 403 Forbidden - User lacks permission");
-
         toast.error(message || getTranslation("middleware.forbidden"), {
           id: `forbidden-error-${message || ""}`,
         });
-      }
-
-      if (status === 404) {
-        console.log("🔍 [Middleware] 404 Not Found");
       }
 
       if (status === 500) {
@@ -66,10 +58,6 @@ export const authErrorMiddleware: Middleware =
         toast.error(getTranslation("middleware.networkError"), {
           id: "network-error",
         });
-      }
-
-      if (status === 400) {
-        console.log("⚠️ [Middleware] 400 Bad Request");
       }
     }
 
