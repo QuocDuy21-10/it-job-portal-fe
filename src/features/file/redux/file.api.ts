@@ -18,7 +18,7 @@ export const fileApi = baseApi.injectEndpoints({
           method: "POST",
           data: formData,
           headers: {
-            folder_type: folderType,
+            "X-Folder-Type": folderType,
             // Content-Type will be auto-set by axios for FormData
           },
         };
