@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { Roboto } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
@@ -22,6 +23,7 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   const locale = await getLocale();
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -30,8 +32,8 @@ export default async function RootLayout({
       >
         <ReduxProvider>
           <CaslProvider>
-            <GoogleOAuthProvider>
-              <ThemeProvider>
+            <GoogleOAuthProvider nonce={nonce}>
+              <ThemeProvider nonce={nonce}>
                 {children}
                 <Toaster />
               </ThemeProvider>

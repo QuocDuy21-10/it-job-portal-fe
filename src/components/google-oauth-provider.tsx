@@ -6,9 +6,13 @@ import { env } from "@/shared/config/env";
 
 interface GoogleOAuthProviderProps {
   children: ReactNode;
+  nonce?: string;
 }
 
-export function GoogleOAuthProvider({ children }: GoogleOAuthProviderProps) {
+export function GoogleOAuthProvider({
+  children,
+  nonce,
+}: GoogleOAuthProviderProps) {
   const clientId = env.GOOGLE_CLIENT_ID;
 
   // Memoize to prevent re-initialization on re-renders
@@ -22,6 +26,7 @@ export function GoogleOAuthProvider({ children }: GoogleOAuthProviderProps) {
   return (
     <GoogleProvider
       clientId={memoizedClientId}
+      nonce={nonce}
       onScriptLoadError={() =>
         console.error("Failed to load Google Sign-In script")
       }
