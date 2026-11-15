@@ -13,6 +13,7 @@ import { NotificationInitializer } from "@/components/notification/notification-
 import { AuthModalLazy } from "@/components/modals/auth-modal-lazy";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
+import { pickPublicMessages } from "@/i18n/client-messages";
 import { routing } from "@/i18n/routing";
 import { SocketProvider } from "@/lib/socket/socket-provider";
 import {
@@ -79,7 +80,7 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const messages = pickPublicMessages(await getMessages());
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
