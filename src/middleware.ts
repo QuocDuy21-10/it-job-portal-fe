@@ -6,8 +6,8 @@ import { DEV_API_URL } from "@/shared/config/env-defaults";
 
 const handleI18nRouting = createMiddleware(routing);
 
-// Report-only until the main flows show no violations.
-const CSP_HEADER = "Content-Security-Policy-Report-Only";
+// Revert the commit that set this to go back to report-only.
+const CSP_HEADER = "Content-Security-Policy";
 
 function hasLocalePrefix(pathname: string) {
   return routing.locales.some(

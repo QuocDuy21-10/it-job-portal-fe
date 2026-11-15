@@ -4,7 +4,7 @@
 import { NextRequest } from "next/server";
 import middleware from "./middleware";
 
-const CSP = "content-security-policy-report-only";
+const CSP = "content-security-policy";
 
 const run = (path: string) =>
   middleware(new NextRequest(new URL(path, "http://localhost:3000")));
@@ -48,7 +48,9 @@ describe("middleware CSP", () => {
     expect(first).not.toBe(second);
   });
 
-  it("does not send an enforcing CSP yet", () => {
-    expect(run("/jobs").headers.get("content-security-policy")).toBeNull();
+  it("enforces the CSP and no longer sends the report-only header", () => {
+    expect(
+      run("/jobs").headers.get("content-security-policy-report-only")
+    ).toBeNull();
   });
 });
