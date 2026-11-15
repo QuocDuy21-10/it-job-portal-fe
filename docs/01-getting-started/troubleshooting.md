@@ -55,10 +55,6 @@ Trang này chỉ liệt kê các tình huống đã gặp thật khi chạy dự
 - **Nguyên nhân:** `API_BASE_URL` được viết cứng, không đọc biến môi trường.
 - **Xử lý:** sửa `src/shared/constants/constant.ts`, đồng thời `next.config.ts` (`images.remotePatterns`) và danh sách trong `proxy-image/route.ts` nếu dùng ảnh từ backend đó.
 
-### Thông báo lỗi 403, 500 hoặc mạng hiện bằng tiếng Việt ở trang tiếng Anh
-
-- **Nguyên nhân:** middleware lỗi đoán ngôn ngữ từ đoạn đầu của địa chỉ và rơi về tiếng Việt khi địa chỉ không có tiền tố, mà tiếng Anh không có tiền tố. Xem [Đa ngôn ngữ](../02-architecture/internationalization.md).
-
 ## Chưa kiểm tra
 
 - Build và chạy khi **không có mạng** (phông Roboto được tải từ Google Fonts).
@@ -73,4 +69,3 @@ Trang này chỉ liệt kê các tình huống đã gặp thật khi chạy dự
 - [`src/app/sitemap.ts`](../../src/app/sitemap.ts): sitemap
 - [`next.config.ts`](../../next.config.ts): `ignoreDuringBuilds` và máy chủ ảnh
 - [`src/app/api/proxy-image/route.ts`](../../src/app/api/proxy-image/route.ts): proxy ảnh
-- [`src/lib/redux/middleware/auth-error.middleware.ts`](../../src/lib/redux/middleware/auth-error.middleware.ts): suy ra ngôn ngữ thông báo lỗi
