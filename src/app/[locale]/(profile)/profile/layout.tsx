@@ -1,51 +1,22 @@
-"use client";
+import type { ReactNode } from "react";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { I18nProvider } from "@/contexts/i18n-provider";
+import { ProfileLayoutClient } from "./profile-layout-client";
 
-import { useState } from "react";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import ChatWidget from "@/features/chatbot/components/chat-widget";
-import ProfileSidebar from "@/features/profile/components/profile-sidebar";
-import ProfileBottomNav from "@/features/profile/components/profile-bottom-nav";
-import { PendingDeletionBanner } from "@/features/profile/components/pending-deletion-banner";
-import { useGetMeQuery } from "@/features/auth/redux/auth.api";
-import { cn } from "@/lib/utils";
-
-export default function ProfileLayout({
+// The [locale] layout sends only public messages; this area needs the full set.
+export default async function ProfileLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
-  const { data: meData } = useGetMeQuery();
-  const scheduledDeletionAt = meData?.data?.user?.scheduledDeletionAt;
+  const messages = await getMessages();
 
   return (
-    <>
-      <Header />
-      <div className="flex min-h-screen bg-background">
-        <ProfileSidebar onExpandedChange={setSidebarExpanded} />
-        <div
-          className={cn(
-            "flex flex-col flex-1 transition-all duration-300 min-w-0",
-            sidebarExpanded ? "md:pl-64" : "md:pl-16",
-            "pl-0"
-          )}
-        >
-          {scheduledDeletionAt && (
-            <div className="pt-16 px-6">
-              <div className="max-w-4xl mx-auto mt-4">
-                <PendingDeletionBanner
-                  scheduledDeletionAt={scheduledDeletionAt}
-                />
-              </div>
-            </div>
-          )}
-          <main className="flex-1 pt-16 pb-20 md:pb-0">{children}</main>
-          <Footer />
-        </div>
-      </div>
-      <ChatWidget />
-      <ProfileBottomNav className="md:hidden" />
-    </>
+    <NextIntlClientProvider messages={messages}>
+      <I18nProvider>
+        <ProfileLayoutClient>{children}</ProfileLayoutClient>
+      </I18nProvider>
+    </NextIntlClientProvider>
   );
 }
