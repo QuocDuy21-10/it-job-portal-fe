@@ -1,3 +1,5 @@
+import { standaloneMessages } from "./standalone";
+
 export const vi = {
   common: {
     cancel: "Huỷ",
@@ -1739,19 +1741,7 @@ export const vi = {
     empty: "Không có thông báo",
     viewAll: "Xem tất cả",
   },
-  errorPage: {
-    title: "Có lỗi xảy ra",
-    description: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-    retry: "Thử lại",
-    goHome: "Về trang chủ",
-    devDetails: "Chi tiết lỗi (Dev only)",
-  },
-  middleware: {
-    forbidden: "Bạn không có quyền thực hiện hành động này",
-    serverError: "Lỗi server. Vui lòng thử lại sau",
-    networkError:
-      "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
-  },
+  ...standaloneMessages.vi,
   fileUpload: {
     toasts: {
       success: "Upload file thành công!",

@@ -1,3 +1,5 @@
+import { standaloneMessages } from "./standalone";
+
 export const en = {
   common: {
     cancel: "Cancel",
@@ -1737,19 +1739,7 @@ export const en = {
     empty: "No notifications",
     viewAll: "View all",
   },
-  errorPage: {
-    title: "Something went wrong",
-    description: "An unexpected error occurred. Please try again.",
-    retry: "Try again",
-    goHome: "Go to Home",
-    devDetails: "Error details (Dev only)",
-  },
-  middleware: {
-    forbidden: "You do not have permission to perform this action",
-    serverError: "Server error. Please try again later",
-    networkError:
-      "Cannot connect to server. Please check your network connection",
-  },
+  ...standaloneMessages.en,
   fileUpload: {
     toasts: {
       success: "File uploaded successfully!",
