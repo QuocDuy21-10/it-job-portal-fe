@@ -3,6 +3,9 @@ import { buildCsp, buildSecurityHeaders } from "./headers";
 const prod = { apiUrl: "https://api.example.com", isProduction: true };
 const dev = { apiUrl: "http://localhost:8081", isProduction: false };
 
+const prodCsp = { ...prod, nonce: "bm9uY2U=" };
+const devCsp = { ...dev, nonce: "bm9uY2U=" };
+
 const valueOf = (options: typeof prod, key: string) =>
   buildSecurityHeaders(options).find((header) => header.key === key)?.value;
 
@@ -28,16 +31,19 @@ describe("buildSecurityHeaders", () => {
     expect(valueOf(dev, "Strict-Transport-Security")).toBeUndefined();
   });
 
-  it("ships CSP as report-only and never as an enforcing header", () => {
-    const keys = buildSecurityHeaders(prod).map((header) => header.key);
-    expect(keys).toContain("Content-Security-Policy-Report-Only");
-    expect(keys).not.toContain("Content-Security-Policy");
+  it("leaves CSP to the middleware, which needs a fresh nonce per request", () => {
+    for (const options of [prod, dev]) {
+      const keys = buildSecurityHeaders(options).map((header) => header.key);
+      expect(keys.some((key) => /content-security-policy/i.test(key))).toBe(
+        false
+      );
+    }
   });
 });
 
 describe("buildCsp", () => {
   it("locks down framing, plugins and base URI", () => {
-    const csp = buildCsp(prod);
+    const csp = buildCsp(prodCsp);
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("base-uri 'self'");
@@ -46,25 +52,43 @@ describe("buildCsp", () => {
   });
 
   it("allows the API origin for images and connections", () => {
-    const csp = buildCsp(prod);
+    const csp = buildCsp(prodCsp);
     expect(csp).toMatch(/img-src [^;]*https:\/\/api\.example\.com/);
     expect(csp).toMatch(/connect-src [^;]*https:\/\/api\.example\.com/);
   });
 
   it("allows the matching websocket scheme for sockets", () => {
-    expect(buildCsp(prod)).toContain("wss://api.example.com");
-    expect(buildCsp(dev)).toContain("ws://localhost:8081");
+    expect(buildCsp(prodCsp)).toContain("wss://api.example.com");
+    expect(buildCsp(devCsp)).toContain("ws://localhost:8081");
   });
 
   it("allows Google sign-in and Google avatars", () => {
-    const csp = buildCsp(prod);
+    const csp = buildCsp(prodCsp);
     expect(csp).toMatch(/script-src [^;]*https:\/\/accounts\.google\.com/);
-    expect(csp).toMatch(/frame-src https:\/\/accounts\.google\.com/);
+    expect(csp).toMatch(/frame-src [^;]*https:\/\/accounts\.google\.com/);
     expect(csp).toMatch(/img-src [^;]*https:\/\/lh3\.googleusercontent\.com/);
   });
 
   it("allows unsafe-eval only outside production", () => {
-    expect(buildCsp(prod)).not.toContain("'unsafe-eval'");
-    expect(buildCsp(dev)).toContain("'unsafe-eval'");
+    expect(buildCsp(prodCsp)).not.toContain("'unsafe-eval'");
+    expect(buildCsp(devCsp)).toContain("'unsafe-eval'");
+  });
+
+  it("allows scripts only by nonce, plus the scripts they load", () => {
+    const scriptSrc = buildCsp(prodCsp)
+      .split("; ")
+      .find((directive) => directive.startsWith("script-src "));
+    expect(scriptSrc).toContain("'nonce-bm9uY2U='");
+    expect(scriptSrc).toContain("'strict-dynamic'");
+    expect(scriptSrc).toContain("'wasm-unsafe-eval'");
+    expect(scriptSrc).not.toContain("'unsafe-inline'");
+  });
+
+  it("allows blob: frames for the CV PDF preview", () => {
+    expect(buildCsp(prodCsp)).toMatch(/frame-src [^;]*blob:/);
+  });
+
+  it("keeps unsafe-inline for styles", () => {
+    expect(buildCsp(prodCsp)).toMatch(/style-src [^;]*'unsafe-inline'/);
   });
 });
