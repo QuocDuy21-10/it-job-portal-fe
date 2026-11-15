@@ -54,11 +54,13 @@ src/app/layout.tsx                      Redux, CASL, Google OAuth, giao diện s
 └─ [locale]/layout.tsx                  Dịch thuật, Socket.IO, khởi tạo phiên, thông báo, modal đăng nhập
    ├─ (main)/layout.tsx                 Header, Footer, ChatWidget
    ├─ (auth)/layout.tsx                 Đưa người đã đăng nhập về trang mặc định
-   ├─ (profile)/profile/layout.tsx      Header, thanh bên hồ sơ, Footer, ChatWidget
-   ├─ (dashboard)/layout.tsx            AdminRoute + thanh bên và header quản trị
-   ├─ (hr-dashboard)/layout.tsx         HrRoute + thanh bên, header và trợ lý chat cho HR
+   ├─ (profile)/profile/layout.tsx      Đủ messages dịch; Header, thanh bên hồ sơ, Footer, ChatWidget
+   ├─ (dashboard)/layout.tsx            Đủ messages dịch; AdminRoute + thanh bên và header quản trị
+   ├─ (hr-dashboard)/layout.tsx         Đủ messages dịch; HrRoute + thanh bên, header và trợ lý chat cho HR
    └─ account/                          Không có layout riêng
 ```
+
+Ba layout có ghi "Đủ messages dịch" là Server Component: chúng nạp toàn bộ messages (layout `[locale]` chỉ gửi bộ công khai) rồi render phần giao diện ở file `*-layout-client.tsx` cạnh đó. Xem [Đa ngôn ngữ](internationalization.md).
 
 ## Các guard truy cập
 
@@ -76,8 +78,8 @@ Các guard này chạy ở trình duyệt sau khi state đã nạp, chỉ nhằm
 
 - [`src/middleware.ts`](../../src/middleware.ts): rewrite và redirect tiền tố ngôn ngữ
 - [`src/i18n/routing.ts`](../../src/i18n/routing.ts): danh sách ngôn ngữ và `localePrefix`
-- [`src/app/[locale]/(dashboard)/layout.tsx`](../../src/app/[locale]/(dashboard)/layout.tsx): layout quản trị dùng `AdminRoute`
-- [`src/app/[locale]/(hr-dashboard)/layout.tsx`](../../src/app/[locale]/(hr-dashboard)/layout.tsx): layout HR dùng `HrRoute`
+- [`src/app/[locale]/(dashboard)/dashboard-layout-client.tsx`](../../src/app/[locale]/(dashboard)/dashboard-layout-client.tsx): layout quản trị dùng `AdminRoute`
+- [`src/app/[locale]/(hr-dashboard)/hr-dashboard-layout-client.tsx`](../../src/app/[locale]/(hr-dashboard)/hr-dashboard-layout-client.tsx): layout HR dùng `HrRoute`
 - [`src/app/[locale]/(auth)/layout.tsx`](../../src/app/[locale]/(auth)/layout.tsx): chuyển hướng người đã đăng nhập
 - [`src/components/admin-route.tsx`](../../src/components/admin-route.tsx): guard quản trị
 - [`src/components/hr-route.tsx`](../../src/components/hr-route.tsx): guard HR

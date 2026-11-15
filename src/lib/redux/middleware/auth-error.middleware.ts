@@ -1,32 +1,9 @@
 import { Middleware } from "@reduxjs/toolkit";
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import { toast } from "sonner";
-import { en } from "@/locales/en";
-import { vi } from "@/locales/vi";
+import { getDocumentLocale, standaloneMessages } from "@/locales/standalone";
 
-const getLocaleFromPath = () => {
-  if (typeof window !== "undefined") {
-    const parts = window.location.pathname.split("/");
-    const locale = parts[1];
-    if (locale === "vi" || locale === "en") return locale;
-  }
-  return "vi"; // default
-};
-
-const getTranslation = (key: string): string => {
-  const locale = getLocaleFromPath();
-  const messages = { en, vi };
-  const keys = key.split(".");
-  let current: any = messages[locale];
-  for (const k of keys) {
-    if (current && typeof current === "object" && k in current) {
-      current = current[k];
-    } else {
-      return key;
-    }
-  }
-  return typeof current === "string" ? current : key;
-};
+const getMessages = () => standaloneMessages[getDocumentLocale()].middleware;
 
 export const authErrorMiddleware: Middleware =
   (store) => (next) => (action: any) => {
@@ -36,7 +13,7 @@ export const authErrorMiddleware: Middleware =
       const message = action.payload?.data?.message;
 
       if (status === 403) {
-        toast.error(message || getTranslation("middleware.forbidden"), {
+        toast.error(message || getMessages().forbidden, {
           id: `forbidden-error-${message || ""}`,
         });
       }
@@ -44,7 +21,7 @@ export const authErrorMiddleware: Middleware =
       if (status === 500) {
         console.error("💥 [Middleware] 500 Internal Server Error");
 
-        toast.error(message || getTranslation("middleware.serverError"), {
+        toast.error(message || getMessages().serverError, {
           id: `server-error-${message || ""}`,
         });
 
@@ -55,7 +32,7 @@ export const authErrorMiddleware: Middleware =
       if (action.payload?.message?.includes("Network Error")) {
         console.error("📡 [Middleware] Network Error");
 
-        toast.error(getTranslation("middleware.networkError"), {
+        toast.error(getMessages().networkError, {
           id: "network-error",
         });
       }

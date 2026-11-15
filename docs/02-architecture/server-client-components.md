@@ -31,7 +31,7 @@ Trang việc làm bên ngoài (`jobs/external/[id]`) là ngoại lệ: server l�
 Có 25 file dưới `src/app/` bắt đầu bằng `"use client"`. Phần lớn là:
 
 - Các trang cần trạng thái đăng nhập: toàn bộ nhóm `(auth)`, sáu trang `admin/*` (users, jobs, companies, resumes, personal-info, change-password), `profile/page.tsx`, `account/cancel-deletion`.
-- Các layout có guard hoặc trạng thái giao diện: `(auth)`, `(dashboard)`, `(hr-dashboard)` và `(profile)/profile`.
+- Các layout có guard hoặc trạng thái giao diện: `(auth)/layout.tsx`, và phần giao diện của `(dashboard)`, `(hr-dashboard)`, `(profile)/profile` (file `*-layout-client.tsx`). Bản thân `layout.tsx` của ba nhóm sau là Server Component, chỉ nạp đủ messages dịch. Xem [Đa ngôn ngữ](internationalization.md).
 - Các trang lỗi: `error.tsx` và `global-error.tsx` (Next.js bắt buộc là Client Component), cùng `not-found.tsx` (ở đây cũng khai báo client).
 
 Hai trang tổng quan `/admin` và `/hr/dashboard` vẫn là Server Component: chúng chỉ tạo metadata rồi render một component thống kê chạy ở trình duyệt.
