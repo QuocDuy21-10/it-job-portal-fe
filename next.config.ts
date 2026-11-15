@@ -7,6 +7,7 @@ import { env } from "./src/shared/config/env";
 const apiUrl = new URL(env.API_URL);
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   experimental: {
     authInterrupts: true,
     optimizePackageImports: ["lucide-react"],
