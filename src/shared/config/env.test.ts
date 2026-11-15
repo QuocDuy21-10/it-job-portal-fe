@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { parseEnv } from "./env";
 
 const PROD_OK = {
@@ -87,5 +88,11 @@ describe("parseEnv", () => {
         "production"
       ).GOOGLE_CLIENT_ID
     ).toBe("abc");
+  });
+});
+
+describe("zod config", () => {
+  it("turns off zod's Function() probe, which the CSP blocks in production", () => {
+    expect(z.config().jitless).toBe(true);
   });
 });

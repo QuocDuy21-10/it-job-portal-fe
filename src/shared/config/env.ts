@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { DEV_API_URL, DEV_SITE_URL } from "./env-defaults";
 
+// Skip zod's `Function("")` probe: the CSP has no 'unsafe-eval' in production.
+z.config({ jitless: true });
+
 const toUrl = (value: string): URL | null => {
   try {
     return new URL(value);
