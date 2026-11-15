@@ -1,7 +1,5 @@
 import { z } from "zod";
-
-const DEV_API_URL = "http://localhost:8081";
-const DEV_SITE_URL = "http://localhost:3000";
+import { DEV_API_URL, DEV_SITE_URL } from "./env-defaults";
 
 const toUrl = (value: string): URL | null => {
   try {
