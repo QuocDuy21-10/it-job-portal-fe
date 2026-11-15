@@ -26,7 +26,7 @@ src/
 ├── lib/                        # Hạ tầng: axios, redux, socket, casl, pdf, utils
 ├── locales/                    # Bản dịch: en.ts, vi.ts
 ├── shared/                     # Hằng số, kiểu, cấu hình, dữ liệu tĩnh
-└── middleware.ts               # Điều hướng tiền tố ngôn ngữ
+└── middleware.ts               # Điều hướng tiền tố ngôn ngữ, nonce và CSP
 ```
 
 Tên trong ngoặc tròn như `(main)` là nhóm route của Next.js, không xuất hiện trong địa chỉ trang. Xem [Routing và layout](routing-and-layouts.md).

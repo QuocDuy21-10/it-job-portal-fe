@@ -22,6 +22,22 @@ Thứ được cache là dữ liệu: các hàm `fetchPublic*` giữ phản hồ
 
 Trang chủ lấy sẵn dữ liệu trên server. `(main)/page.tsx` gọi song song `fetchPublicJobs` (trang 1 của việc làm nổi bật) và `fetchPublicTopHiringCompanies`, rồi truyền kết quả cho `home-page-client.tsx` qua hai prop `initialJobs` và `initialCompanies`. Nhờ vậy HTML trả về đã có danh sách việc làm và công ty, công cụ tìm kiếm đọc được mà không cần chạy JavaScript. Khi backend không trả lời, hai prop này là `null` và trình duyệt tự gọi API.
 
+## Content Security Policy
+
+`src/middleware.ts` sinh một nonce mới cho mỗi request và gửi header `Content-Security-Policy`, dựng bằng `buildCsp` trong `src/lib/security/headers.ts`. `script-src` chỉ cho phép script mang đúng nonce đó, cộng với các script mà chúng tải tiếp (`'strict-dynamic'`); không có `'unsafe-inline'`. Next.js đọc nonce từ header CSP của request và tự gắn vào script của nó. Root layout đọc header `x-nonce` và truyền cho `ThemeProvider` (script chống nháy theme) và `GoogleOAuthProvider`.
+
+Hệ quả: HTML của mỗi trang chứa nonce của riêng request đó, nên trang dưới `src/app/[locale]/` phải render theo từng request. Không chuyển các trang này sang ISR hay HTML tĩnh khi còn dùng nonce. Cache dữ liệu ở mức fetch không bị ảnh hưởng.
+
+Vài chỉ thị có lý do riêng:
+
+- `'wasm-unsafe-eval'`: `@react-pdf/renderer` biên dịch engine dàn trang từ WebAssembly.
+- `frame-src blob:`: khung xem trước CV hiển thị PDF từ địa chỉ `blob:`.
+- `style-src 'unsafe-inline'`: Radix UI và các thuộc tính `style` viết thẳng trong component.
+- `'unsafe-eval'` chỉ có khi chạy `next dev`.
+- zod được cấu hình `jitless` trong `src/shared/config/env.ts`, vì nếu không nó gọi thử `Function("")` và tạo vi phạm trên mọi trang.
+
+Muốn tạm quay về chế độ chỉ báo cáo, đổi `CSP_HEADER` trong `src/middleware.ts` thành `Content-Security-Policy-Report-Only`. Các header bảo mật còn lại (HSTS, `X-Frame-Options`, ...) vẫn do `next.config.ts` gửi qua `buildSecurityHeaders`.
+
 ## Địa chỉ gốc của site
 
 Hàm `getSiteUrl` đọc biến `NEXT_PUBLIC_SITE_URL`. Khi biến này trống, nó dùng `http://localhost:3000`. Vì vậy môi trường triển khai cần đặt biến này, nếu không canonical, sitemap và Open Graph sẽ trỏ về `localhost`. Xem [Biến môi trường](../01-getting-started/environment-variables.md).
@@ -66,3 +82,5 @@ Hàm `serializeJsonLd` trong `seo.ts` biến dữ liệu thành chuỗi JSON-LD 
 - [`src/app/[locale]/layout.tsx`](../../src/app/[locale]/layout.tsx): metadata mặc định cho cả site
 - [`src/app/[locale]/(main)/page.tsx`](../../src/app/[locale]/(main)/page.tsx): trang chủ lấy sẵn dữ liệu trên server
 - [`src/app/[locale]/(main)/jobs/external/[id]/page.tsx`](../../src/app/[locale]/(main)/jobs/external/[id]/page.tsx): cấu hình `noindex`
+- [`src/middleware.ts`](../../src/middleware.ts): sinh nonce và gửi CSP
+- [`src/lib/security/headers.ts`](../../src/lib/security/headers.ts): `buildCsp` và các header bảo mật khác
