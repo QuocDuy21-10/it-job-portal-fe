@@ -6,7 +6,7 @@ DevLink Frontend là một ứng dụng Next.js 15 dùng App Router. Ứng dụn
 
 Khi một người dùng mở trang, các lớp sau cùng tham gia:
 
-1. **Middleware** (`src/middleware.ts`) xem địa chỉ có tiền tố ngôn ngữ chưa và điều hướng tương ứng. Xem [Đa ngôn ngữ](internationalization.md).
+1. **Middleware** (`src/middleware.ts`) xem địa chỉ có tiền tố ngôn ngữ chưa và điều hướng tương ứng, đồng thời sinh nonce và gửi Content Security Policy. Xem [Đa ngôn ngữ](internationalization.md) và [Rendering và SEO](rendering-and-seo.md#content-security-policy).
 2. **Layout gốc** (`src/app/layout.tsx`) bọc toàn bộ ứng dụng bằng các provider: Redux, CASL (phân quyền), Google OAuth và giao diện sáng/tối.
 3. **Layout theo ngôn ngữ** (`src/app/[locale]/layout.tsx`) thêm provider dịch thuật, Socket.IO, khởi tạo phiên đăng nhập và thông báo.
 4. **Layout theo nhóm trang** (ví dụ `(main)`, `(dashboard)`) thêm khung giao diện và, với admin hoặc HR, thêm lớp kiểm tra quyền truy cập.
@@ -54,6 +54,6 @@ Sơ đồ nằm trong thư mục `diagrams/`: [bối cảnh hệ thống](diagra
 
 - [`src/app/layout.tsx`](../../src/app/layout.tsx): layout gốc, các provider toàn cục
 - [`src/app/[locale]/layout.tsx`](../../src/app/[locale]/layout.tsx): layout theo ngôn ngữ, Socket.IO, khởi tạo phiên
-- [`src/middleware.ts`](../../src/middleware.ts): xử lý tiền tố ngôn ngữ
+- [`src/middleware.ts`](../../src/middleware.ts): xử lý tiền tố ngôn ngữ, nonce và CSP
 - [`src/lib/utils/public-content.ts`](../../src/lib/utils/public-content.ts): fetch công khai phía server
 - [`src/lib/redux/store.ts`](../../src/lib/redux/store.ts): cấu hình Redux store

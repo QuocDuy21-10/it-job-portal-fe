@@ -51,6 +51,10 @@ const ESM_PACKAGES = [
   "domelementtype",
   "dom-serializer",
   "entities",
+  // src/middleware.ts runs next-intl's real middleware in middleware.test.ts.
+  "next-intl",
+  "use-intl",
+  "@formatjs",
 ];
 
 module.exports = async () => {

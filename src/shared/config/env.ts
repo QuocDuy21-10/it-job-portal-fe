@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { DEV_API_URL, DEV_SITE_URL } from "./env-defaults";
 
-const DEV_API_URL = "http://localhost:8081";
-const DEV_SITE_URL = "http://localhost:3000";
+// Skip zod's `Function("")` probe: the CSP has no 'unsafe-eval' in production.
+z.config({ jitless: true });
 
 const toUrl = (value: string): URL | null => {
   try {

@@ -6,7 +6,11 @@ interface Options {
   isProduction: boolean;
 }
 
-export function buildCsp({ apiUrl, isProduction }: Options): string {
+interface CspOptions extends Options {
+  nonce: string;
+}
+
+export function buildCsp({ apiUrl, isProduction, nonce }: CspOptions): string {
   const api = new URL(apiUrl);
   const apiWs = `${api.protocol === "https:" ? "wss" : "ws"}://${api.host}`;
 
@@ -14,7 +18,9 @@ export function buildCsp({ apiUrl, isProduction }: Options): string {
     "default-src": ["'self'"],
     "script-src": [
       "'self'",
-      "'unsafe-inline'", // Next inline bootstrap + JSON-LD; replace with nonces later (loses ISR)
+      `'nonce-${nonce}'`,
+      "'strict-dynamic'",
+      "'wasm-unsafe-eval'", // @react-pdf/renderer compiles yoga-layout from WebAssembly
       ...(isProduction ? [] : ["'unsafe-eval'"]),
       "https://accounts.google.com",
     ],
@@ -27,7 +33,7 @@ export function buildCsp({ apiUrl, isProduction }: Options): string {
       "https://lh3.googleusercontent.com",
     ],
     "connect-src": ["'self'", api.origin, apiWs, "https://accounts.google.com"],
-    "frame-src": ["https://accounts.google.com"],
+    "frame-src": ["https://accounts.google.com", "blob:"], // blob: = CV PDF preview iframe
     "font-src": ["'self'", "data:"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
@@ -54,7 +60,6 @@ export function buildSecurityHeaders(options: Options): HeaderEntry[] {
     ...(options.isProduction
       ? [{ key: "Strict-Transport-Security", value: "max-age=15552000" }]
       : []),
-    // Report-only until the browser console shows no violations on the main flows.
-    { key: "Content-Security-Policy-Report-Only", value: buildCsp(options) },
+    // CSP is sent by src/middleware.ts: it needs a fresh nonce per request.
   ];
 }
