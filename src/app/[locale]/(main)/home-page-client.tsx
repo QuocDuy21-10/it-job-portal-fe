@@ -154,6 +154,14 @@ export default function Home({ initialJobs, initialCompanies }: HomeProps) {
   return (
     <div className="flex flex-col">
       <section className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[url('/images/homepage-it-careers-banner.png')] bg-[length:100%_auto] bg-[position:center_top] bg-no-repeat opacity-90 sm:bg-cover sm:bg-center dark:opacity-25"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/35 to-background/95 dark:from-background/25 dark:via-background/60 dark:to-background"
+        />
         {/* Decorative background */}
         <div className="hidden dark:block absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
 
