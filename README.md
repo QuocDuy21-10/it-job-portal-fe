@@ -21,6 +21,8 @@
 
 **DevLink** là frontend của một nền tảng tuyển dụng hiện đại, cao cấp, được thiết kế dành riêng cho lập trình viên và các chuyên gia IT. Được xây dựng trên [<u><font color="blue">Next.js 15</font></u>](https://nextjs.org/), [<u><font color="blue">React 18</font></u>](https://react.dev/) và [<u><font color="blue">TypeScript</font></u>](https://www.typescriptlang.org/), dự án có định tuyến theo vai trò, hỗ trợ đa ngôn ngữ, hydrate trạng thái nâng cao, nhắn tin thời gian thực, trình tạo CV tương tác với tính năng xuất PDF, cùng các giao diện dashboard được trau chuốt cho ứng viên, nhà tuyển dụng và quản trị viên.
 
+> 🌐 **Website đã triển khai**: **https://devlink.duydq.cloud/**
+
 > 📚 **Website tài liệu**: **https://quocduy21-10.github.io/it-job-portal-fe/** (tìm kiếm, chế độ tối, sơ đồ). Nội dung Markdown tương tự có thể đọc trực tiếp trên GitHub tại [`docs/`](docs/README.md).
 
 | Bắt đầu tại đây | Tìm hiểu sâu hơn |
