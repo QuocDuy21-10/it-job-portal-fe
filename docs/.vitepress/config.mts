@@ -24,15 +24,15 @@ export default withMermaid(
     lastUpdated: true,
     cleanUrls: true,
     ignoreDeadLinks: true,
-    base: '/it-job-portal-fe/',
-    sitemap: { hostname: 'https://quocduy21-10.github.io/it-job-portal-fe/' },
+    base: '/',
+    sitemap: { hostname: 'https://docs.devlink.duydq.cloud/' },
     head: [
       ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' }],
-      ['link', { rel: 'icon', type: 'image/png', href: '/it-job-portal-fe/favicon.png' }],
+      ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }],
       ['meta', { property: 'og:type', content: 'website' }],
       ['meta', { property: 'og:title', content: 'DevLink Docs' }],
       ['meta', { property: 'og:description', content: 'Tài liệu Kỹ thuật & Kiến trúc Hệ thống DevLink Frontend' }],
-      ['meta', { property: 'og:image', content: 'https://quocduy21-10.github.io/it-job-portal-fe/hero.png' }],
+      ['meta', { property: 'og:image', content: 'https://docs.devlink.duydq.cloud/hero.png' }],
     ],
 
     markdown: {

@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="https://quocduy21-10.github.io/it-job-portal-fe/"><img src="https://img.shields.io/badge/Docs-Read_the_documentation-2563eb?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation" /></a>
+  <a href="https://docs.devlink.duydq.cloud/"><img src="https://img.shields.io/badge/Docs-Read_the_documentation-2563eb?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation" /></a>
   <a href="https://github.com/QuocDuy21-10/it-job-portal-fe/actions/workflows/docs.yml"><img src="https://github.com/QuocDuy21-10/it-job-portal-fe/actions/workflows/docs.yml/badge.svg" alt="Docs deploy status" /></a>
 </p>
 
@@ -23,7 +23,7 @@
 
 > 🌐 **Website đã triển khai**: **https://devlink.duydq.cloud/**
 
-> 📚 **Website tài liệu**: **https://quocduy21-10.github.io/it-job-portal-fe/** (tìm kiếm, chế độ tối, sơ đồ). Nội dung Markdown tương tự có thể đọc trực tiếp trên GitHub tại [`docs/`](docs/README.md).
+> 📚 **Website tài liệu**: **https://docs.devlink.duydq.cloud/** (tìm kiếm, chế độ tối, sơ đồ). Nội dung Markdown tương tự có thể đọc trực tiếp trên GitHub tại [`docs/`](docs/README.md).
 
 | Bắt đầu tại đây | Tìm hiểu sâu hơn |
 | :-- | :-- |
