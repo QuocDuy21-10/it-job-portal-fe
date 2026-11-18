@@ -70,7 +70,7 @@ export default function RegisterPage() {
         error?.data?.message ||
         error.message ||
         t("authModal.register.toasts.failed");
-      toast.error(`${t("authModal.register.toasts.failed")}: ${errorMessage}`);
+      toast.error(errorMessage);
     }
   };
 
@@ -99,7 +99,7 @@ export default function RegisterPage() {
       <AuthHeader />
       <AuthCard
         title={t("authModal.tabs.signup")}
-        description={t("authModal.description.signin")}
+        description={t("authModal.description.signup")}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Full Name */}
@@ -114,6 +114,7 @@ export default function RegisterPage() {
               />
               <Input
                 id="name"
+                autoComplete="name"
                 type="text"
                 placeholder={t("authModal.register.fields.name.placeholder")}
                 className="pl-10 auth-input"
@@ -140,6 +141,7 @@ export default function RegisterPage() {
               />
               <Input
                 id="email"
+                autoComplete="email"
                 type="email"
                 placeholder={t("authModal.register.fields.email.placeholder")}
                 className="pl-10 auth-input"
@@ -157,6 +159,7 @@ export default function RegisterPage() {
           {/* Password */}
           <PasswordInput
             id="password"
+            autoComplete="new-password"
             label={t("authModal.register.fields.password.label")}
             placeholder={t("authModal.register.fields.password.placeholder")}
             error={errors.password?.message}
@@ -167,6 +170,7 @@ export default function RegisterPage() {
           {/* Confirm Password */}
           <PasswordInput
             id="confirmPassword"
+            autoComplete="new-password"
             label={t("authModal.register.fields.confirmPassword.label")}
             placeholder={t(
               "authModal.register.fields.confirmPassword.placeholder"

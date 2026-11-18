@@ -474,6 +474,7 @@ export const en = {
     },
     description: {
       signin: "Sign in to continue",
+      signup: "Sign up to get started",
     },
     tabs: {
       signin: "Sign in",
@@ -529,7 +530,7 @@ export const en = {
         },
         password: {
           label: "Password",
-          placeholder: "At least 6 characters",
+          placeholder: "At least 8 characters",
         },
         confirmPassword: {
           label: "Confirm Password",

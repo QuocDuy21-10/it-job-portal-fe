@@ -13,6 +13,8 @@ const en = {
     serverError: "Server error. Please try again later",
     networkError:
       "Cannot connect to server. Please check your network connection",
+    tooManyRequests:
+      "Too many attempts. Please wait a few minutes and try again",
   },
 };
 
@@ -29,6 +31,8 @@ const vi: typeof en = {
     serverError: "Lỗi server. Vui lòng thử lại sau",
     networkError:
       "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng",
+    tooManyRequests:
+      "Bạn thao tác quá nhiều lần. Vui lòng đợi vài phút rồi thử lại",
   },
 };
 

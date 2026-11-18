@@ -147,3 +147,28 @@ describe("auth slice session reset", () => {
     });
   });
 });
+
+describe("auth slice loading flag", () => {
+  // The (auth) layout swaps its children for a spinner while isLoading is true,
+  // which unmounts the login/register form and wipes what the user typed.
+  const pendingMutation = (endpointName: "login" | "register") => ({
+    type: "api/executeMutation/pending",
+    meta: {
+      arg: { type: "mutation", endpointName, originalArgs: {} },
+      requestId: "req-1",
+      requestStatus: "pending",
+    },
+  });
+
+  it.each(["login", "register"] as const)(
+    "does not raise the session loading flag while %s is in flight",
+    (endpointName) => {
+      const state = authReducer(
+        createBaseState(),
+        pendingMutation(endpointName)
+      );
+
+      expect(state.isLoading).toBe(false);
+    }
+  );
+});

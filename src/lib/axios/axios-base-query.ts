@@ -1,6 +1,7 @@
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import axiosInstance from "@/lib/axios/axios-instance";
 import { AxiosError, AxiosRequestConfig } from "axios";
+import { getDocumentLocale, standaloneMessages } from "@/locales/standalone";
 
 interface AxiosBaseQueryArgs {
   url: string;
@@ -40,11 +41,24 @@ export const axiosBaseQuery =
       return { data: result };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
+      const status = err.response?.status;
+      // Pages toast data.message as-is; the throttler's raw text is not fit for users and is not localized.
+      const data =
+        status === 429
+          ? {
+              ...(typeof err.response?.data === "object"
+                ? err.response.data
+                : {}),
+              message:
+                standaloneMessages[getDocumentLocale()].middleware
+                  .tooManyRequests,
+            }
+          : err.response?.data || err.message;
 
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          status,
+          data,
           message: err.message,
         },
       };

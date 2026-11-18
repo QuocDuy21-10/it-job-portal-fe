@@ -155,6 +155,7 @@ export default function ForgotPasswordPage() {
                   />
                   <Input
                     id="email"
+                    autoComplete="email"
                     type="email"
                     placeholder={t("authModal.login.fields.email.placeholder")}
                     className="pl-10 auth-input"
