@@ -478,6 +478,7 @@ export const vi = {
     },
     description: {
       signin: "Đăng nhập để tiếp tục",
+      signup: "Đăng ký để bắt đầu",
     },
     tabs: {
       signin: "Đăng nhập",

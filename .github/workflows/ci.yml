@@ -43,4 +43,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - run: npm audit --omit=dev --audit-level=high
+      # High/critical production advisories fail the job; documented exceptions live in audit-ci.jsonc.
+      - run: npx --yes audit-ci@7.1.0 --config audit-ci.jsonc

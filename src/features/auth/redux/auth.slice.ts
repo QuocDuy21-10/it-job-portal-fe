@@ -131,11 +131,10 @@ const authSlice = createSlice({
   },
 
   extraReducers(builder) {
-    // LOGIN
+    // LOGIN / REGISTER: no isLoading here. isLoading means "session check in progress" and the
+    // (auth) layout replaces its children with a spinner while it is true, which unmounted the
+    // form and wiped the user's input on every failed submit. Pages use the mutation's own isLoading.
     builder
-      .addMatcher(authApi.endpoints.login.matchPending, (state) => {
-        state.isLoading = true;
-      })
       .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
         const userData = action.payload.data?.user;
 
@@ -143,12 +142,10 @@ const authSlice = createSlice({
           state.user = buildAuthUser(userData);
           state.isAuthenticated = true;
         }
-        state.isLoading = false;
       })
       .addMatcher(authApi.endpoints.login.matchRejected, (state) => {
         state.user = null;
         state.isAuthenticated = false;
-        state.isLoading = false;
       })
 
       // GET ME
@@ -185,10 +182,6 @@ const authSlice = createSlice({
         resetSession
       )
 
-      // REGISTER
-      .addMatcher(authApi.endpoints.register.matchPending, (state) => {
-        state.isLoading = true;
-      })
       .addMatcher(
         authApi.endpoints.register.matchFulfilled,
         (state, action) => {
@@ -198,12 +191,8 @@ const authSlice = createSlice({
             state.user = buildAuthUser(userData);
             state.isAuthenticated = true;
           }
-          state.isLoading = false;
         }
-      )
-      .addMatcher(authApi.endpoints.register.matchRejected, (state) => {
-        state.isLoading = false;
-      });
+      );
   },
 });
 

@@ -148,6 +148,7 @@ function ResetPasswordForm() {
               {/* New Password */}
               <PasswordInput
                 id="newPassword"
+                autoComplete="new-password"
                 label={t("authModal.resetPassword.titleCard")}
                 placeholder="••••••••"
                 error={errors.newPassword?.message}
@@ -158,6 +159,7 @@ function ResetPasswordForm() {
               {/* Confirm Password */}
               <PasswordInput
                 id="confirmPassword"
+                autoComplete="new-password"
                 label={t("authModal.register.fields.confirmPassword.label")}
                 placeholder="••••••••"
                 error={errors.confirmPassword?.message}

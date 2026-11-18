@@ -1,0 +1,12 @@
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  // Same policy as before: fail CI on high or critical advisories in production dependencies.
+  "high": true,
+  "skip-dev": true,
+  "allowlist": [
+    // picomatch ReDoS (all versions <= 4.0.7, no patched release yet). Only reached through build and
+    // dev tooling: tailwindcss content scanning and next-intl -> @parcel/watcher (extractor watcher).
+    // The globs are written by developers, never taken from user input. Remove once picomatch ships a fix.
+    "GHSA-fc5q-39xc-vjpf"
+  ]
+}

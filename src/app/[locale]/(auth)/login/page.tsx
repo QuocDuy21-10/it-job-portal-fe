@@ -208,6 +208,7 @@ function LoginContent() {
               />
               <Input
                 id="email"
+                autoComplete="email"
                 type="email"
                 placeholder={t("authModal.login.fields.email.placeholder")}
                 className="pl-10 auth-input"
@@ -234,6 +235,7 @@ function LoginContent() {
             </div>
             <PasswordInput
               id="password"
+              autoComplete="current-password"
               label=""
               placeholder={t("authModal.login.fields.password.placeholder")}
               error={errors.password?.message}
