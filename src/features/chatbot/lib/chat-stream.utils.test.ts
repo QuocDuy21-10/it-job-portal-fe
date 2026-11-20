@@ -1,4 +1,5 @@
 import {
+  buildStreamRequestBody,
   parseChatStreamEvent,
   parseServerSentEventChunk,
 } from "./chat-stream.utils";
@@ -167,5 +168,12 @@ describe("chat stream utils", () => {
       type: "error",
       message: "{not-json",
     });
+  });
+
+  it("builds the stream body with optional jobId and clientMessageId", () => {
+    expect(buildStreamRequestBody("hi")).toEqual({ message: "hi" });
+    expect(
+      buildStreamRequestBody("hi", { jobId: "job-1", clientMessageId: "msg-1" })
+    ).toEqual({ message: "hi", jobId: "job-1", clientMessageId: "msg-1" });
   });
 });

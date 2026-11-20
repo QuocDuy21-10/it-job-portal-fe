@@ -127,4 +127,49 @@ describe("useChat", () => {
     expect(mockDispatch).toHaveBeenCalledWith(setMessages([]));
     expect(mockDispatch).toHaveBeenCalledWith(setQuota(quota));
   });
+
+  it("sends the user bubble id as clientMessageId to the stream", async () => {
+    const sendStreamMessage = jest
+      .fn()
+      .mockResolvedValue({ status: "started" });
+    mockUseStreamChat.mockReturnValue({
+      sendStreamMessage,
+      abortStream: jest.fn(),
+      isStreaming: false,
+    });
+
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.sendMessage("hello", { jobId: "job-1" });
+    });
+
+    expect(sendStreamMessage).toHaveBeenCalledWith("hello", {
+      jobId: "job-1",
+      clientMessageId: "test-id",
+    });
+  });
+
+  it("reuses the same clientMessageId on the REST fallback", async () => {
+    const sendMessageMutation = jest.fn().mockReturnValue({
+      unwrap: () => Promise.resolve({ conversationId: "c-1", response: "ok" }),
+    });
+    mockUseSendMessageMutation.mockReturnValue([sendMessageMutation]);
+    mockUseStreamChat.mockReturnValue({
+      sendStreamMessage: jest.fn().mockResolvedValue({ status: "fallback" }),
+      abortStream: jest.fn(),
+      isStreaming: false,
+    });
+
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.sendMessage("hello");
+    });
+
+    expect(sendMessageMutation).toHaveBeenCalledWith({
+      message: "hello",
+      clientMessageId: "test-id",
+    });
+  });
 });

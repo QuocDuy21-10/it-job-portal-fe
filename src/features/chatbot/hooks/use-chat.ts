@@ -185,6 +185,7 @@ export const useChat = () => {
       // Try streaming first, fall back to REST
       const streamResult = await sendStreamMessage(trimmedContent, {
         jobId: options?.jobId,
+        clientMessageId: userMessage.id,
       });
 
       if (streamResult.status !== "fallback") {
@@ -198,6 +199,7 @@ export const useChat = () => {
         const response = await sendMessageMutation({
           message: trimmedContent,
           ...(options?.jobId ? { jobId: options.jobId } : {}),
+          clientMessageId: userMessage.id,
         }).unwrap();
 
         const botMessage = normalizeAssistantResponseMessage(response);
