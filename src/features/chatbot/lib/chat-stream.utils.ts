@@ -1,4 +1,8 @@
-import type { IChatQuotaStatus, IStreamDoneEvent } from "@/shared/types/chat";
+import type {
+  IChatQuotaStatus,
+  ISendMessageRequest,
+  IStreamDoneEvent,
+} from "@/shared/types/chat";
 
 export interface ServerSentEvent {
   event: string;
@@ -155,3 +159,14 @@ export const parseChatStreamEvent = (
 
   return null;
 };
+
+export const buildStreamRequestBody = (
+  content: string,
+  options: { jobId?: string; clientMessageId?: string } = {}
+): ISendMessageRequest => ({
+  message: content,
+  ...(options.jobId ? { jobId: options.jobId } : {}),
+  ...(options.clientMessageId
+    ? { clientMessageId: options.clientMessageId }
+    : {}),
+});

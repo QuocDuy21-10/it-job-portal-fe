@@ -50,6 +50,7 @@ export interface IMessage extends IChatTransportMessage {
 export interface ISendMessageRequest {
   message: string;
   jobId?: string;
+  clientMessageId?: string;
 }
 
 export interface IChatResponse extends IChatRecommendationMetadata {

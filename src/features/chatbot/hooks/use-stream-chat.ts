@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { normalizeStreamDoneEvent } from "@/features/chatbot/lib/chat-message.utils";
 import {
+  buildStreamRequestBody,
   parseChatStreamEvent,
   parseServerSentEventChunk,
   type ServerSentEvent,
@@ -16,7 +17,7 @@ import {
   setQuota,
   setSuggestedActions,
 } from "@/features/chatbot/redux/chat-bot.slice";
-import { IMessage, ISendMessageRequest } from "@/shared/types/chat";
+import { IMessage } from "@/shared/types/chat";
 import { API_BASE_URL } from "@/shared/constants/constant";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
@@ -65,14 +66,6 @@ const shouldFallbackToRest = (response: Response): boolean =>
   response.status === 404 ||
   response.status === 405 ||
   response.status === 501;
-
-const buildStreamRequestBody = (
-  content: string,
-  jobId?: string
-): ISendMessageRequest => ({
-  message: content,
-  ...(jobId ? { jobId } : {}),
-});
 
 export const useStreamChat = () => {
   const dispatch = useAppDispatch();
@@ -203,7 +196,7 @@ export const useStreamChat = () => {
   const sendStreamMessage = useCallback(
     async (
       content: string,
-      options?: { jobId?: string }
+      options?: { jobId?: string; clientMessageId?: string }
     ): Promise<StreamSendResult> => {
       closeStream(true);
       dispatch(setIsTyping(true));
@@ -220,7 +213,7 @@ export const useStreamChat = () => {
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           },
           credentials: "include",
-          body: JSON.stringify(buildStreamRequestBody(content, options?.jobId)),
+          body: JSON.stringify(buildStreamRequestBody(content, options)),
           signal: abortController.signal,
         });
 
