@@ -18,11 +18,14 @@ import { ADMIN_NAVIGATION } from "@/shared/config/admin-navigation";
 import { useI18n } from "@/hooks/use-i18n";
 
 /** False when the admin page at `pathname` needs a subject the role cannot read (e.g. HR on /admin/users). */
-export function canOpenAdminPath(pathname: string, ability: AppAbility): boolean {
+export function canOpenAdminPath(
+  pathname: string,
+  ability: AppAbility
+): boolean {
   const page = ADMIN_NAVIGATION.find(
     (item) =>
       item.href !== "/admin" &&
-      (pathname === item.href || pathname.startsWith(`${item.href}/`)),
+      (pathname === item.href || pathname.startsWith(`${item.href}/`))
   );
   return !page?.subject || ability.can(EAction.READ, page.subject);
 }
@@ -55,7 +58,15 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
         router.replace(getPathname({ locale, href: "/admin" }));
       }
     }
-  }, [isMounted, isAuthenticated, isLoading, isAdmin, canOpenPage, locale, router]);
+  }, [
+    isMounted,
+    isAuthenticated,
+    isLoading,
+    isAdmin,
+    canOpenPage,
+    locale,
+    router,
+  ]);
 
   if (!isMounted) {
     return (

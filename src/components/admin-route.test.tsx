@@ -17,7 +17,12 @@ describe("canOpenAdminPath", () => {
   });
 
   it("lets HR open the pages its role can read", () => {
-    for (const path of ["/admin", "/admin/jobs", "/admin/companies", "/admin/resumes"]) {
+    for (const path of [
+      "/admin",
+      "/admin/jobs",
+      "/admin/companies",
+      "/admin/resumes",
+    ]) {
       expect(canOpenAdminPath(path, hr)).toBe(true);
     }
   });

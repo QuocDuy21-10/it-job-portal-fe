@@ -19,8 +19,12 @@ describe("Access", () => {
       </Access>
     );
 
-    expect(screen.getByText("adminShell.accessDeniedTitle")).toBeInTheDocument();
-    expect(screen.getByText("adminShell.accessDeniedMessage")).toBeInTheDocument();
+    expect(
+      screen.getByText("adminShell.accessDeniedTitle")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("adminShell.accessDeniedMessage")
+    ).toBeInTheDocument();
     expect(screen.queryByText("users")).not.toBeInTheDocument();
   });
 
