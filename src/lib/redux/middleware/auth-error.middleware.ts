@@ -2,6 +2,7 @@ import { Middleware } from "@reduxjs/toolkit";
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import { toast } from "sonner";
 import { getDocumentLocale, standaloneMessages } from "@/locales/standalone";
+import { authApi } from "@/features/auth/redux/auth.api";
 
 const getMessages = () => standaloneMessages[getDocumentLocale()].middleware;
 
@@ -16,6 +17,17 @@ export const authErrorMiddleware: Middleware =
         toast.error(message || getMessages().forbidden, {
           id: `forbidden-error-${message || ""}`,
         });
+
+        // A 403 may mean the role changed (e.g. HR demoted) since login: reload it so the
+        // route guards and menus follow. getMe is skipped so a 403 from it cannot loop.
+        if (action.meta?.arg?.endpointName !== "getMe") {
+          store.dispatch(
+            authApi.endpoints.getMe.initiate(undefined, {
+              forceRefetch: true,
+              subscribe: false,
+            }) as any
+          );
+        }
       }
 
       if (status === 500) {

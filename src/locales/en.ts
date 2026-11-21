@@ -282,6 +282,9 @@ export const en = {
   },
   adminShell: {
     panelTitle: "Admin Panel",
+    checkingAccess: "Checking access...",
+    accessDeniedTitle: "Access denied",
+    accessDeniedMessage: "You do not have permission to use this feature.",
     toggleMobileMenu: "Toggle mobile menu",
     collapseSidebarAria: "Collapse sidebar",
     expandSidebarAria: "Expand sidebar",
