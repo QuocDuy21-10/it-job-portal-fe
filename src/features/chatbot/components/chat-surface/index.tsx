@@ -46,6 +46,7 @@ const ChatSurface = ({
     suggestedActions,
     quota,
     sendMessage,
+    resendMessage,
     loadHistory,
     clearChat,
     isAuthenticated,
@@ -247,6 +248,9 @@ const ChatSurface = ({
                 activeToolActionId={activeToolActionId}
                 onConfirmPendingToolAction={handleConfirmPendingToolAction}
                 onCancelPendingToolAction={handleCancelPendingToolAction}
+                onResend={(failedMessage) =>
+                  resendMessage(failedMessage, { jobId })
+                }
               />
             ))}
 

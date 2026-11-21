@@ -23,41 +23,43 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/use-i18n";
 import { getAccessTokenAsync } from "@/lib/auth/session";
+import { getChatErrorText } from "@/features/chatbot/lib/chat-error.utils";
+import { normalizeChatQuotaStatus } from "@/features/chatbot/lib/chat-message.utils";
 
 const STREAM_ENDPOINT = `${API_BASE_URL}/chat/message/stream`;
 
 type StreamSendResult =
-  { status: "started" } | { status: "handled_error" } | { status: "fallback" };
+  | { status: "started" }
+  | { status: "handled_error" }
+  | { status: "fallback" }
+  | { status: "network_error" };
 
 const getResponseErrorMessage = async (
   response: Response,
+  language: string,
   t: (key: string) => string
 ): Promise<string> => {
-  const defaultStreamErrorMessage = t("chatWidget.errors.systemBusy");
-  const contentType = response.headers.get("content-type") || "";
-
   try {
-    if (contentType.includes("application/json")) {
+    if (
+      (response.headers.get("content-type") || "").includes("application/json")
+    ) {
       const payload = (await response.json()) as {
         message?: string | string[];
         error?: string | string[];
+        quota?: unknown;
       };
 
-      const message = payload.message ?? payload.error;
-
-      if (Array.isArray(message)) {
-        return message[0] || defaultStreamErrorMessage;
-      }
-
-      if (typeof message === "string" && message.trim()) {
-        return message;
-      }
+      return getChatErrorText(
+        payload.message ?? payload.error,
+        language,
+        t,
+        normalizeChatQuotaStatus(payload.quota)
+      );
     }
 
-    const text = await response.text();
-    return text.trim() || defaultStreamErrorMessage;
+    return getChatErrorText(await response.text(), language, t);
   } catch {
-    return defaultStreamErrorMessage;
+    return t("chatWidget.errors.systemBusy");
   }
 };
 
@@ -69,7 +71,7 @@ const shouldFallbackToRest = (response: Response): boolean =>
 
 export const useStreamChat = () => {
   const dispatch = useAppDispatch();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const abortControllerRef = useRef<AbortController | null>(null);
   const streamingMessageIdRef = useRef<string | null>(null);
   const { streamingMessageId } = useAppSelector((state) => state.chatBot);
@@ -136,11 +138,17 @@ export const useStreamChat = () => {
         dispatch(setQuota(parsedEvent.quota));
       }
 
-      dispatch(finalizeStream({ content: parsedEvent.message }));
-      toast.error(parsedEvent.message);
+      const errorText = getChatErrorText(
+        parsedEvent.message,
+        language,
+        t,
+        parsedEvent.quota
+      );
+      dispatch(finalizeStream({ content: errorText }));
+      toast.error(errorText);
       closeStream();
     },
-    [closeStream, dispatch]
+    [closeStream, dispatch, language, t]
   );
 
   const readStream = useCallback(
@@ -225,7 +233,7 @@ export const useStreamChat = () => {
             return { status: "fallback" };
           }
 
-          toast.error(await getResponseErrorMessage(response, t));
+          toast.error(await getResponseErrorMessage(response, language, t));
           return { status: "handled_error" };
         }
 
@@ -253,10 +261,11 @@ export const useStreamChat = () => {
       } catch {
         dispatch(setIsTyping(false));
         closeStream();
-        return { status: "fallback" };
+        // Offline: the REST fallback would fail the same way, so report it directly.
+        return { status: navigator.onLine ? "fallback" : "network_error" };
       }
     },
-    [closeStream, dispatch, readStream]
+    [closeStream, dispatch, language, readStream, t]
   );
 
   const abortStream = useCallback(() => {

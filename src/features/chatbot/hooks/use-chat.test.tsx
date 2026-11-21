@@ -7,7 +7,13 @@ import {
   useLazyGetChatHistoryQuery,
   useSendMessageMutation,
 } from "@/features/chatbot/redux/chat-bot.api";
-import { setMessages, setQuota } from "@/features/chatbot/redux/chat-bot.slice";
+import {
+  markMessageFailed,
+  removeMessage,
+  setMessages,
+  setQuota,
+} from "@/features/chatbot/redux/chat-bot.slice";
+import { toast } from "sonner";
 import { useStreamChat } from "@/features/chatbot/hooks/use-stream-chat";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 
@@ -169,6 +175,117 @@ describe("useChat", () => {
 
     expect(sendMessageMutation).toHaveBeenCalledWith({
       message: "hello",
+      clientMessageId: "test-id",
+    });
+  });
+
+  const assistantMessages = () =>
+    mockDispatch.mock.calls
+      .map(([action]) => action)
+      .filter(
+        (action) =>
+          action.type === "chatBot/addMessage" &&
+          action.payload.role === "assistant"
+      );
+
+  it("marks the user message as not sent when the stream reports offline", async () => {
+    mockUseStreamChat.mockReturnValue({
+      sendStreamMessage: jest
+        .fn()
+        .mockResolvedValue({ status: "network_error" }),
+      abortStream: jest.fn(),
+      isStreaming: false,
+    });
+
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.sendMessage("hello");
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(markMessageFailed("test-id"));
+    expect(assistantMessages()).toEqual([]);
+    expect(toast.error).toHaveBeenCalledWith("chatWidget.errors.network");
+  });
+
+  it("marks the user message as not sent when the REST call has no response", async () => {
+    mockUseSendMessageMutation.mockReturnValue([
+      jest.fn().mockReturnValue({
+        unwrap: () =>
+          Promise.reject({ message: "Network Error", data: "Network Error" }),
+      }),
+    ]);
+    mockUseStreamChat.mockReturnValue({
+      sendStreamMessage: jest.fn().mockResolvedValue({ status: "fallback" }),
+      abortStream: jest.fn(),
+      isStreaming: false,
+    });
+
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.sendMessage("hello");
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(markMessageFailed("test-id"));
+    expect(assistantMessages()).toEqual([]);
+  });
+
+  it("shows a localized message instead of raw English server errors", async () => {
+    mockUseSendMessageMutation.mockReturnValue([
+      jest.fn().mockReturnValue({
+        unwrap: () =>
+          Promise.reject({
+            status: 400,
+            data: { message: "Unable to process your message at this time." },
+          }),
+      }),
+    ]);
+    mockUseStreamChat.mockReturnValue({
+      sendStreamMessage: jest.fn().mockResolvedValue({ status: "fallback" }),
+      abortStream: jest.fn(),
+      isStreaming: false,
+    });
+
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.sendMessage("hello");
+    });
+
+    expect(assistantMessages()[0].payload.content).toBe(
+      "chatWidget.errors.systemBusy"
+    );
+  });
+
+  it("removes the failed bubble and sends its text again on resend", async () => {
+    const sendStreamMessage = jest
+      .fn()
+      .mockResolvedValue({ status: "started" });
+    mockUseStreamChat.mockReturnValue({
+      sendStreamMessage,
+      abortStream: jest.fn(),
+      isStreaming: false,
+    });
+
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.resendMessage(
+        {
+          id: "failed-1",
+          role: "user",
+          content: "hello again",
+          timestamp: "2026-11-21T00:00:00.000Z",
+          sendStatus: "failed",
+        },
+        { jobId: "job-1" }
+      );
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(removeMessage("failed-1"));
+    expect(sendStreamMessage).toHaveBeenCalledWith("hello again", {
+      jobId: "job-1",
       clientMessageId: "test-id",
     });
   });

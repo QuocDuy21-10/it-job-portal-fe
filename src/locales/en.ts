@@ -439,6 +439,11 @@ export const en = {
       loginRequired: "Please sign in to use AI Chat",
       maxLength: "Message cannot exceed 1000 characters",
       clearHistory: "Unable to clear chat history",
+      network: "No connection. Check your network and send the message again.",
+      quotaExceeded:
+        "You have used all chat messages for today. Please come back after the quota resets.",
+      messageNotSent: "Not sent",
+      resend: "Resend",
     },
   },
   jobDetailPage: {
