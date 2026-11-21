@@ -1,6 +1,6 @@
 import type { IChatQuotaStatus } from "@/shared/types/chat";
 
-// The backend writes user-facing chat errors as "Vietnamese / English".
+// The API now answers in Vietnamese only; older builds sent "Vietnamese / English".
 const BILINGUAL_SEPARATOR = " / ";
 
 export const getChatErrorText = (
@@ -14,11 +14,14 @@ export const getChatErrorText = (
   }
 
   const text = Array.isArray(message) ? message[0] : message;
-  const separatorIndex =
-    typeof text === "string" ? text.indexOf(BILINGUAL_SEPARATOR) : -1;
 
-  if (typeof text !== "string" || separatorIndex === -1) {
+  if (typeof text !== "string" || !text.trim()) {
     return t("chatWidget.errors.systemBusy");
+  }
+
+  const separatorIndex = text.indexOf(BILINGUAL_SEPARATOR);
+  if (separatorIndex === -1) {
+    return text.trim();
   }
 
   return (
