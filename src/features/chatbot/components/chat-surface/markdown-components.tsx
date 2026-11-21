@@ -24,6 +24,22 @@ export const markdownComponents = {
       {...props}
     />
   ),
+  // Images become links so the browser never loads a model-chosen URL (no reliance on CSP).
+  img: ({
+    node,
+    src,
+    alt,
+  }: React.ComponentPropsWithoutRef<"img"> & { node?: unknown }) =>
+    typeof src === "string" && src ? (
+      <a
+        href={src}
+        className="text-blue-600 hover:underline dark:text-blue-400"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {alt || src}
+      </a>
+    ) : null,
   p: ({
     node,
     ...props
