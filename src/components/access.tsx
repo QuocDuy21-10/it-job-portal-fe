@@ -3,6 +3,7 @@
 import React from "react";
 import { useAbility } from "@/lib/casl/casl-provider";
 import type { EAction, ESubject } from "@/lib/casl/ability";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface AccessProps {
   action: EAction;
@@ -17,9 +18,10 @@ export function Access({
   subject,
   hideChildren = false,
   children,
-  deniedMessage = "Bạn không có quyền truy cập tính năng này.",
+  deniedMessage,
 }: AccessProps) {
   const ability = useAbility();
+  const { t } = useI18n();
 
   const isAllowed = ability.can(action, subject);
 
@@ -51,9 +53,11 @@ export function Access({
           </svg>
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Truy cập bị từ chối
+          {t("adminShell.accessDeniedTitle")}
         </h3>
-        <p className="text-gray-600 max-w-md">{deniedMessage}</p>
+        <p className="text-gray-600 max-w-md">
+          {deniedMessage ?? t("adminShell.accessDeniedMessage")}
+        </p>
       </div>
     </div>
   );

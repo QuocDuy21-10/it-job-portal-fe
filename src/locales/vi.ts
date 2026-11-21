@@ -285,6 +285,9 @@ export const vi = {
   },
   adminShell: {
     panelTitle: "Bảng quản trị",
+    checkingAccess: "Đang kiểm tra quyền truy cập...",
+    accessDeniedTitle: "Truy cập bị từ chối",
+    accessDeniedMessage: "Bạn không có quyền truy cập tính năng này.",
     toggleMobileMenu: "Bật hoặc tắt menu di động",
     collapseSidebarAria: "Thu gọn thanh bên",
     expandSidebarAria: "Mở rộng thanh bên",

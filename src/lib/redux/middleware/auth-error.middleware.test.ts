@@ -2,23 +2,41 @@ import { toast } from "sonner";
 import { authErrorMiddleware } from "./auth-error.middleware";
 
 jest.mock("sonner", () => ({ toast: { error: jest.fn() } }));
+jest.mock("@/features/auth/redux/auth.api", () => ({
+  authApi: {
+    endpoints: {
+      getMe: {
+        initiate: jest.fn((arg: unknown, options: unknown) => ({
+          type: "getMe/initiate",
+          options,
+        })),
+      },
+    },
+  },
+}));
 
-const rejected = (payload: unknown) => ({
+const rejected = (payload: unknown, endpointName = "getUsers") => ({
   type: "api/executeQuery/rejected",
   payload,
-  meta: { requestId: "1", requestStatus: "rejected", rejectedWithValue: true },
+  meta: {
+    requestId: "1",
+    requestStatus: "rejected",
+    rejectedWithValue: true,
+    arg: { endpointName },
+  },
 });
+
+const dispatch = jest.fn();
 
 const run = (action: unknown) => {
   const next = jest.fn();
-  authErrorMiddleware({ dispatch: jest.fn(), getState: jest.fn() })(next)(
-    action
-  );
+  authErrorMiddleware({ dispatch, getState: jest.fn() })(next)(action);
   return next;
 };
 
 describe("authErrorMiddleware", () => {
   beforeEach(() => {
+    dispatch.mockClear();
     jest.mocked(toast.error).mockClear();
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
@@ -37,6 +55,21 @@ describe("authErrorMiddleware", () => {
       { id: "forbidden-error-" }
     );
     expect(next).toHaveBeenCalled();
+  });
+
+  it("reloads the current user on 403 so a changed role reaches the guards", () => {
+    run(rejected({ status: 403 }));
+
+    expect(dispatch).toHaveBeenCalledWith({
+      type: "getMe/initiate",
+      options: { forceRefetch: true, subscribe: false },
+    });
+  });
+
+  it("does not reload the user when /auth/me itself returns 403", () => {
+    run(rejected({ status: 403 }, "getMe"));
+
+    expect(dispatch).not.toHaveBeenCalled();
   });
 
   it("shows the Vietnamese 500 message on a Vietnamese page", () => {

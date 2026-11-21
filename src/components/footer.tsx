@@ -4,9 +4,18 @@ import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import Image from "next/image";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
+import { useAppSelector } from "@/lib/redux/hooks";
+import {
+  selectIsAdmin,
+  selectIsAuthenticated,
+} from "@/features/auth/redux/auth.slice";
 
 export function Footer() {
   const { t, mounted: i18nMounted } = useI18n();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAdmin = useAppSelector(selectIsAdmin);
+  // /admin only bounces a signed-in candidate back home, so the link is for guests (login) and staff.
+  const showPostAJob = !isAuthenticated || isAdmin;
 
   return (
     <footer className="mt-auto border-t bg-background relative overflow-hidden">
@@ -110,14 +119,16 @@ export function Footer() {
               {i18nMounted ? t("footer.forEmployers") : " For Employers"}
             </h3>
             <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/admin"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.postAJob") : " Post a Job"}
-                </Link>
-              </li>
+              {showPostAJob && (
+                <li>
+                  <Link
+                    href="/admin"
+                    className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
+                  >
+                    {i18nMounted ? t("footer.postAJob") : " Post a Job"}
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   href="#"
