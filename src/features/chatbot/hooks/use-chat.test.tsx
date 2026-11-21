@@ -231,13 +231,13 @@ describe("useChat", () => {
     expect(assistantMessages()).toEqual([]);
   });
 
-  it("shows a localized message instead of raw English server errors", async () => {
+  it("shows the backend error message in the assistant bubble", async () => {
     mockUseSendMessageMutation.mockReturnValue([
       jest.fn().mockReturnValue({
         unwrap: () =>
           Promise.reject({
             status: 400,
-            data: { message: "Unable to process your message at this time." },
+            data: { message: "Tin nhắn cần có chữ hoặc số." },
           }),
       }),
     ]);
@@ -254,7 +254,7 @@ describe("useChat", () => {
     });
 
     expect(assistantMessages()[0].payload.content).toBe(
-      "chatWidget.errors.systemBusy"
+      "Tin nhắn cần có chữ hoặc số."
     );
   });
 

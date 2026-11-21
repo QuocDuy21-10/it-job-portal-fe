@@ -30,11 +30,21 @@ describe("getChatErrorText", () => {
     );
   });
 
-  it("falls back to the busy message for English-only or missing messages", () => {
-    expect(getChatErrorText("AI service is currently busy.", "vi", t)).toBe(
+  it("shows a single-language backend message as it is", () => {
+    expect(
+      getChatErrorText(
+        "Tin nhắn có chứa chỉ thị mà chatbot không thể xử lý.",
+        "vi",
+        t
+      )
+    ).toBe("Tin nhắn có chứa chỉ thị mà chatbot không thể xử lý.");
+  });
+
+  it("falls back to the busy message when there is no message", () => {
+    expect(getChatErrorText(undefined, "vi", t)).toBe(
       "chatWidget.errors.systemBusy"
     );
-    expect(getChatErrorText(undefined, "vi", t)).toBe(
+    expect(getChatErrorText("  ", "vi", t)).toBe(
       "chatWidget.errors.systemBusy"
     );
   });
