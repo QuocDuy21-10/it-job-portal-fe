@@ -24,6 +24,7 @@ interface ChatMessageItemProps {
     messageId: string,
     pendingToolAction: IChatToolAction
   ) => Promise<void>;
+  onResend?: (message: IMessage) => void;
 }
 
 const ChatMessageItem = ({
@@ -33,6 +34,7 @@ const ChatMessageItem = ({
   activeToolActionId,
   onConfirmPendingToolAction: handleConfirmPendingToolAction,
   onCancelPendingToolAction: handleCancelPendingToolAction,
+  onResend: handleResend,
 }: ChatMessageItemProps) => {
   const { t } = useI18n();
 
@@ -118,6 +120,19 @@ const ChatMessageItem = ({
             </div>
           </div>
         )}
+
+      {message.role === "user" && message.sendStatus === "failed" && (
+        <div className="flex items-center gap-2 px-1 text-xs text-destructive">
+          <span>{t("chatWidget.errors.messageNotSent")}</span>
+          <button
+            type="button"
+            className="font-medium underline hover:no-underline"
+            onClick={() => handleResend?.(message)}
+          >
+            {t("chatWidget.errors.resend")}
+          </button>
+        </div>
+      )}
 
       {message.id !== streamingMessageId && (
         <span className="px-1 text-xs text-gray-400">

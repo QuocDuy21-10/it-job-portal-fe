@@ -443,6 +443,11 @@ export const vi = {
       loginRequired: "Vui lòng đăng nhập để sử dụng AI Chat",
       maxLength: "Tin nhắn không được vượt quá 1000 ký tự",
       clearHistory: "Không thể xóa lịch sử chat",
+      network: "Mất kết nối. Hãy kiểm tra mạng rồi gửi lại tin nhắn.",
+      quotaExceeded:
+        "Bạn đã dùng hết lượt chat hôm nay. Vui lòng quay lại sau khi hạn mức được làm mới.",
+      messageNotSent: "Chưa gửi được",
+      resend: "Gửi lại",
     },
   },
   jobDetailPage: {

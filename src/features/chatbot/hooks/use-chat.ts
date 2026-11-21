@@ -17,7 +17,13 @@ import {
   useClearChatHistoryMutation,
 } from "@/features/chatbot/redux/chat-bot.api";
 import {
+  getChatErrorText,
+  isChatNetworkError,
+} from "@/features/chatbot/lib/chat-error.utils";
+import {
   addMessage,
+  markMessageFailed,
+  removeMessage,
   setMessages,
   clearMessages,
   setIsTyping,
@@ -41,25 +47,12 @@ interface SendMessageOptions {
   jobId?: string;
 }
 
-const getErrorMessage = (error: any, t: (key: string) => string): string => {
-  const defaultErrorMessage = t("chatWidget.errors.systemBusy");
-  const message = error?.data?.message ?? error?.data?.error ?? error?.message;
-
-  if (Array.isArray(message)) {
-    return message[0] || defaultErrorMessage;
-  }
-
-  return typeof message === "string" && message.trim()
-    ? message
-    : defaultErrorMessage;
-};
-
 const getErrorQuota = (error: any) =>
   normalizeChatQuotaStatus(error?.data?.quota ?? error?.data?.data?.quota);
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const {
     messages,
     isTyping,
@@ -188,6 +181,12 @@ export const useChat = () => {
         clientMessageId: userMessage.id,
       });
 
+      if (streamResult.status === "network_error") {
+        dispatch(markMessageFailed(userMessage.id));
+        toast.error(t("chatWidget.errors.network"));
+        return;
+      }
+
       if (streamResult.status !== "fallback") {
         return;
       }
@@ -216,8 +215,19 @@ export const useChat = () => {
       } catch (error: any) {
         console.error("Failed to send message:", error);
 
-        const errorMessageText = getErrorMessage(error, t);
+        if (isChatNetworkError(error)) {
+          dispatch(markMessageFailed(userMessage.id));
+          toast.error(t("chatWidget.errors.network"));
+          return;
+        }
+
         const errorQuota = getErrorQuota(error);
+        const errorMessageText = getChatErrorText(
+          error?.data?.message ?? error?.data?.error,
+          language,
+          t,
+          errorQuota
+        );
         const errorMessage: IMessage = {
           id: uuidv4(),
           role: "assistant",
@@ -236,7 +246,22 @@ export const useChat = () => {
         dispatch(setIsTyping(false));
       }
     },
-    [dispatch, sendMessageMutation, sendStreamMessage, isAuthenticated]
+    [
+      dispatch,
+      sendMessageMutation,
+      sendStreamMessage,
+      isAuthenticated,
+      language,
+      t,
+    ]
+  );
+
+  const resendMessage = useCallback(
+    (message: IMessage, options?: SendMessageOptions) => {
+      dispatch(removeMessage(message.id));
+      return sendMessage(message.content, options);
+    },
+    [dispatch, sendMessage]
   );
 
   const clearChat = useCallback(async () => {
@@ -338,6 +363,7 @@ export const useChat = () => {
 
     // Actions
     sendMessage,
+    resendMessage,
     loadHistory,
     clearChat,
     confirmPendingToolAction,

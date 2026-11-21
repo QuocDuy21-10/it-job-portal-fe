@@ -5,6 +5,8 @@ import chatBotReducer, {
   clearMessages,
   finalizeStream,
   getActiveChatQuotaStatus,
+  markMessageFailed,
+  removeMessage,
   setQuota,
   startStreaming,
 } from "@/features/chatbot/redux/chat-bot.slice";
@@ -92,5 +94,19 @@ describe("chat bot slice", () => {
     );
     expect(finalizedState.streamingMessageId).toBeNull();
     expect(finalizedState.streamingContent).toBe("");
+  });
+
+  it("marks a user message as failed and removes it on resend", () => {
+    const message = {
+      id: "m-1",
+      role: "user" as const,
+      content: "hello",
+      timestamp: "2026-11-21T00:00:00.000Z",
+    };
+    const added = chatBotReducer(undefined, addMessage(message));
+    const failed = chatBotReducer(added, markMessageFailed("m-1"));
+
+    expect(failed.messages[0].sendStatus).toBe("failed");
+    expect(chatBotReducer(failed, removeMessage("m-1")).messages).toEqual([]);
   });
 });

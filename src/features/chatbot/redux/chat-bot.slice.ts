@@ -109,6 +109,19 @@ const chatBotSlice = createSlice({
       state.messages.push(action.payload);
     },
 
+    markMessageFailed: (state, action: PayloadAction<string>) => {
+      const message = state.messages.find((item) => item.id === action.payload);
+      if (message) {
+        message.sendStatus = "failed";
+      }
+    },
+
+    removeMessage: (state, action: PayloadAction<string>) => {
+      state.messages = state.messages.filter(
+        (item) => item.id !== action.payload
+      );
+    },
+
     // Thêm nhiều tin nhắn (dùng khi load history)
     setMessages: (state, action: PayloadAction<IMessage[]>) => {
       state.messages = action.payload;
@@ -252,6 +265,8 @@ const chatBotSlice = createSlice({
 
 export const {
   addMessage,
+  markMessageFailed,
+  removeMessage,
   setMessages,
   clearMessages,
   setIsTyping,

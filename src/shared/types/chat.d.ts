@@ -45,6 +45,8 @@ export interface IChatTransportMessage extends IChatRecommendationMetadata {
 export interface IMessage extends IChatTransportMessage {
   id: string;
   isLoading?: boolean;
+  /** Set on a user message that never reached the server (offline). */
+  sendStatus?: "failed";
 }
 
 export interface ISendMessageRequest {
