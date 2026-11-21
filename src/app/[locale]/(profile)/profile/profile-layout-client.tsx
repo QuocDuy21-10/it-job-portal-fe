@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import ChatWidget from "@/features/chatbot/components/chat-widget";
@@ -8,6 +10,9 @@ import ProfileSidebar from "@/features/profile/components/profile-sidebar";
 import ProfileBottomNav from "@/features/profile/components/profile-bottom-nav";
 import { PendingDeletionBanner } from "@/features/profile/components/pending-deletion-banner";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
+import { useAuth } from "@/hooks/use-auth";
+import { getPathname, usePathname } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
 export function ProfileLayoutClient({
@@ -18,6 +23,25 @@ export function ProfileLayoutClient({
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const { data: meData } = useGetMeQuery();
   const scheduledDeletionAt = meData?.data?.user?.scheduledDeletionAt;
+  const router = useRouter();
+  const locale = useLocale() as AppLocale;
+  const pathname = usePathname();
+  const { isAuthenticated, isLoading, isRehydrated } = useAuth();
+  // Wait for the persisted auth state so a signed-in reload is not bounced to login.
+  const isGuest = isRehydrated && !isLoading && !isAuthenticated;
+
+  useEffect(() => {
+    if (!isGuest) return;
+    router.replace(
+      getPathname({
+        locale,
+        href: { pathname: "/login", query: { returnUrl: pathname } },
+      })
+    );
+  }, [isGuest, locale, pathname, router]);
+
+  // Covers Back after logout: no guest shell of the profile page.
+  if (isGuest) return null;
 
   return (
     <>

@@ -45,7 +45,7 @@ src/
 └── locales/                    # Translation files (en.ts, vi.ts)
 ```
 
-**Route protection**: `AdminRoute` (SUPER ADMIN or HR) guards `(dashboard)` and also sends a role away from an admin page whose `ADMIN_NAVIGATION` subject it cannot read (HR on `/admin/users` → `/admin` → `/hr/dashboard`); a 403 from any API refetches `/auth/me` so a changed role reaches the guards, `HrRoute` (HR only) guards `(hr-dashboard)`, and `(auth)/layout.tsx` redirects signed-in users. `/profile` has no frontend guard. These guards only steer the UI; the backend enforces access.  
+**Route protection**: `AdminRoute` (SUPER ADMIN or HR) guards `(dashboard)` and also sends a role away from an admin page whose `ADMIN_NAVIGATION` subject it cannot read (HR on `/admin/users` → `/admin` → `/hr/dashboard`); a 403 from any API refetches `/auth/me` so a changed role reaches the guards, `HrRoute` (HR only) guards `(hr-dashboard)`, and `(auth)/layout.tsx` redirects signed-in users. `(profile)/profile/profile-layout-client.tsx` sends guests to `/login?returnUrl=…`. These guards only steer the UI; the backend enforces access.  
 **Path alias**: `@/*` → `src/*`
 
 ## Common Commands
