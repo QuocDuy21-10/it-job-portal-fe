@@ -7,12 +7,32 @@ Các trang công khai của DevLink được dựng metadata trên server để 
 Mỗi `page.tsx` công khai export `generateMetadata`. Hầu hết gọi hàm `buildLocalizedPageMetadata` trong `src/shared/constants/seo.ts`, hàm này tạo ra:
 
 - `title`, `description`, `keywords`
-- `alternates.canonical` và `alternates.languages` (gồm cả `x-default` trỏ tới tiếng Anh)
-- Open Graph và Twitter Card; nếu không có ảnh riêng thì dùng `/images/logo.png`
+- Trang được lập chỉ mục: `alternates.canonical` và `alternates.languages` (gồm cả `x-default` trỏ tới tiếng Anh)
+- Trang truyền `indexable: false`: `robots: noindex, follow`, không có canonical và hreflang
+- Open Graph và Twitter Card; nếu trang không có ảnh riêng thì dùng `/images/og-default.png` (1200×630)
 
 Tiêu đề và mô tả đến từ bản dịch (`getTranslations`) hoặc từ dữ liệu của chính trang đó, ví dụ tên việc làm. Hàm `toMetadataDescription` xóa thẻ HTML, giải mã một số ký tự đặc biệt và cắt mô tả còn tối đa 160 ký tự.
 
-Layout theo ngôn ngữ đặt metadata mặc định cho cả site, với `robots: { index: true, follow: true }`.
+Layout theo ngôn ngữ đặt `title.template` là `%s | DevLink`, nên tiêu đề trang con có đuôi thương hiệu. Trang chủ dùng `title.absolute` vì tiêu đề đã bắt đầu bằng DevLink. Layout không đặt `robots`; mặc định trang được lập chỉ mục.
+
+Trang chi tiết việc làm dùng mô tả dựng từ dữ kiện (công ty, địa điểm, lương, cấp bậc, hình thức, hạn nộp) bằng `buildJobFactsDescription` trong `src/lib/seo/json-ld.tsx`.
+
+## Trang không được lập chỉ mục
+
+| Trang | Cách chặn |
+| --- | --- |
+| Đăng nhập, đăng ký, khôi phục mật khẩu, xác minh email, `/admin`, `/hr`, `/profile`, `/account` | Middleware gửi header `X-Robots-Tag: noindex, nofollow`; danh sách tiền tố ở `src/shared/constants/private-routes.ts` |
+| `/jobs` có tìm kiếm, bộ lọc, nguồn, cách sắp xếp hoặc số mục khác mặc định; `/companies` có tìm kiếm hoặc số mục khác mặc định | `noindex, follow`, không có canonical |
+| `/terms`, `/privacy` khi nội dung còn là bản nháp (`draftNotice`) | `noindex, follow` |
+| `/jobs/external/[id]` | `noindex, nofollow`, xem bên dưới |
+
+Robots.txt không chặn các trang trên, vì Google chỉ đọc được `noindex` của trang mà nó được phép tải. `noindex` không thay cho kiểm soát truy cập: backend vẫn là nơi chặn người không có quyền.
+
+Trang `/jobs?page=N` hoặc `/companies?page=N` với N lớn hơn số trang hiện có trả 404.
+
+## Lỗi backend trên trang chi tiết
+
+`fetchPublicJobById`, `fetchPublicCompanyById` và `fetchPublicExternalJobById` chỉ trả `null` (trang trả 404) khi backend trả 404 hoặc 400. Lỗi khác, lỗi mạng hoặc chờ quá 10 giây thì hàm ném lỗi và trang trả 500. Lý do: Google bỏ URL trả 404 khỏi chỉ mục ngay, còn URL trả 5xx được giữ lại một thời gian.
 
 ## Trang được render lúc nào
 
@@ -44,21 +64,15 @@ Hàm `getSiteUrl` đọc biến `NEXT_PUBLIC_SITE_URL`. Khi biến này trống,
 
 ## Sitemap
 
-`src/app/sitemap.ts` gồm ba nhóm địa chỉ, đều ở dạng ngôn ngữ mặc định kèm danh sách `alternates.languages`:
+`src/app/sitemap.ts` gồm ba trang tĩnh (`/`, `/jobs`, `/companies`), mọi việc làm công khai và mọi công ty, đều ở dạng ngôn ngữ mặc định kèm `alternates.languages`. Hai hàm `fetchAllPublicJobs` và `fetchAllPublicCompanies` lấy lần lượt từng trang 100 mục (giới hạn của backend) cho tới trang cuối.
 
-| Nhóm | Nguồn |
-| --- | --- |
-| Trang tĩnh: `/`, `/jobs`, `/companies` | Danh sách `PUBLIC_SITEMAP_PATHS` |
-| Việc làm nội bộ | Tối đa 1000 việc làm đầu tiên lấy từ backend |
-| Công ty | Tối đa 500 công ty đầu tiên lấy từ backend |
+`lastmod` của việc làm và công ty lấy từ `updatedAt` (hoặc `createdAt`). `/` và `/jobs` lấy ngày mới nhất của việc làm, `/companies` lấy ngày mới nhất của công ty. Không có `changefreq` và `priority` vì Google bỏ qua hai trường này.
 
-Sitemap **không** chứa việc làm bên ngoài. Khi backend không trả lời, hàm lấy dữ liệu trả về `null` và hai nhóm việc làm, công ty bị bỏ qua mà không báo lỗi: sitemap chạy thử không có backend chỉ còn ba địa chỉ trang tĩnh. Vì vậy cần kiểm tra sitemap thật sau khi triển khai, đừng chỉ dựa vào việc nó trả mã 200.
+Sitemap render theo từng request (`connection()`); dữ liệu vẫn dùng cache của từng lời gọi. Khi backend lỗi, `/sitemap.xml` trả 500 thay vì một danh sách thiếu việc làm. Sitemap **không** chứa việc làm bên ngoài. Một file sitemap chứa tối đa 50.000 địa chỉ; vượt mức đó thì cần tách bằng `generateSitemaps`.
 
 ## Robots
 
-`src/app/robots.ts` cho phép mọi trang trừ các tiền tố riêng tư, mỗi tiền tố được thêm cho cả hai ngôn ngữ: `/admin`, `/profile`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/verify-email`, `/account`. Robots cũng khai báo địa chỉ sitemap.
-
-Lưu ý: danh sách này không chứa `/hr`, nên trang `/hr/dashboard` không bị chặn qua robots. Đây là mô tả hiện trạng, không phải đánh giá bảo mật; trang vẫn yêu cầu đăng nhập vai trò `HR` ở frontend.
+`src/app/robots.ts` cho phép mọi trang, chỉ chặn `/api/`, và khai báo địa chỉ sitemap. Các trang riêng tư không nằm trong robots.txt mà được gắn `noindex` qua header, xem mục "Trang không được lập chỉ mục" ở trên.
 
 ## Vì sao việc làm bên ngoài là `noindex`
 
@@ -72,11 +86,21 @@ Code chỉ ghi chú ngắn về ý định; không có tài liệu thiết kế 
 
 ## Dữ liệu có cấu trúc
 
-Hàm `serializeJsonLd` trong `seo.ts` biến dữ liệu thành chuỗi JSON-LD và thay ký tự `<` bằng `<` để không đóng sớm thẻ `<script>` khi nhúng vào HTML.
+Các hàm dựng JSON-LD nằm trong `src/lib/seo/json-ld.tsx`; component `JsonLd` in thẻ `<script type="application/ld+json">` qua `serializeJsonLd`, hàm này thay `<` bằng `\u003c` để dữ liệu không đóng sớm thẻ `<script>`.
+
+| Trang | Dữ liệu |
+| --- | --- |
+| Trang chủ | `WebSite` và `Organization` (tên site cho Google) |
+| Chi tiết việc làm | `JobPosting` và `BreadcrumbList` |
+| Chi tiết công ty | `Organization` và `BreadcrumbList` |
+
+`JobPosting` theo quy định của Google: mô tả là HTML đầy đủ đã làm sạch; `datePosted` là ngày duyệt tin; `employmentType` bỏ trống với `Remote` và `Hybrid` thay vì đoán; `jobLocationType: TELECOMMUTE` chỉ cho `Remote`; `baseSalary` chỉ khi lương lớn hơn 0. Tin hết hạn không cần xử lý ở frontend vì backend trả 404 cho tin đã quá `endDate`, đã tắt hoặc chưa duyệt.
 
 ## Source code liên quan
 
-- [`src/shared/constants/seo.ts`](../../src/shared/constants/seo.ts): metadata, canonical, đa ngôn ngữ, JSON-LD
+- [`src/shared/constants/seo.ts`](../../src/shared/constants/seo.ts): metadata, canonical, đa ngôn ngữ
+- [`src/shared/constants/private-routes.ts`](../../src/shared/constants/private-routes.ts): danh sách trang riêng tư được gắn `noindex`
+- [`src/lib/seo/json-ld.tsx`](../../src/lib/seo/json-ld.tsx): dữ liệu có cấu trúc
 - [`src/app/sitemap.ts`](../../src/app/sitemap.ts): tạo sitemap
 - [`src/app/robots.ts`](../../src/app/robots.ts): quy tắc robots
 - [`src/app/[locale]/layout.tsx`](../../src/app/[locale]/layout.tsx): metadata mặc định cho cả site

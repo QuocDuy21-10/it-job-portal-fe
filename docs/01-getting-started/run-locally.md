@@ -37,9 +37,9 @@ Quy tắc tiền tố ngôn ngữ và bảng đầy đủ các route nằm ở [
 | --- | --- | --- |
 | `/`, `/vi`, `/jobs`, `/companies` | 200 | Trang được render; dữ liệu công khai không lấy được |
 | `/login` | 200 | HTML chứa lỗi Google nếu thiếu Client ID, xem [Khắc phục sự cố](troubleshooting.md) |
-| `/admin`, `/hr/dashboard`, `/profile` | 200 | Máy chủ vẫn trả khung trang; việc chuyển hướng người chưa đăng nhập do guard chạy ở trình duyệt |
+| `/admin`, `/hr/dashboard`, `/profile` | 200 | Máy chủ vẫn trả khung trang; việc chuyển hướng người chưa đăng nhập do guard chạy ở trình duyệt; phản hồi có header `X-Robots-Tag: noindex, nofollow` |
 | `/robots.txt` | 200 | Bình thường |
-| `/sitemap.xml` | 200 | Chỉ có ba địa chỉ trang tĩnh, không có việc làm hay công ty |
+| `/sitemap.xml` | 500 | Không có backend nên sitemap báo lỗi thay vì trả danh sách thiếu |
 | `/api/proxy-image` | 400 | `{"error":"Image URL is required"}` vì thiếu tham số `url` |
 
 Lần đầu mở mỗi trang chậm hơn vì Next.js biên dịch theo yêu cầu (trang đầu mất khoảng 9,6 giây, các trang sau 0,2 đến 3 giây).

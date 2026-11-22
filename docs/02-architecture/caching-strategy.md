@@ -47,9 +47,9 @@ Sơ đồ cho thấy hai đường độc lập: request từ trình duyệt kh�
 | `fetchPublicCompanies`, `fetchPublicCompanyById`, `fetchPublicTopHiringCompanies` | 3600 giây |
 | `fetchPublicExternalJobById` | 3600 giây |
 
-Dữ liệu mà trang công khai thấy ban đầu có thể cũ đúng bằng khoảng thời gian đó. Khi lời gọi lỗi hoặc backend trả mã không thành công, hàm trả về `null` thay vì ném lỗi, và trang xử lý như không có dữ liệu.
+Dữ liệu mà trang công khai thấy ban đầu có thể cũ đúng bằng khoảng thời gian đó. Các hàm lấy danh sách (`fetchPublicJobs`, `fetchPublicCompanies`, `fetchPublicJobSearch`, `fetchPublicTopHiringCompanies`) trả `null` khi lỗi để trang tự lấy lại ở trình duyệt. Các hàm lấy một mục (`fetchPublicJobById`, `fetchPublicCompanyById`, `fetchPublicExternalJobById`) chỉ trả `null` khi backend trả 404 hoặc 400; lỗi khác hoặc chờ quá 10 giây thì ném lỗi để trang trả 500.
 
-`sitemap.xml` gọi `fetchPublicJobs` và `fetchPublicCompanies`, nên Next.js làm mới nó theo thời gian ngắn hơn trong hai hàm: 60 giây.
+`sitemap.xml` render theo từng request và gọi `fetchAllPublicJobs`, `fetchAllPublicCompanies`; dữ liệu dùng cache 60 giây (việc làm) và 1 giờ (công ty) của từng lời gọi.
 
 Các hàm như `fetchPublicJobById` được bọc thêm `cache()` của React, để cùng một lần render, `generateMetadata` và component trang gọi cùng một địa chỉ mà chỉ phát sinh một lời gọi.
 

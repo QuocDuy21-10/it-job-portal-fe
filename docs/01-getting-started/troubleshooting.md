@@ -15,16 +15,16 @@ Trang này chỉ liệt kê các tình huống đã gặp thật khi chạy dự
 - **Nguyên nhân:** cùng nguyên nhân trên; `google-oauth-provider.tsx` ghi `console.error` mỗi lần render khi thiếu biến.
 - **Xử lý:** đặt biến. Nếu bạn không dùng đăng nhập Google, có thể bỏ qua dòng này ở các trang khác ngoài `/login`.
 
-### Sitemap chỉ có ba địa chỉ
+### Sitemap trả 500
 
-- **Dấu hiệu:** `/sitemap.xml` trả 200 nhưng chỉ có `/`, `/jobs`, `/companies`.
-- **Nguyên nhân:** không kết nối được backend. Hàm lấy dữ liệu trả `null` mà không báo lỗi nên sitemap bỏ qua việc làm và công ty.
+- **Dấu hiệu:** `/sitemap.xml` trả 500.
+- **Nguyên nhân:** không kết nối được backend. Sitemap báo lỗi thay vì trả danh sách thiếu việc làm và công ty.
 - **Xử lý:** chạy backend ở `localhost:8081`. Xem [Rendering và SEO](../02-architecture/rendering-and-seo.md).
 
 ### Robots và sitemap trỏ về `localhost:3000`
 
 - **Nguyên nhân:** chưa đặt `NEXT_PUBLIC_SITE_URL`, nên dùng giá trị dự phòng.
-- **Xử lý:** đặt biến này. Đã kiểm tra: đặt xong thì `Host`, `Sitemap` và `<loc>` đổi theo.
+- **Xử lý:** đặt biến này. Đã kiểm tra: đặt xong thì `Sitemap` và `<loc>` đổi theo.
 
 ### `next build` không báo lỗi lint nhưng `npm run lint` có cảnh báo
 
