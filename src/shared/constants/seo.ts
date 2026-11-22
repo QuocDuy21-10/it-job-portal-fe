@@ -22,17 +22,6 @@ export const PUBLIC_SITEMAP_PATHS = [
   },
 ] as const;
 
-const PRIVATE_ROUTE_PREFIXES = [
-  "/admin",
-  "/profile",
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-  "/verify-email",
-  "/account",
-] as const;
-
 const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
   en: "en_US",
   vi: "vi_VN",
@@ -87,16 +76,6 @@ export const getAlternateLanguageUrls = (pathname: string) => {
     ...localizedUrls,
     ["x-default", getLocalizedUrl(pathname, routing.defaultLocale)],
   ]) as Record<string, string>;
-};
-
-export const getRobotsDisallowPaths = () => {
-  return Array.from(
-    new Set(
-      PRIVATE_ROUTE_PREFIXES.flatMap((pathname) =>
-        routing.locales.map((locale) => getLocalizedPath(pathname, locale))
-      )
-    )
-  );
 };
 
 type BuildLocalizedPageMetadataOptions = {
