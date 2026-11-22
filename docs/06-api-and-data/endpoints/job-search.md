@@ -4,7 +4,7 @@ Trang này liệt kê hai endpoint tìm kiếm hợp nhất trong `job.api.ts` v
 
 ## Vì sao có cả hook lẫn `fetch`
 
-Trang `/jobs` phải có dữ liệu ngay khi render trên server để có nội dung cho công cụ tìm kiếm và để người dùng không thấy trang trống. Vì vậy lần tải đầu dùng `fetch` phía server. Khi người dùng đổi bộ lọc, trình duyệt gọi lại bằng RTK Query. Hai đường này gọi cùng route backend nhưng độc lập về cache; xem [Chiến lược cache](../../02-architecture/caching-strategy.md).
+Trang `/viec-lam` phải có dữ liệu ngay khi render trên server để có nội dung cho công cụ tìm kiếm và để người dùng không thấy trang trống. Vì vậy lần tải đầu dùng `fetch` phía server. Khi người dùng đổi bộ lọc, trình duyệt gọi lại bằng RTK Query. Hai đường này gọi cùng route backend nhưng độc lập về cache; xem [Chiến lược cache](../../02-architecture/caching-strategy.md).
 
 ## Bảng endpoint
 

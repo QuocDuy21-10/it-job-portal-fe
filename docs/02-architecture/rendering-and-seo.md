@@ -7,7 +7,7 @@ Các trang công khai của DevLink được dựng metadata trên server để 
 Mỗi `page.tsx` công khai export `generateMetadata`. Hầu hết gọi hàm `buildLocalizedPageMetadata` trong `src/shared/constants/seo.ts`, hàm này tạo ra:
 
 - `title`, `description`, `keywords`
-- Trang được lập chỉ mục: `alternates.canonical` và `alternates.languages` (gồm cả `x-default` trỏ tới tiếng Anh)
+- Trang được lập chỉ mục: `alternates.canonical` và `alternates.languages` (gồm cả `x-default` trỏ tới tiếng Việt). Các hàm `getLocalizedPath`, `getLocalizedUrl`, `getAlternateLanguageUrls` nhận route nội bộ và dịch bằng `getPathname` của next-intl, nên canonical, hreflang, JSON-LD và sitemap dùng đúng địa chỉ mà ứng dụng liên kết tới
 - Trang truyền `indexable: false`: `robots: noindex, follow`, không có canonical và hreflang
 - Open Graph và Twitter Card; nếu trang không có ảnh riêng thì dùng `/images/og-default.png` (1200×630)
 
@@ -22,13 +22,13 @@ Trang chi tiết việc làm dùng mô tả dựng từ dữ kiện (công ty, �
 | Trang | Cách chặn |
 | --- | --- |
 | Đăng nhập, đăng ký, khôi phục mật khẩu, xác minh email, `/admin`, `/hr`, `/profile`, `/account` | Middleware gửi header `X-Robots-Tag: noindex, nofollow`; danh sách tiền tố ở `src/shared/constants/private-routes.ts` |
-| `/jobs` có tìm kiếm, bộ lọc, nguồn, cách sắp xếp hoặc số mục khác mặc định; `/companies` có tìm kiếm hoặc số mục khác mặc định | `noindex, follow`, không có canonical |
-| `/terms`, `/privacy` khi nội dung còn là bản nháp (`draftNotice`) | `noindex, follow` |
-| `/jobs/external/[id]` | `noindex, nofollow`, xem bên dưới |
+| `/viec-lam` có tìm kiếm, bộ lọc, nguồn, cách sắp xếp hoặc số mục khác mặc định; `/cong-ty` có tìm kiếm hoặc số mục khác mặc định | `noindex, follow`, không có canonical |
+| `/dieu-khoan-su-dung`, `/chinh-sach-bao-mat` khi nội dung còn là bản nháp (`draftNotice`) | `noindex, follow` |
+| `/viec-lam/nguon-ngoai/[id]` | `noindex, nofollow`, xem bên dưới |
 
 Robots.txt không chặn các trang trên, vì Google chỉ đọc được `noindex` của trang mà nó được phép tải. `noindex` không thay cho kiểm soát truy cập: backend vẫn là nơi chặn người không có quyền.
 
-Trang `/jobs?page=N` hoặc `/companies?page=N` với N lớn hơn số trang hiện có trả 404.
+Trang `/viec-lam?page=N` hoặc `/cong-ty?page=N` với N lớn hơn số trang hiện có trả 404.
 
 ## Lỗi backend trên trang chi tiết
 
@@ -64,7 +64,7 @@ Hàm `getSiteUrl` đọc biến `NEXT_PUBLIC_SITE_URL`. Khi biến này trống,
 
 ## Sitemap
 
-`src/app/sitemap.ts` gồm ba trang tĩnh (`/`, `/jobs`, `/companies`), mọi việc làm công khai và mọi công ty, đều ở dạng ngôn ngữ mặc định kèm `alternates.languages`. Hai hàm `fetchAllPublicJobs` và `fetchAllPublicCompanies` lấy lần lượt từng trang 100 mục (giới hạn của backend) cho tới trang cuối.
+`src/app/sitemap.ts` gồm ba trang tĩnh (`/`, `/viec-lam`, `/cong-ty`), mọi việc làm công khai và mọi công ty, đều ở dạng tiếng Việt (ngôn ngữ mặc định), trang chi tiết dạng `{slug}-{id}`, kèm `alternates.languages`. Hai hàm `fetchAllPublicJobs` và `fetchAllPublicCompanies` lấy lần lượt từng trang 100 mục (giới hạn của backend) cho tới trang cuối.
 
 `lastmod` của việc làm và công ty lấy từ `updatedAt` (hoặc `createdAt`). `/` và `/jobs` lấy ngày mới nhất của việc làm, `/companies` lấy ngày mới nhất của công ty. Không có `changefreq` và `priority` vì Google bỏ qua hai trường này.
 

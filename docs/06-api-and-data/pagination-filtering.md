@@ -53,7 +53,7 @@ Danh sách công ty công khai lọc theo tên bằng `name=/<từ khóa>/i`, do
 
 ## Kiểu 2: tìm việc hợp nhất
 
-Trạng thái của trang `/jobs` được giữ trong URL, đọc bằng `parseJobListSearchParams`, rồi đổi thành tham số API bằng `buildJobSearchParams`. Giá trị lạ trong URL bị thay bằng mặc định.
+Trạng thái của trang `/viec-lam` được giữ trong URL, đọc bằng `parseJobListSearchParams`, rồi đổi thành tham số API bằng `buildJobSearchParams`. Giá trị lạ trong URL bị thay bằng mặc định.
 
 | Tham số URL | Giá trị chấp nhận | Tham số API | Ghi chú |
 | --- | --- | --- | --- |
@@ -91,7 +91,7 @@ Hai component cùng tồn tại:
 
 | Component | Props chính | Dùng ở |
 | --- | --- | --- |
-| `SimplePagination` | `page`, `totalPages`, `onPageChange` | Trang `/jobs`, lấy `totalPages` từ `meta.pagination.total_pages` |
+| `SimplePagination` | `page`, `totalPages`, `onPageChange` | Trang `/viec-lam`, lấy `totalPages` từ `meta.pagination.total_pages` |
 | `Pagination` | `currentPage`, `pageSize`, `totalItems`, `onPageChange`, `onPageSizeChange` | Tự tính số trang bằng `Math.ceil(totalItems / pageSize)` |
 
 ## Source code liên quan
@@ -103,7 +103,7 @@ Hai component cùng tồn tại:
 - [`src/features/job/redux/job.api.ts`](../../src/features/job/redux/job.api.ts): `getJobs`, `searchJobs`
 - [`src/features/company/redux/company.api.ts`](../../src/features/company/redux/company.api.ts): `getCompanies`
 - [`src/app/[locale]/(main)/jobs/jobs-page-client.tsx`](../../src/app/[locale]/(main)/jobs/jobs-page-client.tsx): `router.replace`
-- [`src/components/simple-pagination.tsx`](../../src/components/simple-pagination.tsx): thanh phân trang của trang `/jobs`
+- [`src/components/simple-pagination.tsx`](../../src/components/simple-pagination.tsx): thanh phân trang của trang `/viec-lam`
 - [`src/components/pagination.tsx`](../../src/components/pagination.tsx): thanh phân trang có chọn kích thước trang
 
 Backend mô tả route tìm kiếm ở [Job Search API](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/job-search.md).

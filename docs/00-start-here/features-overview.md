@@ -7,10 +7,10 @@ Trang này liệt kê những gì người dùng làm được trên DevLink, nh
 | Tính năng | Ở đâu | Ghi chú |
 | --- | --- | --- |
 | Xem trang chủ và tìm nhanh | `/` | Ô tìm kiếm theo từ khóa và địa điểm |
-| Tìm việc làm | `/jobs` | Lọc theo hình thức, cấp bậc, mức lương, địa điểm; sắp xếp; chuyển giữa tất cả, nội bộ và bên ngoài |
-| Xem chi tiết việc làm | `/jobs/[id]` | Mô tả, kỹ năng yêu cầu, hạn nộp hồ sơ |
-| Xem việc làm tổng hợp từ nguồn khác | `/jobs/external/[id]` | Xem phần giải thích bên dưới |
-| Xem danh sách và hồ sơ công ty | `/companies`, `/companies/[id]` | Số vị trí đang tuyển |
+| Tìm việc làm | `/viec-lam` | Lọc theo hình thức, cấp bậc, mức lương, địa điểm; sắp xếp; chuyển giữa tất cả, nội bộ và bên ngoài |
+| Xem chi tiết việc làm | `/viec-lam/<slug>-<id>` | Mô tả, kỹ năng yêu cầu, hạn nộp hồ sơ |
+| Xem việc làm tổng hợp từ nguồn khác | `/viec-lam/nguon-ngoai/<id>` | Xem phần giải thích bên dưới |
+| Xem danh sách và hồ sơ công ty | `/cong-ty`, `/cong-ty/<slug>-<id>` | Số vị trí đang tuyển |
 | Đổi ngôn ngữ, đổi giao diện sáng tối | Thanh trên cùng | Tiếng Anh và tiếng Việt |
 | Hỏi chatbot | Nút chat nổi | Có ở các trang công khai và hồ sơ |
 

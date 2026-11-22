@@ -19,7 +19,7 @@ Chỗ nào code lệch backend hoặc có hành vi cần chạy thử, trang ghi
 | Trang | Dành cho | Nội dung |
 | --- | --- | --- |
 | [Xác thực](authentication.md) | Mọi người | Đăng ký, xác minh email, đăng nhập, Google, quên và đổi mật khẩu |
-| [Tìm kiếm việc làm](job-search.md) | Mọi người | Trang `/jobs`, bộ lọc, chi tiết tin nội bộ |
+| [Tìm kiếm việc làm](job-search.md) | Mọi người | Trang `/viec-lam`, bộ lọc, chi tiết tin nội bộ |
 | [Việc làm từ nguồn ngoài](external-job-aggregation.md) | Mọi người | Tin tổng hợp từ website khác, quy tắc hiển thị |
 | [Ứng tuyển](job-application.md) | Ứng viên | Nộp file CV vào một tin |
 | [Tạo CV](cv-builder.md) | Ứng viên | Nhập CV, mức hoàn thành, lưu |

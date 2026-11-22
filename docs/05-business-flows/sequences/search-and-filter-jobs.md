@@ -1,6 +1,6 @@
 # Tìm kiếm và lọc việc làm
 
-Trang này vẽ trình tự từ lúc ứng viên mở `/jobs` đến khi đổi bộ lọc và thấy kết quả mới. Dành cho người cần biết khi nào dữ liệu đến từ server, khi nào từ RTK Query, và vì sao đổi bộ lọc không làm trang nhảy.
+Trang này vẽ trình tự từ lúc ứng viên mở `/viec-lam` đến khi đổi bộ lọc và thấy kết quả mới. Dành cho người cần biết khi nào dữ liệu đến từ server, khi nào từ RTK Query, và vì sao đổi bộ lọc không làm trang nhảy.
 
 ## Vì sao tách bước nhập và bước áp dụng
 

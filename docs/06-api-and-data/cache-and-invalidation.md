@@ -75,7 +75,7 @@ Các endpoint sau không khai báo `providesTags` hoặc `invalidatesTags`:
 
 ## Điều cần lưu ý
 
-- `searchJobs` (danh sách `/jobs` công khai) có tag `Job`, nên mọi thao tác tạo, sửa, duyệt, xóa tin sẽ làm nó tải lại. Trang công khai ban đầu render từ server nên không bị ảnh hưởng cho tới khi người dùng đổi bộ lọc.
+- `searchJobs` (danh sách `/viec-lam` công khai) có tag `Job`, nên mọi thao tác tạo, sửa, duyệt, xóa tin sẽ làm nó tải lại. Trang công khai ban đầu render từ server nên không bị ảnh hưởng cho tới khi người dùng đổi bộ lọc.
 - `saveJob` làm mất hiệu lực `Auth` và `User` chứ không phải `Job`, nên danh sách việc làm không tự tải lại khi lưu việc.
 - Cache không được lưu qua lần tải lại trang, chỉ `auth` và `chatBot` được Redux Persist giữ.
 

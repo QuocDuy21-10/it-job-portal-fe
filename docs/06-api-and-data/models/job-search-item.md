@@ -4,7 +4,7 @@ Trang này mô tả hai model của tìm kiếm hợp nhất: `JobSearchItem` (m
 
 ## Vì sao có model riêng
 
-Danh sách `/jobs` trộn hai loại tin có nguồn gốc khác nhau: tin do nhà tuyển dụng đăng trên DevLink và tin DevLink lấy về từ các website khác. Hai loại có dữ liệu khác nhau (tin ngoài có `salaryText`, không có số lượng tuyển), nên backend trả về một dạng chung rút gọn. Từ dạng chung đó, frontend biết mở tin nào ở trang nào.
+Danh sách `/viec-lam` trộn hai loại tin có nguồn gốc khác nhau: tin do nhà tuyển dụng đăng trên DevLink và tin DevLink lấy về từ các website khác. Hai loại có dữ liệu khác nhau (tin ngoài có `salaryText`, không có số lượng tuyển), nên backend trả về một dạng chung rút gọn. Từ dạng chung đó, frontend biết mở tin nào ở trang nào.
 
 **Type chính:** `JobSearchItem` và `ExternalJobDetail` ở `src/features/job/schemas/job-search.schema.ts`. Đây là type TypeScript thuần, không có schema Zod kiểm tra lúc chạy.
 
@@ -32,7 +32,7 @@ Danh sách `/jobs` trộn hai loại tin có nguồn gốc khác nhau: tin do nh
 | `applyUrl` | `string` | Không | Địa chỉ ứng tuyển ngoài |
 
 > [!NOTE]
-> Frontend không dùng `applyMode` và `applyUrl` ở danh sách. Thẻ kết quả chọn trang chi tiết chỉ dựa vào `sourceType`: `EXTERNAL` đi tới `/jobs/external/<id>`, còn lại đi tới `/jobs/<id>`.
+> Frontend không dùng `applyMode` và `applyUrl` ở danh sách. Thẻ kết quả chọn trang chi tiết chỉ dựa vào `sourceType`: `EXTERNAL` đi tới `/viec-lam/nguon-ngoai/<id>`, còn lại đi tới `/viec-lam/<slug>-<id>`.
 
 ## Cách frontend dùng dữ liệu
 

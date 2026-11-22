@@ -20,7 +20,7 @@ Trang danh sách công ty: ô tìm theo tên và lưới thẻ công ty.
 
 Trang chi tiết: thông tin công ty, nút theo dõi, các tin đang mở, liên hệ và chia sẻ.
 
-## Danh sách `/companies`
+## Danh sách `/cong-ty`
 
 | Chức năng | Hành vi |
 | --- | --- |
@@ -30,7 +30,7 @@ Trang chi tiết: thông tin công ty, nút theo dõi, các tin đang mở, liê
 | Dữ liệu đầu | Render trên server; khi trạng thái giống ban đầu thì bỏ qua truy vấn RTK Query |
 | Thẻ công ty | Hiện logo, mô tả rút gọn (đã bỏ thẻ HTML) và số vị trí đang mở; thẻ không có nút theo dõi |
 
-## Trang chi tiết `/companies/<id>`
+## Trang chi tiết `/cong-ty/<slug>-<id>`
 
 | Phần | Nội dung |
 | --- | --- |

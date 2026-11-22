@@ -46,7 +46,7 @@ Sơ đồ rút gọn; trình tự kỹ thuật xem [Stream chat AI](../05-busine
 | Chức năng | Hành vi |
 | --- | --- |
 | Câu hỏi gợi ý | Màn hình chào có sáu câu gợi ý (việc làm, kỹ năng hot, công ty, CV, việc phù hợp, so sánh lương); trên trang chi tiết tin có thêm câu hỏi về tin đó |
-| Ngữ cảnh tin đang xem | Trên `/jobs/<id>`, mã tin được gửi kèm tin nhắn |
+| Ngữ cảnh tin đang xem | Trên `/viec-lam/<slug>-<id>`, mã tin được gửi kèm tin nhắn |
 | Gợi ý tiếp theo | Sau mỗi câu trả lời có thể có các câu hỏi gợi ý; chọn một câu sẽ gửi kèm mã tin của trang |
 | Thẻ việc làm | Hiện việc làm gợi ý; với mã chưa có dữ liệu, giao diện gọi `GET /jobs/:id` để bổ sung |
 | Lưu việc qua chat | Phản hồi có thể kèm hành động `save_job` chờ xác nhận; xác nhận thì gọi backend và đánh dấu việc đã lưu |
@@ -55,7 +55,7 @@ Sơ đồ rút gọn; trình tự kỹ thuật xem [Stream chat AI](../05-busine
 | Lịch sử | Tải 50 tin gần nhất (`page` 1, `limit` 50) khi mở hộp chat đang trống; nút xóa lịch sử ở đầu hộp chat, hạn mức vẫn giữ nguyên sau khi xóa (theo test của slice) |
 
 > [!WARNING]
-> Trên trang chi tiết tin bên ngoài (`/jobs/external/<id>`), mã tin lấy từ đường dẫn sẽ là chuỗi `external` và được gửi lên backend, vốn yêu cầu mã hợp lệ; tin nhắn có thể bị từ chối. Chi tiết ở [Endpoint Chat](../06-api-and-data/endpoints/chat.md). Đây là suy luận từ code, chưa chạy thử.
+> Trên trang chi tiết tin bên ngoài (`/viec-lam/nguon-ngoai/<id>`), mã tin lấy từ đường dẫn sẽ là chuỗi `external` và được gửi lên backend, vốn yêu cầu mã hợp lệ; tin nhắn có thể bị từ chối. Chi tiết ở [Endpoint Chat](../06-api-and-data/endpoints/chat.md). Đây là suy luận từ code, chưa chạy thử.
 
 ## API liên quan
 

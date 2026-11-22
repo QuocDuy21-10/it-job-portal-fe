@@ -8,17 +8,21 @@ DevLink hỗ trợ tiếng Anh và tiếng Việt bằng thư viện `next-intl`
 
 | Thiết lập | Giá trị |
 | --- | --- |
-| `locales` | `en`, `vi` |
-| `defaultLocale` | `en` |
-| `localePrefix` | `as-needed`: tiếng mặc định không có tiền tố, ví dụ `/jobs` là tiếng Anh, `/vi/jobs` là tiếng Việt |
+| `locales` | `vi`, `en` |
+| `defaultLocale` | `vi` |
+| `localePrefix` | `as-needed`: tiếng Việt không có tiền tố, tiếng Anh nằm dưới `/en`, ví dụ `/viec-lam` và `/en/jobs` |
+| `pathnames` | Đường dẫn tiếng Việt cho trang công khai: `/viec-lam`, `/viec-lam/{slug}-{id}`, `/cong-ty`, `/cong-ty/{slug}-{id}`, `/chinh-sach-bao-mat`, `/dieu-khoan-su-dung`; trang riêng tư giữ nguyên đường dẫn |
+| `localeDetection`, `localeCookie`, `alternateLinks` | `false`: không tự chuyển ngôn ngữ theo cookie hay trình duyệt, không đặt cookie, hreflang chỉ nằm trong HTML |
 
-`src/middleware.ts` thực hiện quy tắc này: rewrite địa chỉ không tiền tố sang `/en/...`, chuyển hướng `/en/...` về dạng không tiền tố, và giao địa chỉ `/vi/...` cho `next-intl`. Xem [Routing và layout](routing-and-layouts.md).
+`src/middleware.ts` giao mọi địa chỉ cho `next-intl`, thư viện tự dịch đường dẫn (`/viec-lam` → route `/jobs`). Mọi chuyển hướng của `next-intl` (307) được đổi thành 308: địa chỉ cũ như `/jobs`, `/vi/...`, `/companies`, `/privacy` chuyển vĩnh viễn sang địa chỉ tiếng Việt tương ứng. Xem [Routing và layout](routing-and-layouts.md).
 
-`src/i18n/navigation.ts` xuất `Link`, `useRouter`, `usePathname`, `redirect` và `getPathname` đã biết về ngôn ngữ. Khi điều hướng trong ứng dụng, nên dùng các hàm này thay cho bản của `next/navigation` để tiền tố được giữ đúng.
+`src/i18n/navigation.ts` xuất `Link`, `useRouter`, `usePathname`, `redirect`, `permanentRedirect` và `getPathname` đã biết về ngôn ngữ. Khi điều hướng trong ứng dụng, nên dùng các hàm này thay cho bản của `next/navigation` để tiền tố được giữ đúng.
+
+Liên kết tới trang chi tiết dùng `jobHref(id, name)` và `companyHref(id, name)` trong `src/i18n/hrefs.ts`; đường dẫn tĩnh có query dùng `toAppHref("/profile?tab=my-cv")`. TypeScript báo lỗi nếu đường dẫn không có trong `pathnames`. Trang chi tiết chuyển 308 về dạng `{slug}-{id}` khi địa chỉ chỉ có id hoặc slug cũ.
 
 ## Bản dịch
 
-`src/i18n/request.ts` nạp `src/locales/en.ts` và `src/locales/vi.ts` (mỗi file xuất một đối tượng lồng nhau, hơn 1700 dòng) và chọn bản theo ngôn ngữ của request. Ngôn ngữ không hợp lệ rơi về `en`.
+`src/i18n/request.ts` nạp `src/locales/en.ts` và `src/locales/vi.ts` (mỗi file xuất một đối tượng lồng nhau, hơn 1700 dòng) và chọn bản theo ngôn ngữ của request. Ngôn ngữ không hợp lệ rơi về `vi`.
 
 Layout theo ngôn ngữ kiểm tra `hasLocale`, gọi `setRequestLocale` và truyền bộ messages công khai xuống `NextIntlClientProvider` (xem mục dưới). Trang server dùng `getTranslations({ locale, namespace })` để lấy chuỗi cho metadata; phía server luôn có đủ messages.
 
@@ -66,7 +70,7 @@ Khóa dịch là chuỗi thường, không có kiểu kiểm tra khi biên dịc
 
 1. Thêm khóa vào **cả hai** file `src/locales/en.ts` và `src/locales/vi.ts`, trong cùng một nhóm. Với nhóm `errorPage` và `middleware`, sửa `src/locales/standalone.ts`.
 2. Dùng `t("nhóm.khóa")` trong thành phần client, hoặc `getTranslations` trong Server Component.
-3. Kiểm tra bằng cách mở trang ở cả `/...` và `/vi/...`.
+3. Kiểm tra bằng cách mở trang ở cả `/...` (tiếng Việt) và `/en/...`.
 
 ## Source code liên quan
 

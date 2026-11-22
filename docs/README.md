@@ -90,7 +90,7 @@ Sơ đồ: [bối cảnh hệ thống](02-architecture/diagrams/system-context.m
 | --- | --- |
 | [Tổng quan tính năng](04-features/README.md) | Mục lục nhóm tính năng |
 | [Xác thực](04-features/authentication.md) | Đăng ký, đăng nhập, mật khẩu |
-| [Tìm kiếm việc làm](04-features/job-search.md) | Trang `/jobs`, bộ lọc, chi tiết tin |
+| [Tìm kiếm việc làm](04-features/job-search.md) | Trang `/viec-lam`, bộ lọc, chi tiết tin |
 | [Việc làm từ nguồn ngoài](04-features/external-job-aggregation.md) | Tin tổng hợp, quy tắc hiển thị |
 | [Ứng tuyển](04-features/job-application.md) | Nộp file CV vào một tin |
 | [Tạo CV](04-features/cv-builder.md) | Trình tạo CV, mức hoàn thành |
