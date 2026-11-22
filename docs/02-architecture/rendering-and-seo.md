@@ -36,7 +36,7 @@ Trang `/jobs?page=N` hoặc `/companies?page=N` với N lớn hơn số trang hi
 
 ## Trang được render lúc nào
 
-Mọi trang dưới `src/app/[locale]/` được render theo từng request; không trang nào được dựng sẵn thành HTML lúc build. Sau khi build, `.next/prerender-manifest.json` chỉ có `sitemap.xml`, `robots.txt` và `favicon.ico`. Ký hiệu `●` mà `next build` in cạnh các route `[locale]` vì vậy không có nghĩa là HTML của trang được cache.
+Mọi trang dưới `src/app/[locale]/` được render theo từng request; không trang nào được dựng sẵn thành HTML lúc build. Sau khi build, `.next/prerender-manifest.json` chỉ có `robots.txt` và `favicon.ico`. Ký hiệu `●` mà `next build` in cạnh các route `[locale]` vì vậy không có nghĩa là HTML của trang được cache.
 
 Thứ được cache là dữ liệu: các hàm `fetchPublic*` giữ phản hồi của backend trong 60 giây hoặc 1 giờ tùy loại, xem [Chiến lược cache](caching-strategy.md).
 
