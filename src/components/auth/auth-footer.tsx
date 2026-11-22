@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { toAppHref, type StaticHref } from "@/i18n/hrefs";
+import { Link } from "@/i18n/navigation";
 import { useI18n } from "@/hooks/use-i18n";
 
 interface AuthFooterLink {
   text: string;
-  href: string;
+  href: StaticHref;
   highlight?: boolean;
 }
 
@@ -33,7 +34,7 @@ export function AuthFooter({
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {message}{" "}
           <Link
-            href={link.href}
+            href={toAppHref(link.href)}
             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors underline-offset-4 hover:underline"
           >
             {link.text}

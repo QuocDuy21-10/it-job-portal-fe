@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Mail, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +61,10 @@ export default function RegisterPage() {
         toast.success(t("authModal.register.toasts.success"));
 
         // Chuyển sang trang verify email (email only)
-        router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+        router.push({
+          pathname: "/verify-email",
+          query: { email: data.email },
+        });
       }
     } catch (error: any) {
       console.error("Register error:", error);

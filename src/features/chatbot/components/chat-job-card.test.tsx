@@ -6,7 +6,7 @@ import { IJob } from "@/shared/types/backend";
 
 const mockPush = jest.fn();
 
-jest.mock("next/navigation", () => ({
+jest.mock("@/i18n/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),

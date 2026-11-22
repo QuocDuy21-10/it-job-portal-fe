@@ -33,15 +33,15 @@ const NOT_FOUND_MESSAGES = {
 function getLocaleFromPath(pathname: string | null) {
   const firstSegment = pathname?.split("/").filter(Boolean)[0];
 
-  return firstSegment === "vi" ? "vi" : "en";
+  return firstSegment === "en" ? "en" : "vi";
 }
 
 export default function NotFound() {
   const pathname = usePathname();
   const locale = getLocaleFromPath(pathname);
   const messages = NOT_FOUND_MESSAGES[locale];
-  const baseHref = locale === "vi" ? "/vi" : "/";
-  const jobsHref = locale === "vi" ? "/vi/jobs" : "/jobs";
+  const baseHref = locale === "en" ? "/en" : "/";
+  const jobsHref = locale === "en" ? "/en/jobs" : "/viec-lam";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
