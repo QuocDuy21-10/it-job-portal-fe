@@ -22,26 +22,60 @@ import type {
 const JOBS_REVALIDATE_SECONDS = 60;
 const COMPANIES_REVALIDATE_SECONDS = 3600;
 const EXTERNAL_JOBS_REVALIDATE_SECONDS = 3600;
+const FETCH_TIMEOUT_MS = 10_000;
+// The backend caps `limit` at this value (MAX_PAGE_LIMIT).
+const MAX_PAGE_SIZE = 100;
 
+// 404 and 400 (malformed id) mean "no such public item". Anything else is thrown: a detail page
+// that answered 404 during a backend outage would be dropped from Google's index.
 async function fetchPublicEntity<T>(
   pathname: string,
   revalidate: number
 ): Promise<T | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${pathname}`, {
-      next: { revalidate },
-    });
+  const response = await fetch(`${API_BASE_URL}${pathname}`, {
+    next: { revalidate },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
 
-    if (!response.ok) {
-      return null;
-    }
-
-    const payload = (await response.json()) as ApiResponse<T>;
-
-    return payload.data ?? null;
-  } catch {
+  if (response.status === 404 || response.status === 400) {
     return null;
   }
+
+  if (!response.ok) {
+    throw new Error(`Backend answered ${response.status} for ${pathname}`);
+  }
+
+  const payload = (await response.json()) as ApiResponse<T>;
+
+  return payload.data ?? null;
+}
+
+// Listing pages fetch in the browser when the server got nothing, so they swallow errors.
+const nullOnError = <T>(request: Promise<T | null>) =>
+  request.catch(() => null);
+
+// Sequential on purpose: the backend rate-limits bursts of requests.
+async function fetchAllPages<T>(
+  pathname: string,
+  revalidate: number
+): Promise<T[]> {
+  const items: T[] = [];
+
+  for (let page = 1, totalPages = 1; page <= totalPages; page += 1) {
+    const data = await fetchPublicEntity<PaginatedResult<T>>(
+      `${pathname}?page=${page}&limit=${MAX_PAGE_SIZE}`,
+      revalidate
+    );
+
+    if (!data) {
+      throw new Error(`Backend returned no data for ${pathname} page ${page}`);
+    }
+
+    items.push(...data.result);
+    totalPages = data.meta.pagination.total_pages;
+  }
+
+  return items;
 }
 
 const buildPublicListQuery = ({
@@ -98,18 +132,20 @@ export const fetchPublicCompanyById = cache((id: string) => {
 
 // Same URL as getTopHiringCompanies in company.api.ts, so both sides read one list.
 export const fetchPublicTopHiringCompanies = cache((limit: number) => {
-  return fetchPublicEntity<TopHiringCompany[]>(
-    `/companies/top-hiring?limit=${limit}`,
-    COMPANIES_REVALIDATE_SECONDS
+  return nullOnError(
+    fetchPublicEntity<TopHiringCompany[]>(
+      `/companies/top-hiring?limit=${limit}`,
+      COMPANIES_REVALIDATE_SECONDS
+    )
   );
 });
 
 export const fetchPublicJobs = (params: PaginatedQueryParams) => {
-  return fetchPublicJobsByQuery(buildPublicListQuery(params));
+  return nullOnError(fetchPublicJobsByQuery(buildPublicListQuery(params)));
 };
 
 export const fetchPublicCompanies = (params: PaginatedQueryParams) => {
-  return fetchPublicCompaniesByQuery(buildPublicListQuery(params));
+  return nullOnError(fetchPublicCompaniesByQuery(buildPublicListQuery(params)));
 };
 
 const fetchPublicJobSearchByQuery = cache((query: string) => {
@@ -120,7 +156,9 @@ const fetchPublicJobSearchByQuery = cache((query: string) => {
 });
 
 export const fetchPublicJobSearch = (params: JobSearchParams) => {
-  return fetchPublicJobSearchByQuery(toJobSearchQueryString(params));
+  return nullOnError(
+    fetchPublicJobSearchByQuery(toJobSearchQueryString(params))
+  );
 };
 
 export const fetchPublicExternalJobById = cache((id: string) => {
@@ -129,3 +167,10 @@ export const fetchPublicExternalJobById = cache((id: string) => {
     EXTERNAL_JOBS_REVALIDATE_SECONDS
   );
 });
+
+// For the sitemap: every public item, or an error. Never a partial list.
+export const fetchAllPublicJobs = () =>
+  fetchAllPages<Job>("/jobs", JOBS_REVALIDATE_SECONDS);
+
+export const fetchAllPublicCompanies = () =>
+  fetchAllPages<Company>("/companies", COMPANIES_REVALIDATE_SECONDS);
