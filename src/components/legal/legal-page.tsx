@@ -17,13 +17,16 @@ export function buildLegalPageMetadata(
   page: LegalPageKey
 ): Metadata {
   const resolvedLocale = resolveLocale(locale);
-  const { title, description } = LEGAL_CONTENT[resolvedLocale][page];
+  const { title, description, draftNotice } =
+    LEGAL_CONTENT[resolvedLocale][page];
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,
     pathname: `/${page}`,
     title,
     description,
+    // Sample text is not worth indexing. Drop draftNotice when the real documents land.
+    indexable: !draftNotice,
   });
 }
 
