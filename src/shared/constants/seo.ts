@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getPathname, type AppHref } from "@/i18n/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { env } from "@/shared/config/env";
 
@@ -9,63 +10,34 @@ const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
   vi: "vi_VN",
 };
 
-const normalizePath = (pathname: string) => {
-  if (!pathname || pathname === "/") {
-    return "/";
-  }
-
-  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
-
-  if (normalizedPath.length > 1 && normalizedPath.endsWith("/")) {
-    return normalizedPath.slice(0, -1);
-  }
-
-  return normalizedPath;
-};
-
 export const getSiteUrl = () => new URL(`${env.SITE_URL}/`);
 
 export const getOpenGraphLocale = (locale: AppLocale) => {
   return OPEN_GRAPH_LOCALES[locale];
 };
 
-export const getLocalizedPath = (pathname: string, locale: AppLocale) => {
-  const normalizedPath = normalizePath(pathname);
-  const localePrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+export const getLocalizedPath = (href: AppHref, locale: AppLocale) =>
+  getPathname({ href, locale });
 
-  if (normalizedPath === "/") {
-    return localePrefix || "/";
-  }
+// For files (sitemap, images): not localized.
+export const getAbsoluteUrl = (pathname: string) =>
+  new URL(pathname, getSiteUrl()).toString();
 
-  return `${localePrefix}${normalizedPath}`;
-};
+export const getLocalizedUrl = (href: AppHref, locale: AppLocale) =>
+  getAbsoluteUrl(getLocalizedPath(href, locale));
 
-export const getAbsoluteUrl = (pathname: string) => {
-  return new URL(normalizePath(pathname), getSiteUrl()).toString();
-};
-
-export const getLocalizedUrl = (pathname: string, locale: AppLocale) => {
-  return new URL(getLocalizedPath(pathname, locale), getSiteUrl()).toString();
-};
-
-export const getAlternateLanguageUrls = (pathname: string) => {
-  const localizedUrls = routing.locales.map((locale) => [
-    locale,
-    getLocalizedUrl(pathname, locale),
-  ]);
-
-  return Object.fromEntries([
-    ...localizedUrls,
-    ["x-default", getLocalizedUrl(pathname, routing.defaultLocale)],
+export const getAlternateLanguageUrls = (href: AppHref) =>
+  Object.fromEntries([
+    ...routing.locales.map((locale) => [locale, getLocalizedUrl(href, locale)]),
+    ["x-default", getLocalizedUrl(href, routing.defaultLocale)],
   ]) as Record<string, string>;
-};
 
 // 1200×630, generated once from the logo (generator script: SEO-1 plan, Task 4).
 const DEFAULT_OG_IMAGE_PATH = "/images/og-default.png";
 
 type BuildLocalizedPageMetadataOptions = {
   locale: AppLocale;
-  pathname: string;
+  href: AppHref;
   title: string;
   description: string;
   keywords?: Metadata["keywords"];
@@ -76,14 +48,14 @@ type BuildLocalizedPageMetadataOptions = {
 
 export const buildLocalizedPageMetadata = ({
   locale,
-  pathname,
+  href,
   title,
   description,
   keywords,
   ogImage,
   indexable = true,
 }: BuildLocalizedPageMetadataOptions): Metadata => {
-  const url = getLocalizedUrl(pathname, locale);
+  const url = getLocalizedUrl(href, locale);
   const fallbackOgImage = getAbsoluteUrl(DEFAULT_OG_IMAGE_PATH);
   const ogImages = ogImage
     ? [{ url: ogImage }]
@@ -97,7 +69,7 @@ export const buildLocalizedPageMetadata = ({
       ? {
           alternates: {
             canonical: url,
-            languages: getAlternateLanguageUrls(pathname),
+            languages: getAlternateLanguageUrls(href),
           },
         }
       : { robots: { index: false, follow: true } }),

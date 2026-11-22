@@ -36,21 +36,31 @@ jest.mock("@/hooks/use-i18n", () => ({
   }),
 }));
 
-jest.mock("@/i18n/navigation", () => ({
-  Link: ({
-    children,
-    href,
-    className,
-  }: {
-    children: ReactNode;
-    href: string;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
-}));
+jest.mock("@/i18n/navigation", () => {
+  // Real route table: object hrefs render as the URL a visitor sees (Vietnamese).
+  const { getPathname } = jest.requireActual("@/i18n/navigation");
+
+  return {
+    Link: ({
+      children,
+      href,
+      className,
+    }: {
+      children: ReactNode;
+      href: string | object;
+      className?: string;
+    }) => (
+      <a
+        href={
+          typeof href === "string" ? href : getPathname({ href, locale: "vi" })
+        }
+        className={className}
+      >
+        {children}
+      </a>
+    ),
+  };
+});
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -94,7 +104,9 @@ describe("JobSearchCard", () => {
   it("renders an internal job with salary and save button", () => {
     render(<JobSearchCard item={internalItem} />);
 
-    expect(new Set(hrefs())).toEqual(new Set(["/jobs/job-1"]));
+    expect(new Set(hrefs())).toEqual(
+      new Set(["/viec-lam/frontend-engineer-job-1"])
+    );
     expect(
       screen.getByRole("button", { name: "Save job" })
     ).toBeInTheDocument();
@@ -110,7 +122,7 @@ describe("JobSearchCard", () => {
   it("renders an external job without salary or save button", () => {
     render(<JobSearchCard item={externalItem} />);
 
-    expect(new Set(hrefs())).toEqual(new Set(["/jobs/external/ext-1"]));
+    expect(new Set(hrefs())).toEqual(new Set(["/viec-lam/nguon-ngoai/ext-1"]));
     expect(screen.getByText("jobsPage.externalBadge")).toBeInTheDocument();
     expect(screen.getByText("jobsPage.salaryNotDisclosed")).toBeInTheDocument();
     expect(

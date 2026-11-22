@@ -1,10 +1,10 @@
 # Tìm kiếm việc làm
 
-Tính năng cho phép ứng viên tìm tin tuyển dụng theo từ khóa, địa điểm, loại hình, cấp bậc, mức lương và nguồn, rồi xem chi tiết một tin. Trang dành cho người muốn biết trang `/jobs` làm được gì, và cho developer cần biết mỗi phần dùng component nào.
+Tính năng cho phép ứng viên tìm tin tuyển dụng theo từ khóa, địa điểm, loại hình, cấp bậc, mức lương và nguồn, rồi xem chi tiết một tin. Trang dành cho người muốn biết trang `/viec-lam` làm được gì, và cho developer cần biết mỗi phần dùng component nào.
 
 ## Vì sao cần
 
-Ứng viên cần thu hẹp hàng loạt tin về vài tin phù hợp. Trang `/jobs` gom cả tin do nhà tuyển dụng đăng trên DevLink và tin DevLink tổng hợp từ website khác vào một danh sách, nên người dùng không phải tìm ở nhiều nơi.
+Ứng viên cần thu hẹp hàng loạt tin về vài tin phù hợp. Trang `/viec-lam` gom cả tin do nhà tuyển dụng đăng trên DevLink và tin DevLink tổng hợp từ website khác vào một danh sách, nên người dùng không phải tìm ở nhiều nơi.
 
 **Đối tượng:** mọi người, kể cả khách chưa đăng nhập. Lưu việc hoặc ứng tuyển thì cần đăng nhập.
 
@@ -31,8 +31,8 @@ flowchart TD
     Filter --> Apply["Bấm áp dụng"]
     Apply --> List["Danh sách kết quả"]
     List --> Pick{"Loại tin"}
-    Pick -- "Nội bộ" --> Detail["/jobs/id"]
-    Pick -- "Bên ngoài" --> Ext["/jobs/external/id"]
+    Pick -- "Nội bộ" --> Detail["/viec-lam/<slug>-<id>"]
+    Pick -- "Bên ngoài" --> Ext["/viec-lam/nguon-ngoai/id"]
     Detail --> Apply2["Lưu việc hoặc ứng tuyển"]
     Ext --> Out["Sang website gốc"]
 ```
@@ -54,7 +54,7 @@ Trạng thái bộ lọc nằm trên URL nên có thể chia sẻ đường dẫ
 
 ## Trang chi tiết tin nội bộ
 
-Trang `/jobs/<id>` render trên server bằng `fetchPublicJobById`. Nếu không có tin, trang trả 404. Trang có thêm dữ liệu có cấu trúc dạng `application/ld+json` trong HTML. Số ngày còn lại tính từ `endDate`.
+Trang `/viec-lam/<slug>-<id>` render trên server bằng `fetchPublicJobById`. Nếu không có tin, trang trả 404. Trang có thêm dữ liệu có cấu trúc dạng `application/ld+json` trong HTML. Số ngày còn lại tính từ `endDate`.
 
 Chi tiết cách ứng tuyển ở [Ứng tuyển](job-application.md).
 
@@ -62,7 +62,7 @@ Chi tiết cách ứng tuyển ở [Ứng tuyển](job-application.md).
 
 | Hook hoặc hàm | Endpoint | Dùng ở |
 | --- | --- | --- |
-| `fetchPublicJobSearch` | `GET /job-search` | Tải đầu trang `/jobs` trên server |
+| `fetchPublicJobSearch` | `GET /job-search` | Tải đầu trang `/viec-lam` trên server |
 | `useSearchJobsQuery` | `GET /job-search` | Khi đổi bộ lọc |
 | `fetchPublicJobById` | `GET /jobs/:id` | Trang chi tiết |
 | `useGetSkillCatalogQuery`, `useGetPopularSkillsQuery` | Danh mục và kỹ năng phổ biến | Gợi ý ở ô tìm kiếm |
@@ -93,7 +93,7 @@ Kiểu dữ liệu kết quả ở [Model JobSearchItem](../06-api-and-data/mode
 | `src/components/ui/search-suggest-input.test.tsx` | Từ khóa gần đây, xóa một mục, chọn một mục |
 | `src/app/[locale]/(main)/jobs/[id]/job-detail-page-client.test.tsx` | Trang chi tiết phía client |
 
-Chưa có test cho: `jobs-page-client.tsx` (ghi URL, ngăn lọc trên điện thoại), trang `/jobs` phía server, phân trang.
+Chưa có test cho: `jobs-page-client.tsx` (ghi URL, ngăn lọc trên điện thoại), trang `/viec-lam` phía server, phân trang.
 
 ## Source code liên quan
 

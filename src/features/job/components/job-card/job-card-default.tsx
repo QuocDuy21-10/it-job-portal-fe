@@ -1,6 +1,7 @@
 "use client";
 
 import { MapPin } from "lucide-react";
+import { jobHref } from "@/i18n/hrefs";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
@@ -38,7 +39,7 @@ export function JobCardDefault({
           <FavoriteButton {...favorite} />
         </div>
 
-        <Link href={`/jobs/${job._id}`} className="block space-y-3">
+        <Link href={jobHref(job._id, job.name)} className="block space-y-3">
           {/* Header: logo + title/company */}
           <div className="flex items-start gap-3 pr-9">
             {!hideLogo && (

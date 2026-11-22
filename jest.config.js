@@ -55,6 +55,7 @@ const ESM_PACKAGES = [
   "next-intl",
   "use-intl",
   "@formatjs",
+  "intl-messageformat",
 ];
 
 module.exports = async () => {

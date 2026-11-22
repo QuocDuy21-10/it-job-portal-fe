@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { toAppHref } from "@/i18n/hrefs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -103,7 +104,7 @@ export default function OverviewPage() {
               </span>
             </div>
           </div>
-          <Link href="/profile?tab=create-cv">
+          <Link href={toAppHref("/profile?tab=create-cv")}>
             <Button className="bg-primary hover:bg-primary/90 shadow-md">
               <User className="w-4 h-4 mr-2" />
               {t("profileOverview.updateProfile")}
@@ -144,7 +145,7 @@ export default function OverviewPage() {
           <p className="text-muted-foreground mb-3">
             {t("profileOverview.noAttachedCv")}
           </p>
-          <Link href="/profile?tab=my-cv">
+          <Link href={toAppHref("/profile?tab=my-cv")}>
             <button className="text-primary font-medium hover:underline transition-colors">
               {t("profileOverview.manageAttachedCv")} →
             </button>
@@ -159,7 +160,7 @@ export default function OverviewPage() {
           {t("profileOverview.quickActions")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <Link href="/profile?tab=create-cv">
+          <Link href={toAppHref("/profile?tab=create-cv")}>
             <button className="w-full p-4 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/40 rounded-lg text-left transition-all group">
               <FileText className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-medium text-foreground">
@@ -181,7 +182,7 @@ export default function OverviewPage() {
               </p>
             </button>
           </Link>
-          <Link href="/profile?tab=my-jobs">
+          <Link href={toAppHref("/profile?tab=my-jobs")}>
             <button className="w-full p-4 bg-secondary/50 hover:bg-secondary border border-border hover:border-primary/30 rounded-lg text-left transition-all group">
               <Heart className="w-5 h-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-medium text-foreground">

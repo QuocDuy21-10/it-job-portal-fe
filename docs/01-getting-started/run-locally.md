@@ -18,10 +18,10 @@ Khi thấy dòng `Ready`, máy chủ đã sẵn sàng (trong lần chạy thử 
 
 | Địa chỉ | Nội dung |
 | --- | --- |
-| `http://localhost:3000/` | Trang chủ, tiếng Anh (ngôn ngữ mặc định, không có tiền tố) |
-| `http://localhost:3000/vi` | Trang chủ, tiếng Việt |
-| `http://localhost:3000/jobs` | Danh sách việc làm |
-| `http://localhost:3000/companies` | Danh sách công ty |
+| `http://localhost:3000/` | Trang chủ, tiếng Việt (ngôn ngữ mặc định, không có tiền tố) |
+| `http://localhost:3000/en` | Trang chủ, tiếng Anh |
+| `http://localhost:3000/viec-lam` | Danh sách việc làm |
+| `http://localhost:3000/cong-ty` | Danh sách công ty |
 | `http://localhost:3000/login` | Đăng nhập |
 | `http://localhost:3000/admin` | Khu quản trị (cần đăng nhập vai trò `SUPER ADMIN` hoặc `HR`) |
 | `http://localhost:3000/hr/dashboard` | Bảng điều khiển HR (cần vai trò `HR`) |
@@ -35,7 +35,7 @@ Quy tắc tiền tố ngôn ngữ và bảng đầy đủ các route nằm ở [
 
 | Địa chỉ | Mã trả về | Ghi chú |
 | --- | --- | --- |
-| `/`, `/vi`, `/jobs`, `/companies` | 200 | Trang được render; dữ liệu công khai không lấy được |
+| `/`, `/en`, `/viec-lam`, `/cong-ty` | 200 | Trang được render; dữ liệu công khai không lấy được |
 | `/login` | 200 | HTML chứa lỗi Google nếu thiếu Client ID, xem [Khắc phục sự cố](troubleshooting.md) |
 | `/admin`, `/hr/dashboard`, `/profile` | 200 | Máy chủ vẫn trả khung trang; việc chuyển hướng người chưa đăng nhập do guard chạy ở trình duyệt; phản hồi có header `X-Robots-Tag: noindex, nofollow` |
 | `/robots.txt` | 200 | Bình thường |

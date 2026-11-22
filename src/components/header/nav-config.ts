@@ -8,9 +8,10 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react";
+import type { StaticHref } from "@/i18n/hrefs";
 
 export interface NavItem {
-  href: string;
+  href: StaticHref;
   labelKey: string;
   fallback: string;
   icon: LucideIcon;

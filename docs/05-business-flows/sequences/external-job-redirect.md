@@ -34,7 +34,7 @@ Sơ đồ cho thấy người dùng rời DevLink bằng liên kết mở ở ta
 
 | Bước | Giải thích |
 | --- | --- |
-| 2 | Thẻ kết quả chọn `/jobs/external/<id>` chỉ dựa vào `sourceType` |
+| 2 | Thẻ kết quả chọn `/viec-lam/nguon-ngoai/<id>` chỉ dựa vào `sourceType` |
 | 3 | Lời gọi phía server, bọc `cache()`, `revalidate` 3600 giây |
 | 5 | `fetchPublicEntity` trả `null` cho mọi lỗi, nên server không phân biệt 404 với lỗi mạng |
 | 6 | Trang đặt `robots: { index: false, follow: false }` |

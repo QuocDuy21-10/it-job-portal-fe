@@ -4,18 +4,22 @@
 
 ## Tiền tố ngôn ngữ
 
-Có hai ngôn ngữ: `en` (mặc định) và `vi`. Cấu hình `localePrefix: "as-needed"` nghĩa là tiếng Anh không có tiền tố, tiếng Việt có:
+Có hai ngôn ngữ: `vi` (mặc định) và `en`. Cấu hình `localePrefix: "as-needed"` nghĩa là tiếng Việt không có tiền tố, tiếng Anh nằm dưới `/en`, và các trang công khai có đường dẫn tiếng Việt riêng (`pathnames` trong `src/i18n/routing.ts`):
 
-| Địa chỉ | Ngôn ngữ |
+| Tiếng Việt | Tiếng Anh |
 | --- | --- |
-| `/jobs` | Tiếng Anh |
-| `/vi/jobs` | Tiếng Việt |
+| `/` | `/en` |
+| `/viec-lam` | `/en/jobs` |
+| `/viec-lam/{slug}-{id}` | `/en/jobs/{slug}-{id}` |
+| `/viec-lam/nguon-ngoai/{id}` | `/en/jobs/external/{id}` |
+| `/cong-ty`, `/cong-ty/{slug}-{id}` | `/en/companies`, `/en/companies/{slug}-{id}` |
+| `/chinh-sach-bao-mat`, `/dieu-khoan-su-dung` | `/en/privacy`, `/en/terms` |
 
-Middleware xử lý ba trường hợp: địa chỉ không có tiền tố thì được viết lại (rewrite) sang `/en/...`; địa chỉ bắt đầu bằng `/en` thì được chuyển hướng về dạng không tiền tố; địa chỉ có `/vi` được giao cho `next-intl`. Các đường dẫn `/api`, `/_next` và file có phần mở rộng không đi qua middleware. Chi tiết ở [Đa ngôn ngữ](internationalization.md).
+Middleware giao mọi địa chỉ cho `next-intl`: địa chỉ không tiền tố được viết lại (rewrite) sang `/vi/...` bên trong, địa chỉ cũ (`/jobs`, `/vi/...`, `/companies`) được chuyển hướng 308 sang địa chỉ tiếng Việt hiện hành. Các đường dẫn `/api`, `/_next` và file có phần mở rộng không đi qua middleware. Chi tiết ở [Đa ngôn ngữ](internationalization.md).
 
 ## Bảng route
 
-Các địa chỉ dưới đây là dạng không tiền tố ngôn ngữ.
+Các địa chỉ dưới đây là tên thư mục route (khóa trong `pathnames`); địa chỉ người dùng thấy ở bảng trên.
 
 | Địa chỉ | Nhóm route | Kiểm tra truy cập ở frontend |
 | --- | --- | --- |

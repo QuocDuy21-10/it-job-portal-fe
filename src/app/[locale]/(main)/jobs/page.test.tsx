@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 import JobsPage, { generateMetadata } from "./page";
 import { fetchPublicJobSearch } from "@/lib/utils/public-content";
 
-jest.mock("next-intl", () => ({ hasLocale: () => true }));
+jest.mock("next-intl", () => ({
+  ...jest.requireActual("next-intl"),
+  hasLocale: () => true,
+}));
 
 jest.mock("next-intl/server", () => ({
   getTranslations: jest.fn(
@@ -15,10 +18,6 @@ jest.mock("next/navigation", () => ({
   notFound: () => {
     throw new Error("NEXT_NOT_FOUND");
   },
-}));
-
-jest.mock("@/i18n/routing", () => ({
-  routing: { locales: ["en", "vi"], defaultLocale: "en" },
 }));
 
 jest.mock("@/lib/utils/public-content", () => ({
@@ -53,7 +52,7 @@ describe("JobsPage metadata", () => {
 
     expect(metadata.robots).toBeUndefined();
     expect(metadata.alternates?.canonical).toBe(
-      "http://localhost:3000/vi/jobs?page=2"
+      "http://localhost:3000/viec-lam?page=2"
     );
     expect(metadata.title).toBe('pagedTitle:{"title":"heroTitle","page":2}');
   });

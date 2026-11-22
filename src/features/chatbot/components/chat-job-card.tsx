@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { jobHref } from "@/i18n/hrefs";
+import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
@@ -49,7 +50,7 @@ const JobCard = ({
       return;
     }
 
-    router.push(`/jobs/${jobId}`);
+    router.push(jobHref(jobId, job.name));
   };
 
   const handleConfirmPendingAction = (

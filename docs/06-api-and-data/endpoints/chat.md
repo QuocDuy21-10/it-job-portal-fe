@@ -59,7 +59,7 @@ Các route frontend gọi có trong `chat.controller.ts`: `POST /chat/message`, 
 | Route frontend không gọi | Nhóm `sessions` (tạo, liệt kê, xem, gửi, xóa phiên), `POST /chat/sessions/:sessionId/messages/stream` và các route thống kê `admin/usage/*` |
 
 > [!WARNING]
-> Trên trang chi tiết tin ngoài (`/jobs/external/<id>`), hàm `getChatJobIdFromPathname` lấy đoạn đứng sau `jobs` làm mã việc làm, tức là chuỗi `external`, rồi gửi lên là `jobId`. Chuỗi này không phải `MongoId` nên theo DTO backend sẽ bị từ chối với 400. Đây là suy luận từ code, chưa chạy thử; test hiện có không kiểm tra đường dẫn dạng này.
+> Trên trang chi tiết tin ngoài (`/viec-lam/nguon-ngoai/<id>`), hàm `getChatJobIdFromPathname` lấy đoạn đứng sau `jobs` hoặc `viec-lam` làm mã việc làm (với dạng `{slug}-{id}` thì lấy `id` ở cuối), tức là chuỗi `nguon-ngoai`, rồi gửi lên là `jobId`. Chuỗi này không phải `MongoId` nên theo DTO backend sẽ bị từ chối với 400. Đây là suy luận từ code, chưa chạy thử; test hiện có không kiểm tra đường dẫn dạng này.
 
 ## Dữ liệu và kiểm tra
 

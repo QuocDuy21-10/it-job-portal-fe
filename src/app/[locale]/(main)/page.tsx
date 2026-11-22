@@ -36,7 +36,7 @@ export async function generateMetadata({
   return {
     ...buildLocalizedPageMetadata({
       locale: resolvedLocale,
-      pathname: "/",
+      href: "/",
       title,
       description: meta("description"),
       keywords: meta("keywords"),

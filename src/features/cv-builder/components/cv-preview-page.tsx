@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { ArrowLeft, Loader2, FileText, Eye, EyeOff } from "lucide-react";
+import { toAppHref } from "@/i18n/hrefs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ICVProfile } from "@/shared/types/cv";
@@ -143,7 +144,9 @@ export default function CVPreviewPage() {
           <p className="text-muted-foreground mb-4">
             {t("cvPreviewPage.emptyDescription")}
           </p>
-          <Button onClick={() => router.push("/profile?tab=create-cv")}>
+          <Button
+            onClick={() => router.push(toAppHref("/profile?tab=create-cv"))}
+          >
             {t("cvPreviewPage.createButton")}
           </Button>
         </div>
@@ -159,7 +162,7 @@ export default function CVPreviewPage() {
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
-              onClick={() => router.push("/profile?tab=create-cv")}
+              onClick={() => router.push(toAppHref("/profile?tab=create-cv"))}
               className="flex items-center gap-2 text-foreground font-medium hover:text-primary transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />

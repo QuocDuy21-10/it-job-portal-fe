@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { toAppHref } from "@/i18n/hrefs";
 import { Card } from "@/components/ui/card";
 import { Circle, Bell, CheckCheck, Loader2 } from "lucide-react";
 import { StatCard } from "../shared/stat-card";
@@ -35,7 +36,7 @@ export default function NotificationsPage() {
 
   const handleNotificationClick = useCallback(
     (notification: Notification) => {
-      router.push(getNotificationLink(notification));
+      router.push(toAppHref(getNotificationLink(notification)));
     },
     [router]
   );

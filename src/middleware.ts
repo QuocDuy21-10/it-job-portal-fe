@@ -10,38 +10,14 @@ const handleI18nRouting = createMiddleware(routing);
 // Revert the commit that set this to go back to report-only.
 const CSP_HEADER = "Content-Security-Policy";
 
-function hasLocalePrefix(pathname: string) {
-  return routing.locales.some(
-    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
-  );
-}
+// next-intl redirects with 307. With locale detection off, each of its redirects maps an old or
+// non-canonical URL to the one canonical URL (/jobs → /viec-lam, /vi/x → /x), so make it permanent.
+function permanent(response: NextResponse): NextResponse {
+  const location = response.headers.get("location");
 
-function route(request: NextRequest): NextResponse {
-  const { pathname } = request.nextUrl;
-  const defaultLocalePrefix = `/${routing.defaultLocale}`;
-
-  if (!hasLocalePrefix(pathname)) {
-    const url = request.nextUrl.clone();
-    url.pathname =
-      pathname === "/"
-        ? defaultLocalePrefix
-        : `${defaultLocalePrefix}${pathname}`;
-
-    return NextResponse.rewrite(url, { request: { headers: request.headers } });
-  }
-
-  if (
-    pathname === defaultLocalePrefix ||
-    pathname.startsWith(`${defaultLocalePrefix}/`)
-  ) {
-    const url = request.nextUrl.clone();
-    url.pathname = pathname.slice(defaultLocalePrefix.length) || "/";
-
-    // Permanent: /en/... is never the canonical address of a page.
-    return NextResponse.redirect(url, 308);
-  }
-
-  return handleI18nRouting(request);
+  return response.status === 307 && location
+    ? NextResponse.redirect(location, 308)
+    : response;
 }
 
 export default function middleware(request: NextRequest) {
@@ -58,7 +34,7 @@ export default function middleware(request: NextRequest) {
   request.headers.set("x-nonce", nonce);
   request.headers.set(CSP_HEADER, csp);
 
-  const response = route(request);
+  const response = permanent(handleI18nRouting(request));
   response.headers.set(CSP_HEADER, csp);
   if (isPrivatePath(request.nextUrl.pathname)) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow");

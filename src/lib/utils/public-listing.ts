@@ -1,3 +1,4 @@
+import type { AppHref } from "@/i18n/navigation";
 import type { PaginatedQueryParams } from "@/shared/types/pagination";
 import { resolveLocationCode } from "@/shared/data/location-catalog";
 import {
@@ -320,7 +321,7 @@ export const buildPathWithSearchParams = (
 // null for searched, filtered or re-sorted variants: those are noindexed, not canonicalized.
 export const getJobListCanonicalPath = (
   searchState: JobListSearchState
-): string | null => {
+): AppHref | null => {
   const isIndexableVariant =
     !searchState.q &&
     !searchState.locationCode &&
@@ -335,18 +336,14 @@ export const getJobListCanonicalPath = (
     return null;
   }
 
-  const canonicalParams = new URLSearchParams();
-
-  if (searchState.page > 1) {
-    canonicalParams.set("page", String(searchState.page));
-  }
-
-  return buildPathWithSearchParams("/jobs", canonicalParams);
+  return searchState.page > 1
+    ? { pathname: "/jobs", query: { page: String(searchState.page) } }
+    : "/jobs";
 };
 
 export const getCompanyListCanonicalPath = (
   searchState: CompanyListSearchState
-): string | null => {
+): AppHref | null => {
   const isIndexableVariant =
     !searchState.q && searchState.limit === DEFAULT_COMPANY_LIST_PAGE_SIZE;
 
@@ -354,13 +351,9 @@ export const getCompanyListCanonicalPath = (
     return null;
   }
 
-  const canonicalParams = new URLSearchParams();
-
-  if (searchState.page > 1) {
-    canonicalParams.set("page", String(searchState.page));
-  }
-
-  return buildPathWithSearchParams("/companies", canonicalParams);
+  return searchState.page > 1
+    ? { pathname: "/companies", query: { page: String(searchState.page) } }
+    : "/companies";
 };
 
 export const areJobListSearchStatesEqual = (

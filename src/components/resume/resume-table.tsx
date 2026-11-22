@@ -1,5 +1,6 @@
 import { FileText, ExternalLink, Calendar, Edit, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { jobHref } from "@/i18n/hrefs";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -227,7 +228,7 @@ function ResumeTableRow({
         {resume.jobId ? (
           typeof resume.jobId === "object" ? (
             <Link
-              href={`/jobs/${resume.jobId._id}`}
+              href={jobHref(resume.jobId._id, resume.jobId.name)}
               className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors"
             >
               {resume.jobId.name}

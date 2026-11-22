@@ -13,6 +13,7 @@ import {
   MAIN_NAV_ITEMS,
   type HeaderAuthView,
 } from "./nav-config";
+import { toAppHref } from "@/i18n/hrefs";
 
 interface MobileNavDrawerProps {
   open: boolean;
@@ -94,7 +95,7 @@ export function MobileNavDrawer({
               return (
                 <Link
                   key={href}
-                  href={href}
+                  href={toAppHref(href)}
                   className={cn(
                     "flex items-center gap-4 px-4 py-3 rounded-lg transition-colors border",
                     isActive

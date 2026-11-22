@@ -5,7 +5,7 @@ import { calculateCVCompletion } from "@/features/cv-builder/utils/cv-helpers";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
 import { Download, AlertCircle, Save, Loader2, Lightbulb } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 interface CompletionProgressProps {

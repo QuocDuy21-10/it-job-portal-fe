@@ -1,6 +1,7 @@
 "use client";
 
 import { MapPin } from "lucide-react";
+import { externalJobHref, jobHref } from "@/i18n/hrefs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -44,7 +45,9 @@ function InternalJobFavorite({ jobId }: { jobId: string }) {
 export function JobSearchCard({ item }: { item: JobSearchItem }) {
   const { t, language } = useI18n();
   const isExternal = item.sourceType === "EXTERNAL";
-  const href = isExternal ? `/jobs/external/${item.id}` : `/jobs/${item.id}`;
+  const href = isExternal
+    ? externalJobHref(item.id)
+    : jobHref(item.id, item.title);
   const status = getJobStatus(
     isExternal
       ? { createdAt: item.postedAt }

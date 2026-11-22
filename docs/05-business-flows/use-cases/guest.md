@@ -42,10 +42,10 @@ Sơ đồ rút gọn, không theo đúng ký pháp UML: đường chấm có nh�
 
 | Use case | Màn hình | Trang tính năng |
 | --- | --- | --- |
-| Tìm và lọc việc làm | `/jobs` | [Tìm kiếm việc làm](../../04-features/job-search.md) |
-| Xem chi tiết tin nội bộ | `/jobs/<id>` | [Tìm kiếm việc làm](../../04-features/job-search.md) |
-| Xem tin bên ngoài | `/jobs/external/<id>` | [Việc làm từ nguồn ngoài](../../04-features/external-job-aggregation.md) |
-| Xem danh sách và chi tiết công ty | `/companies`, `/companies/<id>` | [Danh bạ công ty](../../04-features/company-directory.md) |
+| Tìm và lọc việc làm | `/viec-lam` | [Tìm kiếm việc làm](../../04-features/job-search.md) |
+| Xem chi tiết tin nội bộ | `/viec-lam/<slug>-<id>` | [Tìm kiếm việc làm](../../04-features/job-search.md) |
+| Xem tin bên ngoài | `/viec-lam/nguon-ngoai/<id>` | [Việc làm từ nguồn ngoài](../../04-features/external-job-aggregation.md) |
+| Xem danh sách và chi tiết công ty | `/cong-ty`, `/cong-ty/<slug>-<id>` | [Danh bạ công ty](../../04-features/company-directory.md) |
 | Đăng ký, xác minh email | `/register`, `/verify-email` | [Xác thực](../../04-features/authentication.md) |
 | Đăng nhập (email, Google) | `/login`, modal | [Xác thực](../../04-features/authentication.md) |
 | Quên và đặt lại mật khẩu | `/forgot-password`, `/reset-password` | [Xác thực](../../04-features/authentication.md) |

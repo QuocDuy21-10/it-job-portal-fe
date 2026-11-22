@@ -19,7 +19,10 @@ export function useProfileTab(): {
   );
 
   const goToPage = (page: PageType) => {
-    router.push(`/profile?tab=${page}`, { scroll: false });
+    router.push(
+      { pathname: "/profile", query: { tab: page } },
+      { scroll: false }
+    );
   };
 
   return { currentPage, goToPage };

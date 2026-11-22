@@ -45,9 +45,9 @@ Sơ đồ rút gọn, không theo đúng ký pháp UML. Ứng viên làm đượ
 
 | Use case | Màn hình | Trang tính năng |
 | --- | --- | --- |
-| Ứng tuyển bằng file CV | Hộp thoại ở `/jobs/<id>` | [Ứng tuyển](../../04-features/job-application.md) |
+| Ứng tuyển bằng file CV | Hộp thoại ở `/viec-lam/<slug>-<id>` | [Ứng tuyển](../../04-features/job-application.md) |
 | Lưu và bỏ lưu việc | Nút ở thẻ tin, trang tin; tab "đã lưu" của `/profile?tab=my-jobs` | [Việc làm đã lưu](../../04-features/saved-jobs.md) |
-| Theo dõi công ty | Nút ở `/companies/<id>` | [Theo dõi công ty](../../04-features/company-following.md) |
+| Theo dõi công ty | Nút ở `/cong-ty/<slug>-<id>` | [Theo dõi công ty](../../04-features/company-following.md) |
 | Tạo CV | `/profile?tab=create-cv` | [Tạo CV](../../04-features/cv-builder.md) |
 | Xem trước và tải PDF | `/profile/cv-preview` | [Xuất CV ra PDF](../../04-features/cv-pdf-export.md) |
 | Hỏi trợ lý AI, xác nhận lưu việc | Hộp chat nổi | [Trợ lý AI](../../04-features/ai-career-assistant.md) |

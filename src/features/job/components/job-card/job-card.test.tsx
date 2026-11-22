@@ -53,21 +53,31 @@ jest.mock("@/hooks/use-i18n", () => ({
   }),
 }));
 
-jest.mock("@/i18n/navigation", () => ({
-  Link: ({
-    children,
-    href,
-    className,
-  }: {
-    children: ReactNode;
-    href: string;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
-}));
+jest.mock("@/i18n/navigation", () => {
+  // Real route table: object hrefs render as the URL a visitor sees (Vietnamese).
+  const { getPathname } = jest.requireActual("@/i18n/navigation");
+
+  return {
+    Link: ({
+      children,
+      href,
+      className,
+    }: {
+      children: ReactNode;
+      href: string | object;
+      className?: string;
+    }) => (
+      <a
+        href={
+          typeof href === "string" ? href : getPathname({ href, locale: "vi" })
+        }
+        className={className}
+      >
+        {children}
+      </a>
+    ),
+  };
+});
 
 const job = {
   _id: "job-1",
@@ -129,7 +139,7 @@ describe("JobCard", () => {
 
     expect(screen.getByRole("link", { name: "Apply now" })).toHaveAttribute(
       "href",
-      "/jobs/job-1"
+      "/viec-lam/frontend-engineer-job-1"
     );
     expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
     expect(screen.queryByText(/25[.,]000[.,]000/)).toBeNull();

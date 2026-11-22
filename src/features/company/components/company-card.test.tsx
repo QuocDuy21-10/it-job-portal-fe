@@ -2,21 +2,31 @@ import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import { CompanyCard } from "./company-card";
 
-jest.mock("@/i18n/navigation", () => ({
-  Link: ({
-    children,
-    className,
-    href,
-  }: {
-    children: ReactNode;
-    className?: string;
-    href: string;
-  }) => (
-    <a className={className} href={href}>
-      {children}
-    </a>
-  ),
-}));
+jest.mock("@/i18n/navigation", () => {
+  // Real route table: object hrefs render as the URL a visitor sees (Vietnamese).
+  const { getPathname } = jest.requireActual("@/i18n/navigation");
+
+  return {
+    Link: ({
+      children,
+      className,
+      href,
+    }: {
+      children: ReactNode;
+      className?: string;
+      href: string | object;
+    }) => (
+      <a
+        className={className}
+        href={
+          typeof href === "string" ? href : getPathname({ href, locale: "vi" })
+        }
+      >
+        {children}
+      </a>
+    ),
+  };
+});
 
 jest.mock("@/hooks/use-i18n", () => ({
   useI18n: () => ({
@@ -53,7 +63,7 @@ describe("CompanyCard", () => {
 
     expect(screen.getByRole("link", { name: /google/i })).toHaveAttribute(
       "href",
-      "/companies/company-1"
+      "/cong-ty/google-company-1"
     );
     expect(
       screen.getByText("Organizing the world's information.")

@@ -1,6 +1,6 @@
 # Việc làm từ nguồn ngoài
 
-DevLink tổng hợp tin tuyển dụng từ các website khác vào cùng danh sách `/jobs`. Trang này giải thích người dùng thấy gì ở loại tin này, vì sao nó khác tin do nhà tuyển dụng đăng, và frontend dùng dữ liệu nào để quyết định. Dành cho người dùng muốn hiểu và developer sửa phần hiển thị.
+DevLink tổng hợp tin tuyển dụng từ các website khác vào cùng danh sách `/viec-lam`. Trang này giải thích người dùng thấy gì ở loại tin này, vì sao nó khác tin do nhà tuyển dụng đăng, và frontend dùng dữ liệu nào để quyết định. Dành cho người dùng muốn hiểu và developer sửa phần hiển thị.
 
 ## Vì sao cần
 
@@ -18,7 +18,7 @@ DevLink tổng hợp tin tuyển dụng từ các website khác vào cùng danh 
 | | Tin nội bộ | Tin bên ngoài |
 | --- | --- | --- |
 | Nguồn | Nhà tuyển dụng đăng trên DevLink | Tổng hợp từ website khác |
-| Trang chi tiết | `/jobs/<id>` | `/jobs/external/<id>` |
+| Trang chi tiết | `/viec-lam/<slug>-<id>` | `/viec-lam/nguon-ngoai/<id>` |
 | Ứng tuyển | Trên DevLink bằng hộp thoại nộp hồ sơ | Sang website gốc, tab mới |
 | Lưu việc | Có | Không |
 | Lương | `salary` (số) | `salaryText` (văn bản) |

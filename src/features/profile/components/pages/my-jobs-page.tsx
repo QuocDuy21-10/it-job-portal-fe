@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { jobHref } from "@/i18n/hrefs";
 import { Card } from "@/components/ui/card";
 import {
   Briefcase,
@@ -230,7 +231,7 @@ export default function MyJobsPage() {
                         {/* Mobile Title & Company Name */}
                         <div className="md:hidden">
                           <Link
-                            href={`/jobs/${jobData.id}`}
+                            href={jobHref(jobData.id, jobData.name)}
                             className="group/link"
                           >
                             <h3 className="font-semibold text-foreground text-sm leading-tight hover:text-primary transition-colors line-clamp-2">
@@ -273,7 +274,7 @@ export default function MyJobsPage() {
                     <div className="hidden md:flex flex-1 flex-col gap-2 min-w-0">
                       <div>
                         <Link
-                          href={`/jobs/${jobData.id}`}
+                          href={jobHref(jobData.id, jobData.name)}
                           className="inline-flex items-center gap-2 group/link"
                         >
                           <h3 className="font-semibold text-foreground text-lg group-hover/link:text-primary transition-colors line-clamp-1">
@@ -366,7 +367,7 @@ export default function MyJobsPage() {
                     {/* Action Button - full-width on mobile, auto-width on desktop */}
                     <div className="w-full md:w-auto md:self-center pt-2 md:pt-0">
                       <Link
-                        href={`/jobs/${jobData.id}`}
+                        href={jobHref(jobData.id, jobData.name)}
                         className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap ${
                           jobData.status === "APPROVED"
                             ? "bg-emerald-600 hover:bg-emerald-700 text-white"

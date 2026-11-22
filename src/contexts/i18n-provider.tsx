@@ -7,7 +7,7 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
@@ -29,6 +29,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const locale = useLocale() as Language;
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams();
   const searchParams = useSearchParams();
   const translate = useTranslations();
   const mounted = true;
@@ -54,12 +55,13 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const queryString = searchParams.toString();
-      const nextPath = queryString ? `${pathname}?${queryString}` : pathname;
-
-      router.replace(nextPath, { locale: lang });
+      router.replace(
+        // @ts-expect-error -- `params` always belongs to the current route `pathname` (next-intl docs)
+        { pathname, params, query: Object.fromEntries(searchParams) },
+        { locale: lang }
+      );
     },
-    [locale, pathname, router, searchParams]
+    [locale, params, pathname, router, searchParams]
   );
 
   const contextValue = useMemo<I18nContextType>(

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Mail, ArrowLeft, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ import { CountdownTimer } from "@/components/auth/countdown-timer";
 import { VerificationAlert } from "@/components/auth/verification-alert";
 import { useVerification } from "@/hooks/use-verification";
 import { useI18n } from "@/hooks/use-i18n";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 function VerifyEmailContent() {
@@ -41,7 +41,7 @@ function VerifyEmailContent() {
       toast.success(t("authModal.verifyEmail.toasts.verifySuccess"));
       // Chuyển về trang login sau khi verify thành công
       setTimeout(() => {
-        router.push("/login?verified=true");
+        router.push({ pathname: "/login", query: { verified: "true" } });
       }, 1500);
     },
     onError: (message) => {

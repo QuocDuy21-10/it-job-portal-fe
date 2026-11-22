@@ -17,8 +17,8 @@ const forwarded = (response: Response, name: string) =>
 
 describe("middleware CSP", () => {
   it.each([
-    ["rewrite (no locale prefix)", "/jobs"],
-    ["next-intl (non-default locale)", "/vi/jobs"],
+    ["rewrite (default locale, no prefix)", "/viec-lam"],
+    ["pass-through (prefixed locale)", "/en/jobs"],
   ])(
     "%s: forwards the nonce to Next and sends the same CSP back",
     (_, path) => {
@@ -33,11 +33,13 @@ describe("middleware CSP", () => {
     }
   );
 
-  it("redirect (default locale prefix): still sends a CSP", () => {
-    const response = run("/en/jobs");
+  it("redirect (default locale prefix): permanent, with a CSP", () => {
+    const response = run("/vi/jobs");
 
     expect(response.status).toBe(308);
-    expect(new URL(response.headers.get("location")!).pathname).toBe("/jobs");
+    expect(new URL(response.headers.get("location")!).pathname).toBe(
+      "/viec-lam"
+    );
     expect(nonceOf(response.headers.get(CSP))).toBeTruthy();
   });
 
@@ -74,4 +76,50 @@ describe("middleware X-Robots-Tag", () => {
       expect(run(path).headers.get("x-robots-tag")).toBeNull();
     }
   );
+});
+
+describe("middleware legacy URLs", () => {
+  const ID = "6af9ccda25a0db1ca69a68da";
+
+  it.each([
+    ["/vi", "/"],
+    ["/vi/jobs", "/viec-lam"],
+    [`/vi/jobs/${ID}`, `/viec-lam/${ID}`],
+    ["/jobs", "/viec-lam"],
+    [`/jobs/${ID}`, `/viec-lam/${ID}`],
+    ["/jobs/external/x1", "/viec-lam/nguon-ngoai/x1"],
+    ["/companies", "/cong-ty"],
+    [`/companies/${ID}`, `/cong-ty/${ID}`],
+    ["/privacy", "/chinh-sach-bao-mat"],
+    ["/terms", "/dieu-khoan-su-dung"],
+    ["/vi/login", "/login"],
+    ["/en/viec-lam", "/en/jobs"],
+    ["/jobs?q=react&page=2", "/viec-lam?q=react&page=2"],
+  ])("%s → 308 %s", (from, to) => {
+    const response = run(from);
+    const location = new URL(response.headers.get("location")!);
+
+    expect(response.status).toBe(308);
+    expect(location.pathname + location.search).toBe(to);
+  });
+
+  it.each([
+    "/",
+    "/viec-lam",
+    "/cong-ty",
+    `/viec-lam/x-${ID}`,
+    "/en",
+    "/en/jobs",
+    "/login",
+    "/en/login",
+  ])("serves %s without redirecting or setting a locale cookie", (path) => {
+    const response = run(path);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it.each(["/en/login", "/en/admin/users"])("noindexes %s", (path) => {
+    expect(run(path).headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
 });

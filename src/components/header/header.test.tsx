@@ -36,22 +36,32 @@ jest.mock("@/shared/constants/roles", () => ({
   isSuperAdmin: () => false, // auth.slice imports this too
 }));
 
-jest.mock("@/i18n/navigation", () => ({
-  Link: ({
-    href,
-    children,
-    ...rest
-  }: {
-    href: string;
-    children: ReactNode;
-    [key: string]: unknown;
-  }) => (
-    <a href={href} {...rest}>
-      {children}
-    </a>
-  ),
-  usePathname: () => "/jobs",
-}));
+jest.mock("@/i18n/navigation", () => {
+  // Real route table: object hrefs render as the URL a visitor sees (Vietnamese).
+  const { getPathname } = jest.requireActual("@/i18n/navigation");
+
+  return {
+    Link: ({
+      href,
+      children,
+      ...rest
+    }: {
+      href: string | object;
+      children: ReactNode;
+      [key: string]: unknown;
+    }) => (
+      <a
+        href={
+          typeof href === "string" ? href : getPathname({ href, locale: "vi" })
+        }
+        {...rest}
+      >
+        {children}
+      </a>
+    ),
+    usePathname: () => "/jobs",
+  };
+});
 
 jest.mock("@/components/notification/notification-bell", () => ({
   NotificationBell: () => <div data-testid="notification-bell" />,

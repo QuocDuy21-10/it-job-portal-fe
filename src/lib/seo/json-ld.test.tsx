@@ -11,10 +11,6 @@ import {
   type Translate,
 } from "./json-ld";
 
-jest.mock("@/i18n/routing", () => ({
-  routing: { locales: ["en", "vi"], defaultLocale: "en" },
-}));
-
 const SITE = "http://localhost:3000";
 
 const job = {
@@ -52,11 +48,11 @@ describe("buildJobPostingJsonLd", () => {
     expect(data.description).not.toContain("<script");
     expect(data.datePosted).toBe("2026-10-17T00:00:00.000Z");
     expect(data.validThrough).toBe("2026-12-05T00:00:00.000Z");
-    expect(data.url).toBe(`${SITE}/vi/jobs/j1`);
+    expect(data.url).toBe(`${SITE}/viec-lam/senior-backend-engineer-go-j1`);
     expect(data.hiringOrganization).toEqual({
       "@type": "Organization",
       name: "VNG Corporation",
-      url: `${SITE}/vi/companies/c1`,
+      url: `${SITE}/cong-ty/vng-corporation-c1`,
       logo: "https://api.example.com/vng.png",
     });
   });
@@ -149,7 +145,7 @@ describe("buildCompanyJsonLd", () => {
     expect(data).not.toHaveProperty("numberOfEmployees");
     expect(data).not.toHaveProperty("logo");
     expect(data).toHaveProperty("sameAs", ["https://fpt.com"]);
-    expect(data.url).toBe(`${SITE}/companies/c1`);
+    expect(data.url).toBe(`${SITE}/en/companies/fpt-software-c1`);
   });
 
   it("keeps a real employee count", () => {

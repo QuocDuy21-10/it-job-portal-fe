@@ -7,6 +7,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
 import type { UserInfo } from "@/features/auth/schemas/auth.schema";
 import { USER_MENU_ITEMS } from "./nav-config";
+import { toAppHref } from "@/i18n/hrefs";
 
 interface MobileUserDrawerProps {
   open: boolean;
@@ -89,7 +90,7 @@ export function MobileUserDrawer({
               ({ href, icon: Icon, labelKey, fallback }) => (
                 <Link
                   key={href}
-                  href={href}
+                  href={toAppHref(href)}
                   className="flex items-center gap-4 px-4 py-3 text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors border border-transparent hover:border-primary/20"
                   onClick={onClose}
                 >

@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toAppHref } from "@/i18n/hrefs";
 
 interface AdminSidebarProps {
   isExpanded: boolean;
@@ -124,7 +125,7 @@ export function AdminSidebar({
               const navLink = (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={toAppHref(item.href)}
                   className={cn(
                     "group flex items-center py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
                     isExpanded ? "px-3 gap-3" : "px-2 justify-center",

@@ -2,6 +2,7 @@
 
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { MapPin } from "lucide-react";
+import { jobHref } from "@/i18n/hrefs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,7 +46,7 @@ export function JobCardDetailed({
         <CardContent className="p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              href={`/jobs/${job._id}`}
+              href={jobHref(job._id, job.name)}
               className="flex flex-1 min-w-0 gap-4"
             >
               {!hideLogo && (
@@ -146,7 +147,7 @@ export function JobCardDetailed({
                           asChild
                           className="flex-1 sm:flex-initial sm:px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 shadow-sm"
                         >
-                          <Link href={`/jobs/${job._id}`}>
+                          <Link href={jobHref(job._id, job.name)}>
                             {t("jobsPage.jobCard.applyNow") || "Apply Now"}
                           </Link>
                         </Button>
@@ -209,7 +210,7 @@ export function JobCardDetailed({
                             asChild
                             className="flex-1 sm:flex-initial sm:px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 shadow-sm"
                           >
-                            <Link href={`/jobs/${job._id}`}>
+                            <Link href={jobHref(job._id, job.name)}>
                               {t("jobsPage.jobCard.applyNow") || "Apply Now"}
                             </Link>
                           </Button>

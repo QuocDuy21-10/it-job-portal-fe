@@ -15,4 +15,13 @@ describe("chat route utils", () => {
     expect(getChatJobIdFromPathname("/vi/companies/company-1")).toBeUndefined();
     expect(getChatJobIdFromPathname(null)).toBeUndefined();
   });
+
+  it("reads the id out of Vietnamese and slug URLs", () => {
+    const id = "6af9ccda25a0db1ca69a68da";
+
+    expect(getChatJobIdFromPathname(`/viec-lam/dev-go-${id}`)).toBe(id);
+    expect(getChatJobIdFromPathname(`/en/jobs/dev-go-${id}`)).toBe(id);
+    expect(getChatJobIdFromPathname("/viec-lam")).toBeUndefined();
+    expect(getChatJobIdFromPathname("/cong-ty/acme-1")).toBeUndefined();
+  });
 });

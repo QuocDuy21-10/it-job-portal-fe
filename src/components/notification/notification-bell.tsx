@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { Bell, Check } from "lucide-react";
+import { toAppHref } from "@/i18n/hrefs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -35,7 +36,7 @@ export function NotificationBell() {
   const handleNotificationClick = useCallback(
     (notification: Notification) => {
       setOpen(false);
-      router.push(getNotificationLink(notification));
+      router.push(toAppHref(getNotificationLink(notification)));
     },
     [router]
   );
@@ -126,7 +127,7 @@ export function NotificationBell() {
         {/* Footer */}
         <div className="border-t px-4 py-2">
           <Link
-            href="/profile?tab=notifications"
+            href={toAppHref("/profile?tab=notifications")}
             onClick={() => setOpen(false)}
             className="text-xs text-primary hover:underline font-medium"
           >

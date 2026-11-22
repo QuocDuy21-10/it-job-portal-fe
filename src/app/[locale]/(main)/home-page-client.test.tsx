@@ -201,7 +201,10 @@ describe("Home", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Choose NextJS" }));
 
-    expect(mockPush).toHaveBeenCalledWith("/jobs?q=NextJS");
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: "/jobs",
+      query: { q: "NextJS" },
+    });
   });
 
   it("renders the server data and skips both queries", () => {
