@@ -1,7 +1,10 @@
 import CompaniesPage, { generateMetadata } from "./page";
 import { fetchPublicCompanies } from "@/lib/utils/public-content";
 
-jest.mock("next-intl", () => ({ hasLocale: () => true }));
+jest.mock("next-intl", () => ({
+  ...jest.requireActual("next-intl"),
+  hasLocale: () => true,
+}));
 
 jest.mock("next-intl/server", () => ({
   getTranslations: jest.fn(
@@ -14,10 +17,6 @@ jest.mock("next/navigation", () => ({
   notFound: () => {
     throw new Error("NEXT_NOT_FOUND");
   },
-}));
-
-jest.mock("@/i18n/routing", () => ({
-  routing: { locales: ["en", "vi"], defaultLocale: "en" },
 }));
 
 jest.mock("@/lib/utils/public-content", () => ({

@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { connection } from "next/server";
+import { companyHref, jobHref } from "@/i18n/hrefs";
+import type { AppHref } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import {
   fetchAllPublicCompanies,
@@ -23,12 +25,12 @@ const newestOf = (items: Dated[]) =>
     .pop();
 
 const toEntry = (
-  pathname: string,
+  href: AppHref,
   lastModified: string | undefined
 ): MetadataRoute.Sitemap[number] => ({
-  url: getLocalizedUrl(pathname, routing.defaultLocale),
+  url: getLocalizedUrl(href, routing.defaultLocale),
   ...(lastModified ? { lastModified } : {}),
-  alternates: { languages: getAlternateLanguageUrls(pathname) },
+  alternates: { languages: getAlternateLanguageUrls(href) },
 });
 
 // One sitemap file holds up to 50,000 URLs; past that, split it with generateSitemaps.
@@ -47,9 +49,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     toEntry("/", newestJob),
     toEntry("/jobs", newestJob),
     toEntry("/companies", newestOf(companies)),
-    ...jobs.map((job) => toEntry(`/jobs/${job._id}`, lastModifiedOf(job))),
+    ...jobs.map((job) =>
+      toEntry(jobHref(job._id, job.name), lastModifiedOf(job))
+    ),
     ...companies.map((company) =>
-      toEntry(`/companies/${company._id}`, lastModifiedOf(company))
+      toEntry(companyHref(company._id, company.name), lastModifiedOf(company))
     ),
   ];
 }

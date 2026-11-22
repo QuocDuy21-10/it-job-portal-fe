@@ -1,3 +1,4 @@
+import { companyHref, jobHref } from "@/i18n/hrefs";
 import type { Company } from "@/features/company/schemas/company.schema";
 import type { Job } from "@/features/job/schemas/job.schema";
 import type { AppLocale } from "@/i18n/routing";
@@ -96,7 +97,10 @@ export const buildJobPostingJsonLd = ({
     hiringOrganization: {
       "@type": "Organization",
       name: job.company.name,
-      url: getLocalizedUrl(`/companies/${job.company._id}`, locale),
+      url: getLocalizedUrl(
+        companyHref(job.company._id, job.company.name),
+        locale
+      ),
       ...(logoUrl ? { logo: logoUrl } : {}),
     },
     jobLocation: {
@@ -120,7 +124,7 @@ export const buildJobPostingJsonLd = ({
           },
         }
       : {}),
-    url: getLocalizedUrl(`/jobs/${job._id}`, locale),
+    url: getLocalizedUrl(jobHref(job._id, job.name), locale),
   };
 };
 
@@ -139,7 +143,7 @@ export const buildCompanyJsonLd = ({
   "@type": "Organization",
   name: company.name,
   description,
-  url: getLocalizedUrl(`/companies/${company._id}`, locale),
+  url: getLocalizedUrl(companyHref(company._id, company.name), locale),
   ...(logoUrl ? { image: logoUrl, logo: logoUrl } : {}),
   ...(company.website ? { sameAs: [company.website] } : {}),
   ...(company.address

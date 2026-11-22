@@ -41,7 +41,7 @@ export async function generateMetadata({
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,
-    pathname: canonicalPath ?? "/jobs",
+    href: canonicalPath ?? "/jobs",
     indexable: canonicalPath !== null,
     title:
       searchState.page > 1

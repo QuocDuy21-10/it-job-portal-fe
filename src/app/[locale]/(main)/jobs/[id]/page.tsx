@@ -27,7 +27,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { companyHref, jobHref } from "@/i18n/hrefs";
+import { permanentRedirect } from "@/i18n/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { isCanonicalSlugId, parseSlugId } from "@/lib/seo/slug";
 import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 import { fetchPublicJobById } from "@/lib/utils/public-content";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
@@ -56,10 +59,13 @@ const resolveJobDetailParams = async (
     notFound();
   }
 
-  return {
-    id,
-    locale: locale as AppLocale,
-  };
+  const jobId = parseSlugId(id);
+
+  if (!jobId) {
+    notFound();
+  }
+
+  return { id, jobId, locale: locale as AppLocale };
 };
 
 const getCompanyLogoUrl = (logo?: string | null) => {
@@ -73,9 +79,9 @@ const getCompanyLogoUrl = (logo?: string | null) => {
 export async function generateMetadata({
   params,
 }: JobDetailPageProps): Promise<Metadata> {
-  const { locale, id } = await resolveJobDetailParams(params);
+  const { locale, jobId } = await resolveJobDetailParams(params);
   const [job, meta] = await Promise.all([
-    fetchPublicJobById(id),
+    fetchPublicJobById(jobId),
     getTranslations({ locale, namespace: "meta" }),
   ]);
 
@@ -85,7 +91,7 @@ export async function generateMetadata({
 
   return buildLocalizedPageMetadata({
     locale,
-    pathname: `/jobs/${id}`,
+    href: jobHref(job._id, job.name),
     title: meta("jobTitle", {
       job: job.name,
       company: job.company.name,
@@ -98,9 +104,9 @@ export async function generateMetadata({
 }
 
 export default async function JobDetailPage({ params }: JobDetailPageProps) {
-  const { locale, id } = await resolveJobDetailParams(params);
+  const { locale, id, jobId } = await resolveJobDetailParams(params);
   const [job, t, meta] = await Promise.all([
-    fetchPublicJobById(id),
+    fetchPublicJobById(jobId),
     getTranslations({ locale }),
     getTranslations({ locale, namespace: "meta" }),
   ]);
@@ -109,9 +115,17 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     notFound();
   }
 
+  // Bare ids (backend emails, old links) and renamed jobs land on the one canonical URL.
+  if (!isCanonicalSlugId(id, job.name, job._id)) {
+    permanentRedirect({ href: jobHref(job._id, job.name), locale });
+  }
+
   const homePath = getLocalizedPath("/", locale);
   const jobsPath = getLocalizedPath("/jobs", locale);
-  const companyPath = getLocalizedPath(`/companies/${job.company._id}`, locale);
+  const companyPath = getLocalizedPath(
+    companyHref(job.company._id, job.company.name),
+    locale
+  );
   const companyLogoUrl = getCompanyLogoUrl(job.company.logo);
   const daysRemaining = Math.ceil(
     (new Date(job.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
@@ -131,7 +145,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         data={buildBreadcrumbJsonLd([
           { name: t("breadcrumb.home"), url: getLocalizedUrl("/", locale) },
           { name: t("nav.findJobs"), url: getLocalizedUrl("/jobs", locale) },
-          { name: job.name, url: getLocalizedUrl(`/jobs/${job._id}`, locale) },
+          {
+            name: job.name,
+            url: getLocalizedUrl(jobHref(job._id, job.name), locale),
+          },
         ])}
       />
 

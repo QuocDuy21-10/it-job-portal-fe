@@ -70,9 +70,11 @@ describe("public-listing source", () => {
     expect(
       getJobListCanonicalPath(buildState({ source: "external" }))
     ).toBeNull();
-    expect(getJobListCanonicalPath(buildState({ page: 2 }))).toBe(
-      "/jobs?page=2"
-    );
+    expect(getJobListCanonicalPath(buildState({ page: 2 }))).toEqual({
+      pathname: "/jobs",
+      query: { page: "2" },
+    });
+    expect(getJobListCanonicalPath(buildState())).toBe("/jobs");
   });
 });
 
@@ -153,6 +155,6 @@ describe("getCompanyListCanonicalPath", () => {
         page: 3,
         q: "",
       })
-    ).toBe("/companies?page=3");
+    ).toEqual({ pathname: "/companies", query: { page: "3" } });
   });
 });

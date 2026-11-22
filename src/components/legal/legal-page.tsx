@@ -22,7 +22,7 @@ export function buildLegalPageMetadata(
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,
-    pathname: `/${page}`,
+    href: `/${page}` as const,
     title,
     description,
     // Sample text is not worth indexing. Drop draftNotice when the real documents land.

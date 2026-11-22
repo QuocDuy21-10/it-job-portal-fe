@@ -1,3 +1,4 @@
+import { externalJobHref } from "@/i18n/hrefs";
 import parse from "html-react-parser";
 import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
@@ -44,7 +45,7 @@ export async function generateMetadata({
   return {
     ...buildLocalizedPageMetadata({
       locale,
-      pathname: `/jobs/external/${id}`,
+      href: externalJobHref(id),
       title: `${job.title} - ${job.companyName}`,
       description:
         toMetadataDescription(job.descriptionHtml) ||

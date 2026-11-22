@@ -1,9 +1,8 @@
 import { buildLegalPageMetadata } from "./legal-page";
 
-jest.mock("next-intl", () => ({ hasLocale: () => true }));
-
-jest.mock("@/i18n/routing", () => ({
-  routing: { locales: ["en", "vi"], defaultLocale: "en" },
+jest.mock("next-intl", () => ({
+  ...jest.requireActual("next-intl"),
+  hasLocale: () => true,
 }));
 
 describe("buildLegalPageMetadata", () => {

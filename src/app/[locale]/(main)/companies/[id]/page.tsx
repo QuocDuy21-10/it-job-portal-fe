@@ -21,7 +21,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
+import { companyHref } from "@/i18n/hrefs";
+import { permanentRedirect } from "@/i18n/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { isCanonicalSlugId, parseSlugId } from "@/lib/seo/slug";
 import {
   fetchPublicCompanyById,
   fetchPublicJobs,
@@ -52,10 +55,13 @@ const resolveCompanyDetailParams = async (
     notFound();
   }
 
-  return {
-    id,
-    locale: locale as AppLocale,
-  };
+  const companyId = parseSlugId(id);
+
+  if (!companyId) {
+    notFound();
+  }
+
+  return { id, companyId, locale: locale as AppLocale };
 };
 
 const getCompanyLogoUrl = (logo?: string) => {
@@ -69,9 +75,9 @@ const getCompanyLogoUrl = (logo?: string) => {
 export async function generateMetadata({
   params,
 }: CompanyDetailPageProps): Promise<Metadata> {
-  const { locale, id } = await resolveCompanyDetailParams(params);
+  const { locale, companyId } = await resolveCompanyDetailParams(params);
   const [company, meta] = await Promise.all([
-    fetchPublicCompanyById(id),
+    fetchPublicCompanyById(companyId),
     getTranslations({ locale, namespace: "meta" }),
   ]);
 
@@ -81,7 +87,7 @@ export async function generateMetadata({
 
   return buildLocalizedPageMetadata({
     locale,
-    pathname: `/companies/${id}`,
+    href: companyHref(company._id, company.name),
     title: meta("companyTitle", { company: company.name }),
     description:
       toMetadataDescription(company.description) ||
@@ -94,11 +100,11 @@ export async function generateMetadata({
 export default async function CompanyDetailPage({
   params,
 }: CompanyDetailPageProps) {
-  const { locale, id } = await resolveCompanyDetailParams(params);
+  const { locale, id, companyId } = await resolveCompanyDetailParams(params);
   const [company, initialJobs, t, meta] = await Promise.all([
-    fetchPublicCompanyById(id),
+    fetchPublicCompanyById(companyId),
     fetchPublicJobs({
-      filter: `isActive=true&company._id=${id}`,
+      filter: `isActive=true&company._id=${companyId}`,
       limit: 20,
     }),
     getTranslations({ locale }),
@@ -109,10 +115,16 @@ export default async function CompanyDetailPage({
     notFound();
   }
 
+  // Bare ids and renamed companies land on the one canonical URL.
+  if (!isCanonicalSlugId(id, company.name, company._id)) {
+    permanentRedirect({ href: companyHref(company._id, company.name), locale });
+  }
+
   const homePath = getLocalizedPath("/", locale);
   const companiesPath = getLocalizedPath("/companies", locale);
-  const companyPath = getLocalizedPath(`/companies/${company._id}`, locale);
-  const companyUrl = getLocalizedUrl(`/companies/${company._id}`, locale);
+  const companyHrefValue = companyHref(company._id, company.name);
+  const companyPath = getLocalizedPath(companyHrefValue, locale);
+  const companyUrl = getLocalizedUrl(companyHrefValue, locale);
   const companyLogoUrl = getCompanyLogoUrl(company.logo);
 
   return (

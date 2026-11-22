@@ -1,11 +1,6 @@
 import { API_BASE_URL, API_BASE_URL_IMAGE } from "./constant";
 import { buildLocalizedPageMetadata, getSiteUrl } from "./seo";
 
-// next-intl ships ESM that Jest cannot parse; seo.ts only needs the locale list.
-jest.mock("@/i18n/routing", () => ({
-  routing: { locales: ["en", "vi"], defaultLocale: "en" },
-}));
-
 describe("env-derived constants", () => {
   it("builds API urls from the configured origin", () => {
     expect(API_BASE_URL).toBe("http://localhost:8081/api/v1");
@@ -20,7 +15,7 @@ describe("env-derived constants", () => {
 describe("buildLocalizedPageMetadata", () => {
   const base = {
     locale: "vi" as const,
-    pathname: "/jobs",
+    href: "/jobs" as const,
     title: "Việc làm IT mới nhất",
     description: "d",
   };
@@ -30,12 +25,12 @@ describe("buildLocalizedPageMetadata", () => {
 
     expect(metadata.robots).toBeUndefined();
     expect(metadata.alternates?.canonical).toBe(
-      "http://localhost:3000/vi/jobs"
+      "http://localhost:3000/viec-lam"
     );
     expect(metadata.alternates?.languages).toEqual({
-      en: "http://localhost:3000/jobs",
-      vi: "http://localhost:3000/vi/jobs",
-      "x-default": "http://localhost:3000/jobs",
+      vi: "http://localhost:3000/viec-lam",
+      en: "http://localhost:3000/en/jobs",
+      "x-default": "http://localhost:3000/viec-lam",
     });
     expect(metadata.openGraph?.images).toEqual([
       {
@@ -52,6 +47,18 @@ describe("buildLocalizedPageMetadata", () => {
 
     expect(metadata.robots).toEqual({ index: false, follow: true });
     expect(metadata.alternates).toBeUndefined();
+  });
+
+  it("translates dynamic routes and keeps query strings", () => {
+    const metadata = buildLocalizedPageMetadata({
+      ...base,
+      locale: "en",
+      href: { pathname: "/jobs", query: { page: "2" } },
+    });
+
+    expect(metadata.alternates?.canonical).toBe(
+      "http://localhost:3000/en/jobs?page=2"
+    );
   });
 
   it("uses the page's own image when it has one", () => {
