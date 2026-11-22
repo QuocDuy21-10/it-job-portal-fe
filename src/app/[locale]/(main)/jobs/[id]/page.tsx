@@ -32,34 +32,19 @@ import { formatVndCurrency } from "@/lib/utils/locale-formatters";
 import { fetchPublicJobById } from "@/lib/utils/public-content";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import {
+  JsonLd,
+  buildBreadcrumbJsonLd,
+  buildJobFactsDescription,
+  buildJobPostingJsonLd,
+} from "@/lib/seo/json-ld";
+import {
   buildLocalizedPageMetadata,
   getLocalizedPath,
   getLocalizedUrl,
-  serializeJsonLd,
-  toMetadataDescription,
 } from "@/shared/constants/seo";
-import type { Job } from "@/features/job/schemas/job.schema";
 
 type JobDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
-};
-
-const buildJobTitle = (jobName?: string, companyName?: string) => {
-  return [jobName, companyName].filter(Boolean).join(" | ");
-};
-
-const buildJobSummary = (companyName?: string, location?: string) => {
-  return [companyName, location].filter(Boolean).join(" · ");
-};
-
-const JOB_EMPLOYMENT_TYPES: Record<Job["formOfWork"], string> = {
-  "Full-time": "FULL_TIME",
-  "Part-time": "PART_TIME",
-  Internship: "INTERN",
-  Freelance: "CONTRACTOR",
-  Remote: "FULL_TIME",
-  Hybrid: "FULL_TIME",
-  Other: "OTHER",
 };
 
 const resolveJobDetailParams = async (
@@ -85,84 +70,6 @@ const getCompanyLogoUrl = (logo?: string | null) => {
   return `${API_BASE_URL_IMAGE}/images/company/${logo}`;
 };
 
-const buildJobStructuredData = (job: Job, locale: AppLocale) => {
-  const jobPath = `/jobs/${job._id}`;
-  const companyPath = `/companies/${job.company._id}`;
-  const companyLogoUrl = getCompanyLogoUrl(job.company.logo);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    title: job.name,
-    description:
-      toMetadataDescription(job.description, 5_000) ||
-      buildJobSummary(job.company.name, job.location),
-    identifier: {
-      "@type": "PropertyValue",
-      name: job.company.name,
-      value: job._id,
-    },
-    datePosted: job.createdAt ?? job.startDate,
-    validThrough: job.endDate,
-    employmentType: JOB_EMPLOYMENT_TYPES[job.formOfWork],
-    hiringOrganization: {
-      "@type": "Organization",
-      name: job.company.name,
-      url: getLocalizedUrl(companyPath, locale),
-      ...(companyLogoUrl ? { logo: companyLogoUrl } : {}),
-    },
-    jobLocation: {
-      "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        addressCountry: "VN",
-        addressLocality: job.location,
-      },
-    },
-    baseSalary: {
-      "@type": "MonetaryAmount",
-      currency: "VND",
-      value: {
-        "@type": "QuantitativeValue",
-        unitText: "MONTH",
-        value: job.salary,
-      },
-    },
-    url: getLocalizedUrl(jobPath, locale),
-  };
-};
-
-const buildJobBreadcrumbsStructuredData = (job: Job, locale: AppLocale) => {
-  const homeUrl = getLocalizedUrl("/", locale);
-  const jobsUrl = getLocalizedUrl("/jobs", locale);
-  const jobUrl = getLocalizedUrl(`/jobs/${job._id}`, locale);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: homeUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Jobs",
-        item: jobsUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: job.name,
-        item: jobUrl,
-      },
-    ],
-  };
-};
-
 export async function generateMetadata({
   params,
 }: JobDetailPageProps): Promise<Metadata> {
@@ -176,16 +83,15 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = buildJobTitle(job.name, job.company.name);
-  const description =
-    toMetadataDescription(job.description) ||
-    buildJobSummary(job.company.name, job.location);
-
   return buildLocalizedPageMetadata({
     locale,
     pathname: `/jobs/${id}`,
-    title,
-    description,
+    title: meta("jobTitle", {
+      job: job.name,
+      company: job.company.name,
+      location: job.location,
+    }),
+    description: buildJobFactsDescription(job, locale, meta),
     keywords: meta("keywords"),
     ogImage: getCompanyLogoUrl(job.company.logo),
   });
@@ -193,9 +99,10 @@ export async function generateMetadata({
 
 export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const { locale, id } = await resolveJobDetailParams(params);
-  const [job, t] = await Promise.all([
+  const [job, t, meta] = await Promise.all([
     fetchPublicJobById(id),
     getTranslations({ locale }),
+    getTranslations({ locale, namespace: "meta" }),
   ]);
 
   if (!job) {
@@ -212,19 +119,20 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(buildJobStructuredData(job, locale)),
-        }}
+      <JsonLd
+        data={buildJobPostingJsonLd({
+          job,
+          locale,
+          logoUrl: companyLogoUrl,
+          factsDescription: buildJobFactsDescription(job, locale, meta),
+        })}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(
-            buildJobBreadcrumbsStructuredData(job, locale)
-          ),
-        }}
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: t("breadcrumb.home"), url: getLocalizedUrl("/", locale) },
+          { name: t("nav.findJobs"), url: getLocalizedUrl("/jobs", locale) },
+          { name: job.name, url: getLocalizedUrl(`/jobs/${job._id}`, locale) },
+        ])}
       />
 
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
