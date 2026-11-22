@@ -50,8 +50,9 @@ describe("ProfileBottomNav", () => {
       screen.getByRole("button", { name: "profileSidebar.settingsLabel" })
     );
 
-    expect(mockPush).toHaveBeenCalledWith("/profile?tab=settings", {
-      scroll: false,
-    });
+    expect(mockPush).toHaveBeenCalledWith(
+      { pathname: "/profile", query: { tab: "settings" } },
+      { scroll: false }
+    );
   });
 });

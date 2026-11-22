@@ -147,8 +147,7 @@ export default function Home({ initialJobs, initialCompanies }: HomeProps) {
 
     if (query) params.set("q", query);
     if (locationCode) params.set("locationCode", locationCode);
-    const nextPath = params.size ? `/jobs?${params.toString()}` : "/jobs";
-    router.push(nextPath);
+    router.push({ pathname: "/jobs", query: Object.fromEntries(params) });
   };
 
   return (

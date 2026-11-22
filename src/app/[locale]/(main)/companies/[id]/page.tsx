@@ -113,7 +113,6 @@ export default async function CompanyDetailPage({
   const companiesPath = getLocalizedPath("/companies", locale);
   const companyPath = getLocalizedPath(`/companies/${company._id}`, locale);
   const companyUrl = getLocalizedUrl(`/companies/${company._id}`, locale);
-  const jobsPath = getLocalizedPath("/jobs", locale);
   const companyLogoUrl = getCompanyLogoUrl(company.logo);
 
   return (
@@ -277,7 +276,6 @@ export default async function CompanyDetailPage({
 
                 <CompanyDetailPageClient
                   companyId={company._id}
-                  jobPathPrefix={jobsPath}
                   initialJobs={initialJobs}
                 />
               </section>

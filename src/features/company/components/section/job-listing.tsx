@@ -14,7 +14,6 @@ interface JobListingProps {
   company?: any;
   searchQuery: string;
   selectedLocation: string;
-  jobPathPrefix?: string;
   initialJobs?: PaginatedResult<Job> | null;
 }
 
@@ -22,7 +21,6 @@ function JobListing({
   companyId,
   searchQuery,
   selectedLocation,
-  jobPathPrefix,
   initialJobs,
 }: JobListingProps) {
   const { t } = useI18n();

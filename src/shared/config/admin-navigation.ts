@@ -12,11 +12,12 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { ESubject } from "@/lib/casl/ability";
+import type { StaticHref } from "@/i18n/hrefs";
 
 export interface NavigationItem {
   name: string;
   labelKey?: string;
-  href: string;
+  href: StaticHref;
   icon: LucideIcon;
   subject?: ESubject; // CASL subject required to access
   badge?: string;

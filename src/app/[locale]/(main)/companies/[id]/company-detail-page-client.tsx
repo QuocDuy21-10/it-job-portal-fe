@@ -20,13 +20,11 @@ import type { Job } from "@/features/job/schemas/job.schema";
 
 type CompanyDetailPageClientProps = {
   companyId: string;
-  jobPathPrefix: string;
   initialJobs?: PaginatedResult<Job> | null;
 };
 
 export default function CompanyDetailPageClient({
   companyId,
-  jobPathPrefix,
   initialJobs,
 }: CompanyDetailPageClientProps) {
   const [selectedLocationCode, setSelectedLocationCode] = useState("");
@@ -108,7 +106,6 @@ export default function CompanyDetailPageClient({
         companyId={companyId}
         searchQuery={appliedSearchQuery}
         selectedLocation={selectedLocationCode}
-        jobPathPrefix={jobPathPrefix}
         initialJobs={initialJobs}
       />
     </div>

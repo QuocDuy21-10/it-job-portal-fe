@@ -17,8 +17,9 @@ import {
 } from "@/features/notification/redux/notification.slice";
 import { Notification } from "@/features/notification/schemas/notification.schema";
 import { useAuth } from "./use-auth";
+import type { StaticHref } from "@/i18n/hrefs";
 
-export function getNotificationLink(notification: Notification): string {
+export function getNotificationLink(notification: Notification): StaticHref {
   switch (notification.type) {
     case "APPLICATION_STATUS_CHANGE":
       return "/profile?tab=my-jobs";

@@ -15,6 +15,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
 import type { UserInfo } from "@/features/auth/schemas/auth.schema";
 import { USER_MENU_ITEMS } from "./nav-config";
+import { toAppHref } from "@/i18n/hrefs";
 
 interface UserMenuProps {
   user: UserInfo;
@@ -82,7 +83,7 @@ export function UserMenu({ user, isAdmin, onSignOut }: UserMenuProps) {
         {USER_MENU_ITEMS.filter((item) => !item.adminOnly || isAdmin).map(
           ({ href, icon: Icon, labelKey, fallback }) => (
             <DropdownMenuItem key={href} asChild>
-              <Link href={href} className="cursor-pointer">
+              <Link href={toAppHref(href)} className="cursor-pointer">
                 <Icon className="mr-2 h-4 w-4" />
                 {label(labelKey, fallback)}
               </Link>

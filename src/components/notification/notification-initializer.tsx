@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { toast } from "sonner";
+import { toAppHref } from "@/i18n/hrefs";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { useSocketEvent } from "@/lib/socket/use-socket";
 import { incrementUnreadCount } from "@/features/notification/redux/notification.slice";
@@ -30,7 +31,8 @@ export function NotificationInitializer() {
         description: notification.message,
         action: {
           label: t("common.view"),
-          onClick: () => router.push(getNotificationLink(notification)),
+          onClick: () =>
+            router.push(toAppHref(getNotificationLink(notification))),
         },
       });
     },

@@ -12,6 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toAppHref } from "@/i18n/hrefs";
 
 interface AdminMobileNavProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={toAppHref(item.href)}
                   onClick={handleNavClick}
                   className={cn(
                     "flex items-center gap-3 py-3 px-3 text-sm font-medium rounded-lg transition-all duration-200",

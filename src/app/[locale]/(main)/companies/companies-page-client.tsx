@@ -1,5 +1,6 @@
 "use client";
 
+import { companyHref } from "@/i18n/hrefs";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -278,7 +279,7 @@ export default function CompanyListPage({
             {companies.map((company) => (
               <Link
                 key={company._id}
-                href={`/companies/${company._id}`}
+                href={companyHref(company._id, company.name)}
                 className="group block"
               >
                 <Card

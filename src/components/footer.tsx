@@ -96,20 +96,20 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted ? t("footer.careerAdvice") : "Career Advice"}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted ? t("footer.salaryGuide") : " Salary Guide"}
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -130,32 +130,32 @@ export function Footer() {
                 </li>
               )}
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted
                     ? t("footer.browseCandidates")
                     : " Browse Candidates"}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted
                     ? t("footer.employerBranding")
                     : "Employer Branding"}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted ? t("footer.pricing") : "Pricing"}
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -166,20 +166,20 @@ export function Footer() {
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted ? t("footer.aboutUs") : "About Us"}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
+                <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
                 >
                   {i18nMounted ? t("footer.contact") : "Contact"}
-                </Link>
+                </a>
               </li>
               <li>
                 <Link

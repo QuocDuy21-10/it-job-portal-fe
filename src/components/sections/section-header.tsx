@@ -2,12 +2,14 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 import { Link } from "@/i18n/navigation";
+import { toAppHref } from "@/i18n/hrefs";
+import type { StaticHref } from "@/i18n/hrefs";
 
 interface SectionHeaderProps {
   title: string;
   description?: string;
   actionLabel?: string;
-  actionHref?: string;
+  actionHref?: StaticHref;
   showAction?: boolean;
 }
 
@@ -28,7 +30,7 @@ export function SectionHeader({
       </div>
       {showAction && actionLabel && actionHref && (
         <Button asChild variant="outline" className="hidden sm:flex">
-          <Link href={actionHref}>
+          <Link href={toAppHref(actionHref)}>
             {actionLabel}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

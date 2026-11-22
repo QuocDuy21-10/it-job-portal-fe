@@ -6,13 +6,14 @@
 import { getPathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { ROLES } from "./role-values";
+import { toAppHref, type StaticHref } from "@/i18n/hrefs";
 
 export { ROLES, ROLE_VALUES, type RoleName } from "./role-values";
 
 /**
  * Route mặc định cho từng role sau khi đăng nhập
  */
-export const DEFAULT_ROUTES_BY_ROLE: Record<string, string> = {
+export const DEFAULT_ROUTES_BY_ROLE: Record<string, StaticHref> = {
   [ROLES.SUPER_ADMIN]: "/admin",
   [ROLES.HR]: "/admin/resumes",
   [ROLES.NORMAL_USER]: "/",
@@ -23,7 +24,7 @@ export const DEFAULT_ROUTES_BY_ROLE: Record<string, string> = {
  * @param role - Tên role của user
  * @returns Route mặc định
  */
-export function getDefaultRoute(role?: string): string {
+export function getDefaultRoute(role?: string): StaticHref {
   if (!role) return "/";
   return DEFAULT_ROUTES_BY_ROLE[role] || "/";
 }
@@ -32,7 +33,7 @@ export function getLocalizedDefaultRoute(
   role: string | undefined,
   locale: AppLocale
 ): string {
-  return getPathname({ locale, href: getDefaultRoute(role) });
+  return getPathname({ locale, href: toAppHref(getDefaultRoute(role)) });
 }
 
 /**

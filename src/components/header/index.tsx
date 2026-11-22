@@ -20,6 +20,7 @@ import { MobileUserDrawer } from "./mobile-user-drawer";
 import { UserMenu } from "./user-menu";
 import { isNavActive, MAIN_NAV_ITEMS, type HeaderAuthView } from "./nav-config";
 import { hasSession } from "@/lib/auth/session";
+import { toAppHref } from "@/i18n/hrefs";
 
 export function Header() {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
@@ -96,7 +97,7 @@ export function Header() {
               return (
                 <Link
                   key={href}
-                  href={href}
+                  href={toAppHref(href)}
                   className={cn(
                     "text-sm font-medium transition-all duration-200 hover:scale-105 relative group",
                     isActive

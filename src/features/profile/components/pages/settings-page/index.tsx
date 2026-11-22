@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Settings } from "lucide-react";
+import { toAppHref } from "@/i18n/hrefs";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { sessionEnded } from "@/features/auth/redux/auth.slice";
 import { AccountDeletionDialog } from "@/features/profile/components/account-deletion-dialog";
@@ -24,7 +25,7 @@ export default function SettingsPage({
   const { t } = useI18n();
   const handleNavigateToCCV =
     onNavigateToCCV ??
-    (() => router.push("/profile?tab=create-cv", { scroll: false }));
+    (() => router.push(toAppHref("/profile?tab=create-cv"), { scroll: false }));
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showSetPasswordModal, setShowSetPasswordModal] = useState(false);

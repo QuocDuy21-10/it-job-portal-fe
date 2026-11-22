@@ -1,6 +1,7 @@
 import { Building2, Briefcase } from "lucide-react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
+import { companyHref } from "@/i18n/hrefs";
 import { Card, CardContent } from "@/components/ui/card";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import {
@@ -38,7 +39,7 @@ export function CompanyCard({ company, className }: CompanyCardProps) {
 
   return (
     <Link
-      href={`/companies/${company._id}`}
+      href={companyHref(company._id, company.name)}
       className={cn("group block h-full", className)}
     >
       <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-xl dark:bg-transparent">
