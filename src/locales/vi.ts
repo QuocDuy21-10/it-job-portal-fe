@@ -76,10 +76,22 @@ export const vi = {
       "Theo dõi công ty này để nhận thông báo về các vị trí tuyển dụng mới.",
   },
   meta: {
-    title: "DevLink - Tìm Công Việc Mơ Ước",
+    title: "DevLink – Việc làm IT, tuyển dụng lập trình viên tại Việt Nam",
     description:
-      "Kết nối những chuyên gia tài năng với các cơ hội tuyệt vời trên toàn thế giới. Duyệt qua hàng nghìn công việc từ các công ty hàng đầu.",
+      "Tìm việc làm IT, lập trình viên mới nhất từ các công ty công nghệ tại Việt Nam. Xem mức lương, tạo CV và ứng tuyển ngay trên DevLink.",
     keywords: "việc làm, sự nghiệp, tuyển dụng, tìm việc, tuyển người",
+    pagedTitle: "{title} – Trang {page}",
+    companiesTitle: "Công ty IT đang tuyển dụng",
+    companiesDescription:
+      "Khám phá các công ty công nghệ đang tuyển dụng: giới thiệu, quy mô, địa chỉ và việc làm IT đang mở.",
+    jobTitle: "{job} tại {company}, {location}",
+    jobDescription:
+      "{company} tuyển {job} tại {location}: {details}. Hạn nộp {endDate}.",
+    jobSalary: "lương {salary}",
+    jobLevel: "cấp bậc {level}",
+    companyTitle: "{company} – Tuyển dụng việc làm IT",
+    companyDescriptionFallback:
+      "{company}: giới thiệu, địa chỉ và việc làm IT đang tuyển trên DevLink.",
   },
   home: {
     findYour: "Tìm ",
@@ -1538,9 +1550,9 @@ export const vi = {
   jobsPage: {
     pageLabel: "trang",
     breadcrumb: "Tìm việc làm",
-    heroTitle: "Khám phá cơ hội nghề nghiệp",
+    heroTitle: "Việc làm IT mới nhất",
     heroDescription:
-      "Tìm kiếm công việc phù hợp với kỹ năng và hoài bão của bạn",
+      "Việc làm IT mới nhất tại Việt Nam. Lọc theo kỹ năng, địa điểm, cấp bậc và mức lương, rồi ứng tuyển ngay trên DevLink.",
     searchPlaceholder: "Tìm theo tên công việc, kỹ năng hoặc từ khóa...",
     filters: "Bộ lọc",
     hideFilters: "Ẩn bộ lọc",

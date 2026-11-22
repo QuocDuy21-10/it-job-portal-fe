@@ -30,13 +30,19 @@ export async function generateMetadata({
     namespace: "meta",
   });
 
-  return buildLocalizedPageMetadata({
-    locale: resolvedLocale,
-    pathname: "/",
-    title: meta("title"),
-    description: meta("description"),
-    keywords: meta("keywords"),
-  });
+  const title = meta("title");
+
+  return {
+    ...buildLocalizedPageMetadata({
+      locale: resolvedLocale,
+      pathname: "/",
+      title,
+      description: meta("description"),
+      keywords: meta("keywords"),
+    }),
+    // The home title already starts with the brand: skip the "%s | DevLink" template.
+    title: { absolute: title },
+  };
 }
 
 export default async function HomePage() {

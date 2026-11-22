@@ -77,10 +77,22 @@ export const en = {
       "Follow this company to receive notifications about new job openings.",
   },
   meta: {
-    title: "DevLink - Find Your Dream Job",
+    title: "DevLink – IT Jobs and Developer Hiring in Vietnam",
     description:
-      "Connecting talented professionals with amazing opportunities worldwide. Browse thousands of jobs from top companies.",
+      "Find the latest IT and developer jobs from tech companies in Vietnam. See salaries, build your CV and apply on DevLink.",
     keywords: "jobs, careers, employment, recruitment, job search, hiring",
+    pagedTitle: "{title} – Page {page}",
+    companiesTitle: "Tech Companies Hiring in Vietnam",
+    companiesDescription:
+      "Explore tech companies that are hiring: profile, size, address and open IT jobs.",
+    jobTitle: "{job} at {company}, {location}",
+    jobDescription:
+      "{job} at {company} in {location}: {details}. Apply by {endDate}.",
+    jobSalary: "salary {salary}",
+    jobLevel: "{level} level",
+    companyTitle: "{company} – IT Jobs & Careers",
+    companyDescriptionFallback:
+      "{company}: company profile, address and open IT jobs on DevLink.",
   },
   home: {
     topCompaniesHiringNow: "Top Companies Hiring Now",
@@ -1533,8 +1545,9 @@ export const en = {
   jobsPage: {
     pageLabel: "pages",
     breadcrumb: "Find jobs",
-    heroTitle: "Discover career opportunities",
-    heroDescription: "Find the role that matches your skills and ambition",
+    heroTitle: "Latest IT jobs in Vietnam",
+    heroDescription:
+      "The latest IT jobs in Vietnam. Filter by skill, location, level and salary, then apply on DevLink.",
     searchPlaceholder: "Search by job title, skill, or keyword...",
     filters: "Filters",
     hideFilters: "Hide filters",

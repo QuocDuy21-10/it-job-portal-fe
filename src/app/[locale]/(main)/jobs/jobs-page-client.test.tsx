@@ -160,6 +160,9 @@ describe("JobsPageClient", () => {
     );
 
     expect(screen.getByTestId("job-search-box")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "jobsPage.heroTitle" })
+    ).toBeInTheDocument();
     expect(screen.getByText("jobsPage.breadcrumb")).toBeInTheDocument();
     expect(screen.getAllByTestId("job-search-card")).toHaveLength(2);
     expect(screen.getByTestId("pagination")).toBeInTheDocument();
