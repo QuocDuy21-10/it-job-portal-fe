@@ -36,7 +36,7 @@ Khi đặt biến này (thử với một giá trị giả có dạng `xxx.apps.
 
 ### `NEXT_PUBLIC_SITE_URL`
 
-Đã chạy thật: đặt giá trị này thì dòng `Host` và `Sitemap` trong `/robots.txt` và các thẻ `<loc>` trong `/sitemap.xml` đổi theo. Khi triển khai nhất thiết phải đặt, nếu không các địa chỉ này trỏ về `localhost:3000`.
+Đã chạy thật: đặt giá trị này thì dòng `Sitemap` trong `/robots.txt` và các thẻ `<loc>` trong `/sitemap.xml` đổi theo. Khi triển khai nhất thiết phải đặt, nếu không các địa chỉ này trỏ về `localhost:3000`.
 
 ### `NEXT_PUBLIC_API_URL`
 

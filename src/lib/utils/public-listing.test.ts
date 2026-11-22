@@ -1,7 +1,9 @@
 import {
+  DEFAULT_COMPANY_LIST_PAGE_SIZE,
   DEFAULT_JOB_LIST_PAGE_SIZE,
   buildJobListUrlSearchParams,
   buildJobSearchParams,
+  getCompanyListCanonicalPath,
   getJobListCanonicalPath,
   parseJobListSearchParams,
   toJobSearchQueryString,
@@ -65,9 +67,9 @@ describe("public-listing source", () => {
   });
 
   it("treats a source-filtered list as a non-indexable variant", () => {
-    expect(getJobListCanonicalPath(buildState({ source: "external" }))).toBe(
-      "/jobs"
-    );
+    expect(
+      getJobListCanonicalPath(buildState({ source: "external" }))
+    ).toBeNull();
     expect(getJobListCanonicalPath(buildState({ page: 2 }))).toBe(
       "/jobs?page=2"
     );
@@ -133,5 +135,24 @@ describe("toJobSearchQueryString", () => {
         level: undefined,
       })
     ).toBe("keyword=c%2B%2B&salaryMin=0&sort=newest&page=1&limit=10");
+  });
+});
+
+describe("getCompanyListCanonicalPath", () => {
+  it("returns null for a search and keeps plain pagination canonical", () => {
+    expect(
+      getCompanyListCanonicalPath({
+        limit: DEFAULT_COMPANY_LIST_PAGE_SIZE,
+        page: 1,
+        q: "fpt",
+      })
+    ).toBeNull();
+    expect(
+      getCompanyListCanonicalPath({
+        limit: DEFAULT_COMPANY_LIST_PAGE_SIZE,
+        page: 3,
+        q: "",
+      })
+    ).toBe("/companies?page=3");
   });
 });

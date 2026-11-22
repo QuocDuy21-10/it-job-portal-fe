@@ -1,4 +1,9 @@
+/**
+ * @jest-environment node
+ */
 import {
+  fetchAllPublicCompanies,
+  fetchAllPublicJobs,
   fetchPublicCompanies,
   fetchPublicCompanyById,
   fetchPublicExternalJobById,
@@ -17,8 +22,12 @@ jest.mock("react", () => ({
 const API = "http://localhost:8081/api/v1";
 const fetchMock = jest.fn();
 
-const respondWith = (data: unknown, ok = true) => {
-  fetchMock.mockResolvedValue({ ok, json: async () => ({ data }) });
+const respondWith = (data: unknown, status = 200) => {
+  fetchMock.mockResolvedValue({
+    ok: status < 400,
+    status,
+    json: async () => ({ data }),
+  });
 };
 
 describe("public-content", () => {
@@ -84,7 +93,13 @@ describe("public-content", () => {
       await call();
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(url, { next: { revalidate } });
+      expect(fetchMock).toHaveBeenCalledWith(
+        url,
+        expect.objectContaining({
+          next: { revalidate },
+          signal: expect.any(AbortSignal),
+        })
+      );
     }
   );
 
@@ -95,8 +110,8 @@ describe("public-content", () => {
     await expect(fetchPublicTopHiringCompanies(8)).resolves.toEqual(companies);
   });
 
-  it("returns null when the backend answers with an error status", async () => {
-    respondWith(null, false);
+  it("listing fetchers return null when the backend answers 500", async () => {
+    respondWith(null, 500);
 
     await expect(fetchPublicTopHiringCompanies(8)).resolves.toBeNull();
   });
@@ -105,5 +120,82 @@ describe("public-content", () => {
     fetchMock.mockRejectedValue(new Error("ECONNREFUSED"));
 
     await expect(fetchPublicTopHiringCompanies(8)).resolves.toBeNull();
+  });
+
+  describe("detail fetchers", () => {
+    it.each([404, 400])(
+      "return null when the backend answers %s",
+      async (status) => {
+        respondWith(null, status);
+
+        await expect(fetchPublicJobById("j1")).resolves.toBeNull();
+      }
+    );
+
+    it("throw when the backend answers 500, so the page is not a 404", async () => {
+      respondWith(null, 500);
+
+      await expect(fetchPublicJobById("j1")).rejects.toThrow(
+        "Backend answered 500 for /jobs/j1"
+      );
+    });
+
+    it("throw when the request times out", async () => {
+      fetchMock.mockRejectedValue(
+        new DOMException("The operation timed out.", "TimeoutError")
+      );
+
+      await expect(fetchPublicCompanyById("c1")).rejects.toThrow("timed out");
+    });
+  });
+
+  describe("fetchAllPublic*", () => {
+    const page = (ids: string[], totalPages: number) => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: {
+          result: ids.map((_id) => ({ _id })),
+          meta: { pagination: { total_pages: totalPages } },
+        },
+      }),
+    });
+
+    it("walks every page at the backend's maximum page size", async () => {
+      fetchMock
+        .mockResolvedValueOnce(page(["a", "b"], 3))
+        .mockResolvedValueOnce(page(["c"], 3))
+        .mockResolvedValueOnce(page(["d"], 3));
+
+      await expect(fetchAllPublicJobs()).resolves.toEqual([
+        { _id: "a" },
+        { _id: "b" },
+        { _id: "c" },
+        { _id: "d" },
+      ]);
+      expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+        `${API}/jobs?page=1&limit=100`,
+        `${API}/jobs?page=2&limit=100`,
+        `${API}/jobs?page=3&limit=100`,
+      ]);
+    });
+
+    it("reads companies the same way", async () => {
+      fetchMock.mockResolvedValueOnce(page(["c1"], 1));
+
+      await expect(fetchAllPublicCompanies()).resolves.toEqual([{ _id: "c1" }]);
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${API}/companies?page=1&limit=100`,
+        expect.objectContaining({ next: { revalidate: 3600 } })
+      );
+    });
+
+    it("throws instead of returning a partial list", async () => {
+      fetchMock
+        .mockResolvedValueOnce(page(["a"], 2))
+        .mockRejectedValueOnce(new Error("ECONNREFUSED"));
+
+      await expect(fetchAllPublicJobs()).rejects.toThrow("ECONNREFUSED");
+    });
   });
 });

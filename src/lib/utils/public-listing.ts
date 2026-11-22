@@ -317,7 +317,10 @@ export const buildPathWithSearchParams = (
   return queryString ? `${pathname}?${queryString}` : pathname;
 };
 
-export const getJobListCanonicalPath = (searchState: JobListSearchState) => {
+// null for searched, filtered or re-sorted variants: those are noindexed, not canonicalized.
+export const getJobListCanonicalPath = (
+  searchState: JobListSearchState
+): string | null => {
   const isIndexableVariant =
     !searchState.q &&
     !searchState.locationCode &&
@@ -329,7 +332,7 @@ export const getJobListCanonicalPath = (searchState: JobListSearchState) => {
     searchState.limit === DEFAULT_JOB_LIST_PAGE_SIZE;
 
   if (!isIndexableVariant) {
-    return "/jobs";
+    return null;
   }
 
   const canonicalParams = new URLSearchParams();
@@ -343,12 +346,12 @@ export const getJobListCanonicalPath = (searchState: JobListSearchState) => {
 
 export const getCompanyListCanonicalPath = (
   searchState: CompanyListSearchState
-) => {
+): string | null => {
   const isIndexableVariant =
     !searchState.q && searchState.limit === DEFAULT_COMPANY_LIST_PAGE_SIZE;
 
   if (!isIndexableVariant) {
-    return "/companies";
+    return null;
   }
 
   const canonicalParams = new URLSearchParams();

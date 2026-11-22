@@ -1,78 +1,55 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { routing } from "@/i18n/routing";
 import {
-  PUBLIC_SITEMAP_PATHS,
+  fetchAllPublicCompanies,
+  fetchAllPublicJobs,
+} from "@/lib/utils/public-content";
+import {
   getAlternateLanguageUrls,
   getLocalizedUrl,
 } from "@/shared/constants/seo";
-import {
-  fetchPublicCompanies,
-  fetchPublicJobs,
-} from "@/lib/utils/public-content";
 
+type Dated = { createdAt?: string; updatedAt?: string };
+
+const lastModifiedOf = (item: Dated) => item.updatedAt ?? item.createdAt;
+
+// ISO 8601 UTC strings sort chronologically.
+const newestOf = (items: Dated[]) =>
+  items
+    .map(lastModifiedOf)
+    .filter((date): date is string => Boolean(date))
+    .sort()
+    .pop();
+
+const toEntry = (
+  pathname: string,
+  lastModified: string | undefined
+): MetadataRoute.Sitemap[number] => ({
+  url: getLocalizedUrl(pathname, routing.defaultLocale),
+  ...(lastModified ? { lastModified } : {}),
+  alternates: { languages: getAlternateLanguageUrls(pathname) },
+});
+
+// One sitemap file holds up to 50,000 URLs; past that, split it with generateSitemaps.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const lastModified = new Date();
+  // Render per request: CI builds have no backend, and a failed fetch must answer 500 rather
+  // than publish a sitemap with jobs missing. The fetches keep their own revalidate cache.
+  await connection();
 
-  // 1. Static Pages
-  const staticEntries = PUBLIC_SITEMAP_PATHS.map(
-    ({ pathname, changeFrequency, priority }) => ({
-      url: getLocalizedUrl(pathname, routing.defaultLocale),
-      lastModified,
-      changeFrequency,
-      priority,
-      alternates: {
-        languages: getAlternateLanguageUrls(pathname),
-      },
-    })
-  );
+  const [jobs, companies] = await Promise.all([
+    fetchAllPublicJobs(),
+    fetchAllPublicCompanies(),
+  ]);
+  const newestJob = newestOf(jobs);
 
-  // 2. Dynamic Job Pages
-  let jobEntries: MetadataRoute.Sitemap = [];
-  try {
-    const jobsData = await fetchPublicJobs({ limit: 1000, page: 1 });
-    if (jobsData?.result) {
-      jobEntries = jobsData.result.map((job) => {
-        const pathname = `/jobs/${job._id}`;
-        return {
-          url: getLocalizedUrl(pathname, routing.defaultLocale),
-          lastModified: new Date(
-            job.updatedAt || job.createdAt || lastModified
-          ),
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-          alternates: {
-            languages: getAlternateLanguageUrls(pathname),
-          },
-        };
-      });
-    }
-  } catch (error) {
-    console.error("Error generating sitemap job entries:", error);
-  }
-
-  // 3. Dynamic Company Pages
-  let companyEntries: MetadataRoute.Sitemap = [];
-  try {
-    const companiesData = await fetchPublicCompanies({ limit: 500, page: 1 });
-    if (companiesData?.result) {
-      companyEntries = companiesData.result.map((company) => {
-        const pathname = `/companies/${company._id}`;
-        return {
-          url: getLocalizedUrl(pathname, routing.defaultLocale),
-          lastModified: new Date(
-            company.updatedAt || company.createdAt || lastModified
-          ),
-          changeFrequency: "weekly" as const,
-          priority: 0.6,
-          alternates: {
-            languages: getAlternateLanguageUrls(pathname),
-          },
-        };
-      });
-    }
-  } catch (error) {
-    console.error("Error generating sitemap company entries:", error);
-  }
-
-  return [...staticEntries, ...jobEntries, ...companyEntries];
+  return [
+    toEntry("/", newestJob),
+    toEntry("/jobs", newestJob),
+    toEntry("/companies", newestOf(companies)),
+    ...jobs.map((job) => toEntry(`/jobs/${job._id}`, lastModifiedOf(job))),
+    ...companies.map((company) =>
+      toEntry(`/companies/${company._id}`, lastModifiedOf(company))
+    ),
+  ];
 }

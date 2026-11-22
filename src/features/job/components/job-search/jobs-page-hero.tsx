@@ -29,6 +29,9 @@ export function JobsPageHero({ list }: { list: JobListState }) {
       {/* Header with blue background */}
       <div className="home-hero-surface relative z-40 text-foreground">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+          <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            {t("jobsPage.heroTitle")}
+          </h1>
           <JobSearchBox
             searchQuery={searchInput}
             onSearchQueryChange={setSearchInput}

@@ -28,20 +28,19 @@ import {
 } from "@/lib/utils/public-content";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import {
+  JsonLd,
+  buildBreadcrumbJsonLd,
+  buildCompanyJsonLd,
+} from "@/lib/seo/json-ld";
+import {
   buildLocalizedPageMetadata,
   getLocalizedPath,
   getLocalizedUrl,
-  serializeJsonLd,
   toMetadataDescription,
 } from "@/shared/constants/seo";
-import type { Company } from "@/features/company/schemas/company.schema";
 
 type CompanyDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
-};
-
-const buildCompanySummary = (...parts: Array<string | undefined>) => {
-  return parts.filter(Boolean).join(" · ");
 };
 
 const resolveCompanyDetailParams = async (
@@ -67,67 +66,6 @@ const getCompanyLogoUrl = (logo?: string) => {
   return `${API_BASE_URL_IMAGE}/images/company/${logo}`;
 };
 
-const buildCompanyStructuredData = (company: Company, locale: AppLocale) => {
-  const companyPath = `/companies/${company._id}`;
-  const companyUrl = getLocalizedUrl(companyPath, locale);
-  const companyLogoUrl = getCompanyLogoUrl(company.logo);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: company.name,
-    description:
-      toMetadataDescription(company.description, 5_000) ||
-      buildCompanySummary(company.address, company.website || undefined),
-    url: companyUrl,
-    ...(companyLogoUrl ? { image: companyLogoUrl, logo: companyLogoUrl } : {}),
-    ...(company.website ? { sameAs: [company.website] } : {}),
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "VN",
-      streetAddress: company.address,
-    },
-    numberOfEmployees: {
-      "@type": "QuantitativeValue",
-      value: company.numberOfEmployees,
-    },
-  };
-};
-
-const buildCompanyBreadcrumbsStructuredData = (
-  company: Company,
-  locale: AppLocale
-) => {
-  const homeUrl = getLocalizedUrl("/", locale);
-  const companiesUrl = getLocalizedUrl("/companies", locale);
-  const companyUrl = getLocalizedUrl(`/companies/${company._id}`, locale);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: homeUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Companies",
-        item: companiesUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: company.name,
-        item: companyUrl,
-      },
-    ],
-  };
-};
-
 export async function generateMetadata({
   params,
 }: CompanyDetailPageProps): Promise<Metadata> {
@@ -141,16 +79,13 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = company.name;
-  const description =
-    toMetadataDescription(company.description) ||
-    buildCompanySummary(company.address, company.website || undefined);
-
   return buildLocalizedPageMetadata({
     locale,
     pathname: `/companies/${id}`,
-    title,
-    description,
+    title: meta("companyTitle", { company: company.name }),
+    description:
+      toMetadataDescription(company.description) ||
+      meta("companyDescriptionFallback", { company: company.name }),
     keywords: meta("keywords"),
     ogImage: getCompanyLogoUrl(company.logo),
   });
@@ -160,13 +95,14 @@ export default async function CompanyDetailPage({
   params,
 }: CompanyDetailPageProps) {
   const { locale, id } = await resolveCompanyDetailParams(params);
-  const [company, initialJobs, t] = await Promise.all([
+  const [company, initialJobs, t, meta] = await Promise.all([
     fetchPublicCompanyById(id),
     fetchPublicJobs({
       filter: `isActive=true&company._id=${id}`,
       limit: 20,
     }),
     getTranslations({ locale }),
+    getTranslations({ locale, namespace: "meta" }),
   ]);
 
   if (!company) {
@@ -182,22 +118,28 @@ export default async function CompanyDetailPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(buildCompanyStructuredData(company, locale)),
-        }}
+      <JsonLd
+        data={buildCompanyJsonLd({
+          company,
+          locale,
+          logoUrl: companyLogoUrl,
+          description:
+            toMetadataDescription(company.description, 5_000) ||
+            meta("companyDescriptionFallback", { company: company.name }),
+        })}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(
-            buildCompanyBreadcrumbsStructuredData(company, locale)
-          ),
-        }}
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: t("breadcrumb.home"), url: getLocalizedUrl("/", locale) },
+          {
+            name: t("nav.companies"),
+            url: getLocalizedUrl("/companies", locale),
+          },
+          { name: company.name, url: companyUrl },
+        ])}
       />
 
-      <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
         <div className="border-b border-slate-200 bg-white shadow-sm dark:border-border dark:bg-card">
           <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <Breadcrumb>
@@ -387,7 +329,7 @@ export default async function CompanyDetailPage({
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }

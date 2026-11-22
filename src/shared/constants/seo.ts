@@ -4,35 +4,6 @@ import { env } from "@/shared/config/env";
 
 export const SITE_NAME = "DevLink";
 
-export const PUBLIC_SITEMAP_PATHS = [
-  {
-    pathname: "/",
-    changeFrequency: "daily",
-    priority: 1,
-  },
-  {
-    pathname: "/jobs",
-    changeFrequency: "hourly",
-    priority: 0.9,
-  },
-  {
-    pathname: "/companies",
-    changeFrequency: "daily",
-    priority: 0.8,
-  },
-] as const;
-
-const PRIVATE_ROUTE_PREFIXES = [
-  "/admin",
-  "/profile",
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-  "/verify-email",
-  "/account",
-] as const;
-
 const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
   en: "en_US",
   vi: "vi_VN",
@@ -89,15 +60,8 @@ export const getAlternateLanguageUrls = (pathname: string) => {
   ]) as Record<string, string>;
 };
 
-export const getRobotsDisallowPaths = () => {
-  return Array.from(
-    new Set(
-      PRIVATE_ROUTE_PREFIXES.flatMap((pathname) =>
-        routing.locales.map((locale) => getLocalizedPath(pathname, locale))
-      )
-    )
-  );
-};
+// 1200×630, generated once from the logo (generator script: SEO-1 plan, Task 4).
+const DEFAULT_OG_IMAGE_PATH = "/images/og-default.png";
 
 type BuildLocalizedPageMetadataOptions = {
   locale: AppLocale;
@@ -106,6 +70,8 @@ type BuildLocalizedPageMetadataOptions = {
   description: string;
   keywords?: Metadata["keywords"];
   ogImage?: string | null;
+  // false: `noindex, follow` with no canonical or hreflang (filtered listings, drafts).
+  indexable?: boolean;
 };
 
 export const buildLocalizedPageMetadata = ({
@@ -115,8 +81,10 @@ export const buildLocalizedPageMetadata = ({
   description,
   keywords,
   ogImage,
+  indexable = true,
 }: BuildLocalizedPageMetadataOptions): Metadata => {
-  const fallbackOgImage = getAbsoluteUrl("/images/logo.png");
+  const url = getLocalizedUrl(pathname, locale);
+  const fallbackOgImage = getAbsoluteUrl(DEFAULT_OG_IMAGE_PATH);
   const ogImages = ogImage
     ? [{ url: ogImage }]
     : [{ url: fallbackOgImage, width: 1200, height: 630, alt: title }];
@@ -125,15 +93,19 @@ export const buildLocalizedPageMetadata = ({
     title,
     description,
     keywords,
-    alternates: {
-      canonical: getLocalizedUrl(pathname, locale),
-      languages: getAlternateLanguageUrls(pathname),
-    },
+    ...(indexable
+      ? {
+          alternates: {
+            canonical: url,
+            languages: getAlternateLanguageUrls(pathname),
+          },
+        }
+      : { robots: { index: false, follow: true } }),
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
       locale: getOpenGraphLocale(locale),
-      url: getLocalizedUrl(pathname, locale),
+      url,
       title,
       description,
       images: ogImages,

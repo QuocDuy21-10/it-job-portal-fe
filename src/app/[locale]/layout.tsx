@@ -43,7 +43,7 @@ export async function generateMetadata({
   return {
     metadataBase: getSiteUrl(),
     applicationName: SITE_NAME,
-    title: t("title"),
+    title: { default: t("title"), template: `%s | ${SITE_NAME}` },
     description: t("description"),
     keywords: t("keywords"),
     openGraph: {
@@ -57,10 +57,6 @@ export async function generateMetadata({
       card: "summary",
       title: t("title"),
       description: t("description"),
-    },
-    robots: {
-      index: true,
-      follow: true,
     },
   };
 }

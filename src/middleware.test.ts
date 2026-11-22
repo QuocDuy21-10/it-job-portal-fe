@@ -36,7 +36,7 @@ describe("middleware CSP", () => {
   it("redirect (default locale prefix): still sends a CSP", () => {
     const response = run("/en/jobs");
 
-    expect(response.status).toBe(307);
+    expect(response.status).toBe(308);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/jobs");
     expect(nonceOf(response.headers.get(CSP))).toBeTruthy();
   });
@@ -53,4 +53,25 @@ describe("middleware CSP", () => {
       run("/jobs").headers.get("content-security-policy-report-only")
     ).toBeNull();
   });
+});
+
+describe("middleware X-Robots-Tag", () => {
+  it.each([
+    "/login",
+    "/vi/register",
+    "/admin",
+    "/vi/admin/users",
+    "/hr/dashboard",
+    "/profile",
+    "/account/cancel-deletion",
+  ])("noindexes the private page %s", (path) => {
+    expect(run(path).headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+
+  it.each(["/", "/vi", "/jobs", "/vi/companies/abc", "/administrator"])(
+    "leaves the public page %s indexable",
+    (path) => {
+      expect(run(path).headers.get("x-robots-tag")).toBeNull();
+    }
+  );
 });

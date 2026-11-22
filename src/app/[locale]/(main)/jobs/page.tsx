@@ -32,19 +32,21 @@ export async function generateMetadata({
 
   const resolvedLocale = locale as AppLocale;
   const searchState = parseJobListSearchParams(resolvedSearchParams);
-  const jobsPage = await getTranslations({
-    locale: resolvedLocale,
-    namespace: "jobsPage",
-  });
-  const meta = await getTranslations({
-    locale: resolvedLocale,
-    namespace: "meta",
-  });
+  const canonicalPath = getJobListCanonicalPath(searchState);
+  const [jobsPage, meta] = await Promise.all([
+    getTranslations({ locale: resolvedLocale, namespace: "jobsPage" }),
+    getTranslations({ locale: resolvedLocale, namespace: "meta" }),
+  ]);
+  const title = jobsPage("heroTitle");
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,
-    pathname: getJobListCanonicalPath(searchState),
-    title: jobsPage("heroTitle"),
+    pathname: canonicalPath ?? "/jobs",
+    indexable: canonicalPath !== null,
+    title:
+      searchState.page > 1
+        ? meta("pagedTitle", { title, page: searchState.page })
+        : title,
     description: jobsPage("heroDescription"),
     keywords: meta("keywords"),
   });
@@ -67,6 +69,15 @@ export default async function JobsPage({
   const initialData = await fetchPublicJobSearch(
     buildJobSearchParams(initialSearchState)
   );
+
+  // Google asks for a 404 on pagination URLs past the last page.
+  if (
+    initialData &&
+    initialSearchState.page > 1 &&
+    initialSearchState.page > initialData.meta.pagination.total_pages
+  ) {
+    notFound();
+  }
 
   return (
     <JobsPageClient

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
 import { buildCsp } from "@/lib/security/headers";
 import { DEV_API_URL } from "@/shared/config/env-defaults";
+import { isPrivatePath } from "@/shared/constants/private-routes";
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -36,7 +37,8 @@ function route(request: NextRequest): NextResponse {
     const url = request.nextUrl.clone();
     url.pathname = pathname.slice(defaultLocalePrefix.length) || "/";
 
-    return NextResponse.redirect(url);
+    // Permanent: /en/... is never the canonical address of a page.
+    return NextResponse.redirect(url, 308);
   }
 
   return handleI18nRouting(request);
@@ -58,6 +60,9 @@ export default function middleware(request: NextRequest) {
 
   const response = route(request);
   response.headers.set(CSP_HEADER, csp);
+  if (isPrivatePath(request.nextUrl.pathname)) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
   return response;
 }
 

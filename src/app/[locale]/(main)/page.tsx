@@ -3,6 +3,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import HomePageClient from "./home-page-client";
+import { JsonLd, buildHomeJsonLd } from "@/lib/seo/json-ld";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
 import { routing, type AppLocale } from "@/i18n/routing";
 import {
@@ -30,13 +31,19 @@ export async function generateMetadata({
     namespace: "meta",
   });
 
-  return buildLocalizedPageMetadata({
-    locale: resolvedLocale,
-    pathname: "/",
-    title: meta("title"),
-    description: meta("description"),
-    keywords: meta("keywords"),
-  });
+  const title = meta("title");
+
+  return {
+    ...buildLocalizedPageMetadata({
+      locale: resolvedLocale,
+      pathname: "/",
+      title,
+      description: meta("description"),
+      keywords: meta("keywords"),
+    }),
+    // The home title already starts with the brand: skip the "%s | DevLink" template.
+    title: { absolute: title },
+  };
 }
 
 export default async function HomePage() {
@@ -47,9 +54,12 @@ export default async function HomePage() {
   ]);
 
   return (
-    <HomePageClient
-      initialJobs={initialJobs}
-      initialCompanies={initialCompanies}
-    />
+    <>
+      <JsonLd data={buildHomeJsonLd()} />
+      <HomePageClient
+        initialJobs={initialJobs}
+        initialCompanies={initialCompanies}
+      />
+    </>
   );
 }
