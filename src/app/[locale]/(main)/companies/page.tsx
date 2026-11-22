@@ -17,10 +17,6 @@ type CompaniesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const joinTitle = (...parts: string[]) => {
-  return parts.join(" ").replace(/\s+/g, " ").trim();
-};
-
 export async function generateMetadata({
   params,
   searchParams,
@@ -36,20 +32,22 @@ export async function generateMetadata({
 
   const resolvedLocale = locale as AppLocale;
   const searchState = parseCompanyListSearchParams(resolvedSearchParams);
-  const companyList = await getTranslations({
-    locale: resolvedLocale,
-    namespace: "companyList",
-  });
+  const canonicalPath = getCompanyListCanonicalPath(searchState);
   const meta = await getTranslations({
     locale: resolvedLocale,
     namespace: "meta",
   });
+  const title = meta("companiesTitle");
 
   return buildLocalizedPageMetadata({
     locale: resolvedLocale,
-    pathname: getCompanyListCanonicalPath(searchState),
-    title: joinTitle(companyList("findYourNext"), companyList("employer")),
-    description: companyList("browseTopCompanies"),
+    pathname: canonicalPath ?? "/companies",
+    indexable: canonicalPath !== null,
+    title:
+      searchState.page > 1
+        ? meta("pagedTitle", { title, page: searchState.page })
+        : title,
+    description: meta("companiesDescription"),
     keywords: meta("keywords"),
   });
 }
@@ -71,6 +69,15 @@ export default async function CompaniesPage({
   const initialData = await fetchPublicCompanies(
     buildCompanyListQueryArgs(initialSearchState)
   );
+
+  // Google asks for a 404 on pagination URLs past the last page.
+  if (
+    initialData &&
+    initialSearchState.page > 1 &&
+    initialSearchState.page > initialData.meta.pagination.total_pages
+  ) {
+    notFound();
+  }
 
   return (
     <CompaniesPageClient
