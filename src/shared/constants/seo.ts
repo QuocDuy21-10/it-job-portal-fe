@@ -4,24 +4,6 @@ import { env } from "@/shared/config/env";
 
 export const SITE_NAME = "DevLink";
 
-export const PUBLIC_SITEMAP_PATHS = [
-  {
-    pathname: "/",
-    changeFrequency: "daily",
-    priority: 1,
-  },
-  {
-    pathname: "/jobs",
-    changeFrequency: "hourly",
-    priority: 0.9,
-  },
-  {
-    pathname: "/companies",
-    changeFrequency: "daily",
-    priority: 0.8,
-  },
-] as const;
-
 const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
   en: "en_US",
   vi: "vi_VN",
