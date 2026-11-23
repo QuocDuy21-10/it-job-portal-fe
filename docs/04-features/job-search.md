@@ -43,6 +43,7 @@ Sơ đồ rút gọn hành trình tìm việc; trình tự kỹ thuật xem [Tì
 | --- | --- |
 | Tìm theo từ khóa | `q` trên URL; ô nhập gợi ý kỹ năng khi gõ từ 2 ký tự và nhớ 5 từ khóa gần nhất trong `localStorage` |
 | Địa điểm | `locationCode` trên URL; đường dẫn cũ dùng `location` vẫn được đổi sang mã |
+| Kỹ năng (API) | `skills`: một kỹ năng, khớp chính xác không phân biệt hoa thường (trang `/viec-lam/ky-nang/...` dùng tham số này) |
 | Loại hình, cấp bậc, mức lương | Chọn trong danh sách; chỉ áp dụng khi bấm áp dụng |
 | Tab nguồn | Tất cả, nội bộ, bên ngoài; áp dụng ngay |
 | Sắp xếp | Mới nhất, cũ nhất, lương giảm dần, lương tăng dần |
