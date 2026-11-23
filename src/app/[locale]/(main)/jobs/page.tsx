@@ -3,6 +3,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import JobsPageClient from "./jobs-page-client";
+import { LandingLinks } from "@/features/job/components/landing/landing-links";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { fetchPublicJobSearch } from "@/lib/utils/public-content";
 import {
@@ -79,10 +80,15 @@ export default async function JobsPage({
     notFound();
   }
 
+  const t = await getTranslations({ locale });
+
   return (
-    <JobsPageClient
-      initialData={initialData}
-      initialSearchState={initialSearchState}
-    />
+    <>
+      <JobsPageClient
+        initialData={initialData}
+        initialSearchState={initialSearchState}
+      />
+      <LandingLinks locale={locale as AppLocale} t={t} variant="full" />
+    </>
   );
 }

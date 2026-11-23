@@ -24,6 +24,10 @@ jest.mock("@/lib/utils/public-content", () => ({
   fetchPublicJobSearch: jest.fn(),
 }));
 
+jest.mock("@/features/job/components/landing/landing-links", () => ({
+  LandingLinks: () => <nav data-testid="landing-links" />,
+}));
+
 jest.mock("./jobs-page-client", () => ({
   __esModule: true,
   default: () => <div data-testid="jobs-page-client" />,

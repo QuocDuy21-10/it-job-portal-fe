@@ -1,5 +1,11 @@
 import type { MetadataRoute } from "next";
 import { connection } from "next/server";
+import {
+  LANDING_MIN_JOBS,
+  LANDING_PAGES,
+  landingHref,
+  matchesLanding,
+} from "@/features/job/config/landing-pages";
 import { companyHref, jobHref } from "@/i18n/hrefs";
 import type { AppHref } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -44,11 +50,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     fetchAllPublicCompanies(),
   ]);
   const newestJob = newestOf(jobs);
+  // Counted from internal jobs only; the page itself counts all sources, so a few indexable
+  // landing pages may be missing here (the sitemap is a hint).
+  const landingEntries = LANDING_PAGES.flatMap((landing) => {
+    const matches = jobs.filter((job) => matchesLanding(landing, job));
+
+    return matches.length >= LANDING_MIN_JOBS
+      ? [toEntry(landingHref(landing), newestOf(matches))]
+      : [];
+  });
 
   return [
     toEntry("/", newestJob),
     toEntry("/jobs", newestJob),
     toEntry("/companies", newestOf(companies)),
+    ...landingEntries,
     ...jobs.map((job) =>
       toEntry(jobHref(job._id, job.name), lastModifiedOf(job))
     ),
