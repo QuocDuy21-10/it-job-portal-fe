@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import ReduxProvider from "@/lib/redux/provider";
 import { CaslProvider } from "@/lib/casl/casl-provider";
-import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
+import { NonceProvider } from "@/contexts/nonce-context";
 
 const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
@@ -32,12 +32,12 @@ export default async function RootLayout({
       >
         <ReduxProvider>
           <CaslProvider>
-            <GoogleOAuthProvider nonce={nonce}>
+            <NonceProvider nonce={nonce}>
               <ThemeProvider nonce={nonce}>
                 {children}
                 <Toaster />
               </ThemeProvider>
-            </GoogleOAuthProvider>
+            </NonceProvider>
           </CaslProvider>
         </ReduxProvider>
       </body>
