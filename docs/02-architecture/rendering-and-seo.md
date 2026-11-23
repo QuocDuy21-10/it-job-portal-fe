@@ -106,6 +106,13 @@ Các hàm dựng JSON-LD nằm trong `src/lib/seo/json-ld.tsx`; component `JsonL
 
 `JobPosting` theo quy định của Google: mô tả là HTML đầy đủ đã làm sạch; `datePosted` là ngày duyệt tin; `employmentType` bỏ trống với `Remote` và `Hybrid` thay vì đoán; `jobLocationType: TELECOMMUTE` chỉ cho `Remote`; `baseSalary` chỉ khi lương lớn hơn 0. Tin hết hạn không cần xử lý ở frontend vì backend trả 404 cho tin đã quá `endDate`, đã tắt hoặc chưa duyệt.
 
+## Hiệu năng (Core Web Vitals)
+
+- Ảnh nền đầu trang chủ là phần tử LCP; nó được hiển thị bằng `next/image` với `priority` và `fetchPriority="high"`, nên được tải trước và trả về dạng AVIF/WebP theo bề rộng màn hình. Không chuyển ảnh này về `background-image` của CSS.
+- Script đăng nhập Google chỉ được tải khi nút Google hiển thị (`SocialAuthButtons` bọc `GoogleOAuthProvider`). Nonce CSP đi tới component client qua `NonceContext` (`src/contexts/nonce-context.tsx`).
+- `vercel.json` đặt vùng chạy function là `sin1` (Singapore), gần backend ở Hà Nội. Kiểm tra bằng header `x-vercel-id`, phần thứ hai là vùng function.
+- Vercel Speed Insights (`<SpeedInsights />` trong root layout) thu số liệu Web Vitals của người dùng thật; cần bật trong dashboard của dự án Vercel.
+
 ## Source code liên quan
 
 - [`src/shared/constants/seo.ts`](../../src/shared/constants/seo.ts): metadata, canonical, đa ngôn ngữ

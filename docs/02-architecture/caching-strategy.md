@@ -47,6 +47,8 @@ Sơ đồ cho thấy hai đường độc lập: request từ trình duyệt kh�
 | `fetchPublicCompanies`, `fetchPublicCompanyById`, `fetchPublicTopHiringCompanies` | 3600 giây |
 | `fetchPublicExternalJobById` | 3600 giây |
 
+Function chạy ở vùng `sin1` (xem `vercel.json`), nên lời gọi backend khi cache dữ liệu hết hạn chỉ đi Singapore – Hà Nội.
+
 Dữ liệu mà trang công khai thấy ban đầu có thể cũ đúng bằng khoảng thời gian đó. Các hàm lấy danh sách (`fetchPublicJobs`, `fetchPublicCompanies`, `fetchPublicJobSearch`, `fetchPublicTopHiringCompanies`) trả `null` khi lỗi để trang tự lấy lại ở trình duyệt. Các hàm lấy một mục (`fetchPublicJobById`, `fetchPublicCompanyById`, `fetchPublicExternalJobById`) chỉ trả `null` khi backend trả 404 hoặc 400; lỗi khác hoặc chờ quá 10 giây thì ném lỗi để trang trả 500.
 
 `sitemap.xml` render theo từng request và gọi `fetchAllPublicJobs`, `fetchAllPublicCompanies`; dữ liệu dùng cache 60 giây (việc làm) và 1 giờ (công ty) của từng lời gọi.
