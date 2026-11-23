@@ -10,6 +10,7 @@ import {
   fetchPublicJobById,
   fetchPublicJobs,
   fetchPublicJobSearch,
+  fetchPublicJobSearchStrict,
   fetchPublicTopHiringCompanies,
 } from "./public-content";
 
@@ -197,5 +198,20 @@ describe("public-content", () => {
 
       await expect(fetchAllPublicJobs()).rejects.toThrow("ECONNREFUSED");
     });
+  });
+
+  it("fetchPublicJobSearchStrict throws on a backend error instead of returning null", async () => {
+    respondWith(null, 500);
+
+    await expect(
+      fetchPublicJobSearchStrict({
+        skills: "React",
+        sort: "newest",
+        page: 1,
+        limit: 20,
+      })
+    ).rejects.toThrow(
+      "Backend answered 500 for /job-search?skills=React&sort=newest&page=1&limit=20"
+    );
   });
 });

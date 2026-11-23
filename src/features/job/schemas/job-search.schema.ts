@@ -46,6 +46,8 @@ export type ExternalJobDetail = {
 
 export type JobSearchParams = {
   keyword?: string;
+  // One skill tag, matched exactly by the backend.
+  skills?: string;
   locationCode?: string;
   level?: string;
   formOfWork?: string;

@@ -161,6 +161,11 @@ export const fetchPublicJobSearch = (params: JobSearchParams) => {
   );
 };
 
+// Landing pages: a backend failure must be a 500, not a page with an empty list.
+export const fetchPublicJobSearchStrict = (params: JobSearchParams) => {
+  return fetchPublicJobSearchByQuery(toJobSearchQueryString(params));
+};
+
 export const fetchPublicExternalJobById = cache((id: string) => {
   return fetchPublicEntity<ExternalJobDetail>(
     `/job-search/external/${encodeURIComponent(id)}`,
