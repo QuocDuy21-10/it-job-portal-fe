@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
+    // AVIF first (smaller), WebP fallback; the default is WebP only.
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: apiUrl.protocol === "https:" ? "https" : "http",

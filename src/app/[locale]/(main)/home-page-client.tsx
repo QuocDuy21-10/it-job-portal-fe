@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Search,
   ArrowRight,
@@ -153,9 +154,15 @@ export default function Home({ initialJobs, initialCompanies }: HomeProps) {
   return (
     <div className="flex flex-col">
       <section className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[url('/images/homepage-it-careers-banner.png')] bg-[length:100%_auto] bg-[position:center_top] bg-no-repeat opacity-90 sm:bg-cover sm:bg-center dark:opacity-25"
+        {/* LCP element on the home page: preloaded with fetchpriority=high, served as AVIF/WebP. */}
+        <Image
+          src="/images/homepage-it-careers-banner.png"
+          alt=""
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          className="object-contain object-top opacity-90 sm:object-cover sm:object-center dark:opacity-25"
         />
         <div
           aria-hidden="true"

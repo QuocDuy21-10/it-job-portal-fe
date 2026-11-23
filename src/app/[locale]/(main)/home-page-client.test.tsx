@@ -274,4 +274,21 @@ describe("Home", () => {
     // Top hiring companies do not depend on the role.
     expect(screen.getByText("Server company")).toBeInTheDocument();
   });
+
+  it("loads the hero banner as a prioritized image, not a CSS background", () => {
+    const { container } = render(
+      <Home initialJobs={null} initialCompanies={null} />
+    );
+    const hero = container.querySelector(
+      'img[src*="homepage-it-careers-banner.png"]'
+    );
+
+    expect(hero).not.toBeNull();
+    expect(hero).toHaveAttribute("alt", "");
+    expect(hero).toHaveAttribute("fetchpriority", "high");
+    expect(hero).not.toHaveAttribute("loading", "lazy");
+    expect(
+      container.querySelector('[class*="homepage-it-careers-banner"]')
+    ).toBeNull();
+  });
 });
