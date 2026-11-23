@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import ReduxProvider from "@/lib/redux/provider";
 import { CaslProvider } from "@/lib/casl/casl-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NonceProvider } from "@/contexts/nonce-context";
 
 const roboto = Roboto({
@@ -40,6 +41,8 @@ export default async function RootLayout({
             </NonceProvider>
           </CaslProvider>
         </ReduxProvider>
+        {/* Real-user Web Vitals; enabled per project in the Vercel dashboard. */}
+        <SpeedInsights />
       </body>
     </html>
   );
