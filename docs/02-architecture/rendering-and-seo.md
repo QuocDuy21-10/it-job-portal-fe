@@ -70,6 +70,16 @@ Hàm `getSiteUrl` đọc biến `NEXT_PUBLIC_SITE_URL`. Khi biến này trống,
 
 Sitemap render theo từng request (`connection()`); dữ liệu vẫn dùng cache của từng lời gọi. Khi backend lỗi, `/sitemap.xml` trả 500 thay vì một danh sách thiếu việc làm. Sitemap **không** chứa việc làm bên ngoài. Một file sitemap chứa tối đa 50.000 địa chỉ; vượt mức đó thì cần tách bằng `generateSitemaps`.
 
+## Trang theo kỹ năng, thành phố, cấp bậc
+
+`src/features/job/config/landing-pages.ts` liệt kê 25 trang: 16 kỹ năng (`/viec-lam/ky-nang/react`), 3 thành phố (`/viec-lam/thanh-pho/ha-noi`) và 6 cấp bậc (`/viec-lam/cap-bac/senior`); tiếng Anh nằm dưới `/en/jobs/skill|city|level/...`. Mỗi mục có tên và đoạn giới thiệu viết tay bằng hai ngôn ngữ. Slug không có trong danh sách trả 404.
+
+Ba route dùng chung `createLandingRoute` trong `src/features/job/lib/landing-route.tsx`. Trang lấy 20 việc làm mỗi trang qua `fetchPublicJobSearchStrict` (kỹ năng lọc bằng tham số `skills` của backend, khớp chính xác), lỗi backend trả 500. Trang có dưới 5 việc làm vẫn hiển thị nhưng `noindex, follow`. JSON-LD chỉ có `BreadcrumbList`.
+
+Liên kết nội bộ: thẻ kỹ năng, địa điểm và cấp bậc trên trang chi tiết việc làm; mục "Việc làm theo kỹ năng / thành phố / cấp bậc" (`LandingLinks`) cuối `/viec-lam` và trang chủ; ba thành phố ở footer. Sitemap thêm trang có từ 5 việc làm nội bộ phù hợp.
+
+Muốn thêm trang: thêm một mục vào `LANDING_PAGES` với đoạn giới thiệu thật, không thêm trang chỉ để chứa từ khóa.
+
 ## Robots
 
 `src/app/robots.ts` cho phép mọi trang, chỉ chặn `/api/`, và khai báo địa chỉ sitemap. Các trang riêng tư không nằm trong robots.txt mà được gắn `noindex` qua header, xem mục "Trang không được lập chỉ mục" ở trên.

@@ -2,8 +2,13 @@
 
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import Image from "next/image";
+import {
+  getLandingPagesByType,
+  landingHref,
+} from "@/features/job/config/landing-pages";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { useAppSelector } from "@/lib/redux/hooks";
 import {
   selectIsAdmin,
@@ -11,7 +16,7 @@ import {
 } from "@/features/auth/redux/auth.slice";
 
 export function Footer() {
-  const { t, mounted: i18nMounted } = useI18n();
+  const { t, language, mounted: i18nMounted } = useI18n();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isAdmin = useAppSelector(selectIsAdmin);
   // /admin only bounces a signed-in candidate back home, so the link is for guests (login) and staff.
@@ -95,6 +100,18 @@ export function Footer() {
                     : "Browse Companies"}
                 </Link>
               </li>
+              {getLandingPagesByType("city").map((city) => (
+                <li key={city.slug}>
+                  <Link
+                    href={landingHref(city)}
+                    className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
+                  >
+                    {t("landingPage.linkCity", {
+                      name: city.name[language as AppLocale],
+                    })}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <a
                   href="#"

@@ -3,6 +3,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import HomePageClient from "./home-page-client";
+import { LandingLinks } from "@/features/job/components/landing/landing-links";
 import { JsonLd, buildHomeJsonLd } from "@/lib/seo/json-ld";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
 import { routing, type AppLocale } from "@/i18n/routing";
@@ -46,11 +47,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function HomePage() {
+export default async function HomePage({ params }: HomePageProps) {
+  const { locale } = await params;
   // Either result is null when the backend is unreachable; the client then fetches it itself.
-  const [initialJobs, initialCompanies] = await Promise.all([
+  const [initialJobs, initialCompanies, t] = await Promise.all([
     fetchPublicJobs(getHomeJobsQuery(1)),
     fetchPublicTopHiringCompanies(HOME_TOP_COMPANIES_LIMIT),
+    getTranslations({ locale }),
   ]);
 
   return (
@@ -60,6 +63,7 @@ export default async function HomePage() {
         initialJobs={initialJobs}
         initialCompanies={initialCompanies}
       />
+      <LandingLinks locale={locale as AppLocale} t={t} variant="compact" />
     </>
   );
 }

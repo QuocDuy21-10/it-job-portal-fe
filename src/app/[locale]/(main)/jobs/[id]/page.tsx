@@ -26,6 +26,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  findCityLanding,
+  findLevelLanding,
+  findSkillLanding,
+  landingHref,
+} from "@/features/job/config/landing-pages";
 import { Card } from "@/components/ui/card";
 import { companyHref, jobHref } from "@/i18n/hrefs";
 import { permanentRedirect } from "@/i18n/navigation";
@@ -126,6 +132,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     companyHref(job.company._id, job.company.name),
     locale
   );
+  const cityLanding = findCityLanding(job.locationCode);
+  const levelLanding = findLevelLanding(job.level);
   const companyLogoUrl = getCompanyLogoUrl(job.company.logo);
   const daysRemaining = Math.ceil(
     (new Date(job.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
@@ -225,7 +233,19 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                         {t("jobDetailPage.summary.location")}
                       </p>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">
-                        {job.location}
+                        {cityLanding ? (
+                          <Link
+                            href={getLocalizedPath(
+                              landingHref(cityLanding),
+                              locale
+                            )}
+                            className="hover:text-primary hover:underline"
+                          >
+                            {job.location}
+                          </Link>
+                        ) : (
+                          job.location
+                        )}
                       </p>
                     </div>
                   </div>
@@ -238,7 +258,19 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                         {t("jobDetailPage.summary.level")}
                       </p>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">
-                        {job.level}
+                        {levelLanding ? (
+                          <Link
+                            href={getLocalizedPath(
+                              landingHref(levelLanding),
+                              locale
+                            )}
+                            className="hover:text-primary hover:underline"
+                          >
+                            {job.level}
+                          </Link>
+                        ) : (
+                          job.level
+                        )}
                       </p>
                     </div>
                   </div>
@@ -310,14 +342,28 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                         </h2>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {job.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 text-sm font-medium text-blue-700 transition-all duration-200 dark:border-blue-800 dark:from-blue-950 dark:to-indigo-950 dark:text-blue-300"
-                          >
-                            {skill}
-                          </span>
-                        ))}
+                        {job.skills.map((skill) => {
+                          const skillLanding = findSkillLanding(skill);
+                          const className =
+                            "rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 text-sm font-medium text-blue-700 transition-all duration-200 dark:border-blue-800 dark:from-blue-950 dark:to-indigo-950 dark:text-blue-300";
+
+                          return skillLanding ? (
+                            <Link
+                              key={skill}
+                              href={getLocalizedPath(
+                                landingHref(skillLanding),
+                                locale
+                              )}
+                              className={`${className} hover:border-blue-400`}
+                            >
+                              {skill}
+                            </Link>
+                          ) : (
+                            <span key={skill} className={className}>
+                              {skill}
+                            </span>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

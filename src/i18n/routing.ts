@@ -18,6 +18,18 @@ export const routing = defineRouting({
       vi: "/viec-lam/nguon-ngoai/[id]",
       en: "/jobs/external/[id]",
     },
+    "/jobs/skill/[skill]": {
+      vi: "/viec-lam/ky-nang/[skill]",
+      en: "/jobs/skill/[skill]",
+    },
+    "/jobs/city/[city]": {
+      vi: "/viec-lam/thanh-pho/[city]",
+      en: "/jobs/city/[city]",
+    },
+    "/jobs/level/[level]": {
+      vi: "/viec-lam/cap-bac/[level]",
+      en: "/jobs/level/[level]",
+    },
     "/companies": { vi: "/cong-ty", en: "/companies" },
     "/companies/[id]": { vi: "/cong-ty/[id]", en: "/companies/[id]" },
     "/privacy": { vi: "/chinh-sach-bao-mat", en: "/privacy" },
