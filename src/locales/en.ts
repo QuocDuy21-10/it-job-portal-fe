@@ -353,6 +353,10 @@ export const en = {
         label: "Roles",
         description: "Manage roles and permissions",
       },
+      siteContent: {
+        label: "Site content",
+        description: "Banner, terms and privacy policy",
+      },
     },
   },
   adminDialogs: {

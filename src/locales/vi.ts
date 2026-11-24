@@ -356,6 +356,10 @@ export const vi = {
         label: "Vai trò",
         description: "Quản lý vai trò và quyền hạn",
       },
+      siteContent: {
+        label: "Nội dung trang",
+        description: "Banner, điều khoản và chính sách",
+      },
     },
   },
   adminDialogs: {

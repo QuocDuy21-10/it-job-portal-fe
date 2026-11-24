@@ -9,6 +9,7 @@ import {
   Building2,
   Briefcase,
   FileText,
+  Images,
   type LucideIcon,
 } from "lucide-react";
 import type { ESubject } from "@/lib/casl/ability";
@@ -74,5 +75,14 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
     subject: "Resume",
     description: "Quản lý hồ sơ ứng tuyển",
     descriptionKey: "adminShell.navigation.resumes.description",
+  },
+  {
+    name: "Site content",
+    labelKey: "adminShell.navigation.siteContent.label",
+    href: "/admin/site-content",
+    icon: Images,
+    subject: "SiteContent",
+    description: "Banner và văn bản pháp lý",
+    descriptionKey: "adminShell.navigation.siteContent.description",
   },
 ];

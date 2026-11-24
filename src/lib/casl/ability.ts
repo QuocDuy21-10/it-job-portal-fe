@@ -20,6 +20,7 @@ export type ESubject =
   | "File"
   | "Notification"
   | "Statistic"
+  | "SiteContent"
   | "all";
 
 export type AppAbility = PureAbility<[EAction, ESubject]>;
