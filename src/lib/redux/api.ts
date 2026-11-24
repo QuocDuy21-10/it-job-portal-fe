@@ -18,6 +18,8 @@ export const baseApi = createApi({
     "Statistics",
     "Notification",
     "Skill",
+    "Banner",
+    "LegalPage",
   ],
 
   endpoints: (builder) => ({

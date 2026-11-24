@@ -356,6 +356,10 @@ export const vi = {
         label: "Vai trò",
         description: "Quản lý vai trò và quyền hạn",
       },
+      siteContent: {
+        label: "Nội dung trang",
+        description: "Banner, điều khoản và chính sách",
+      },
     },
   },
   adminDialogs: {
@@ -830,6 +834,41 @@ export const vi = {
     },
   },
   adminPages: {
+    siteContent: {
+      title: "Nội dung trang",
+      description:
+        "Ảnh banner trang chủ, điều khoản dịch vụ và chính sách bảo mật",
+      saved: "Đã lưu thay đổi. Trang công khai cập nhật sau khoảng 1 phút.",
+      error: "Có lỗi xảy ra. Vui lòng thử lại.",
+      tabs: { banner: "Banner", legal: "Văn bản" },
+      unsavedTitle: "Bỏ thay đổi chưa lưu?",
+      unsavedDescription: "Nội dung bạn vừa sửa chưa được lưu và sẽ mất.",
+      discard: "Bỏ thay đổi",
+      banner: {
+        hint: "JPG, PNG hoặc WebP, tối đa 5 MB, nên dùng ảnh ngang rộng từ 1920 px.",
+        upload: "Tải ảnh lên",
+        useDefault: "Dùng ảnh mặc định",
+        activate: "Hiển thị",
+        active: "Đang hiển thị",
+        empty: "Chưa có banner nào. Trang chủ đang dùng ảnh mặc định.",
+        deleteTitle: "Xóa banner {name}?",
+        deleteDescription: "Ảnh sẽ bị xóa hẳn và không thể khôi phục.",
+        deleteConfirm: "Xóa banner",
+        invalidFile: "Chỉ nhận ảnh JPG, PNG hoặc WebP, tối đa 5 MB.",
+      },
+      legal: {
+        page: "Trang",
+        terms: "Điều khoản dịch vụ",
+        privacy: "Chính sách bảo mật",
+        locale: "Ngôn ngữ",
+        titleLabel: "Tiêu đề",
+        descriptionLabel: "Mô tả (hiển thị trên kết quả tìm kiếm)",
+        contentLabel: "Nội dung",
+        published: "Đã công bố (bỏ nhãn bản nháp, cho phép Google lập chỉ mục)",
+        save: "Lưu",
+        required: "Tiêu đề, mô tả và nội dung không được để trống.",
+      },
+    },
     personalInfo: {
       title: "Thông tin cá nhân",
       description: "Cập nhật thông tin cá nhân và tài khoản của bạn",
@@ -1083,6 +1122,11 @@ export const vi = {
         deleteError: "Không thể xóa hồ sơ. Vui lòng thử lại.",
       },
     },
+  },
+  legalPage: {
+    lastUpdated: "Cập nhật lần cuối: {date}",
+    draftNotice:
+      "Đây là bản nháp mẫu. Đây chưa phải văn bản pháp lý chính thức và sẽ được thay trước khi ra mắt.",
   },
   footer: {
     logoName: "DevLink",

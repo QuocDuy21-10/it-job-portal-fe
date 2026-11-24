@@ -353,6 +353,10 @@ export const en = {
         label: "Roles",
         description: "Manage roles and permissions",
       },
+      siteContent: {
+        label: "Site content",
+        description: "Banner, terms and privacy policy",
+      },
     },
   },
   adminDialogs: {
@@ -823,6 +827,41 @@ export const en = {
     },
   },
   adminPages: {
+    siteContent: {
+      title: "Site content",
+      description: "Home banner, terms of service and privacy policy",
+      saved: "Changes saved. The public pages update within about a minute.",
+      error: "Something went wrong. Please try again.",
+      tabs: { banner: "Banner", legal: "Legal texts" },
+      unsavedTitle: "Discard unsaved changes?",
+      unsavedDescription: "Your latest edits are not saved and will be lost.",
+      discard: "Discard",
+      banner: {
+        hint: "JPG, PNG or WebP, up to 5 MB. A wide image of 1920 px or more works best.",
+        upload: "Upload image",
+        useDefault: "Use the default image",
+        activate: "Show",
+        active: "Shown",
+        empty: "No banners yet. The home page uses the default image.",
+        deleteTitle: "Delete banner {name}?",
+        deleteDescription:
+          "The image is deleted for good and cannot be restored.",
+        deleteConfirm: "Delete banner",
+        invalidFile: "Only JPG, PNG or WebP images up to 5 MB are accepted.",
+      },
+      legal: {
+        page: "Page",
+        terms: "Terms of Service",
+        privacy: "Privacy Policy",
+        locale: "Language",
+        titleLabel: "Title",
+        descriptionLabel: "Description (shown in search results)",
+        contentLabel: "Content",
+        published: "Published (no draft notice, can be indexed by Google)",
+        save: "Save",
+        required: "Title, description and content are required.",
+      },
+    },
     personalInfo: {
       title: "Personal Information",
       description: "Update your personal and account information",
@@ -1077,6 +1116,11 @@ export const en = {
         deleteError: "Unable to delete the application. Please try again.",
       },
     },
+  },
+  legalPage: {
+    lastUpdated: "Last updated: {date}",
+    draftNotice:
+      "This is a draft sample. It is not the final legal text and will be replaced before launch.",
   },
   footer: {
     logoName: "DevLink",

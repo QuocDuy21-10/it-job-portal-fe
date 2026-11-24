@@ -63,9 +63,17 @@ function HomeSearchBox({ onSearch }: HomeSearchBoxProps) {
 type HomeProps = {
   initialJobs: PaginatedResult<Job> | null;
   initialCompanies: TopHiringCompany[] | null;
+  heroImageUrl?: string;
 };
 
-export default function Home({ initialJobs, initialCompanies }: HomeProps) {
+const DEFAULT_HERO_IMAGE = "/images/homepage-it-careers-banner.png";
+
+export default function Home({
+  initialJobs,
+  initialCompanies,
+  heroImageUrl,
+}: HomeProps) {
+  const [heroFailed, setHeroFailed] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
 
@@ -156,7 +164,8 @@ export default function Home({ initialJobs, initialCompanies }: HomeProps) {
       <section className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32">
         {/* LCP element on the home page: preloaded with fetchpriority=high, served as AVIF/WebP. */}
         <Image
-          src="/images/homepage-it-careers-banner.png"
+          src={heroImageUrl && !heroFailed ? heroImageUrl : DEFAULT_HERO_IMAGE}
+          onError={() => setHeroFailed(true)}
           alt=""
           fill
           priority

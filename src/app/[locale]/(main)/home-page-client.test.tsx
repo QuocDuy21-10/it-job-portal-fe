@@ -291,4 +291,21 @@ describe("Home", () => {
       container.querySelector('[class*="homepage-it-careers-banner"]')
     ).toBeNull();
   });
+
+  it("shows the banner chosen by the admin and falls back when it cannot load", () => {
+    const { container } = render(
+      <Home
+        initialJobs={null}
+        initialCompanies={null}
+        heroImageUrl="http://localhost:8081/images/banner/custom.png"
+      />
+    );
+    const hero = () => container.querySelector('img[fetchpriority="high"]')!;
+
+    expect(hero().getAttribute("src")).toContain("custom.png");
+    fireEvent.error(hero());
+    expect(hero().getAttribute("src")).toContain(
+      "homepage-it-careers-banner.png"
+    );
+  });
 });

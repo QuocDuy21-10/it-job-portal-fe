@@ -9,6 +9,11 @@ import type {
   JobSearchItem,
   JobSearchParams,
 } from "@/features/job/schemas/job-search.schema";
+import type {
+  LegalPageContent,
+  LegalPageKey,
+} from "@/features/site-content/schemas/site-content.schema";
+import type { AppLocale } from "@/i18n/routing";
 import { toJobSearchQueryString } from "@/lib/utils/public-listing";
 import type { ApiResponse } from "@/shared/base/api-response.base";
 import { API_BASE_URL } from "@/shared/constants/constant";
@@ -22,6 +27,7 @@ import type {
 const JOBS_REVALIDATE_SECONDS = 60;
 const COMPANIES_REVALIDATE_SECONDS = 3600;
 const EXTERNAL_JOBS_REVALIDATE_SECONDS = 3600;
+const SITE_CONTENT_REVALIDATE_SECONDS = 60;
 const FETCH_TIMEOUT_MS = 10_000;
 // The backend caps `limit` at this value (MAX_PAGE_LIMIT).
 const MAX_PAGE_SIZE = 100;
@@ -179,3 +185,21 @@ export const fetchAllPublicJobs = () =>
 
 export const fetchAllPublicCompanies = () =>
   fetchAllPages<Company>("/companies", COMPANIES_REVALIDATE_SECONDS);
+
+// null: no banner chosen, or the backend failed. The page then shows its bundled image.
+export const fetchPublicActiveBanner = cache(() =>
+  nullOnError(
+    fetchPublicEntity<{ imageUrl: string }>(
+      "/site-content/banners/active",
+      SITE_CONTENT_REVALIDATE_SECONDS
+    )
+  )
+);
+
+export const fetchPublicLegalPage = cache(
+  (page: LegalPageKey, locale: AppLocale) =>
+    fetchPublicEntity<LegalPageContent>(
+      `/site-content/legal/${page}/${locale}`,
+      SITE_CONTENT_REVALIDATE_SECONDS
+    )
+);

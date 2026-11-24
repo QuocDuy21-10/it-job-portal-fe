@@ -14,6 +14,7 @@ describe("canOpenAdminPath", () => {
   it("blocks HR from SUPER ADMIN-only pages", () => {
     expect(canOpenAdminPath("/admin/users", hr)).toBe(false);
     expect(canOpenAdminPath("/admin/users/123", hr)).toBe(false);
+    expect(canOpenAdminPath("/admin/site-content", hr)).toBe(false);
   });
 
   it("lets HR open the pages its role can read", () => {
