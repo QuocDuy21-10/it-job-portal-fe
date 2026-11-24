@@ -18,9 +18,11 @@ const ReactQuillAny = ReactQuill as any;
 
 interface RichTextEditorProps {
   value: string;
-  onChange: (value: string) => void;
+  // source is "user" for edits and "api" when Quill normalizes the loaded HTML.
+  onChange: (value: string, delta?: unknown, source?: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  allowImages?: boolean;
 }
 
 export function RichTextEditor({
@@ -28,6 +30,7 @@ export function RichTextEditor({
   onChange,
   // placeholder = "Enter text...",
   disabled = false,
+  allowImages = true,
 }: RichTextEditorProps) {
   const quillRef = useRef<any>(null);
 
@@ -39,7 +42,7 @@ export function RichTextEditor({
       [{ list: "ordered" }, { list: "bullet" }],
       [{ script: "sub" }, { script: "super" }],
       [{ color: [] }, { background: [] }],
-      ["link", "image"],
+      allowImages ? ["link", "image"] : ["link"],
       ["clean"],
     ],
   };
@@ -57,7 +60,7 @@ export function RichTextEditor({
     "color",
     "background",
     "link",
-    "image",
+    ...(allowImages ? ["image"] : []),
   ];
 
   return (
