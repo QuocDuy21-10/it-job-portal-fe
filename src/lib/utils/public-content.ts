@@ -23,10 +23,11 @@ import type {
 } from "@/shared/types/pagination";
 
 // How long Next.js reuses a cached response before asking the backend again.
-// Jobs change often; companies and aggregated external jobs rarely do.
+// Jobs and aggregated external jobs change often; companies rarely do.
 const JOBS_REVALIDATE_SECONDS = 60;
 const COMPANIES_REVALIDATE_SECONDS = 3600;
-const EXTERNAL_JOBS_REVALIDATE_SECONDS = 3600;
+// Short, so a job taken down by an admin leaves the site within about a minute.
+const EXTERNAL_JOBS_REVALIDATE_SECONDS = 60;
 const SITE_CONTENT_REVALIDATE_SECONDS = 60;
 const FETCH_TIMEOUT_MS = 10_000;
 // The backend caps `limit` at this value (MAX_PAGE_LIMIT).

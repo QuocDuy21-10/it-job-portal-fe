@@ -44,6 +44,7 @@ export const routing = defineRouting({
     "/admin": "/admin",
     "/admin/change-password": "/admin/change-password",
     "/admin/companies": "/admin/companies",
+    "/admin/crawl": "/admin/crawl",
     "/admin/jobs": "/admin/jobs",
     "/admin/personal-info": "/admin/personal-info",
     "/admin/resumes": "/admin/resumes",

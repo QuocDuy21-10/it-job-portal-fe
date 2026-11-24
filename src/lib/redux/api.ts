@@ -20,6 +20,9 @@ export const baseApi = createApi({
     "Skill",
     "Banner",
     "LegalPage",
+    "JobSource",
+    "CrawledJob",
+    "CrawlFailure",
   ],
 
   endpoints: (builder) => ({
