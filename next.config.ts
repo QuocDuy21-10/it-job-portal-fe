@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
     optimizePackageImports: ["lucide-react"],
+    // Removes the render-blocking CSS requests; kept only because PSI on the preview improved (SEO-4).
+    inlineCss: true,
   },
   images: {
     // AVIF first (smaller), WebP fallback; the default is WebP only.
