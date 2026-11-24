@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { GoogleLogin } from "@react-oauth/google";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useI18n } from "@/hooks/use-i18n";
+import { GoogleOAuthProvider } from "@/components/google-oauth-provider";
+import { useNonce } from "@/contexts/nonce-context";
 
 interface SocialAuthButtonsProps {
   onGoogleSuccess: (credentialResponse: any) => void;
@@ -38,6 +40,7 @@ export function SocialAuthButtons({
   }, []);
 
   const { t } = useI18n();
+  const nonce = useNonce();
   const displayDividerText = dividerText || t("authModal.login.socialDivider");
   const isDarkMode = mounted && resolvedTheme === "dark";
   const googleTheme = isDarkMode ? "filled_black" : "outline";
@@ -78,20 +81,23 @@ export function SocialAuthButtons({
             </Button>
           ) : (
             <div className="w-full flex items-center justify-center">
-              <GoogleLogin
-                key={`${googleTheme}-${googleWidth}`}
-                onSuccess={onGoogleSuccess}
-                onError={onGoogleError}
-                containerProps={{
-                  className: googleContainerClassName,
-                }}
-                width={googleWidth}
-                shape="rectangular"
-                size="large"
-                theme={googleTheme}
-                text="signin_with"
-                logo_alignment="center"
-              />
+              {/* The provider loads Google's script, so it lives here and not in the root layout. */}
+              <GoogleOAuthProvider nonce={nonce}>
+                <GoogleLogin
+                  key={`${googleTheme}-${googleWidth}`}
+                  onSuccess={onGoogleSuccess}
+                  onError={onGoogleError}
+                  containerProps={{
+                    className: googleContainerClassName,
+                  }}
+                  width={googleWidth}
+                  shape="rectangular"
+                  size="large"
+                  theme={googleTheme}
+                  text="signin_with"
+                  logo_alignment="center"
+                />
+              </GoogleOAuthProvider>
             </div>
           )}
         </div>
