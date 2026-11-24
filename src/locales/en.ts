@@ -1078,6 +1078,11 @@ export const en = {
       },
     },
   },
+  legalPage: {
+    lastUpdated: "Last updated: {date}",
+    draftNotice:
+      "This is a draft sample. It is not the final legal text and will be replaced before launch.",
+  },
   footer: {
     logoName: "DevLink",
     description:

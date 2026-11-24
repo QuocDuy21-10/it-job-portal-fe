@@ -1084,6 +1084,11 @@ export const vi = {
       },
     },
   },
+  legalPage: {
+    lastUpdated: "Cập nhật lần cuối: {date}",
+    draftNotice:
+      "Đây là bản nháp mẫu. Đây chưa phải văn bản pháp lý chính thức và sẽ được thay trước khi ra mắt.",
+  },
   footer: {
     logoName: "DevLink",
     description:
