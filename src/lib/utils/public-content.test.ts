@@ -8,9 +8,11 @@ import {
   fetchPublicCompanyById,
   fetchPublicExternalJobById,
   fetchPublicJobById,
+  fetchPublicActiveBanner,
   fetchPublicJobs,
   fetchPublicJobSearch,
   fetchPublicJobSearchStrict,
+  fetchPublicLegalPage,
   fetchPublicTopHiringCompanies,
 } from "./public-content";
 
@@ -48,6 +50,18 @@ describe("public-content", () => {
           sort: "sort=-createdAt",
         }),
       `${API}/jobs?page=1&limit=6&isActive=true&sort=-createdAt`,
+      60,
+    ],
+    [
+      "fetchPublicActiveBanner",
+      () => fetchPublicActiveBanner(),
+      `${API}/site-content/banners/active`,
+      60,
+    ],
+    [
+      "fetchPublicLegalPage",
+      () => fetchPublicLegalPage("terms", "vi"),
+      `${API}/site-content/legal/terms/vi`,
       60,
     ],
     [
@@ -213,5 +227,17 @@ describe("public-content", () => {
     ).rejects.toThrow(
       "Backend answered 500 for /job-search?skills=React&sort=newest&page=1&limit=20"
     );
+  });
+
+  it("fetchPublicActiveBanner falls back to null when the backend fails", async () => {
+    respondWith(null, 500);
+    await expect(fetchPublicActiveBanner()).resolves.toBeNull();
+  });
+
+  it("fetchPublicLegalPage reports a missing page as null but throws on an outage", async () => {
+    respondWith(null, 404);
+    await expect(fetchPublicLegalPage("terms", "vi")).resolves.toBeNull();
+    respondWith(null, 500);
+    await expect(fetchPublicLegalPage("terms", "vi")).rejects.toThrow("500");
   });
 });

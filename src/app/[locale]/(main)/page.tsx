@@ -8,6 +8,7 @@ import { JsonLd, buildHomeJsonLd } from "@/lib/seo/json-ld";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
 import { routing, type AppLocale } from "@/i18n/routing";
 import {
+  fetchPublicActiveBanner,
   fetchPublicJobs,
   fetchPublicTopHiringCompanies,
 } from "@/lib/utils/public-content";
@@ -50,9 +51,10 @@ export async function generateMetadata({
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   // Either result is null when the backend is unreachable; the client then fetches it itself.
-  const [initialJobs, initialCompanies, t] = await Promise.all([
+  const [initialJobs, initialCompanies, banner, t] = await Promise.all([
     fetchPublicJobs(getHomeJobsQuery(1)),
     fetchPublicTopHiringCompanies(HOME_TOP_COMPANIES_LIMIT),
+    fetchPublicActiveBanner(),
     getTranslations({ locale }),
   ]);
 
@@ -62,6 +64,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomePageClient
         initialJobs={initialJobs}
         initialCompanies={initialCompanies}
+        heroImageUrl={banner?.imageUrl}
       />
       <LandingLinks locale={locale as AppLocale} t={t} variant="compact" />
     </>
