@@ -10,6 +10,7 @@ import {
   Briefcase,
   FileText,
   Images,
+  Bot,
   type LucideIcon,
 } from "lucide-react";
 import type { ESubject } from "@/lib/casl/ability";
@@ -84,5 +85,14 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
     subject: "SiteContent",
     description: "Banner và văn bản pháp lý",
     descriptionKey: "adminShell.navigation.siteContent.description",
+  },
+  {
+    name: "Crawl",
+    labelKey: "adminShell.navigation.crawl.label",
+    href: "/admin/crawl",
+    icon: Bot,
+    subject: "JobSource",
+    description: "Quản lý tin crawl",
+    descriptionKey: "adminShell.navigation.crawl.description",
   },
 ];

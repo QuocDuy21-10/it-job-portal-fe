@@ -98,7 +98,7 @@ describe("public-content", () => {
       "fetchPublicExternalJobById",
       () => fetchPublicExternalJobById("e1"),
       `${API}/job-search/external/e1`,
-      3600,
+      60,
     ],
   ])(
     "%s caches its response for the right time",

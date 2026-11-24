@@ -21,6 +21,7 @@ export type ESubject =
   | "Notification"
   | "Statistic"
   | "SiteContent"
+  | "JobSource"
   | "all";
 
 export type AppAbility = PureAbility<[EAction, ESubject]>;

@@ -57,6 +57,10 @@ Sau khi ghi dữ liệu, mọi danh sách đang hiển thị dữ liệu đó c�
 | `createSubscriber`, `deleteSubscriber` | `{ Subscriber, id: "LIST" }` |
 | `updateSubscriber` | `{ Subscriber, id: "SKILLS" }` và `LIST` |
 
+## Tin ngoài ở phía server
+
+Trang chi tiết tin ngoài (`fetchPublicExternalJobById`) được Next.js giữ 60 giây, đủ ngắn để tin bị admin gỡ biến khỏi trang công khai sau khoảng một phút. Danh sách công ty vẫn giữ 3600 giây.
+
 ## Endpoint không dùng tag
 
 Các endpoint sau không khai báo `providesTags` hoặc `invalidatesTags`:

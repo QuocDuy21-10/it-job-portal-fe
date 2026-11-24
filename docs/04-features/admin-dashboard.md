@@ -31,6 +31,7 @@ Chưa dùng ảnh trang quản lý người dùng vì ảnh chứa tên và emai
 | Việc làm | `/admin/jobs` | Quản lý tin và duyệt tin, xem [Duyệt tin tuyển dụng](job-approval.md) |
 | Hồ sơ | `/admin/resumes` | Lọc theo trạng thái, đổi trạng thái, xóa, xóa hàng loạt |
 | Nội dung trang | `/admin/site-content` | Chỉ `SUPER ADMIN`. Tab Banner: tải ảnh lên, chọn ảnh hiển thị ở trang chủ, quay lại ảnh mặc định, xóa ảnh không hiển thị. Tab Văn bản: sửa Điều khoản và Chính sách bảo mật theo từng ngôn ngữ, đánh dấu đã công bố. Trang công khai cập nhật sau khoảng 60 giây. Văn bản chưa công bố hiện nhãn bản nháp và không được lập chỉ mục; đổi trang hoặc ngôn ngữ khi chưa lưu sẽ hỏi bỏ thay đổi |
+| Tin crawl | `/admin/crawl` | Chỉ `SUPER ADMIN`, ba tab. Nguồn: số tin theo trạng thái, bật tắt crawl, chính sách hiển thị, đồng bộ, lịch sử, thêm (Greenhouse, Lever) và xóa nguồn đã tắt. Tin đã crawl: lọc, gỡ có lý do và khôi phục, chọn nhiều. Tin lỗi: lỗi và tin bị lọc, thử lại ở lần đồng bộ kế tiếp |
 | Thông tin cá nhân | `/admin/personal-info` | Cập nhật thông tin của chính mình |
 | Đổi mật khẩu | `/admin/change-password` | Đổi mật khẩu của chính mình |
 
@@ -48,6 +49,7 @@ Thanh bên lọc mục theo quyền CASL (`useFilteredNavigation`). Mỗi mục 
 | Việc làm | `Job` | Có | Có, tạo, đọc, sửa, xóa |
 | Hồ sơ | `Resume` | Có | Có, đọc và sửa |
 | Nội dung trang | `SiteContent` | Có | Không |
+| Tin crawl | `JobSource` | Có | Không |
 
 Nút thêm công ty hiện với người có quyền `create` trên `Company`, nút xóa người dùng, công ty và hồ sơ theo quyền `delete`, nên `HR` không thấy các nút đó; nút duyệt tin theo quyền `approve`. Phạm vi dữ liệu theo công ty của HR do backend áp dụng, không phải giao diện.
 
