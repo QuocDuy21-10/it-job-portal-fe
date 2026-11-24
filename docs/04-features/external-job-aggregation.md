@@ -65,7 +65,7 @@ Kiểu dữ liệu ở [Model JobSearchItem](../06-api-and-data/models/job-searc
 
 | Tình huống | Hành vi |
 | --- | --- |
-| Tin không tồn tại, nguồn ẩn hoặc backend lỗi | Trang 404 |
+| Tin không tồn tại, nguồn ẩn hoặc đã xóa, tin bị admin gỡ, hoặc backend lỗi | Trang 404 |
 | Tin đã đóng | Hiện thông báo đóng, ẩn nút ứng tuyển |
 | Địa chỉ ứng tuyển không an toàn | Ẩn nút ứng tuyển |
 | Nguồn chỉ cho dẫn link | Hiện câu hướng dẫn xem đầy đủ ở nguồn |
