@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Job } from "@/features/job/schemas/job.schema";
 import { Access } from "@/components/access";
+import { NoResults } from "@/components/admin/list/no-results";
 import { ApprovalStatusBadge } from "./approval-status-badge";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
@@ -47,6 +48,7 @@ interface JobTableProps {
   onToggleAll: () => void;
   isAllSelected: boolean;
   isIndeterminate: boolean;
+  onClearFilters?: () => void;
 }
 
 export function JobTable({
@@ -62,6 +64,7 @@ export function JobTable({
   onToggleAll,
   isAllSelected,
   isIndeterminate,
+  onClearFilters,
 }: JobTableProps) {
   const { t } = useI18n();
 
@@ -72,7 +75,7 @@ export function JobTable({
   return (
     <Access action={EAction.READ} subject="Job">
       <TooltipProvider>
-        <div className="admin-card">
+        <div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -102,17 +105,21 @@ export function JobTable({
               {jobs.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={10} className="py-12">
-                    <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
-                      <Briefcase className="h-12 w-12 text-gray-300" />
-                      <div className="text-center">
-                        <p className="font-medium text-gray-900 dark:text-gray-100">
-                          {t("adminPages.jobs.table.emptyTitle")}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          {t("adminPages.jobs.table.emptyDescription")}
-                        </p>
+                    {onClearFilters ? (
+                      <NoResults onClear={onClearFilters} />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
+                        <Briefcase className="h-12 w-12 text-gray-300" />
+                        <div className="text-center">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">
+                            {t("adminPages.jobs.table.emptyTitle")}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            {t("adminPages.jobs.table.emptyDescription")}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -347,7 +354,7 @@ function JobTableSkeleton() {
   const { t } = useI18n();
 
   return (
-    <div className="admin-card">
+    <div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -368,7 +375,7 @@ function JobTableSkeleton() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.from({ length: 5 }).map((_, index) => (
+          {Array.from({ length: 8 }).map((_, index) => (
             <TableRow key={index}>
               <TableCell>
                 {" "}
