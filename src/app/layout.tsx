@@ -1,7 +1,8 @@
 import "./globals.css";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
-import { Be_Vietnam_Pro, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { getLocale } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -17,10 +18,20 @@ const inter = Inter({
   display: "swap",
 });
 
-// Heading font (DESIGN.md): static weights only, 600 and 700.
-const beVietnamPro = Be_Vietnam_Pro({
-  subsets: ["latin", "vietnamese"],
-  weight: ["600", "700"],
+// Heading font (DESIGN.md), bundled in public/fonts so builds need no network.
+const beVietnamPro = localFont({
+  src: [
+    {
+      path: "../../public/fonts/BeVietnamPro-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/BeVietnamPro-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-heading",
   display: "swap",
 });
