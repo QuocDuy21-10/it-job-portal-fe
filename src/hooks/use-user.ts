@@ -37,10 +37,6 @@ export function useUserOperations() {
   // Close dialog và reset state
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    // Delay reset để tránh flash UI
-    setTimeout(() => {
-      setEditingUser(null);
-    }, 200);
   };
 
   // Handle submit (create or update)
