@@ -210,10 +210,7 @@ function DateField({
         }}
       />
       {isCustom && (
-        <div
-          ref={datesRef}
-          className="grid scroll-mb-4 grid-cols-1 gap-2 sm:grid-cols-2"
-        >
+        <div ref={datesRef} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <DatePicker
             value={from}
             max={to}
