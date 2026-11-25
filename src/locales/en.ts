@@ -911,8 +911,8 @@ export const en = {
         empty: "No syncs yet.",
       },
       jobs: {
-        searchPlaceholder: "Search by title or company",
-        allStates: "All states",
+        searchPlaceholder: "Search title, company",
+        allTab: "All",
         states: {
           ACTIVE: "Visible",
           STALE: "Unconfirmed",

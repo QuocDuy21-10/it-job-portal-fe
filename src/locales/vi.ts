@@ -922,8 +922,8 @@ export const vi = {
         empty: "Chưa có lần đồng bộ nào.",
       },
       jobs: {
-        searchPlaceholder: "Tìm theo tiêu đề hoặc công ty",
-        allStates: "Tất cả trạng thái",
+        searchPlaceholder: "Tìm tiêu đề, công ty",
+        allTab: "Tất cả",
         states: {
           ACTIVE: "Đang hiển thị",
           STALE: "Chờ xác nhận",
