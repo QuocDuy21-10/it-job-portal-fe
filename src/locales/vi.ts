@@ -1237,6 +1237,15 @@ export const vi = {
       },
     },
     resumes: {
+      form: {
+        title: "Hồ sơ ứng tuyển",
+        email: "Email ứng viên",
+        resume: "CV",
+        status: "Trạng thái",
+        history: "Lịch sử trạng thái",
+        noHistory: "Chưa có thay đổi trạng thái.",
+        submit: "Cập nhật trạng thái",
+      },
       title: "CV ứng tuyển",
       description: "Quản lý hồ sơ ứng tuyển và theo dõi trạng thái",
       searchPlaceholder: "Tìm kiếm theo email...",

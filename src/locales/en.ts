@@ -1226,6 +1226,15 @@ export const en = {
       },
     },
     resumes: {
+      form: {
+        title: "Application",
+        email: "Candidate email",
+        resume: "CV",
+        status: "Status",
+        history: "Status history",
+        noHistory: "No status change yet.",
+        submit: "Update status",
+      },
       title: "Applications",
       description: "Manage candidate resumes and track their status",
       searchPlaceholder: "Search by email...",

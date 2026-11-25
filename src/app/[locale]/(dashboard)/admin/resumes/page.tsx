@@ -11,7 +11,7 @@ import { Resume } from "@/features/resume/schemas/resume.schema";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Pagination } from "@/components/pagination";
 import { ResumeTable } from "@/components/resume/resume-table";
-import { ResumeDialog } from "@/components/resume/resume-dialog";
+import { ResumeDrawer } from "@/components/resume/resume-drawer";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { useResumeOperations } from "@/hooks/use-resume";
@@ -441,8 +441,8 @@ export default function ResumesPage() {
         />
       )}
 
-      {/* Resume Dialog */}
-      <ResumeDialog
+      {/* Resume drawer */}
+      <ResumeDrawer
         open={isDialogOpen}
         onOpenChange={handleCloseDialog}
         editingResume={editingResume}

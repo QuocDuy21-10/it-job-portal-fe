@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export function resolveIntlLocale(locale?: string): string {
   if (locale === "vi") {
     return "vi-VN";
@@ -38,4 +40,9 @@ export function getRuntimeLocale(locale?: string): string {
   }
 
   return "en";
+}
+
+// Admin screens use one date format in every language (DESIGN.md).
+export function formatDateTime(value: Date | string): string {
+  return format(new Date(value), "dd/MM/yyyy HH:mm");
 }
