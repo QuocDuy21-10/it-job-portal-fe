@@ -1,6 +1,8 @@
 import { baseApi } from "@/lib/redux/api";
+import { buildListUrl } from "@/lib/utils/list-url";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
+  CountsQueryParams,
   PaginatedQueryParams,
   PaginatedResult,
 } from "@/shared/types/pagination";
@@ -26,16 +28,21 @@ export const userApi = baseApi.injectEndpoints({
       ApiResponse<PaginatedResult<User>>,
       PaginatedQueryParams
     >({
-      query: ({ page = 1, limit = 10, filter = "", sort = "createdAt" }) => {
-        let query = `page=${page}&limit=${limit}`;
-        if (filter) query += `&${filter}`;
-        if (sort) query += `&${sort}`;
+      query: (params) => ({
+        url: buildListUrl("/users", { page: 1, limit: 10, ...params }),
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
 
-        return {
-          url: `/users?${query}`,
-          method: "GET",
-        };
-      },
+    getUserCounts: builder.query<
+      ApiResponse<Record<string, number>>,
+      CountsQueryParams
+    >({
+      query: (params) => ({
+        url: buildListUrl("/users/status-counts", params),
+        method: "GET",
+      }),
       providesTags: ["User"],
     }),
 
@@ -314,6 +321,7 @@ export const userApi = baseApi.injectEndpoints({
 
 export const {
   useGetUsersQuery,
+  useGetUserCountsQuery,
   useGetUserQuery,
   useCreateUserMutation,
   useUpdateUserMutation,

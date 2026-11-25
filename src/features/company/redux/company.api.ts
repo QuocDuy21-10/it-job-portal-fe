@@ -1,4 +1,5 @@
 import { baseApi } from "@/lib/redux/api";
+import { buildListUrl } from "@/lib/utils/list-url";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
   PaginatedQueryParams,
@@ -18,16 +19,10 @@ export const companyApi = baseApi.injectEndpoints({
       ApiResponse<PaginatedResult<Company>>,
       PaginatedQueryParams
     >({
-      query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
-        let query = `page=${page}&limit=${limit}`;
-        if (filter) query += `&${filter}`;
-        if (sort) query += `&${sort}`;
-
-        return {
-          url: `/companies?${query}`,
-          method: "GET",
-        };
-      },
+      query: (params) => ({
+        url: buildListUrl("/companies", { page: 1, limit: 10, ...params }),
+        method: "GET",
+      }),
       providesTags: ["Company"],
     }),
 

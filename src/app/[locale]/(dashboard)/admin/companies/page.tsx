@@ -210,9 +210,6 @@ export default function CompaniesPage() {
               value={searchQuery}
               onSearch={handleSearchChange}
               placeholder={t("adminPages.companies.searchPlaceholder")}
-              debounceDelay={500}
-              showClearButton
-              width="full"
             />
           </div>
 

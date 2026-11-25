@@ -1,33 +1,32 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { Suspense, useState, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Briefcase, Filter, Trash2, X } from "lucide-react";
+import { Plus, Briefcase, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   useGetJobsQuery,
+  useGetJobCountsQuery,
   useBulkDeleteJobsMutation,
 } from "@/features/job/redux/job.api";
-import { SearchBar } from "@/components/ui/search-bar";
-import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
 import { JobTable } from "@/features/job/components/job-table";
 import { JobDrawer } from "@/features/job/components/job-drawer";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
+import { AdminList } from "@/components/admin/list/admin-list";
+import type { UseListTotal } from "@/components/admin/list/types";
+import { useAdminListParams } from "@/components/admin/list/use-admin-list-params";
 import { Job } from "@/features/job/schemas/job.schema";
 import { useJobOperations } from "@/features/job/hooks/use-job";
+import { selectIsSuperAdmin } from "@/features/auth/redux/auth.slice";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { useSkillCatalog } from "@/hooks/use-skill-catalog";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
+import { buildJobListConfig, toJobQuery } from "./list-config";
 
 // Pulls in sanitize-html, which the rest of the page does not need.
 const JobApprovalDrawer = dynamic(
@@ -38,79 +37,47 @@ const JobApprovalDrawer = dynamic(
   { ssr: false }
 );
 import { toast } from "sonner";
-import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
 
 export default function JobsPage() {
+  return (
+    <Suspense>
+      <JobsContent />
+    </Suspense>
+  );
+}
+
+const useJobTotal: UseListTotal = (values, skip) =>
+  useGetJobsQuery({ ...toJobQuery(values), page: 1, limit: 1 }, { skip })
+    .currentData?.data?.meta?.pagination.total;
+
+function JobsContent() {
   const { t } = useI18n();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedSalary, setSelectedSalary] = useState<string>("all");
-  const [selectedApprovalStatus, setSelectedApprovalStatus] =
-    useState<string>("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const isAdmin = useAppSelector(selectIsSuperAdmin);
+  const { skillOptions } = useSkillCatalog();
+  const config = useMemo(
+    () => buildJobListConfig(t, { isAdmin, skillOptions }),
+    [t, isAdmin, skillOptions]
+  );
+  const {
+    values,
+    set,
+    clear: clearFilters,
+    hasFilters,
+  } = useAdminListParams(config);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
 
-  // Salary ranges (in VND)
-  const salaryRanges = [
-    { label: t("adminPages.jobs.salaryRanges.all"), value: "all" },
-    { label: t("adminPages.jobs.salaryRanges.under10m"), value: "0-10000000" },
-    {
-      label: t("adminPages.jobs.salaryRanges.tenTo20m"),
-      value: "10000000-20000000",
-    },
-    {
-      label: t("adminPages.jobs.salaryRanges.twentyTo50m"),
-      value: "20000000-50000000",
-    },
-    {
-      label: t("adminPages.jobs.salaryRanges.above50m"),
-      value: "50000000-999999999",
-    },
-  ];
-
-  // Construct filter queries with useMemo
-  const filter = useMemo(() => {
-    const filters: string[] = [];
-
-    if (searchQuery) {
-      filters.push(`name=/${searchQuery}/i`);
-    }
-
-    if (selectedStatus !== "all") {
-      filters.push(`isActive=${selectedStatus}`);
-    }
-
-    if (selectedLocation) {
-      filters.push(`locationCode=${selectedLocation}`);
-    }
-
-    if (selectedSalary !== "all") {
-      const [min, max] = selectedSalary.split("-");
-      filters.push(`salary>=${min}`);
-      filters.push(`salary<=${max}`);
-    }
-
-    if (selectedApprovalStatus !== "all") {
-      filters.push(`approvalStatus=${selectedApprovalStatus}`);
-    }
-
-    return filters.join("&");
-  }, [
-    searchQuery,
-    selectedStatus,
-    selectedLocation,
-    selectedSalary,
-    selectedApprovalStatus,
-  ]);
-
-  // Fetch jobs với RTK Query
-  const { data: jobsData, isLoading } = useGetJobsQuery({
-    page: currentPage,
-    limit: pageSize,
-    filter,
+  const query = toJobQuery(values);
+  const {
+    data: jobsData,
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useGetJobsQuery(query);
+  const { data: countsData } = useGetJobCountsQuery({
+    filter: query.filter,
+    keyword: query.keyword,
   });
 
   // Custom hook chứa tất cả CRUD operations
@@ -160,29 +127,6 @@ export default function JobsPage() {
       ? t("adminPages.resources.job")
       : t("adminPages.resources.jobs");
 
-  // Handlers với useCallback để tránh re-render không cần thiết
-  const handlePageChange = useCallback(
-    (newPage: number) => {
-      setCurrentPage(newPage);
-      clear();
-    },
-    [clear]
-  );
-
-  const handlePageSizeChange = useCallback((newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-  }, []);
-
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      setSearchQuery(value);
-      setCurrentPage(1);
-      clear();
-    },
-    [clear]
-  );
-
   const handleBulkDelete = useCallback(async () => {
     try {
       const result = await bulkDeleteJobs(Array.from(selectedIds)).unwrap();
@@ -222,30 +166,6 @@ export default function JobsPage() {
     }
   }, [bulkDeleteJobs, clear, selectedIds, t]);
 
-  const handleStatusChange = useCallback(
-    (value: string) => {
-      setSelectedStatus(value);
-      setCurrentPage(1);
-      clear();
-    },
-    [clear]
-  );
-
-  const handleLocationChange = useCallback((value: string) => {
-    setSelectedLocation(value);
-    setCurrentPage(1);
-  }, []);
-
-  const handleSalaryChange = useCallback((value: string) => {
-    setSelectedSalary(value);
-    setCurrentPage(1);
-  }, []);
-
-  const handleApprovalStatusChange = useCallback((value: string) => {
-    setSelectedApprovalStatus(value);
-    setCurrentPage(1);
-  }, []);
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -270,185 +190,83 @@ export default function JobsPage() {
 
       <DesktopWarningBanner />
 
-      {/* Filters Card */}
-      <div className="admin-card p-4">
-        <div className="space-y-4">
-          {/* Row 1: Search */}
-          <div className="w-full">
-            <SearchBar
-              value={searchQuery}
-              onSearch={handleSearchChange}
-              placeholder={t("adminPages.jobs.searchPlaceholder")}
-              debounceDelay={500}
-              showClearButton
-              width="full"
-            />
-          </div>
-
-          {/* Row 2: Status, Location, Salary filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Status Filter */}
-            <div>
-              <Select value={selectedStatus} onValueChange={handleStatusChange}>
-                <SelectTrigger className="h-10">
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue
-                      placeholder={t("adminPages.jobs.statusPlaceholder")}
-                    />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("adminPages.shared.allStatus")}
-                  </SelectItem>
-                  <SelectItem value="true">
-                    {t("adminPages.shared.active")}
-                  </SelectItem>
-                  <SelectItem value="false">
-                    {t("adminPages.shared.inactive")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Location Filter */}
-            <div>
-              <SingleSelect
-                options={[
-                  { label: t("adminPages.jobs.allLocations"), value: "" },
-                  ...LOCATION_OPTIONS,
-                ]}
-                value={selectedLocation}
-                onChange={handleLocationChange}
-                placeholder={t("adminPages.jobs.locationFilterPlaceholder")}
-                searchPlaceholder={t(
-                  "adminPages.jobs.locationSearchPlaceholder"
-                )}
-                leftIcon={<Briefcase className="h-4 w-4" />}
-                allowClear
-              />
-            </div>
-
-            {/* Salary Filter */}
-            <div>
-              <Select value={selectedSalary} onValueChange={handleSalaryChange}>
-                <SelectTrigger className="h-10">
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue
-                      placeholder={t("adminPages.jobs.salaryPlaceholder")}
-                    />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {salaryRanges.map((range) => (
-                    <SelectItem key={range.value} value={range.value}>
-                      {range.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Row 3: Approval Status filter */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Select
-                value={selectedApprovalStatus}
-                onValueChange={handleApprovalStatusChange}
-              >
-                <SelectTrigger className="h-10">
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-gray-500" />
-                    <SelectValue
-                      placeholder={t("adminPages.jobs.approvalPlaceholder")}
-                    />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("adminPages.jobs.allApprovalStatuses")}
-                  </SelectItem>
-                  <SelectItem value="PENDING">
-                    {t("adminPages.jobs.table.pending")}
-                  </SelectItem>
-                  <SelectItem value="APPROVED">
-                    {t("adminPages.jobs.table.approved")}
-                  </SelectItem>
-                  <SelectItem value="REJECTED">
-                    {t("adminPages.jobs.table.rejected")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Jobs Table */}
-      {selectedCount > 0 && (
-        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
-          <span className="text-sm font-medium text-foreground">
-            {t("adminPages.shared.selectedSummary", {
-              count: selectedCount,
-              resource: selectedResourceLabel,
-            })}
-          </span>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clear}
-              className="gap-1.5"
-            >
-              <X className="h-4 w-4" />
-              {t("adminPages.shared.clear")}
-            </Button>
-            <Access action={EAction.DELETE} subject="Job" hideChildren>
+      <AdminList
+        config={config}
+        values={values}
+        onChange={set}
+        onClear={clearFilters}
+        useTotal={useJobTotal}
+        searchPlaceholder={t("adminPages.jobs.searchPlaceholder")}
+        counts={countsData?.data ?? {}}
+        total={pagination?.total}
+        isFetching={isFetching && !isLoading}
+        isError={isError}
+        onRetry={refetch}
+      >
+        {selectedCount > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/20 bg-primary-subtle px-4 py-2">
+            <span className="text-sm font-medium text-foreground">
+              {t("adminPages.shared.selectedSummary", {
+                count: selectedCount,
+                resource: selectedResourceLabel,
+              })}
+            </span>
+            <div className="flex items-center gap-2">
               <Button
-                variant="destructive"
+                variant="ghost"
                 size="sm"
-                onClick={() => setShowBulkDeleteDialog(true)}
+                onClick={clear}
                 className="gap-1.5"
               >
-                <Trash2 className="h-4 w-4" />
-                {t("adminPages.shared.deleteSelected")}
+                <X className="h-4 w-4" aria-hidden="true" />
+                {t("adminPages.shared.clear")}
               </Button>
-            </Access>
+              <Access action={EAction.DELETE} subject="Job" hideChildren>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowBulkDeleteDialog(true)}
+                  className="gap-1.5"
+                >
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  {t("adminPages.shared.deleteSelected")}
+                </Button>
+              </Access>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <JobTable
-        jobs={jobs}
-        isLoading={isLoading}
-        onEdit={handleOpenDialog}
-        onApprove={(job) => handleOpenApprovalDialog(job, jobs)}
-        onDelete={(id) => {
-          const job: Job | undefined = jobs.find((c: Job) => c._id === id);
-          if (job) handleOpenDeleteDialog(job);
-        }}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        selectedIds={selectedIds}
-        onToggleSelect={toggle}
-        onToggleAll={toggleAll}
-        isAllSelected={isAllSelected}
-        isIndeterminate={isIndeterminate}
-      />
-
-      {/* Pagination */}
-      {totalItems > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          pageSize={pageSize}
-          totalItems={totalItems}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+        <JobTable
+          jobs={jobs}
+          isLoading={isLoading}
+          onEdit={handleOpenDialog}
+          onApprove={(job) => handleOpenApprovalDialog(job, jobs)}
+          onDelete={(id) => {
+            const job: Job | undefined = jobs.find((c: Job) => c._id === id);
+            if (job) handleOpenDeleteDialog(job);
+          }}
+          onClearFilters={hasFilters ? clearFilters : undefined}
+          currentPage={values.page}
+          pageSize={values.limit}
+          selectedIds={selectedIds}
+          onToggleSelect={toggle}
+          onToggleAll={toggleAll}
+          isAllSelected={isAllSelected}
+          isIndeterminate={isIndeterminate}
         />
-      )}
+
+        {totalItems > 0 && (
+          <div className="border-t border-border p-4">
+            <Pagination
+              currentPage={values.page}
+              pageSize={values.limit}
+              totalItems={totalItems}
+              onPageChange={(page) => set({ page })}
+              onPageSizeChange={(limit) => set({ limit })}
+            />
+          </div>
+        )}
+      </AdminList>
 
       {/* Edit/Create Drawer */}
       <JobDrawer

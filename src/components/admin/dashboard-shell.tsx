@@ -47,7 +47,7 @@ export function DashboardShell({
 
       <div
         className={cn(
-          "flex flex-col flex-1 transition-all duration-300",
+          "flex flex-col flex-1 min-w-0 transition-all duration-300",
           isSidebarExpanded ? "lg:pl-64" : "lg:pl-16"
         )}
       >

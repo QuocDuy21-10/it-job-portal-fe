@@ -1,6 +1,8 @@
 import { baseApi } from "@/lib/redux/api";
+import { buildListUrl } from "@/lib/utils/list-url";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
+  CountsQueryParams,
   PaginatedQueryParams,
   PaginatedResult,
 } from "@/shared/types/pagination";
@@ -21,16 +23,21 @@ export const resumeApi = baseApi.injectEndpoints({
       ApiResponse<PaginatedResult<Resume>>,
       PaginatedQueryParams
     >({
-      query: ({ page = 1, limit = 10, filter = "", sort = "" }) => {
-        let query = `page=${page}&limit=${limit}&populate=companyId,jobId&fields=companyId.name,jobId.name`;
-        if (filter) query += `&${filter}`;
-        if (sort) query += `&${sort}`;
+      query: (params) => ({
+        url: buildListUrl("/resumes", { page: 1, limit: 10, ...params }),
+        method: "GET",
+      }),
+      providesTags: ["Resume"],
+    }),
 
-        return {
-          url: `/resumes?${query}`,
-          method: "GET",
-        };
-      },
+    getResumeCounts: builder.query<
+      ApiResponse<Record<string, number>>,
+      CountsQueryParams
+    >({
+      query: (params) => ({
+        url: buildListUrl("/resumes/status-counts", params),
+        method: "GET",
+      }),
       providesTags: ["Resume"],
     }),
 
@@ -123,6 +130,7 @@ export const resumeApi = baseApi.injectEndpoints({
 
 export const {
   useGetResumesQuery,
+  useGetResumeCountsQuery,
   useGetResumeQuery,
   useCreateResumeMutation,
   useCreateResumeWithUploadMutation,

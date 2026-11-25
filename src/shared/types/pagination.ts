@@ -18,4 +18,10 @@ export type PaginatedQueryParams = {
   filter?: string;
   sort?: string;
   keyword?: string;
+  state?: string;
 };
+
+export type CountsQueryParams = Pick<
+  PaginatedQueryParams,
+  "filter" | "keyword"
+>;
