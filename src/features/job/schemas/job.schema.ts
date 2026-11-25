@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
+import type { Translate } from "@/shared/types/i18n";
 
 export enum EJobApprovalStatus {
   PENDING = "PENDING",
@@ -15,48 +16,69 @@ export const ApproveJobSchema = z.object({
     .optional(),
 });
 
-export const JobSchema = z.object({
-  name: z
-    .string("Tên công việc phải là chuỗi")
-    .min(1, "Tên công việc không được để trống")
-    .max(100, "Tên công việc không được quá 100 ký tự"),
-  skills: z.array(z.string()).min(1, "Phải có ít nhất một kỹ năng"),
-  company: z
-    .object({
+const identity: Translate = (key) => key;
+const ERROR = "adminPages.jobs.form.errors";
+
+const jobBaseSchema = (t: Translate) => {
+  const date = (key: string) =>
+    z
+      .string(t(`${ERROR}.${key}`))
+      .refine((value) => !isNaN(Date.parse(value)), {
+        message: t(`${ERROR}.${key}`),
+      });
+
+  return z.object({
+    name: z
+      .string()
+      .min(1, t(`${ERROR}.name`))
+      .max(100, t(`${ERROR}.name`)),
+    skills: z.array(z.string()).min(1, t(`${ERROR}.skills`)),
+    company: z.object({
       _id: mongoIdStringSchema({
-        requiredMessage: "Company ID không được để trống",
-        invalidMessage: "Company ID phải là MongoDB ObjectId hợp lệ",
+        requiredMessage: t(`${ERROR}.company`),
+        invalidMessage: t(`${ERROR}.company`),
       }),
-      name: z.string().min(1, "Company name không được để trống"),
+      name: z.string().min(1, t(`${ERROR}.company`)),
       logo: z.string().nullable(),
-    })
-    .refine((company) => company._id !== "", {
-      message: "Trường 'company' không được để trống",
     }),
-  locationCode: z
-    .string("Mã địa điểm phải là chuỗi")
-    .min(1, "Địa điểm không được để trống"),
-  salary: z.number("Lương phải là số").min(0),
-  quantity: z.number("Số lượng phải là số").min(1),
-  formOfWork: z.enum([
-    "Full-time",
-    "Part-time",
-    "Internship",
-    "Freelance",
-    "Remote",
-    "Hybrid",
-    "Other",
-  ]),
-  level: z.enum(["Internship", "Junior", "Mid", "Senior", "Lead", "Manager"]),
-  description: z.string().min(10, "Mô tả phải có ít nhất 10 ký tự"),
-  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }),
-  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }),
-  isActive: z.boolean(),
-});
+    locationCode: z.string().min(1, t(`${ERROR}.location`)),
+    salary: z.number(t(`${ERROR}.salary`)).min(0, t(`${ERROR}.salary`)),
+    quantity: z.number(t(`${ERROR}.quantity`)).min(1, t(`${ERROR}.quantity`)),
+    formOfWork: z.enum(
+      [
+        "Full-time",
+        "Part-time",
+        "Internship",
+        "Freelance",
+        "Remote",
+        "Hybrid",
+        "Other",
+      ],
+      { error: t(`${ERROR}.workType`) }
+    ),
+    level: z.enum(
+      ["Internship", "Junior", "Mid", "Senior", "Lead", "Manager"],
+      { error: t(`${ERROR}.level`) }
+    ),
+    description: z.string().min(10, t(`${ERROR}.description`)),
+    startDate: date("startDate"),
+    endDate: date("endDate"),
+    isActive: z.boolean(),
+  });
+};
+
+export const JobSchema = jobBaseSchema(identity);
+
+export const createJobSchema = (t: Translate = identity) =>
+  jobBaseSchema(t).superRefine(({ startDate, endDate }, ctx) => {
+    if (Date.parse(endDate) <= Date.parse(startDate)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["endDate"],
+        message: t(`${ERROR}.endBeforeStart`),
+      });
+    }
+  });
 
 export const JobEntitySchema = JobSchema.extend({
   _id: z.string(),
