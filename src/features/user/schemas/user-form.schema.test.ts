@@ -1,4 +1,4 @@
-import { updateUserFormSchema } from "./user.schema";
+import { updateUserFormSchema } from "./user-form.schema";
 
 describe("updateUserFormSchema", () => {
   it("accepts valid enum role strings and company._id", () => {

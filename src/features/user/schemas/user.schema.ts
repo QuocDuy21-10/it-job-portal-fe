@@ -1,46 +1,48 @@
 import { z } from "zod";
 import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
 import { ROLES, ROLE_VALUES } from "@/shared/constants/role-values";
-import type { Translate } from "@/shared/types/i18n";
 
-const identity: Translate = (key) => key;
-const ERROR = "adminPages.users.form.errors";
+export type UserErrorMessages = Record<
+  "name" | "email" | "password" | "role" | "company",
+  string
+>;
 
-const userCompanySchema = (t: Translate) =>
-  z
-    .object({
-      _id: mongoIdStringSchema({
-        requiredMessage: t(`${ERROR}.company`),
-        invalidMessage: t(`${ERROR}.company`),
-      }).optional(),
-      name: z.string().optional(),
-      logo: z.string().optional(),
-    })
-    .optional();
+const DEFAULT_ERRORS: UserErrorMessages = {
+  name: "Name must be at least 2 characters",
+  email: "Invalid email address",
+  password: "Password must be at least 6 characters",
+  role: "Role must be SUPER ADMIN, HR, or NORMAL USER",
+  company: "Company is required for HR role",
+};
 
-const userRoleSchema = (t: Translate) =>
-  z.enum(ROLE_VALUES, { error: t(`${ERROR}.role`) });
+const userRoleSchema = (e: UserErrorMessages) =>
+  z.enum(ROLE_VALUES, { error: e.role });
 
-const createUserSchemaBase = (t: Translate) =>
+export const createUserSchemaBase = (e: UserErrorMessages = DEFAULT_ERRORS) =>
   z.object({
-    name: z.string().min(2, t(`${ERROR}.name`)),
-    email: z.string().email(t(`${ERROR}.email`)),
-    password: z.string().min(6, t(`${ERROR}.password`)),
-    company: userCompanySchema(t),
-    role: userRoleSchema(t),
+    name: z.string().min(2, e.name),
+    email: z.string().email(e.email),
+    password: z.string().min(6, e.password),
+    company: z
+      .object({
+        _id: mongoIdStringSchema({
+          requiredMessage: e.company,
+          invalidMessage: e.company,
+        }).optional(),
+        name: z.string().optional(),
+        logo: z.string().optional(),
+      })
+      .optional(),
+    role: userRoleSchema(e),
   });
 
-const updateUserSchemaBase = (t: Translate) =>
-  createUserSchemaBase(t).extend({
-    password: z
-      .string()
-      .min(6, t(`${ERROR}.password`))
-      .optional()
-      .or(z.literal("")),
+export const updateUserSchemaBase = (e: UserErrorMessages = DEFAULT_ERRORS) =>
+  createUserSchemaBase(e).extend({
+    password: z.string().min(6, e.password).optional().or(z.literal("")),
   });
 
-const requireHrCompany =
-  (t: Translate) =>
+export const requireHrCompany =
+  (e: UserErrorMessages = DEFAULT_ERRORS) =>
   (
     data: { role: string; company?: { _id?: string } },
     ctx: z.RefinementCtx
@@ -49,24 +51,19 @@ const requireHrCompany =
       ctx.addIssue({
         code: "custom",
         path: ["company", "_id"],
-        message: t(`${ERROR}.company`),
+        message: e.company,
       });
     }
   };
 
-export const CreateUserSchema = createUserSchemaBase(identity);
-export const createUserFormSchema = (t: Translate = identity) =>
-  createUserSchemaBase(t).superRefine(requireHrCompany(t));
-
-export const UpdateUserSchema = updateUserSchemaBase(identity);
-export const updateUserFormSchema = (t: Translate = identity) =>
-  updateUserSchemaBase(t).superRefine(requireHrCompany(t));
+export const CreateUserSchema = createUserSchemaBase();
+export const UpdateUserSchema = updateUserSchemaBase();
 
 export const UserEntitySchema = CreateUserSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
-  role: userRoleSchema(identity),
+  role: userRoleSchema(DEFAULT_ERRORS),
   savedJobs: z.array(z.string()).optional().default([]),
   jobFavorites: z.array(z.string()).optional().default([]),
   companyFollowing: z.array(z.string()).optional().default([]),

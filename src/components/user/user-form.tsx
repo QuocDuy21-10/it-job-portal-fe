@@ -15,9 +15,11 @@ import {
 import {
   CreateUserFormData,
   UpdateUserFormData,
+} from "@/features/user/schemas/user.schema";
+import {
   createUserFormSchema,
   updateUserFormSchema,
-} from "@/features/user/schemas/user.schema";
+} from "@/features/user/schemas/user-form.schema";
 import {
   Select,
   SelectContent,
