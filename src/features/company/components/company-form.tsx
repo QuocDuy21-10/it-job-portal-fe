@@ -14,10 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  createCompanySchema,
-  type CreateCompanyFormData,
-} from "@/features/company/schemas/company.schema";
+import { createCompanySchema } from "@/features/company/schemas/company-form.schema";
+import type { CreateCompanyFormData } from "@/features/company/schemas/company.schema";
 import { useFocusFirstError } from "@/hooks/use-focus-first-error";
 import { useI18n } from "@/hooks/use-i18n";
 

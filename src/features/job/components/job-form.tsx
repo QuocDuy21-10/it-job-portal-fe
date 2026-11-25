@@ -25,10 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCompanyOptions } from "@/features/company/hooks/use-company-options";
-import {
-  createJobSchema,
-  type CreateJobFormData,
-} from "@/features/job/schemas/job.schema";
+import { createJobSchema } from "@/features/job/schemas/job-form.schema";
+import type { CreateJobFormData } from "@/features/job/schemas/job.schema";
 import { useFocusFirstError } from "@/hooks/use-focus-first-error";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSkillCatalog } from "@/hooks/use-skill-catalog";

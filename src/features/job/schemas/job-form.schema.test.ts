@@ -1,4 +1,4 @@
-import { createJobSchema } from "./job.schema";
+import { createJobSchema } from "./job-form.schema";
 
 const valid = {
   name: "Dev",
