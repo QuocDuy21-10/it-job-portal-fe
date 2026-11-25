@@ -1,6 +1,8 @@
 import { baseApi } from "@/lib/redux/api";
+import { buildListUrl } from "@/lib/utils/list-url";
 import { ApiResponse } from "@/shared/base/api-response.base";
 import {
+  CountsQueryParams,
   PaginatedQueryParams,
   PaginatedResult,
 } from "@/shared/types/pagination";
@@ -23,17 +25,21 @@ export const jobApi = baseApi.injectEndpoints({
       ApiResponse<PaginatedResult<Job>>,
       PaginatedQueryParams
     >({
-      query: ({ page = 1, limit = 10, filter = "", sort = "", keyword }) => {
-        let query = `page=${page}&limit=${limit}`;
-        if (filter) query += `&${filter}`;
-        if (sort) query += `&${sort}`;
-        if (keyword) query += `&keyword=${encodeURIComponent(keyword)}`;
+      query: (params) => ({
+        url: buildListUrl("/jobs", { page: 1, limit: 10, ...params }),
+        method: "GET",
+      }),
+      providesTags: ["Job"],
+    }),
 
-        return {
-          url: `/jobs?${query}`,
-          method: "GET",
-        };
-      },
+    getJobCounts: builder.query<
+      ApiResponse<Record<string, number>>,
+      CountsQueryParams
+    >({
+      query: (params) => ({
+        url: buildListUrl("/jobs/status-counts", params),
+        method: "GET",
+      }),
       providesTags: ["Job"],
     }),
 
@@ -123,6 +129,7 @@ export const jobApi = baseApi.injectEndpoints({
 
 export const {
   useGetJobsQuery,
+  useGetJobCountsQuery,
   useGetJobQuery,
   useSearchJobsQuery,
   useGetExternalJobQuery,
