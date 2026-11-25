@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { vi } from "date-fns/locale/vi";
 import { useLocale } from "next-intl";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,9 @@ interface DatePickerProps extends Omit<
   value?: Date | string;
   onChange: (date: Date | undefined) => void;
   placeholder?: string;
+  // The first and last day that can be picked.
+  min?: Date;
+  max?: Date;
 }
 
 export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
@@ -28,6 +32,8 @@ export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
       onChange,
       disabled,
       placeholder = "Pick a date",
+      min,
+      max,
       className,
       ...triggerProps
     },
@@ -70,7 +76,17 @@ export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <Calendar mode="single" selected={date} onSelect={handleDateChange} />
+          <Calendar
+            mode="single"
+            locale={locale === "vi" ? vi : undefined}
+            defaultMonth={date ?? max ?? min}
+            disabled={[
+              ...(min ? [{ before: min }] : []),
+              ...(max ? [{ after: max }] : []),
+            ]}
+            selected={date}
+            onSelect={handleDateChange}
+          />
         </PopoverContent>
       </Popover>
     );

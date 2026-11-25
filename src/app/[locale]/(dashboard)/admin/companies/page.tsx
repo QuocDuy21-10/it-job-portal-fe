@@ -59,7 +59,10 @@ function CompaniesContent() {
     isFetching,
     isError,
     refetch,
-  } = useGetCompaniesQuery(toCompanyQuery(values));
+  } = useGetCompaniesQuery(
+    // HR has no toolbar, so a search in the URL could not be cleared.
+    toCompanyQuery(isAdmin ? values : { ...values, q: "", filters: {} })
+  );
 
   // Custom hook chứa tất cả CRUD operations
   const {

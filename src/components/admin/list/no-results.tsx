@@ -3,6 +3,7 @@
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
+import { focusFilterButton } from "./focus-filter-button";
 
 export function NoResults({ onClear }: { onClear: () => void }) {
   const { t } = useI18n();
@@ -26,7 +27,10 @@ export function NoResults({ onClear }: { onClear: () => void }) {
         type="button"
         variant="outline"
         className="h-11 md:h-10"
-        onClick={onClear}
+        onClick={(event) => {
+          focusFilterButton(event.currentTarget);
+          onClear();
+        }}
       >
         {t("adminPages.filters.clearFilters")}
       </Button>

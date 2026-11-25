@@ -46,6 +46,17 @@ describe("toResumeQuery", () => {
   });
 });
 
+it("names its tabs like the status badges in the table", () => {
+  expect(
+    buildResumeListConfig(t, { isAdmin: true }).tabs?.map(({ label }) => label)
+  ).toEqual([
+    "adminPages.resumes.tabs.all",
+    ...["PENDING", "REVIEWING", "INTERVIEWING", "APPROVED", "REJECTED"].map(
+      (status) => `statisticsDashboard.statuses.${status}`
+    ),
+  ]);
+});
+
 it("hides the company filter from HR", () => {
   const keys = (isAdmin: boolean) =>
     buildResumeListConfig(t, { isAdmin }).fields.map((field) => field.key);

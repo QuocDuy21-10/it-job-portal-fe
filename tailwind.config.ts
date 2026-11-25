@@ -64,6 +64,7 @@ const config: Config = {
         "text-tertiary": "hsl(var(--text-tertiary))",
         "primary-hover": "hsl(var(--primary-hover))",
         "primary-subtle": "hsl(var(--primary-subtle))",
+        link: "hsl(var(--text-link))",
         // Not shadcn secondary/accent: those stay neutral for now (see DESIGN.md).
         "brand-secondary": "hsl(var(--brand-secondary))",
         highlight: "hsl(var(--highlight))",

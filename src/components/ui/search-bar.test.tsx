@@ -55,6 +55,7 @@ describe("SearchBar", () => {
     );
     expect(onSearch).toHaveBeenCalledWith("");
     expect(input()).toHaveValue("");
+    expect(input()).toHaveFocus();
   });
 
   it("follows a value changed from outside but not its own echo", () => {

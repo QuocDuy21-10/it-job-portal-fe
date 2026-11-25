@@ -23,6 +23,7 @@ export function SearchBar({
 }: SearchBarProps) {
   const { t } = useI18n();
   const [text, setText] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
   const submitted = useRef(value);
   const timer = useRef<ReturnType<typeof setTimeout>>();
 
@@ -57,6 +58,7 @@ export function SearchBar({
         aria-hidden="true"
       />
       <Input
+        ref={inputRef}
         type="search"
         value={text}
         maxLength={100}
@@ -66,7 +68,10 @@ export function SearchBar({
         onKeyDown={(event) => {
           if (event.key === "Enter") submit(text);
         }}
-        className="h-11 pl-9 pr-11 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:h-9 md:pr-9 md:text-sm [&::-webkit-search-cancel-button]:hidden"
+        className={cn(
+          "h-11 pl-9 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:h-9 md:text-sm [&::-webkit-search-cancel-button]:hidden",
+          text && "pr-11 md:pr-9"
+        )}
       />
       {text && (
         <button
@@ -75,6 +80,8 @@ export function SearchBar({
           onClick={() => {
             setText("");
             submit("");
+            // This button is about to disappear and would take focus with it.
+            inputRef.current?.focus();
           }}
           className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:h-9 md:w-9"
         >

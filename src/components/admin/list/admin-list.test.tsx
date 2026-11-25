@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { AdminList } from "./admin-list";
+import { NoResults } from "./no-results";
 import type { ListConfig, ListValues } from "./types";
 
 jest.mock("@/hooks/use-media-query", () => ({ useMediaQuery: () => true }));
@@ -72,6 +73,57 @@ describe("AdminList", () => {
     setup();
     fireEvent.click(screen.getByRole("button", { name: "remove Created" }));
     expect(onChange).toHaveBeenCalledWith({ filters: {} });
+  });
+
+  // The removed control takes focus with it; keyboard users must not land on <body>.
+  it.each(["remove Created", "clearAll"])(
+    "moves focus to the filter button after %s",
+    (name) => {
+      setup();
+      fireEvent.click(screen.getByRole("button", { name }));
+      expect(
+        screen.getByRole("button", { name: "buttonActive 1" })
+      ).toHaveFocus();
+    }
+  );
+
+  it("moves focus to the filter button after clearing an empty result", () => {
+    render(
+      <AdminList
+        config={config}
+        values={values}
+        onChange={onChange}
+        onClear={jest.fn()}
+        useTotal={() => undefined}
+      >
+        <NoResults onClear={jest.fn()} />
+      </AdminList>
+    );
+    fireEvent.click(screen.getByRole("button", { name: "clearFilters" }));
+    expect(
+      screen.getByRole("button", { name: "buttonActive 1" })
+    ).toHaveFocus();
+  });
+
+  it("goes back to the last page when the page no longer exists", () => {
+    setup({ values: { ...values, page: 99 }, total: 21 });
+    expect(onChange).toHaveBeenCalledWith({ page: 3 });
+  });
+
+  it.each([
+    ["the page exists", { values: { ...values, page: 3 }, total: 21 }],
+    ["the list is empty and on page 1", { total: 0 }],
+    [
+      "the total is still loading",
+      { values: { ...values, page: 9 }, total: undefined },
+    ],
+    [
+      "rows are being refetched",
+      { values: { ...values, page: 9 }, total: 21, isFetching: true },
+    ],
+  ])("stays on the page when %s", (_case, props) => {
+    setup(props);
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it.each([undefined, {}])("still works with counts %p", (counts) => {

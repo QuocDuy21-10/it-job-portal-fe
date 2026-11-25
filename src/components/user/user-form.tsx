@@ -246,7 +246,7 @@ export function UserForm({
                 <SelectContent>
                   {ROLE_VALUES.map((role) => (
                     <SelectItem key={role} value={role}>
-                      {role}
+                      {t(`adminPages.users.roles.${role}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
