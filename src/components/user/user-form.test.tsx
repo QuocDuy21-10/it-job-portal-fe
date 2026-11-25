@@ -3,6 +3,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { UserForm } from "@/components/user/user-form";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 
+jest.mock("@/hooks/use-i18n", () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}));
+
 jest.mock("@/features/company/redux/company.api", () => ({
   useGetCompaniesQuery: jest.fn(),
 }));
@@ -28,8 +32,10 @@ jest.mock("@/components/ui/select", () => ({
       {children}
     </select>
   ),
-  SelectTrigger: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
+  SelectTrigger: React.forwardRef<HTMLElement, { children: React.ReactNode }>(
+    function SelectTrigger({ children }, _ref) {
+      return <>{children}</>;
+    }
   ),
   SelectValue: ({ placeholder }: { placeholder?: string }) => (
     <option value="">{placeholder}</option>
@@ -47,31 +53,31 @@ jest.mock("@/components/ui/select", () => ({
 }));
 
 jest.mock("@/components/combo-box", () => ({
-  Combobox: ({
-    options,
-    value,
-    onChange,
-    disabled,
-  }: {
-    options: Array<{ label: string; value: string }>;
-    value?: string;
-    onChange: (value: string) => void;
-    disabled?: boolean;
-  }) => (
-    <select
-      aria-label="company-combobox"
-      value={value ?? ""}
-      onChange={(event) => onChange(event.target.value)}
-      disabled={disabled}
-    >
-      <option value="">Select company</option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-  ),
+  Combobox: React.forwardRef<
+    HTMLSelectElement,
+    {
+      options: Array<{ label: string; value: string }>;
+      value?: string;
+      onChange: (value: string) => void;
+      disabled?: boolean;
+    }
+  >(function Combobox({ options, value, onChange, disabled }, _ref) {
+    return (
+      <select
+        aria-label="company-combobox"
+        value={value ?? ""}
+        onChange={(event) => onChange(event.target.value)}
+        disabled={disabled}
+      >
+        <option value="">Select company</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    );
+  }),
 }));
 
 const mockUseGetCompaniesQuery = useGetCompaniesQuery as jest.Mock;
@@ -85,6 +91,16 @@ const companiesResponse = {
   },
 };
 
+const renderForm = (props: Partial<React.ComponentProps<typeof UserForm>>) =>
+  render(
+    <>
+      <UserForm formId="f" onSubmit={jest.fn()} {...props} />
+      <button type="submit" form="f">
+        save
+      </button>
+    </>
+  );
+
 describe("UserForm", () => {
   beforeEach(() => {
     mockUseGetCompaniesQuery.mockReturnValue({ data: companiesResponse });
@@ -97,16 +113,14 @@ describe("UserForm", () => {
   it("submits successfully when editing a user, changing role to HR, and selecting a company with a null logo", async () => {
     const handleSubmit = jest.fn().mockResolvedValue(true);
 
-    render(
-      <UserForm
-        initialData={{
-          name: "Alice Admin",
-          email: "alice@example.com",
-          role: "SUPER ADMIN",
-        }}
-        onSubmit={handleSubmit}
-      />
-    );
+    renderForm({
+      initialData: {
+        name: "Alice Admin",
+        email: "alice@example.com",
+        role: "SUPER ADMIN",
+      },
+      onSubmit: handleSubmit,
+    });
 
     fireEvent.change(screen.getByLabelText("role-select"), {
       target: { value: "HR" },
@@ -114,7 +128,7 @@ describe("UserForm", () => {
     fireEvent.change(screen.getByLabelText("company-combobox"), {
       target: { value: "507f1f77bcf86cd799439021" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Update User" }));
+    fireEvent.click(screen.getByText("save"));
 
     await waitFor(() => expect(handleSubmit).toHaveBeenCalledTimes(1));
 
@@ -131,21 +145,19 @@ describe("UserForm", () => {
   it("clears the selected company when the role changes away from HR and still submits", async () => {
     const handleSubmit = jest.fn().mockResolvedValue(true);
 
-    render(
-      <UserForm
-        initialData={{
-          name: "Henry Recruiter",
-          email: "henry@example.com",
-          role: "HR",
-          company: {
-            _id: "507f1f77bcf86cd799439022",
-            name: "Beta Corp",
-            logo: "beta.png",
-          },
-        }}
-        onSubmit={handleSubmit}
-      />
-    );
+    renderForm({
+      initialData: {
+        name: "Henry Recruiter",
+        email: "henry@example.com",
+        role: "HR",
+        company: {
+          _id: "507f1f77bcf86cd799439022",
+          name: "Beta Corp",
+          logo: "beta.png",
+        },
+      },
+      onSubmit: handleSubmit,
+    });
 
     expect(screen.getByLabelText("company-combobox")).toBeInTheDocument();
 
@@ -159,9 +171,29 @@ describe("UserForm", () => {
       ).not.toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Update User" }));
+    fireEvent.click(screen.getByText("save"));
 
     await waitFor(() => expect(handleSubmit).toHaveBeenCalledTimes(1));
     expect(handleSubmit.mock.calls[0][0].company).toBeUndefined();
+  });
+
+  it("requires a role when creating", async () => {
+    const handleSubmit = jest.fn();
+    renderForm({ onSubmit: handleSubmit });
+    expect(screen.getByLabelText("role-select")).toHaveValue("");
+    fireEvent.click(screen.getByText("save"));
+    expect(
+      await screen.findByText("adminPages.users.form.errors.role")
+    ).toBeInTheDocument();
+    expect(handleSubmit).not.toHaveBeenCalled();
+  });
+
+  it("reports dirtiness", async () => {
+    const onDirtyChange = jest.fn();
+    renderForm({ onDirtyChange });
+    fireEvent.change(screen.getByLabelText("adminPages.users.form.name"), {
+      target: { value: "An" },
+    });
+    await waitFor(() => expect(onDirtyChange).toHaveBeenLastCalledWith(true));
   });
 });

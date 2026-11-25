@@ -1,79 +1,72 @@
 import { z } from "zod";
 import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
 import { ROLES, ROLE_VALUES } from "@/shared/constants/role-values";
+import type { Translate } from "@/shared/types/i18n";
 
-const UserCompanySchema = z
-  .object({
-    _id: mongoIdStringSchema({
-      requiredMessage: "Company is required",
-      invalidMessage: "Company ID must be a valid MongoDB ObjectId",
-    }).optional(),
-    name: z.string().optional(),
-    logo: z.string().optional(),
-  })
-  .optional();
+const identity: Translate = (key) => key;
+const ERROR = "adminPages.users.form.errors";
 
-const UserRoleSchema = z.enum(ROLE_VALUES, {
-  error: "Role must be SUPER ADMIN, HR, or NORMAL USER",
-});
+const userCompanySchema = (t: Translate) =>
+  z
+    .object({
+      _id: mongoIdStringSchema({
+        requiredMessage: t(`${ERROR}.company`),
+        invalidMessage: t(`${ERROR}.company`),
+      }).optional(),
+      name: z.string().optional(),
+      logo: z.string().optional(),
+    })
+    .optional();
 
-const createUserSchemaBase = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  company: UserCompanySchema,
-  role: UserRoleSchema,
-});
+const userRoleSchema = (t: Translate) =>
+  z.enum(ROLE_VALUES, { error: t(`${ERROR}.role`) });
 
-const updateUserSchemaBase = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .optional()
-    .or(z.literal("")),
-  company: UserCompanySchema,
-  role: UserRoleSchema,
-});
-
-const withHrCompanyRequirement = <
-  TSchema extends typeof createUserSchemaBase | typeof updateUserSchemaBase,
->(
-  schema: TSchema
-) =>
-  schema.superRefine((data, ctx) => {
-    if (data.role !== ROLES.HR) {
-      return;
-    }
-
-    if (!data.company?._id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["company", "_id"],
-        message: "Company is required for HR role",
-      });
-    }
+const createUserSchemaBase = (t: Translate) =>
+  z.object({
+    name: z.string().min(2, t(`${ERROR}.name`)),
+    email: z.string().email(t(`${ERROR}.email`)),
+    password: z.string().min(6, t(`${ERROR}.password`)),
+    company: userCompanySchema(t),
+    role: userRoleSchema(t),
   });
 
-// Schema cho Create User
-export const CreateUserSchema = createUserSchemaBase;
-export const createUserFormSchema = () =>
-  withHrCompanyRequirement(createUserSchemaBase);
+const updateUserSchemaBase = (t: Translate) =>
+  createUserSchemaBase(t).extend({
+    password: z
+      .string()
+      .min(6, t(`${ERROR}.password`))
+      .optional()
+      .or(z.literal("")),
+  });
 
-// Schema cho Update User (password là optional)
-export const UpdateUserSchema = updateUserSchemaBase;
-export const updateUserFormSchema = () =>
-  withHrCompanyRequirement(updateUserSchemaBase);
+const requireHrCompany =
+  (t: Translate) =>
+  (
+    data: { role: string; company?: { _id?: string } },
+    ctx: z.RefinementCtx
+  ) => {
+    if (data.role === ROLES.HR && !data.company?._id) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["company", "_id"],
+        message: t(`${ERROR}.company`),
+      });
+    }
+  };
 
-// Giữ lại UserSchema cũ để backward compatible
-export const UserSchema = CreateUserSchema;
+export const CreateUserSchema = createUserSchemaBase(identity);
+export const createUserFormSchema = (t: Translate = identity) =>
+  createUserSchemaBase(t).superRefine(requireHrCompany(t));
+
+export const UpdateUserSchema = updateUserSchemaBase(identity);
+export const updateUserFormSchema = (t: Translate = identity) =>
+  updateUserSchemaBase(t).superRefine(requireHrCompany(t));
 
 export const UserEntitySchema = CreateUserSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
-  role: UserRoleSchema,
+  role: userRoleSchema(identity),
   savedJobs: z.array(z.string()).optional().default([]),
   jobFavorites: z.array(z.string()).optional().default([]),
   companyFollowing: z.array(z.string()).optional().default([]),

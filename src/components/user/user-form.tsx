@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,8 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
+import { useCompanyOptions } from "@/features/company/hooks/use-company-options";
 import { Combobox } from "@/components/combo-box";
+import { useFocusFirstError } from "@/hooks/use-focus-first-error";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   ROLES,
   ROLE_VALUES,
@@ -51,220 +53,194 @@ const isRoleName = (role?: string): role is RoleName => {
   return ROLE_VALUES.includes(role as RoleName);
 };
 
-const normalizeRoleValue = (role: UserFormInitialData["role"]): RoleName => {
-  if (typeof role === "string" && isRoleName(role)) {
-    return role;
-  }
-
-  const roleName = typeof role === "object" ? role?.name : undefined;
-  if (isRoleName(roleName)) {
-    return roleName;
-  }
-
-  return ROLES.NORMAL_USER;
+const normalizeRoleValue = (
+  role: UserFormInitialData["role"]
+): RoleName | undefined => {
+  const name = typeof role === "string" ? role : role?.name;
+  return isRoleName(name) ? name : undefined;
 };
 
-const normalizeCompanyValue = (company?: UserFormInitialData["company"]) => {
-  if (!company?._id) {
-    return undefined;
-  }
-
+const normalizeInitialValues = (initialData?: UserFormInitialData) => {
+  const role = normalizeRoleValue(initialData?.role);
+  const company = initialData?.company;
   return {
-    _id: company._id,
-    name: company.name,
-    logo: company.logo ?? undefined,
+    name: initialData?.name || "",
+    email: initialData?.email || "",
+    password: "",
+    role,
+    company:
+      role === ROLES.HR && company?._id
+        ? {
+            _id: company._id,
+            name: company.name,
+            logo: company.logo ?? undefined,
+          }
+        : undefined,
   };
 };
 
-const normalizeInitialValues = (initialData?: UserFormInitialData) => ({
-  name: initialData?.name || "",
-  email: initialData?.email || "",
-  password: "",
-  role: normalizeRoleValue(initialData?.role),
-  company: normalizeCompanyValue(initialData?.company),
-});
-
 interface UserFormProps {
+  formId: string;
   initialData?: UserFormInitialData;
   onSubmit: (data: UserFormValues) => Promise<boolean>;
   isLoading?: boolean;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
+export function UserForm({
+  formId,
+  initialData,
+  onSubmit,
+  isLoading,
+  onDirtyChange,
+}: UserFormProps) {
+  const { t } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
   const isEditMode = !!initialData;
-
-  const { data: companiesData } = useGetCompaniesQuery({
-    page: 1,
-    limit: 100,
-  });
-
-  const companies = companiesData?.data?.result || [];
-  const companyOptions = companies.map((company: any) => ({
-    label: company.name,
-    value: company._id,
-    logo: company.logo,
-  }));
-
-  const normalizedInitialValues = useMemo(
-    () => normalizeInitialValues(initialData),
-    [initialData]
-  );
-
-  const schema = useMemo(
-    () => (isEditMode ? updateUserFormSchema() : createUserFormSchema()),
-    [isEditMode]
-  );
+  const { companies, options } = useCompanyOptions(initialData?.company);
 
   const form = useForm<UserFormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: normalizedInitialValues,
-    mode: "onChange",
+    resolver: zodResolver(
+      isEditMode ? updateUserFormSchema(t) : createUserFormSchema(t)
+    ) as Resolver<UserFormValues>,
+    defaultValues: normalizeInitialValues(initialData),
+    mode: "onTouched",
+    shouldFocusError: false,
   });
+  const { isDirty, submitCount } = form.formState;
+  useFocusFirstError(submitCount, formId);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+    return () => onDirtyChange?.(false);
+  }, [isDirty, onDirtyChange]);
 
   const selectedRole = form.watch("role");
-  const isHrRoleSelected = selectedRole === ROLES.HR;
+
+  useEffect(() => {
+    if (selectedRole !== ROLES.HR && form.getValues("company")) {
+      form.setValue("company", undefined, { shouldDirty: true });
+    }
+  }, [form, selectedRole]);
 
   const handleCompanyChange = (companyId: string) => {
-    const selectedCompany = companies.find(
-      (company: { _id: string }) => company._id === companyId
+    const selected = companies.find((company) => company._id === companyId);
+    if (!selected) return;
+    form.setValue(
+      "company",
+      {
+        _id: selected._id,
+        name: selected.name,
+        logo: selected.logo ?? undefined,
+      },
+      { shouldDirty: true, shouldValidate: true }
     );
-
-    if (selectedCompany) {
-      form.setValue(
-        "company",
-        {
-          _id: selectedCompany._id,
-          name: selectedCompany.name,
-          logo: selectedCompany.logo ?? undefined,
-        },
-        {
-          shouldDirty: true,
-          shouldValidate: true,
-        }
-      );
-      return;
-    }
-
-    form.setValue("company", undefined, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
   };
-
-  useEffect(() => {
-    form.reset(normalizedInitialValues);
-  }, [form, normalizedInitialValues]);
-
-  useEffect(() => {
-    if (selectedRole === ROLES.HR) {
-      return;
-    }
-
-    if (!form.getValues("company")) {
-      return;
-    }
-
-    form.setValue("company", undefined, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  }, [form, selectedRole]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  User Name <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="e.g. John Doe"
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Email <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="email"
-                    placeholder="example@email.com"
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
+      <form
+        id={formId}
+        noValidate
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("adminPages.users.form.name")}</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  autoComplete="off"
+                  placeholder={t("adminPages.users.form.namePlaceholder")}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("adminPages.users.form.email")}</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="email"
+                  autoComplete="off"
+                  placeholder={t("adminPages.users.form.emailPlaceholder")}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {!isEditMode && (
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Password <span className="text-red-500">*</span>
-                </FormLabel>
+                <FormLabel>{t("adminPages.users.form.password")}</FormLabel>
                 <div className="relative">
-                  <input
-                    {...field}
-                    type={showPassword ? "text" : "password"}
-                    placeholder="At least 6 characters"
-                    disabled={isLoading}
-                    className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pr-10"
-                  />
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      className="pr-10"
+                      disabled={isLoading}
+                    />
+                  </FormControl>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                    aria-label={t(
+                      `adminPages.users.form.${showPassword ? "hidePassword" : "showPassword"}`
+                    )}
+                    className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
                     disabled={isLoading}
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" aria-hidden="true" />
+                    ) : (
+                      <Eye className="h-5 w-5" aria-hidden="true" />
+                    )}
                   </button>
                 </div>
+                <FormDescription>
+                  {t("adminPages.users.form.passwordHint")}
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         )}
-
         <FormField
           control={form.control}
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Role <span className="text-red-500">*</span>
-              </FormLabel>
+              <FormLabel>{t("adminPages.users.form.role")}</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                value={field.value}
+                value={field.value ?? ""}
                 disabled={isLoading}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("adminPages.users.form.rolePlaceholder")}
+                    />
+                  </SelectTrigger>
+                </FormControl>
                 <SelectContent>
                   {ROLE_VALUES.map((role) => (
                     <SelectItem key={role} value={role}>
@@ -277,24 +253,21 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
             </FormItem>
           )}
         />
-
-        {isHrRoleSelected && (
+        {selectedRole === ROLES.HR && (
           <FormField
             control={form.control}
             name="company._id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Công ty <span className="text-red-500">*</span>
-                </FormLabel>
+                <FormLabel>{t("adminPages.companyPicker.label")}</FormLabel>
                 <FormControl>
                   <Combobox
-                    options={companyOptions}
+                    options={options}
                     value={field.value}
                     onChange={handleCompanyChange}
-                    placeholder="Chọn công ty"
-                    searchPlaceholder="Tìm kiếm công ty..."
-                    emptyText="Không tìm thấy công ty"
+                    placeholder={t("adminPages.companyPicker.placeholder")}
+                    searchPlaceholder={t("adminPages.companyPicker.search")}
+                    emptyText={t("adminPages.companyPicker.empty")}
                     disabled={isLoading || companies.length === 0}
                   />
                 </FormControl>
@@ -303,16 +276,6 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
             )}
           />
         )}
-
-        <div className="flex justify-end gap-2">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading
-              ? "Saving..."
-              : initialData
-                ? "Update User"
-                : "Create User"}
-          </Button>
-        </div>
       </form>
     </Form>
   );

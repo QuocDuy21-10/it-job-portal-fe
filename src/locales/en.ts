@@ -1029,6 +1029,12 @@ export const en = {
       metaDescription:
         "Track recruiting efficiency and application processing progress",
     },
+    companyPicker: {
+      label: "Company",
+      placeholder: "Choose a company",
+      search: "Search companies...",
+      empty: "No company found",
+    },
     drawer: { optional: "(optional)", saveChanges: "Save changes" },
     shared: {
       unsavedTitle: "Discard unsaved changes?",
@@ -1071,6 +1077,29 @@ export const en = {
       resumes: "resumes",
     },
     users: {
+      form: {
+        createTitle: "Add user",
+        editTitle: "Edit user",
+        createDescription: "Create an account and assign a role.",
+        create: "Create user",
+        name: "Full name",
+        namePlaceholder: "e.g. John Doe",
+        email: "Email",
+        emailPlaceholder: "e.g. name@company.com",
+        password: "Password",
+        passwordHint: "At least 6 characters",
+        showPassword: "Show password",
+        hidePassword: "Hide password",
+        role: "Role",
+        rolePlaceholder: "Choose a role",
+        errors: {
+          name: "Enter a name of at least 2 characters",
+          email: "Enter a valid email, e.g. name@company.com",
+          password: "Enter a password of at least 6 characters",
+          role: "Choose a role",
+          company: "Choose a company for the HR user",
+        },
+      },
       title: "Users Management",
       description: "Manage user profiles, roles and permissions",
       addButton: "Add user",
