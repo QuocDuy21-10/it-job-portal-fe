@@ -31,7 +31,7 @@ Sơ đồ rút gọn; các trạng thái chi tiết ở [Trạng thái duyệt t
 
 | Chức năng | Hành vi |
 | --- | --- |
-| Đăng và sửa tin | Hộp thoại `JobDialog` dùng `JobForm`, kiểm tra bằng `JobSchema` |
+| Đăng và sửa tin | Ngăn kéo `JobDrawer` dùng `JobForm`, kiểm tra bằng `JobSchema` |
 | Xóa | Xóa một tin (có xác nhận) hoặc xóa hàng loạt qua các hộp chọn |
 | Duyệt | Nút duyệt chỉ hiện với `SUPER ADMIN`; hộp thoại chọn `APPROVED` hoặc `REJECTED` và nhập ghi chú tối đa 500 ký tự |
 | Hiển thị kết quả | Cột "Duyệt" có huy hiệu theo trạng thái; ghi chú duyệt hiện dưới huy hiệu nếu có |
@@ -69,7 +69,7 @@ Chưa có test cho hộp thoại duyệt, bảng tin quản trị và trang qu�
 - [`src/app/[locale]/(dashboard)/admin/jobs/page.tsx`](../../src/app/[locale]/(dashboard)/admin/jobs/page.tsx): trang quản trị tin
 - [`src/features/job/components/job-table.tsx`](../../src/features/job/components/job-table.tsx): bảng tin, nút duyệt
 - [`src/features/job/components/job-approval-dialog.tsx`](../../src/features/job/components/job-approval-dialog.tsx): hộp thoại duyệt
-- [`src/features/job/components/job-dialog.tsx`](../../src/features/job/components/job-dialog.tsx), [`src/features/job/components/job-form.tsx`](../../src/features/job/components/job-form.tsx): đăng và sửa tin
+- [`src/features/job/components/job-drawer.tsx`](../../src/features/job/components/job-drawer.tsx), [`src/features/job/components/job-form.tsx`](../../src/features/job/components/job-form.tsx): đăng và sửa tin
 - [`src/features/job/hooks/use-job.ts`](../../src/features/job/hooks/use-job.ts): thao tác kèm toast
 - [`src/features/job/schemas/job.schema.ts`](../../src/features/job/schemas/job.schema.ts): kiểu và kiểm tra
 

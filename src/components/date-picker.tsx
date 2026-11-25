@@ -12,62 +12,72 @@ import {
 import { cn } from "@/lib/utils";
 import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
-interface DatePickerProps {
+interface DatePickerProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
+  "value" | "onChange"
+> {
   value?: Date | string;
   onChange: (date: Date | undefined) => void;
-  disabled?: boolean;
   placeholder?: string;
 }
 
-export function DatePicker({
-  value,
-  onChange,
-  disabled,
-  placeholder = "Pick a date",
-}: DatePickerProps) {
-  const locale = useLocale();
-  const [date, setDate] = React.useState<Date | undefined>(() => {
-    if (!value) return undefined;
-    if (value instanceof Date) return value;
-    return new Date(value);
-  });
-
-  const handleDateChange = (newDate: Date | undefined) => {
-    setDate(newDate);
-    onChange(newDate);
-  };
-
-  const formatDate = (d: Date | undefined) => {
-    if (!d) return placeholder;
-    return formatLocaleDate(d, locale, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
+  function DatePicker(
+    {
+      value,
+      onChange,
+      disabled,
+      placeholder = "Pick a date",
+      className,
+      ...triggerProps
+    },
+    ref
+  ) {
+    const locale = useLocale();
+    const [open, setOpen] = React.useState(false);
+    const [date, setDate] = React.useState<Date | undefined>(() => {
+      if (!value) return undefined;
+      if (value instanceof Date) return value;
+      return new Date(value);
     });
-  };
 
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground"
-          )}
-          disabled={disabled}
-        >
-          {formatDate(date)}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={handleDateChange}
-          disabled={disabled}
-        />
-      </PopoverContent>
-    </Popover>
-  );
-}
+    const handleDateChange = (newDate: Date | undefined) => {
+      setDate(newDate);
+      onChange(newDate);
+      setOpen(false);
+    };
+
+    const formatDate = (d: Date | undefined) => {
+      if (!d) return placeholder;
+      return formatLocaleDate(d, locale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    };
+
+    return (
+      <Popover open={open} onOpenChange={setOpen} modal>
+        <PopoverTrigger asChild>
+          <Button
+            ref={ref}
+            type="button"
+            variant="outline"
+            className={cn(
+              "w-full justify-start text-left font-normal aria-[invalid=true]:border-error",
+              !date && "text-muted-foreground",
+              className
+            )}
+            disabled={disabled}
+            {...triggerProps}
+          >
+            {formatDate(date)}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar mode="single" selected={date} onSelect={handleDateChange} />
+        </PopoverContent>
+      </Popover>
+    );
+  }
+);

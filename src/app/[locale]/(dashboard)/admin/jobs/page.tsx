@@ -18,7 +18,7 @@ import { SearchBar } from "@/components/ui/search-bar";
 import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
 import { JobTable } from "@/features/job/components/job-table";
-import { JobDialog } from "@/features/job/components/job-dialog";
+import { JobDrawer } from "@/features/job/components/job-drawer";
 import { JobApprovalDialog } from "@/features/job/components/job-approval-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
@@ -439,8 +439,8 @@ export default function JobsPage() {
         />
       )}
 
-      {/* Edit/Create Dialog */}
-      <JobDialog
+      {/* Edit/Create Drawer */}
+      <JobDrawer
         open={isDialogOpen}
         onOpenChange={handleCloseDialog}
         editingJob={editingJob}

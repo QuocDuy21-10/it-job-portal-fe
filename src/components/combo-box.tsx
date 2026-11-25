@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { normalizeSearchText } from "@/lib/utils/search-text";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -73,7 +74,9 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           {/* Match the label only: ids are hex and would match short searches. */}
           <Command
             filter={(_value, search, keywords) =>
-              (keywords?.[0] ?? "").toLowerCase().includes(search.toLowerCase())
+              normalizeSearchText(keywords?.[0] ?? "").includes(
+                normalizeSearchText(search)
+              )
                 ? 1
                 : 0
             }
