@@ -1046,6 +1046,17 @@ export const vi = {
       search: "Tìm công ty...",
       empty: "Không tìm thấy công ty",
     },
+    logoUpload: {
+      choose: "Chọn ảnh logo",
+      uploading: "Đang tải lên...",
+      hint: "JPG, PNG, GIF, WebP, tối đa 2 MB",
+      alt: "Logo công ty",
+      preview: "Xem logo cỡ lớn",
+      remove: "Xoá logo",
+      invalidType: "Chỉ nhận ảnh JPG, PNG, GIF hoặc WebP.",
+      tooLarge: "Ảnh không được quá 2 MB.",
+      error: "Không tải được logo. Vui lòng thử lại.",
+    },
     drawer: { optional: "(không bắt buộc)", saveChanges: "Lưu thay đổi" },
     shared: {
       unsavedTitle: "Bỏ thay đổi chưa lưu?",

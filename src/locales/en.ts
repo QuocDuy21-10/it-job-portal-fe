@@ -1035,6 +1035,17 @@ export const en = {
       search: "Search companies...",
       empty: "No company found",
     },
+    logoUpload: {
+      choose: "Choose a logo",
+      uploading: "Uploading...",
+      hint: "JPG, PNG, GIF, WebP, up to 2 MB",
+      alt: "Company logo",
+      preview: "View larger logo",
+      remove: "Remove logo",
+      invalidType: "Only JPG, PNG, GIF or WebP images are accepted.",
+      tooLarge: "The image must not exceed 2 MB.",
+      error: "Could not upload the logo. Please try again.",
+    },
     drawer: { optional: "(optional)", saveChanges: "Save changes" },
     shared: {
       unsavedTitle: "Discard unsaved changes?",

@@ -2,20 +2,12 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, X } from "lucide-react";
+import { normalizeSearchText } from "@/lib/utils/search-text";
 
 interface Option {
   label: string;
   value: string;
 }
-
-const normalizeSearchText = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/đ/g, "d")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
 
 type SingleSelectProps = {
   options: Option[];
@@ -136,6 +128,7 @@ export function SingleSelect({
           <div className="flex items-center gap-1">
             {allowClear && value && !disabled && (
               <button
+                type="button"
                 onClick={clearValue}
                 className={`rounded-full p-1 transition ${isSearchSurface ? "hover:bg-slate-200 dark:hover:bg-white/10" : "hover:bg-slate-200 dark:hover:bg-secondary"}`}
                 aria-label="Clear selection"
@@ -177,6 +170,7 @@ export function SingleSelect({
                 filteredOptions.map((option) => (
                   <li key={option.value}>
                     <button
+                      type="button"
                       onClick={() => selectOption(option.value)}
                       className={`w-full text-left px-4 py-2.5 flex items-center gap-3 transition ${
                         value === option.value
