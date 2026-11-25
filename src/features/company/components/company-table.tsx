@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NoResults } from "@/components/admin/list/no-results";
 import { Company } from "@/features/company/schemas/company.schema";
 import { isSafeHttpUrl } from "@/lib/utils/is-safe-http-url";
 import { Access } from "@/components/access";
@@ -37,6 +38,7 @@ interface CompanyTableProps {
   isLoading?: boolean;
   onEdit: (company: Company) => void;
   onDelete: (id: string) => void;
+  onClearFilters?: () => void;
   currentPage: number;
   pageSize: number;
   selectedIds: Set<string>;
@@ -51,6 +53,7 @@ export function CompanyTable({
   isLoading,
   onEdit,
   onDelete,
+  onClearFilters,
   currentPage,
   pageSize,
   selectedIds,
@@ -68,7 +71,7 @@ export function CompanyTable({
   return (
     <Access action={EAction.READ} subject="Company">
       <TooltipProvider>
-        <div className="admin-card">
+        <div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -98,17 +101,21 @@ export function CompanyTable({
               {companies.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="py-12">
-                    <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
-                      <Building2 className="h-12 w-12 text-gray-300" />
-                      <div className="text-center">
-                        <p className="font-medium text-gray-900 dark:text-gray-100">
-                          {t("adminPages.companies.table.emptyTitle")}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          {t("adminPages.companies.table.emptyDescription")}
-                        </p>
+                    {onClearFilters ? (
+                      <NoResults onClear={onClearFilters} />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
+                        <Building2 className="h-10 w-10" aria-hidden="true" />
+                        <div className="text-center">
+                          <p className="font-medium text-foreground">
+                            {t("adminPages.companies.table.emptyTitle")}
+                          </p>
+                          <p className="mt-1 text-sm">
+                            {t("adminPages.companies.table.emptyDescription")}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -277,7 +284,7 @@ function CompanyTableSkeleton() {
   const { t } = useI18n();
 
   return (
-    <div className="admin-card">
+    <div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -296,7 +303,7 @@ function CompanyTableSkeleton() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.from({ length: 5 }).map((_, index) => (
+          {Array.from({ length: 8 }).map((_, index) => (
             <TableRow key={index}>
               <TableCell>
                 <Skeleton className="h-4 w-4" />
