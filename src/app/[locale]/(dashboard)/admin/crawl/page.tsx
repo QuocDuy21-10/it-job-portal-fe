@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Bot } from "lucide-react";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,8 +10,20 @@ import { FailuresTab } from "@/features/crawl/components/failures-tab";
 import { SourcesTab } from "@/features/crawl/components/sources-tab";
 import { useI18n } from "@/hooks/use-i18n";
 
+const TABS = ["sources", "jobs", "failures"];
+
 export default function CrawlPage() {
+  return (
+    <Suspense>
+      <CrawlContent />
+    </Suspense>
+  );
+}
+
+function CrawlContent() {
   const { t } = useI18n();
+  const requested = useSearchParams().get("tab");
+  const tab = TABS.find((item) => item === requested) ?? "sources";
 
   return (
     <div className="space-y-6">
@@ -29,7 +43,17 @@ export default function CrawlPage() {
 
       <DesktopWarningBanner />
 
-      <Tabs defaultValue="sources">
+      <Tabs
+        value={tab}
+        // Filters belong to one tab: switching drops them.
+        onValueChange={(next) =>
+          window.history.replaceState(
+            null,
+            "",
+            `${window.location.pathname}?tab=${next}`
+          )
+        }
+      >
         <TabsList>
           <TabsTrigger value="sources">
             {t("adminPages.crawl.tabs.sources")}

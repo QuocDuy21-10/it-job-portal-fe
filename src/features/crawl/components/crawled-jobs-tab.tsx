@@ -3,18 +3,14 @@
 import { useMemo, useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { AdminList } from "@/components/admin/list/admin-list";
+import { NoResults } from "@/components/admin/list/no-results";
+import type { UseListTotal } from "@/components/admin/list/types";
+import { useAdminListParams } from "@/components/admin/list/use-admin-list-params";
 import { Pagination } from "@/components/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SearchBar } from "@/components/ui/search-bar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -33,32 +29,29 @@ import {
   useRemoveCrawledJobsMutation,
   useRestoreCrawledJobsMutation,
 } from "../redux/crawl.api";
+import type { CrawledJob } from "../schemas/crawl.schema";
 import {
-  CRAWLED_JOB_STATES,
-  type CrawledJob,
-  type CrawledJobState,
-} from "../schemas/crawl.schema";
+  buildCrawledJobsConfig,
+  toCrawledJobsParams,
+  useSourceOptions,
+} from "./crawl-list-config";
 import { RemoveJobsDialog } from "./remove-jobs-dialog";
-import { SourceFilter } from "./source-filter";
 
-const ALL = "all";
+const useCrawledJobsTotal: UseListTotal = (values, skip) =>
+  useGetCrawledJobsQuery(
+    { ...toCrawledJobsParams(values), page: 1, limit: 1 },
+    { skip }
+  ).currentData?.data?.meta.pagination.total;
 
 export function CrawledJobsTab() {
   const { t, language } = useI18n();
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
-  const [sourceKey, setSourceKey] = useState("");
-  const [state, setState] = useState<CrawledJobState | undefined>();
-  const [keyword, setKeyword] = useState("");
+  const sources = useSourceOptions();
+  const config = buildCrawledJobsConfig(t, sources);
+  const { values, set, clear, hasFilters } = useAdminListParams(config);
   const [removing, setRemoving] = useState<string[]>([]);
 
-  const { data, isLoading, isError } = useGetCrawledJobsQuery({
-    page,
-    limit,
-    sourceKey,
-    state,
-    keyword,
-  });
+  const { data, isLoading, isFetching, isError, refetch } =
+    useGetCrawledJobsQuery(toCrawledJobsParams(values));
   const [removeJobs, { isLoading: isRemoving }] =
     useRemoveCrawledJobsMutation();
   const [restoreJobs, { isLoading: isRestoring }] =
@@ -74,14 +67,6 @@ export function CrawledJobsTab() {
       .map((job) => job._id);
   const removable = idsOf(false);
   const restorable = idsOf(true);
-
-  // Every filter change starts again from page 1.
-  const withReset =
-    <T,>(setter: (value: T) => void) =>
-    (value: T) => {
-      setter(value);
-      setPage(1);
-    };
 
   const handleRemove = async (reason: string) => {
     try {
@@ -110,169 +95,144 @@ export function CrawledJobsTab() {
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <div className="admin-card flex flex-col gap-4 p-4 md:flex-row">
-        <div className="flex-1">
-          <SearchBar
-            value={keyword}
-            onSearch={withReset(setKeyword)}
-            placeholder={t("adminPages.crawl.jobs.searchPlaceholder")}
-          />
-        </div>
-        <SourceFilter value={sourceKey} onChange={withReset(setSourceKey)} />
-        <Select
-          value={state ?? ALL}
-          onValueChange={withReset((next: string) =>
-            setState(next === ALL ? undefined : (next as CrawledJobState))
-          )}
-        >
-          <SelectTrigger
-            className="w-full md:w-48"
-            aria-label={t("adminPages.crawl.jobs.state")}
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL}>
-              {t("adminPages.crawl.jobs.allStates")}
-            </SelectItem>
-            {CRAWLED_JOB_STATES.map((item) => (
-              <SelectItem key={item} value={item}>
-                {t(`adminPages.crawl.jobs.states.${item}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {selectedIds.size > 0 && (
-        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
-          <span className="text-sm font-medium">
-            {t("adminPages.crawl.jobs.selected", { count: selectedIds.size })}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={restorable.length === 0 || isRestoring}
-              onClick={() => handleRestore(restorable)}
+  const jobsTable = (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[50px]">
+            <Checkbox
+              checked={isIndeterminate ? "indeterminate" : isAllSelected}
+              onCheckedChange={toggleAll}
+              aria-label={t("adminPages.shared.selectAll")}
+            />
+          </TableHead>
+          <TableHead>{t("adminPages.crawl.jobs.title")}</TableHead>
+          <TableHead>{t("adminPages.crawl.sources.source")}</TableHead>
+          <TableHead>{t("adminPages.crawl.jobs.state")}</TableHead>
+          <TableHead>{t("adminPages.crawl.jobs.crawledAt")}</TableHead>
+          <TableHead className="text-right">
+            {t("adminPages.shared.actions")}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {jobs.length === 0 && (
+          <TableRow>
+            <TableCell
+              colSpan={6}
+              className="py-12 text-center text-muted-foreground"
             >
-              {t("adminPages.crawl.jobs.restoreSelected")}
-            </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              disabled={removable.length === 0}
-              onClick={() => setRemoving(removable)}
-            >
-              {t("adminPages.crawl.jobs.removeSelected")}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {isLoading ? (
-        <Skeleton className="h-96 w-full" />
-      ) : isError ? (
-        <p role="alert" className="text-sm text-destructive">
-          {t("adminPages.crawl.error")}
-        </p>
-      ) : (
-        <div className="admin-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px]">
-                  <Checkbox
-                    checked={isIndeterminate ? "indeterminate" : isAllSelected}
-                    onCheckedChange={toggleAll}
-                    aria-label={t("adminPages.shared.selectAll")}
-                  />
-                </TableHead>
-                <TableHead>{t("adminPages.crawl.jobs.title")}</TableHead>
-                <TableHead>{t("adminPages.crawl.sources.source")}</TableHead>
-                <TableHead>{t("adminPages.crawl.jobs.state")}</TableHead>
-                <TableHead>{t("adminPages.crawl.jobs.crawledAt")}</TableHead>
-                <TableHead className="text-right">
-                  {t("adminPages.shared.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {jobs.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="py-12 text-center text-muted-foreground"
-                  >
-                    {t("adminPages.crawl.jobs.empty")}
-                  </TableCell>
-                </TableRow>
+              {hasFilters ? (
+                <NoResults onClear={clear} />
+              ) : (
+                t("adminPages.crawl.jobs.empty")
               )}
-              {jobs.map((job) => (
-                <TableRow key={job._id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedIds.has(job._id)}
-                      onCheckedChange={() => toggle(job._id)}
-                      aria-label={t("adminPages.crawl.jobs.select", {
-                        title: job.title,
-                      })}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <JobTitle job={job} />
-                  </TableCell>
-                  <TableCell>{job.sourceKey}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={job.removedAt ? "destructive" : "secondary"}
-                    >
-                      {t(
-                        `adminPages.crawl.jobs.states.${job.removedAt ? "REMOVED" : job.status}`
-                      )}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {formatLocaleDate(job.createdAt, language)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {job.removedAt ? (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={isRestoring}
-                        onClick={() => handleRestore([job._id])}
-                      >
-                        {t("adminPages.crawl.jobs.restore")}
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setRemoving([job._id])}
-                      >
-                        {t("adminPages.crawl.jobs.remove")}
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+            </TableCell>
+          </TableRow>
+        )}
+        {jobs.map((job) => (
+          <TableRow key={job._id}>
+            <TableCell>
+              <Checkbox
+                checked={selectedIds.has(job._id)}
+                onCheckedChange={() => toggle(job._id)}
+                aria-label={t("adminPages.crawl.jobs.select", {
+                  title: job.title,
+                })}
+              />
+            </TableCell>
+            <TableCell>
+              <JobTitle job={job} />
+            </TableCell>
+            <TableCell>{job.sourceKey}</TableCell>
+            <TableCell>
+              <Badge variant={job.removedAt ? "destructive" : "secondary"}>
+                {t(
+                  `adminPages.crawl.jobs.states.${job.removedAt ? "REMOVED" : job.status}`
+                )}
+              </Badge>
+            </TableCell>
+            <TableCell>{formatLocaleDate(job.createdAt, language)}</TableCell>
+            <TableCell className="text-right">
+              {job.removedAt ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isRestoring}
+                  onClick={() => handleRestore([job._id])}
+                >
+                  {t("adminPages.crawl.jobs.restore")}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setRemoving([job._id])}
+                >
+                  {t("adminPages.crawl.jobs.remove")}
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
 
-      {total > 0 && (
-        <Pagination
-          currentPage={page}
-          pageSize={limit}
-          totalItems={total}
-          onPageChange={setPage}
-          onPageSizeChange={withReset(setLimit)}
-        />
-      )}
+  return (
+    <>
+      <AdminList
+        config={config}
+        values={values}
+        onChange={set}
+        onClear={clear}
+        useTotal={useCrawledJobsTotal}
+        searchPlaceholder={t("adminPages.crawl.jobs.searchPlaceholder")}
+        total={data?.data?.meta.pagination.total}
+        isFetching={isFetching && !isLoading}
+        isError={isError}
+        onRetry={refetch}
+      >
+        {selectedIds.size > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/20 bg-primary-subtle px-4 py-2">
+            <span className="text-sm font-medium">
+              {t("adminPages.crawl.jobs.selected", { count: selectedIds.size })}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={restorable.length === 0 || isRestoring}
+                onClick={() => handleRestore(restorable)}
+              >
+                {t("adminPages.crawl.jobs.restoreSelected")}
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={removable.length === 0}
+                onClick={() => setRemoving(removable)}
+              >
+                {t("adminPages.crawl.jobs.removeSelected")}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {isLoading ? <Skeleton className="m-4 h-96" /> : jobsTable}
+
+        {total > 0 && (
+          <div className="border-t border-border p-4">
+            <Pagination
+              currentPage={values.page}
+              pageSize={values.limit}
+              totalItems={total}
+              onPageChange={(page) => set({ page })}
+              onPageSizeChange={(limit) => set({ limit })}
+            />
+          </div>
+        )}
+      </AdminList>
 
       <RemoveJobsDialog
         open={removing.length > 0}
@@ -281,7 +241,7 @@ export function CrawledJobsTab() {
         onOpenChange={(open) => !open && setRemoving([])}
         onConfirm={handleRemove}
       />
-    </div>
+    </>
   );
 }
 

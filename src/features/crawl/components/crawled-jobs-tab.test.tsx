@@ -27,13 +27,13 @@ const mockJobs = [
     removeReason: "Khiếu nại",
   },
 ];
-const mockData = {
-  data: {
-    result: mockJobs,
-    meta: { pagination: { total: 2, total_pages: 1 } },
-  },
-};
+const ALL_JOBS = [...mockJobs];
+let mockTotal = 2;
 
+jest.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(window.location.search),
+}));
+jest.mock("@/hooks/use-media-query", () => ({ useMediaQuery: () => true }));
 jest.mock("sonner", () => ({
   toast: { success: jest.fn(), error: jest.fn() },
 }));
@@ -48,7 +48,19 @@ jest.mock("../redux/crawl.api", () => ({
   useGetJobSourcesQuery: () => ({ data: { data: [] } }),
   useGetCrawledJobsQuery: (params: unknown) => {
     mockQuery(params);
-    return { data: mockData, isLoading: false, isError: false };
+    return {
+      data: {
+        data: {
+          result: mockJobs,
+          meta: { pagination: { total: mockTotal, total_pages: 3 } },
+        },
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: jest.fn(),
+      currentData: undefined,
+    };
   },
   useRemoveCrawledJobsMutation: () => mockMutation(mockRemove),
   useRestoreCrawledJobsMutation: () => mockMutation(mockRestore),
@@ -59,6 +71,9 @@ const K = "adminPages.crawl";
 describe("CrawledJobsTab", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockJobs.splice(0, mockJobs.length, ...ALL_JOBS);
+    mockTotal = 2;
+    window.history.replaceState(null, "", "/admin/crawl?tab=jobs");
     mockRemove.mockResolvedValue({ data: { modified: 1 } });
     mockRestore.mockResolvedValue({ data: { modified: 1 } });
   });
@@ -101,9 +116,34 @@ describe("CrawledJobsTab", () => {
     expect(mockQuery).toHaveBeenCalledWith({
       page: 1,
       limit: 20,
-      sourceKey: "",
-      state: undefined,
       keyword: "",
+      state: undefined,
+      sourceKey: undefined,
+      from: undefined,
+      to: undefined,
     });
+  });
+
+  it("stays on page 2 and keeps the page tab in the URL", () => {
+    mockTotal = 45;
+    const { rerender } = render(<CrawledJobsTab />);
+    fireEvent.click(screen.getByRole("button", { name: "Go to page 2" }));
+    rerender(<CrawledJobsTab />);
+    rerender(<CrawledJobsTab />);
+
+    expect(mockQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 2 })
+    );
+    expect(window.location.search).toBe("?tab=jobs&page=2");
+  });
+
+  it("offers to clear filters when nothing matches", () => {
+    window.history.replaceState(null, "", "/admin/crawl?tab=jobs&q=zzz");
+    mockJobs.splice(0);
+    render(<CrawledJobsTab />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "adminPages.filters.clearFilters" })
+    );
+    expect(window.location.search).toBe("?tab=jobs");
   });
 });

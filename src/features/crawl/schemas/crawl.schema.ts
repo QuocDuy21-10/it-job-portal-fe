@@ -116,6 +116,8 @@ export type CrawledJobsParams = {
   sourceKey?: string;
   state?: CrawledJobState;
   keyword?: string;
+  from?: string;
+  to?: string;
 };
 
 export type CrawlFailuresParams = {
@@ -124,4 +126,6 @@ export type CrawlFailuresParams = {
   sourceKey?: string;
   reason?: RejectionReason;
   group: "error" | "filtered";
+  from?: string;
+  to?: string;
 };
