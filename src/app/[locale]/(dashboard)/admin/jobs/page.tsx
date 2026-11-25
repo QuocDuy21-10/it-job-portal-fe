@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { Plus, Briefcase, Filter, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +20,6 @@ import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
 import { JobTable } from "@/features/job/components/job-table";
 import { JobDrawer } from "@/features/job/components/job-drawer";
-import { JobApprovalDialog } from "@/features/job/components/job-approval-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Job } from "@/features/job/schemas/job.schema";
@@ -28,6 +28,15 @@ import { useTableSelection } from "@/hooks/use-table-selection";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
+
+// Pulls in sanitize-html, which the rest of the page does not need.
+const JobApprovalDrawer = dynamic(
+  () =>
+    import("@/features/job/components/job-approval-drawer").then(
+      (module) => module.JobApprovalDrawer
+    ),
+  { ssr: false }
+);
 import { toast } from "sonner";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
@@ -112,7 +121,9 @@ export default function JobsPage() {
     isMutating,
     isDeleting,
     isApprovalDialogOpen,
-    approvingJob,
+    approvalQueue,
+    approvalIndex,
+    setApprovalIndex,
     isApproving,
     handleOpenDialog,
     handleCloseDialog,
@@ -414,7 +425,7 @@ export default function JobsPage() {
         jobs={jobs}
         isLoading={isLoading}
         onEdit={handleOpenDialog}
-        onApprove={handleOpenApprovalDialog}
+        onApprove={(job) => handleOpenApprovalDialog(job, jobs)}
         onDelete={(id) => {
           const job: Job | undefined = jobs.find((c: Job) => c._id === id);
           if (job) handleOpenDeleteDialog(job);
@@ -457,14 +468,17 @@ export default function JobsPage() {
         isLoading={isDeleting}
       />
 
-      {/* Approval Dialog */}
-      <JobApprovalDialog
-        open={isApprovalDialogOpen}
-        onOpenChange={handleCloseApprovalDialog}
-        job={approvingJob}
-        onSubmit={handleApprove}
-        isLoading={isApproving}
-      />
+      {approvalQueue.length > 0 && (
+        <JobApprovalDrawer
+          open={isApprovalDialogOpen}
+          onOpenChange={handleCloseApprovalDialog}
+          queue={approvalQueue}
+          index={approvalIndex}
+          onNavigate={setApprovalIndex}
+          onSubmit={handleApprove}
+          isLoading={isApproving}
+        />
+      )}
 
       {/* Bulk Delete Confirm Dialog */}
       <BulkDeleteConfirmDialog

@@ -7,13 +7,10 @@ export enum EJobApprovalStatus {
   REJECTED = "REJECTED",
 }
 
-export const ApproveJobSchema = z.object({
-  status: z.enum(["APPROVED", "REJECTED"]),
-  approvalNote: z
-    .string()
-    .max(500, "Ghi chú không được quá 500 ký tự")
-    .optional(),
-});
+export type ApproveJobFormData = {
+  status: "APPROVED" | "REJECTED";
+  approvalNote?: string;
+};
 
 export const JobSchema = z.object({
   name: z
@@ -93,4 +90,3 @@ export const JobEntitySchema = JobSchema.extend({
 export type Job = z.infer<typeof JobEntitySchema>;
 export type CreateJobFormData = z.infer<typeof JobSchema>;
 export type UpdateJobFormData = Partial<CreateJobFormData>;
-export type ApproveJobFormData = z.infer<typeof ApproveJobSchema>;

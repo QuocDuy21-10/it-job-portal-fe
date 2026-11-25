@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Job } from "@/features/job/schemas/job.schema";
 import { Access } from "@/components/access";
+import { ApprovalStatusBadge } from "./approval-status-badge";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
 import {
@@ -175,28 +176,6 @@ function JobTableRow({
     return "bg-gray-100 text-gray-700";
   };
 
-  // Get approval status badge
-  const getApprovalBadge = () => {
-    const status = job.approvalStatus?.toUpperCase() || "PENDING";
-    if (status === "APPROVED")
-      return (
-        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
-          {t("adminPages.jobs.table.approved")}
-        </Badge>
-      );
-    if (status === "REJECTED")
-      return (
-        <Badge className="bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border-red-200 dark:border-red-800">
-          {t("adminPages.jobs.table.rejected")}
-        </Badge>
-      );
-    return (
-      <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800">
-        {t("adminPages.jobs.table.pending")}
-      </Badge>
-    );
-  };
-
   const getLevelLabel = (level?: string) => {
     switch (level?.toLowerCase()) {
       case "internship":
@@ -282,7 +261,9 @@ function JobTableRow({
       <TableCell>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center gap-2">{getApprovalBadge()}</div>
+            <div className="flex items-center gap-2">
+              <ApprovalStatusBadge status={job.approvalStatus} />
+            </div>
           </TooltipTrigger>
           {job.approvalNote && (
             <TooltipContent className="max-w-xs">

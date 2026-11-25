@@ -887,6 +887,15 @@ export const en = {
           "The end of the URL, such as axon in job-boards.greenhouse.io/axon",
         companyName: "Company name",
         submit: "Add and sync",
+        providerPlaceholder: "Choose a platform",
+        boardTokenPlaceholder: "e.g. axon",
+        companyNamePlaceholder: "e.g. Axon",
+        errors: {
+          provider: "Choose a platform",
+          boardToken:
+            "Use lowercase letters, digits and hyphens only, e.g. axon",
+          companyName: "Enter a company name of at most 200 characters",
+        },
       },
       runs: {
         title: "Sync history: {key}",
@@ -1227,6 +1236,27 @@ export const en = {
         approved: "Approved",
         rejected: "Rejected",
         pending: "Pending",
+      },
+      review: {
+        queue: "Job {current}/{total} pending on this page",
+        previous: "Previous job (K)",
+        next: "Next job (J)",
+        openPublic: "Open public page",
+        deadline: "Deadline",
+        noDeadline: "None",
+        skills: "Skills",
+        description: "Job description",
+        viewCompany: "View company",
+        rejectedTitle: "Rejection reason",
+        skip: "Skip",
+        reject: "Reject…",
+        approve: "Approve and publish",
+        rejectTitle: "Reject “{name}”?",
+        rejectDescription:
+          "The job stays hidden from the public. The employer sees this reason.",
+        reason: "Rejection reason",
+        reasonPlaceholder: "e.g. The job description is too short",
+        rejectConfirm: "Reject job",
       },
       workTypes: {
         "Full-time": "Full-time",

@@ -13,13 +13,17 @@ import {
   Job,
 } from "@/features/job/schemas/job.schema";
 
+const isPending = (job: Job) => (job.approvalStatus ?? "PENDING") === "PENDING";
+
 export function useJobOperations() {
   const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [deletingJob, setDeletingJob] = useState<Job | null>(null);
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
-  const [approvingJob, setApprovingJob] = useState<Job | null>(null);
+  // A snapshot: refetching the table must not move the reviewer to another job.
+  const [approvalQueue, setApprovalQueue] = useState<Job[]>([]);
+  const [approvalIndex, setApprovalIndex] = useState(0);
 
   // RTK Query mutations
   const [createJob, { isLoading: isCreating }] = useCreateJobMutation();
@@ -105,48 +109,52 @@ export function useJobOperations() {
     }
   };
 
-  // Open approval dialog
-  const handleOpenApprovalDialog = (job: Job) => {
-    setApprovingJob(job);
+  const handleOpenApprovalDialog = (job: Job, pageJobs: Job[]) => {
+    const queue = isPending(job) ? pageJobs.filter(isPending) : [job];
+    setApprovalQueue(queue);
+    setApprovalIndex(
+      Math.max(
+        0,
+        queue.findIndex(({ _id }) => _id === job._id)
+      )
+    );
     setIsApprovalDialogOpen(true);
   };
 
-  // Close approval dialog
-  const handleCloseApprovalDialog = () => {
-    setIsApprovalDialogOpen(false);
-    setTimeout(() => {
-      setApprovingJob(null);
-    }, 200);
-  };
+  const handleCloseApprovalDialog = () => setIsApprovalDialogOpen(false);
 
-  // Handle approve or reject job
   const handleApprove = async (data: ApproveJobFormData) => {
-    if (!approvingJob) return false;
+    const job = approvalQueue[approvalIndex];
+    if (!job) return false;
 
     try {
-      await approveJob({ id: approvingJob._id, data }).unwrap();
+      await approveJob({ id: job._id, data }).unwrap();
 
       toast.success(
-        data.status === "APPROVED"
-          ? t("adminPages.jobs.toasts.approveSuccess", {
-              name: approvingJob.name,
-            })
-          : t("adminPages.jobs.toasts.rejectSuccess", {
-              name: approvingJob.name,
-            })
+        t(
+          data.status === "APPROVED"
+            ? "adminPages.jobs.toasts.approveSuccess"
+            : "adminPages.jobs.toasts.rejectSuccess",
+          { name: job.name }
+        )
       );
 
-      handleCloseApprovalDialog();
+      const rest = approvalQueue.filter(({ _id }) => _id !== job._id);
+      if (rest.length === 0) {
+        // The queue keeps the last job so it stays on screen during the exit animation.
+        handleCloseApprovalDialog();
+      } else {
+        setApprovalQueue(rest);
+        setApprovalIndex(Math.min(approvalIndex, rest.length - 1));
+      }
       return true;
     } catch (error: any) {
       console.error("Approve job error:", error);
-
-      const errorMessage =
+      toast.error(
         error?.data?.message ||
-        error?.message ||
-        t("adminPages.jobs.toasts.approvalError");
-
-      toast.error(errorMessage);
+          error?.message ||
+          t("adminPages.jobs.toasts.approvalError")
+      );
       return false;
     }
   };
@@ -157,7 +165,9 @@ export function useJobOperations() {
     editingJob,
     deletingJob,
     isApprovalDialogOpen,
-    approvingJob,
+    approvalQueue,
+    approvalIndex,
+    setApprovalIndex,
 
     // Loading states
     isCreating,
