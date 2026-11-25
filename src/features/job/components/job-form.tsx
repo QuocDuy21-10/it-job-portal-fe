@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/combo-box";
+import { DatePicker } from "@/components/date-picker";
+import { MultiSelect } from "@/components/multi-select";
+import { RichTextEditor } from "@/components/rich-text-editor";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -12,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -19,95 +24,115 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import jobTypes from "@/shared/data/job-type.json";
-import { DatePicker } from "@/components/date-picker";
+import { useCompanyOptions } from "@/features/company/hooks/use-company-options";
 import {
-  CreateJobFormData,
-  JobSchema,
+  createJobSchema,
+  type CreateJobFormData,
 } from "@/features/job/schemas/job.schema";
-import { useState } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
-import { Combobox } from "@/components/combo-box";
-import { RichTextEditor } from "@/components/rich-text-editor";
-import { MultiSelect } from "@/components/multi-select";
-import jobLevels from "@/shared/data/job-level.json";
+import { useFocusFirstError } from "@/hooks/use-focus-first-error";
+import { useI18n } from "@/hooks/use-i18n";
 import { useSkillCatalog } from "@/hooks/use-skill-catalog";
-import { SingleSelect } from "@/components/single-select";
+import { toDateOnly } from "@/lib/utils/locale-formatters";
+import jobLevels from "@/shared/data/job-level.json";
+import jobTypes from "@/shared/data/job-type.json";
 import { LOCATION_OPTIONS } from "@/shared/data/location-catalog";
 
+// The data files also feed search filters, which need an "all" entry.
+const LEVELS = jobLevels.filter(({ value }) => value !== "all");
+const WORK_TYPES = jobTypes.filter(({ value }) => value !== "all");
+
+const toNumber = (value: string) => (value === "" ? undefined : Number(value));
+
 interface JobFormProps {
+  formId: string;
   initialData?: Partial<CreateJobFormData>;
   onSubmit: (data: CreateJobFormData) => Promise<boolean>;
   isLoading?: boolean;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
-  const { skillOptions, isLoading: isLoadingSkillCatalog } = useSkillCatalog();
-  const [companySearch, setCompanySearch] = useState("");
-  const debouncedSearch = useDebounce(companySearch, 500);
+function Group({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="space-y-4 border-t border-border pt-6 first:border-t-0 first:pt-0">
+      <h3 className="text-h4">{title}</h3>
+      {children}
+    </section>
+  );
+}
 
-  // Fetch companies for selection
-  const { data: companiesData } = useGetCompaniesQuery({
-    page: 1,
-    limit: 100,
-    filter: debouncedSearch ? `name=/${debouncedSearch}/i` : "",
-  });
-
-  const companies = companiesData?.data?.result || [];
-  const companyOptions = companies.map((company: any) => ({
-    label: company.name,
-    value: company._id,
-    logo: company.logo,
-  }));
+export function JobForm({
+  formId,
+  initialData,
+  onSubmit,
+  isLoading,
+  onDirtyChange,
+}: JobFormProps) {
+  const { t } = useI18n();
+  const { skillOptions, isLoading: isLoadingSkills } = useSkillCatalog();
+  const { companies, options } = useCompanyOptions(initialData?.company);
 
   const form = useForm<CreateJobFormData>({
-    resolver: zodResolver(JobSchema),
+    resolver: zodResolver(createJobSchema(t)),
     defaultValues: {
-      name: initialData?.name || "",
-      skills: initialData?.skills || [],
-      company: initialData?.company || { _id: "", name: "", logo: null },
-      locationCode: initialData?.locationCode || "",
-      salary: initialData?.salary || 0,
-      quantity: initialData?.quantity || 1,
-      level: initialData?.level || "Internship",
-      formOfWork: initialData?.formOfWork || "Full-time",
-      description: initialData?.description || "",
-      startDate: initialData?.startDate || "",
-      endDate: initialData?.endDate || "",
+      name: initialData?.name ?? "",
+      skills: initialData?.skills ?? [],
+      company: initialData?.company ?? { _id: "", name: "", logo: null },
+      locationCode: initialData?.locationCode ?? "",
+      salary: initialData?.salary,
+      quantity: initialData?.quantity,
+      level: initialData?.level,
+      formOfWork: initialData?.formOfWork,
+      description: initialData?.description ?? "",
+      startDate: initialData?.startDate ?? "",
+      endDate: initialData?.endDate ?? "",
       isActive: initialData?.isActive ?? true,
     },
+    mode: "onTouched",
+    shouldFocusError: false,
   });
+  const { isDirty, submitCount } = form.formState;
+  useFocusFirstError(submitCount, formId);
 
-  // Update company details when selection changes
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+    return () => onDirtyChange?.(false);
+  }, [isDirty, onDirtyChange]);
+
   const handleCompanyChange = (companyId: string) => {
-    const selectedCompany = companies.find(
-      (c: { _id: string }) => c._id === companyId
+    const selected = companies.find((company) => company._id === companyId);
+    if (!selected) return;
+    form.setValue(
+      "company",
+      {
+        _id: selected._id,
+        name: selected.name,
+        logo: selected.logo ?? null,
+      },
+      { shouldDirty: true, shouldValidate: true }
     );
-    if (selectedCompany) {
-      form.setValue("company", {
-        _id: selectedCompany._id,
-        name: selectedCompany.name,
-        logo: selectedCompany.logo ?? null,
-      });
-    }
   };
+
+  const label = (key: string) => t(`adminPages.jobs.form.${key}`);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Row 1: Job Name & Level */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <form
+        id={formId}
+        noValidate
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
+        <Group title={label("basics")}>
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tên công việc *</FormLabel>
+                <FormLabel>{label("name")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="VD: Senior Developer"
+                    placeholder={label("namePlaceholder")}
                     disabled={isLoading}
                   />
                 </FormControl>
@@ -115,276 +140,231 @@ export function JobForm({ initialData, onSubmit, isLoading }: JobFormProps) {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="level"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cấp độ *</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
+          <div className="grid gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="company._id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("adminPages.companyPicker.label")}</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn cấp độ" />
-                    </SelectTrigger>
+                    <Combobox
+                      options={options}
+                      value={field.value}
+                      onChange={handleCompanyChange}
+                      placeholder={t("adminPages.companyPicker.placeholder")}
+                      searchPlaceholder={t("adminPages.companyPicker.search")}
+                      emptyText={t("adminPages.companyPicker.empty")}
+                      disabled={isLoading}
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {jobLevels.map((level) => (
-                      <SelectItem key={level.value} value={level.value}>
-                        {level.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="formOfWork"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Hình thức làm việc *</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="locationCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label("location")}</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Hình thức làm việc" />
-                    </SelectTrigger>
+                    <Combobox
+                      options={LOCATION_OPTIONS}
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder={label("locationPlaceholder")}
+                      searchPlaceholder={label("locationSearch")}
+                      emptyText={label("locationEmpty")}
+                      disabled={isLoading}
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {jobTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Row 2: Location & Quantity */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="locationCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Địa điểm *</FormLabel>
-                <FormControl>
-                  <SingleSelect
-                    options={LOCATION_OPTIONS}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Chọn tỉnh/thành phố..."
-                    searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="level"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label("level")}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value ?? ""}
                     disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={label("levelPlaceholder")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {LEVELS.map(({ value }) => (
+                        <SelectItem key={value} value={value}>
+                          {t(`adminPages.jobs.levels.${value.toLowerCase()}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="formOfWork"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label("workType")}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value ?? ""}
+                    disabled={isLoading}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={label("workTypePlaceholder")}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {WORK_TYPES.map(({ value }) => (
+                        <SelectItem key={value} value={value}>
+                          {t(`adminPages.jobs.workTypes.${value}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </Group>
+
+        <Group title={label("hiring")}>
+          <div className="grid gap-4 md:grid-cols-2">
+            {(["salary", "quantity"] as const).map((name) => (
+              <FormField
+                key={name}
+                control={form.control}
+                name={name}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{label(name)}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        inputMode="numeric"
+                        min={name === "salary" ? 0 : 1}
+                        className="tabular-nums"
+                        value={field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(toNumber(event.target.value))
+                        }
+                        placeholder={label(`${name}Placeholder`)}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+            {(["startDate", "endDate"] as const).map((name) => (
+              <FormField
+                key={name}
+                control={form.control}
+                name={name}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{label(name)}</FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value}
+                        onChange={(date) => field.onChange(toDateOnly(date))}
+                        placeholder={label("datePlaceholder")}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
           <FormField
             control={form.control}
             name="skills"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Kỹ năng *</FormLabel>
+                <FormLabel>{label("skills")}</FormLabel>
                 <FormControl>
                   <MultiSelect
                     options={skillOptions}
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="Chọn kỹ năng..."
-                    searchPlaceholder="Tìm kiếm kỹ năng..."
-                    disabled={isLoading || isLoadingSkillCatalog}
+                    aria-label={label("skills")}
+                    placeholder={label("skillsPlaceholder")}
+                    searchPlaceholder={label("skillsSearch")}
+                    emptyText={label("skillsEmpty")}
+                    disabled={isLoading || isLoadingSkills}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
+        </Group>
 
-        {/* Row 3: Salary & Skills */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Group title={label("description")}>
           <FormField
             control={form.control}
-            name="salary"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Lương (VND) *</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min="0"
-                    placeholder="VD: 50000000"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="quantity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Số lượng *</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min="1"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Row 4: Start Date & End Date */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ngày bắt đầu *</FormLabel>
-                <FormControl>
-                  <DatePicker
+                  <RichTextEditor
                     value={field.value}
-                    onChange={(date) => {
-                      field.onChange(
-                        date ? date.toISOString().split("T")[0] : ""
-                      );
+                    onChange={(value, _delta, source) => {
+                      // Quill also fires on load when it normalizes the HTML.
+                      if (source === "user") field.onChange(value);
                     }}
+                    aria-label={label("description")}
                     disabled={isLoading}
-                    placeholder="Chọn ngày bắt đầu"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </Group>
 
-          <FormField
-            control={form.control}
-            name="endDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ngày kết thúc *</FormLabel>
-                <FormControl>
-                  <DatePicker
-                    value={field.value}
-                    onChange={(date) => {
-                      field.onChange(
-                        date ? date.toISOString().split("T")[0] : ""
-                      );
-                    }}
-                    disabled={isLoading}
-                    placeholder="Chọn ngày kết thúc"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Description */}
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description *</FormLabel>
-              <RichTextEditor
-                value={field.value}
-                onChange={field.onChange}
-                disabled={isLoading}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Replace company fields with Combobox */}
-        <FormField
-          control={form.control}
-          name="company._id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Công ty *</FormLabel>
-              <FormControl>
-                <Combobox
-                  options={companyOptions}
-                  value={field.value}
-                  onChange={handleCompanyChange}
-                  placeholder="Chọn công ty"
-                  searchPlaceholder="Tìm kiếm công ty..."
-                  emptyText="Không tìm thấy công ty"
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Active Status */}
-        <div className="flex items-center gap-2">
+        <Group title={label("visibility")}>
           <FormField
             control={form.control}
             name="isActive"
             render={({ field }) => (
-              <FormItem className="space-y-0">
+              <FormItem className="flex items-center gap-2 space-y-0">
                 <FormControl>
-                  <input
-                    type="checkbox"
-                    id="isActive"
+                  <Checkbox
                     checked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
+                    onCheckedChange={(checked) =>
+                      field.onChange(checked === true)
+                    }
                     disabled={isLoading}
-                    className="w-4 h-4"
                   />
                 </FormControl>
+                <FormLabel className="cursor-pointer py-3">
+                  {label("isActive")}
+                </FormLabel>
               </FormItem>
             )}
           />
-          <label
-            htmlFor="isActive"
-            className="text-sm font-medium cursor-pointer"
-          >
-            Công việc đang tuyển dụng
-          </label>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-end gap-2 pt-4">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Đang lưu..." : initialData ? "Cập nhật" : "Tạo mới"}
-          </Button>
-        </div>
+        </Group>
       </form>
     </Form>
   );
