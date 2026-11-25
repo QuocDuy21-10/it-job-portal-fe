@@ -46,3 +46,8 @@ export function getRuntimeLocale(locale?: string): string {
 export function formatDateTime(value: Date | string): string {
   return format(new Date(value), "dd/MM/yyyy HH:mm");
 }
+
+// Local calendar day. toISOString() would give the previous day in UTC+7.
+export function toDateOnly(date?: Date): string {
+  return date ? format(date, "yyyy-MM-dd") : "";
+}

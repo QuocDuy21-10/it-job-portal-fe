@@ -6,7 +6,13 @@ import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { useFileOperations } from "@/hooks/use-file";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useI18n } from "@/hooks/use-i18n";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 
 interface LogoUploadProps {
@@ -27,6 +33,7 @@ export function LogoUpload({
   originalValue,
   onNewFileUploaded,
 }: LogoUploadProps) {
+  const { t } = useI18n();
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sessionFileName, setSessionFileName] = useState<string | null>(null);
@@ -46,12 +53,12 @@ export function LogoUpload({
     setError(null);
 
     if (!ALLOWED_FORMATS.includes(file.type)) {
-      setError("Only JPG, PNG, GIF and WebP formats are supported");
+      setError(t("adminPages.logoUpload.invalidType"));
       return false;
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      setError("File size must not exceed 2MB");
+      setError(t("adminPages.logoUpload.tooLarge"));
       return false;
     }
 
@@ -85,7 +92,7 @@ export function LogoUpload({
       }
     } catch (err) {
       console.error("Upload error:", err);
-      toast.error("Error uploading logo");
+      toast.error(t("adminPages.logoUpload.error"));
       setPreview(null);
     } finally {
       e.target.value = "";
@@ -116,21 +123,24 @@ export function LogoUpload({
       <div className="flex items-center gap-4">
         {displayUrl && (
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger aria-label={t("adminPages.logoUpload.preview")}>
               <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border border-input bg-muted cursor-pointer hover:opacity-80 transition-opacity">
                 <Image
                   src={displayUrl}
-                  alt="Logo preview"
+                  alt={t("adminPages.logoUpload.alt")}
                   fill
                   className="object-cover"
                 />
               </div>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl" aria-describedby={undefined}>
+              <DialogTitle className="sr-only">
+                {t("adminPages.logoUpload.alt")}
+              </DialogTitle>
               <div className="relative h-96 w-full">
                 <Image
                   src={displayUrl}
-                  alt="Logo preview"
+                  alt={t("adminPages.logoUpload.alt")}
                   fill
                   className="object-contain"
                 />
@@ -140,21 +150,23 @@ export function LogoUpload({
         )}
 
         <div className="flex-1">
-          <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-input px-4 py-3 hover:bg-muted">
+          <label className="flex cursor-pointer focus-within:ring-2 focus-within:ring-ring items-center gap-2 rounded-lg border border-dashed border-input px-4 py-3 hover:bg-muted">
             <Upload className="h-4 w-4" />
             <span className="text-sm text-muted-foreground">
-              {isUploading ? "Uploading..." : "Choose logo file"}
+              {isUploading
+                ? t("adminPages.logoUpload.uploading")
+                : t("adminPages.logoUpload.choose")}
             </span>
             <input
               type="file"
               accept={ALLOWED_FORMATS.join(",")}
               onChange={handleFileChange}
               disabled={disabled || isUploading}
-              className="hidden"
+              className="sr-only"
             />
           </label>
           <p className="mt-1 text-xs text-muted-foreground">
-            JPG, PNG, GIF, WebP • Max 2MB
+            {t("adminPages.logoUpload.hint")}
           </p>
         </div>
 
@@ -166,6 +178,7 @@ export function LogoUpload({
             onClick={handleRemove}
             disabled={disabled || isUploading}
             className="h-10 w-10 p-0"
+            aria-label={t("adminPages.logoUpload.remove")}
           >
             <X className="h-4 w-4" />
           </Button>

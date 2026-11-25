@@ -13,7 +13,7 @@ Form công ty lưu tên file logo, không lưu cả file. Người dùng chọn 
 | `useUploadFileMutation` | `POST /files/upload` | `FormData` chứa `file`; thư mục đích đặt ở header `folder_type` | Không | `hooks/use-file.ts` (`handleUpload`) |
 | `useDeleteFileMutation` | `DELETE /files/remove` | Body `{ fileName, folderType }` | Không | `hooks/use-file.ts` (`handleDelete`) |
 
-`useFileOperations` bọc hai hook: `handleUpload` trả `fileName` và hiện toast, còn `handleDelete` xóa không chờ kết quả. Hiện chỉ có thư mục `company` được truyền (từ `logo-upload.tsx` và `company-dialog.tsx`).
+`useFileOperations` bọc hai hook: `handleUpload` trả `fileName` và hiện toast, còn `handleDelete` xóa không chờ kết quả. Hiện chỉ có thư mục `company` được truyền (từ `logo-upload.tsx` và `company-drawer.tsx`).
 
 Header `folder_type` được đặt trong cấu hình request; `Content-Type` để Axios tự đặt theo `FormData`.
 
@@ -32,7 +32,7 @@ Tải lên trả `{ fileName }`; xóa trả `{ deleted }`.
 - [`src/features/file/redux/file.api.ts`](../../../src/features/file/redux/file.api.ts): khai báo endpoint
 - [`src/hooks/use-file.ts`](../../../src/hooks/use-file.ts): `useFileOperations`
 - [`src/components/logo-upload.tsx`](../../../src/components/logo-upload.tsx): tải logo, kiểm tra loại và dung lượng
-- [`src/features/company/components/company-dialog.tsx`](../../../src/features/company/components/company-dialog.tsx): xóa file thừa
+- [`src/features/company/components/company-drawer.tsx`](../../../src/features/company/components/company-drawer.tsx): xóa file thừa
 
 Hợp đồng đầy đủ: [API Files của backend](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/docs/05-api/endpoints/files.md) và [controller](https://github.com/QuocDuy21-10/it-job-portal-be/blob/main/src/files/files.controller.ts).
 
