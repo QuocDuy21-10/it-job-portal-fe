@@ -116,6 +116,12 @@ describe.each([true, false])("AdminFilterPanel (desktop: %s)", (isDesktop) => {
     expect(button("Senior")).toHaveAttribute("aria-pressed", "false");
   });
 
+  it("names the dialog after its heading", () => {
+    setup();
+    open();
+    expect(screen.getByRole("dialog")).toHaveAccessibleName("button");
+  });
+
   it("sets a date preset", () => {
     setup();
     open();

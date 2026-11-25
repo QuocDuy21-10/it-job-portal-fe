@@ -51,10 +51,11 @@ export function AdminFilterPanel(props: Props) {
     event.preventDefault();
     titleRef.current?.focus();
   };
-  const title = (
+  // The sheet's Radix Title sets its own id; only the popover needs ours.
+  const heading = (id?: string) => (
     <h2
       ref={titleRef}
-      id={titleId}
+      {...(id && { id })}
       tabIndex={-1}
       className="font-heading text-h4 text-foreground outline-none"
     >
@@ -101,7 +102,7 @@ export function AdminFilterPanel(props: Props) {
           className="flex max-h-[--radix-popover-content-available-height] w-[640px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-lg p-0 shadow-elevation-2"
         >
           <header className="shrink-0 border-b border-border px-4 py-3">
-            {title}
+            {heading(titleId)}
           </header>
           {body}
         </PopoverContent>
@@ -125,7 +126,7 @@ export function AdminFilterPanel(props: Props) {
             aria-hidden="true"
           />
           <header className="flex shrink-0 items-center justify-between border-b border-border py-1 pl-4 pr-2">
-            <DialogPrimitive.Title asChild>{title}</DialogPrimitive.Title>
+            <DialogPrimitive.Title asChild>{heading()}</DialogPrimitive.Title>
             <DialogPrimitive.Close asChild>
               <Button
                 type="button"
