@@ -21,7 +21,7 @@ Trang quản lý tin: ô tìm theo tên, bốn bộ lọc (trạng thái, địa
 ```mermaid
 flowchart TD
     Post["HR hoặc quản trị đăng tin"] --> Pending["Trạng thái PENDING, chưa hiện công khai"]
-    Pending --> Review["SUPER ADMIN mở hộp thoại duyệt"]
+    Pending --> Review["SUPER ADMIN mở ngăn kéo duyệt"]
     Review --> Choose{"Kết quả"}
     Choose -- "APPROVED" --> Public["Hiện công khai nếu còn mở và chưa hết hạn"]
     Choose -- "REJECTED" --> Hidden["Không hiện công khai, có ghi chú"]
@@ -33,7 +33,8 @@ Sơ đồ rút gọn; các trạng thái chi tiết ở [Trạng thái duyệt t
 | --- | --- |
 | Đăng và sửa tin | Ngăn kéo `JobDrawer` dùng `JobForm`, kiểm tra bằng `JobSchema` |
 | Xóa | Xóa một tin (có xác nhận) hoặc xóa hàng loạt qua các hộp chọn |
-| Duyệt | Nút duyệt chỉ hiện với `SUPER ADMIN`; hộp thoại chọn `APPROVED` hoặc `REJECTED` và nhập ghi chú tối đa 500 ký tự |
+| Duyệt | Nút duyệt chỉ hiện với `SUPER ADMIN`; ngăn kéo `JobApprovalDrawer` cho xem tin (mô tả đã lọc bằng `sanitizeRichText`) rồi duyệt hoặc từ chối. Từ chối bắt buộc nhập lý do, tối đa 500 ký tự, và nhà tuyển dụng thấy lý do này |
+| Hàng đợi chờ duyệt | Mở một tin đang chờ sẽ xếp các tin chờ duyệt của trang hiện tại vào hàng đợi (ảnh chụp, không đổi khi bảng tải lại). Duyệt xong tự sang tin kế, hết tin thì đóng; có nút Bỏ qua, và phím J/K chuyển tin khi tiêu điểm đang ở trong ngăn kéo. Tin đã quyết định mở riêng một mình |
 | Hiển thị kết quả | Cột "Duyệt" có huy hiệu theo trạng thái; ghi chú duyệt hiện dưới huy hiệu nếu có |
 | Lọc | Theo tên, trạng thái hoạt động, địa điểm, mức lương và trạng thái duyệt |
 
@@ -58,17 +59,19 @@ Dạng tin và các field duyệt (`approvalStatus`, `approvalNote`, `approvedBy
 | --- | --- |
 | Thao tác bị backend từ chối | Toast với thông điệp của backend hoặc thông điệp dự phòng |
 | `HR` muốn duyệt | Không có nút; backend cũng từ chối route duyệt |
-| Ghi chú quá 500 ký tự | Ô nhập giới hạn 500 ký tự |
+| Từ chối không có lý do | Nút xác nhận bị khóa tới khi nhập lý do; ô nhập giới hạn 500 ký tự |
+| Request duyệt lỗi | Toast báo lỗi, ngăn kéo giữ nguyên vị trí trong hàng đợi |
 
 ## Test cases
 
-Chưa có test cho hộp thoại duyệt, bảng tin quản trị và trang quản trị tin. Test của `getJobStatus` (nhãn "mới", "sắp hết hạn") nằm ở `src/features/job/utils/job-status.test.ts`.
+Hàng đợi duyệt có test ở `src/features/job/hooks/use-job.test.tsx`, ngăn kéo duyệt ở `src/features/job/components/job-approval-drawer.test.tsx`. Chưa có test cho bảng tin quản trị và trang quản trị tin. Test của `getJobStatus` (nhãn "mới", "sắp hết hạn") nằm ở `src/features/job/utils/job-status.test.ts`.
 
 ## Source code liên quan
 
 - [`src/app/[locale]/(dashboard)/admin/jobs/page.tsx`](../../src/app/[locale]/(dashboard)/admin/jobs/page.tsx): trang quản trị tin
 - [`src/features/job/components/job-table.tsx`](../../src/features/job/components/job-table.tsx): bảng tin, nút duyệt
-- [`src/features/job/components/job-approval-dialog.tsx`](../../src/features/job/components/job-approval-dialog.tsx): hộp thoại duyệt
+- [`src/features/job/components/job-approval-drawer.tsx`](../../src/features/job/components/job-approval-drawer.tsx): ngăn kéo duyệt
+- [`src/features/job/components/approval-status-badge.tsx`](../../src/features/job/components/approval-status-badge.tsx): huy hiệu trạng thái duyệt
 - [`src/features/job/components/job-drawer.tsx`](../../src/features/job/components/job-drawer.tsx), [`src/features/job/components/job-form.tsx`](../../src/features/job/components/job-form.tsx): đăng và sửa tin
 - [`src/features/job/hooks/use-job.ts`](../../src/features/job/hooks/use-job.ts): thao tác kèm toast
 - [`src/features/job/schemas/job.schema.ts`](../../src/features/job/schemas/job.schema.ts): kiểu và kiểm tra
