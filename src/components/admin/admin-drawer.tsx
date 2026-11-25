@@ -110,7 +110,7 @@ export function AdminDrawer({
       <SheetPortal>
         <SheetOverlay className="duration-slow" />
         <DialogPrimitive.Content
-          className={`fixed inset-y-0 right-0 z-modal flex h-[100dvh] w-full flex-col overflow-hidden bg-card shadow-elevation-3 outline-none duration-slow ease-standard data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right md:w-[90vw] md:rounded-l-xl ${SIZE[size]}`}
+          className={`fixed inset-y-0 left-0 z-modal flex h-[100dvh] w-full flex-col overflow-hidden bg-card shadow-elevation-3 outline-none duration-slow ease-standard data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left md:w-[90vw] md:rounded-r-xl ${SIZE[size]}`}
           onKeyDown={onKeyDown}
           onOpenAutoFocus={(event) => {
             event.preventDefault();
