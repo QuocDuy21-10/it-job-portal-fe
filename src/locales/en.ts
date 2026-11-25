@@ -838,7 +838,6 @@ export const en = {
       saved: "Changes saved.",
       error: "Something went wrong. Please try again.",
       refresh: "Refresh",
-      allSources: "All sources",
       openSource: "Open the original",
       tabs: { sources: "Sources", jobs: "Crawled jobs", failures: "Failures" },
       sources: {
@@ -946,7 +945,6 @@ export const en = {
         filtered: "Filtered out",
         filteredHint:
           "Not IT jobs, or outside Vietnam and not remote. These are not errors.",
-        allReasons: "All reasons",
         reasons: {
           FETCH_ERROR: "Page could not be read",
           NOT_FOUND: "Page not found",

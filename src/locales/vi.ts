@@ -845,7 +845,6 @@ export const vi = {
       saved: "Đã lưu thay đổi.",
       error: "Có lỗi xảy ra. Vui lòng thử lại.",
       refresh: "Tải lại",
-      allSources: "Tất cả nguồn",
       openSource: "Mở link gốc",
       tabs: { sources: "Nguồn", jobs: "Tin đã crawl", failures: "Tin lỗi" },
       sources: {
@@ -957,7 +956,6 @@ export const vi = {
         filtered: "Bị lọc",
         filteredHint:
           "Tin không phải IT hoặc ngoài Việt Nam và không làm từ xa. Đây không phải lỗi.",
-        allReasons: "Tất cả lý do",
         reasons: {
           FETCH_ERROR: "Lỗi tải trang",
           NOT_FOUND: "Không tìm thấy trang",

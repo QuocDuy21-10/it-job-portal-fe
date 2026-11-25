@@ -14,6 +14,10 @@ const mockFailure = {
   retryAt: "2026-11-24T00:00:00Z",
 };
 
+jest.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(window.location.search),
+}));
+jest.mock("@/hooks/use-media-query", () => ({ useMediaQuery: () => true }));
 jest.mock("sonner", () => ({
   toast: { success: jest.fn(), error: jest.fn() },
 }));
@@ -27,6 +31,9 @@ jest.mock("../redux/crawl.api", () => ({
     return {
       isLoading: false,
       isError: false,
+      isFetching: false,
+      refetch: jest.fn(),
+      currentData: undefined,
       data: {
         data: {
           result: [mockFailure],
@@ -46,6 +53,7 @@ const K = "adminPages.crawl.failures";
 describe("FailuresTab", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.history.replaceState(null, "", "/admin/crawl?tab=failures");
     mockRetry.mockResolvedValue({});
   });
 
@@ -55,20 +63,26 @@ describe("FailuresTab", () => {
     expect(mockQuery).toHaveBeenCalledWith({
       page: 1,
       limit: 20,
-      sourceKey: "",
-      reason: undefined,
       group: "error",
+      sourceKey: undefined,
+      reason: undefined,
+      from: undefined,
+      to: undefined,
     });
     expect(screen.getByText("2140001")).toBeInTheDocument();
     expect(screen.getByText(/HTTP 500/)).toBeInTheDocument();
   });
 
-  it("switches to filtered jobs", () => {
-    render(<FailuresTab />);
-    fireEvent.click(screen.getByText(`${K}.filtered`));
+  it("switches to filtered jobs and explains them", () => {
+    const { rerender } = render(<FailuresTab />);
+    fireEvent.mouseDown(screen.getByRole("tab", { name: `${K}.filtered` }));
+    rerender(<FailuresTab />);
+
     expect(mockQuery).toHaveBeenLastCalledWith(
       expect.objectContaining({ group: "filtered", reason: undefined })
     );
+    expect(screen.getByText(`${K}.filteredHint`)).toBeInTheDocument();
+    expect(window.location.search).toBe("?tab=failures&state=filtered");
   });
 
   it("retries one job", async () => {
