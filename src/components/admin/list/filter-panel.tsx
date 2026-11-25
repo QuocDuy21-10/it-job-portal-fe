@@ -188,7 +188,9 @@ function PanelBody({
 
   return (
     <>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
+      {/* macOS hides scrollbars: the faded edge shows there is more below. It sits on the bottom
+          padding at the end, and is off while an inner list hangs past that padding. */}
+      <div className="min-h-0 flex-1 scroll-pb-8 overflow-y-auto overscroll-contain p-4 pb-8 [mask-image:linear-gradient(to_bottom,black_calc(100%-32px),transparent)] [&:has([data-escape-scope])]:[mask-image:none]">
         <div
           key={resets}
           className="grid grid-cols-1 items-start gap-4 md:grid-cols-2"
