@@ -118,9 +118,6 @@ export function CrawledJobsTab() {
             value={keyword}
             onSearch={withReset(setKeyword)}
             placeholder={t("adminPages.crawl.jobs.searchPlaceholder")}
-            debounceDelay={500}
-            showClearButton
-            width="full"
           />
         </div>
         <SourceFilter value={sourceKey} onChange={withReset(setSourceKey)} />

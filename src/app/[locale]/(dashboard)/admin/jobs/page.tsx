@@ -279,9 +279,6 @@ export default function JobsPage() {
               value={searchQuery}
               onSearch={handleSearchChange}
               placeholder={t("adminPages.jobs.searchPlaceholder")}
-              debounceDelay={500}
-              showClearButton
-              width="full"
             />
           </div>
 

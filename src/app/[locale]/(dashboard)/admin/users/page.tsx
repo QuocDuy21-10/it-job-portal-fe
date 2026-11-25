@@ -227,9 +227,6 @@ export default function UsersPage() {
               value={searchQuery}
               onSearch={handleSearchChange}
               placeholder={t("adminPages.users.searchPlaceholder")}
-              debounceDelay={500}
-              showClearButton
-              width="full"
             />
           </div>
 

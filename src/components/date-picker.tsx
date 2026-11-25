@@ -35,14 +35,9 @@ export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
   ) {
     const locale = useLocale();
     const [open, setOpen] = React.useState(false);
-    const [date, setDate] = React.useState<Date | undefined>(() => {
-      if (!value) return undefined;
-      if (value instanceof Date) return value;
-      return new Date(value);
-    });
+    const date = value ? new Date(value) : undefined;
 
     const handleDateChange = (newDate: Date | undefined) => {
-      setDate(newDate);
       onChange(newDate);
       setOpen(false);
     };

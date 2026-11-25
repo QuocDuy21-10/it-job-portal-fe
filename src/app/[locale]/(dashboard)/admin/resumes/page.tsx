@@ -253,7 +253,6 @@ export default function ResumesPage() {
             placeholder={t("adminPages.resumes.searchPlaceholder")}
             onSearch={handleSearchChange}
             value={searchQuery}
-            width="full"
           />
 
           {/* Row 2: 4 filters + Sort in grid */}

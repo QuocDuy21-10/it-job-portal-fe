@@ -29,6 +29,10 @@ interface ComboboxProps extends Omit<
   placeholder?: string;
   searchPlaceholder?: string;
   emptyText?: string;
+  // Set it when the options come from a server search: local filtering is turned off.
+  onSearchChange?: (search: string) => void;
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
 export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
@@ -40,6 +44,9 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
       placeholder = "Select an option",
       searchPlaceholder = "Search...",
       emptyText = "No results found.",
+      onSearchChange,
+      isLoading,
+      loadingText = "Loading...",
       className,
       ...triggerProps
     },
@@ -51,7 +58,14 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     )?.label;
 
     return (
-      <Popover open={open} onOpenChange={setOpen} modal>
+      <Popover
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next) onSearchChange?.("");
+        }}
+        modal
+      >
         <PopoverTrigger asChild>
           <Button
             ref={ref}
@@ -73,6 +87,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
           {/* Match the label only: ids are hex and would match short searches. */}
           <Command
+            shouldFilter={!onSearchChange}
             filter={(_value, search, keywords) =>
               normalizeSearchText(keywords?.[0] ?? "").includes(
                 normalizeSearchText(search)
@@ -81,9 +96,12 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                 : 0
             }
           >
-            <CommandInput placeholder={searchPlaceholder} />
+            <CommandInput
+              placeholder={searchPlaceholder}
+              onValueChange={onSearchChange}
+            />
             <CommandList>
-              <CommandEmpty>{emptyText}</CommandEmpty>
+              <CommandEmpty>{isLoading ? loadingText : emptyText}</CommandEmpty>
               <CommandGroup>
                 {options.map((option) => (
                   <CommandItem
@@ -92,6 +110,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                     keywords={[option.label]}
                     onSelect={() => {
                       onChange(option.value);
+                      onSearchChange?.("");
                       setOpen(false);
                     }}
                   >
