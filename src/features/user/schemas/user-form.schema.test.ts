@@ -1,4 +1,4 @@
-import { updateUserFormSchema } from "./user.schema";
+import { updateUserFormSchema } from "./user-form.schema";
 
 describe("updateUserFormSchema", () => {
   it("accepts valid enum role strings and company._id", () => {
@@ -26,7 +26,7 @@ describe("updateUserFormSchema", () => {
 
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      "Role must be SUPER ADMIN, HR, or NORMAL USER"
+      "adminPages.users.form.errors.role"
     );
   });
 
@@ -43,7 +43,7 @@ describe("updateUserFormSchema", () => {
       result.error?.issues.some(
         (issue) =>
           issue.path.join(".") === "company._id" &&
-          issue.message === "Company is required for HR role"
+          issue.message === "adminPages.users.form.errors.company"
       )
     ).toBe(true);
   });
@@ -65,7 +65,7 @@ describe("updateUserFormSchema", () => {
       result.error?.issues.some(
         (issue) =>
           issue.path.join(".") === "company._id" &&
-          issue.message === "Company ID must be a valid MongoDB ObjectId"
+          issue.message === "adminPages.users.form.errors.company"
       )
     ).toBe(true);
   });

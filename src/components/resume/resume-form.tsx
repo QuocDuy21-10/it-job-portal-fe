@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -12,187 +11,132 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  ResumeSchema,
-  CreateResumeFormData,
-  ResumeFormData,
-} from "@/features/resume/schemas/resume.schema";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  UpdateResumeFormData,
+  type Resume,
+} from "@/features/resume/schemas/resume.schema";
+import { useI18n } from "@/hooks/use-i18n";
+import { formatDateTime } from "@/lib/utils/locale-formatters";
+import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
+
+const STATUSES = ["PENDING", "REVIEWING", "APPROVED", "REJECTED"] as const;
 
 interface ResumeFormProps {
-  initialData?: Partial<ResumeFormData>;
-  onSubmit: (data: ResumeFormData) => Promise<boolean>;
+  formId: string;
+  resume: Resume;
+  onSubmit: (data: UpdateResumeFormData) => Promise<boolean>;
   isLoading?: boolean;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
 export function ResumeForm({
-  initialData,
+  formId,
+  resume,
   onSubmit,
   isLoading,
+  onDirtyChange,
 }: ResumeFormProps) {
-  const form = useForm<ResumeFormData>({
-    resolver: zodResolver(ResumeSchema),
-    defaultValues: {
-      email: initialData?.email || "",
-      userId: initialData?.userId || "",
-      url: initialData?.url || "",
-      status: initialData?.status || "PENDING",
-      // companyId: initialData?.companyId || undefined,
-      // jobId: initialData?.jobId || undefined,
-      histories: initialData?.histories || [],
-    },
-    mode: "onChange",
+  const { t } = useI18n();
+  const form = useForm<UpdateResumeFormData>({
+    resolver: zodResolver(UpdateResumeFormData),
+    defaultValues: { status: resume.status },
   });
+  const { isDirty } = form.formState;
+  const histories = resume.histories ?? [];
 
   useEffect(() => {
-    if (initialData) {
-      form.reset({
-        email: initialData.email || "",
-        userId: initialData.userId || "",
-        url: initialData.url || "",
-        status: initialData.status || "PENDING",
-        // companyId: initialData.companyId,
-        // jobId: initialData.jobId,
-        histories: initialData.histories || [],
-      });
-    }
-  }, [initialData, form]);
+    onDirtyChange?.(isDirty);
+    return () => onDirtyChange?.(false);
+  }, [isDirty, onDirtyChange]);
 
-  const handleLocalSubmit = async (values: ResumeFormData) => {
-    const payload: ResumeFormData = {
-      email: form.getValues("email"),
-      userId: form.getValues("userId"),
-      url: form.getValues("url"),
-      status: values.status,
-      // companyId: form.getValues("companyId"),
-      // jobId: form.getValues("jobId"),
-      histories: form.getValues("histories") || [],
-    };
-
-    return await onSubmit(payload);
-  };
+  const statusLabel = (status: string) =>
+    t(`statisticsDashboard.statuses.${status}`);
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleLocalSubmit)}
-        className="space-y-6"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Read-only fields */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="userId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>User ID</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <div className="space-y-6">
+      <dl className="space-y-4">
+        <div className="space-y-1">
+          <dt className="text-muted-foreground">
+            {t("adminPages.resumes.form.email")}
+          </dt>
+          <dd className="break-all font-medium">{resume.email}</dd>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <dt className="text-muted-foreground">
+            {t("adminPages.resumes.form.resume")}
+          </dt>
+          <dd>
+            <a
+              href={`${API_BASE_URL_IMAGE}/${resume.url}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-sm text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {t("adminPages.resumes.table.viewResume")}
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </dd>
+        </div>
+      </dl>
+
+      <Form {...form}>
+        <form id={formId} onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
-            name="url"
+            name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CV URL</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
+                <FormLabel>{t("adminPages.resumes.form.status")}</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={isLoading}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {STATUSES.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {statusLabel(status)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </form>
+      </Form>
 
-          {/* <FormField
-            control={form.control}
-            name="jobId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Job ID</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-        </div>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="companyId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company ID</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Editable: status only */}
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                disabled={isLoading}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="REVIEWING">Reviewing</SelectItem>
-                  <SelectItem value="APPROVED">Approved</SelectItem>
-                  <SelectItem value="REJECTED">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* </div>  */}
-
-        <div className="flex justify-end gap-2">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Update Status"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+      <section className="space-y-3 border-t border-border pt-6">
+        <h3 className="text-h4">{t("adminPages.resumes.form.history")}</h3>
+        {histories.length === 0 ? (
+          <p className="text-muted-foreground">
+            {t("adminPages.resumes.form.noHistory")}
+          </p>
+        ) : (
+          <ol className="divide-y divide-border">
+            {histories.map((entry, index) => (
+              <li key={index} className="py-3">
+                <p className="font-medium">{statusLabel(entry.status)}</p>
+                <p className="text-muted-foreground">
+                  {formatDateTime(entry.updatedAt)} · {entry.updatedBy?.email}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+    </div>
   );
 }

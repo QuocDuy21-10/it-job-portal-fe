@@ -2,78 +2,68 @@ import { z } from "zod";
 import { mongoIdStringSchema } from "@/lib/utils/mongo-id";
 import { ROLES, ROLE_VALUES } from "@/shared/constants/role-values";
 
-const UserCompanySchema = z
-  .object({
-    _id: mongoIdStringSchema({
-      requiredMessage: "Company is required",
-      invalidMessage: "Company ID must be a valid MongoDB ObjectId",
-    }).optional(),
-    name: z.string().optional(),
-    logo: z.string().optional(),
-  })
-  .optional();
+export type UserErrorMessages = Record<
+  "name" | "email" | "password" | "role" | "company",
+  string
+>;
 
-const UserRoleSchema = z.enum(ROLE_VALUES, {
-  error: "Role must be SUPER ADMIN, HR, or NORMAL USER",
-});
+const DEFAULT_ERRORS: UserErrorMessages = {
+  name: "Name must be at least 2 characters",
+  email: "Invalid email address",
+  password: "Password must be at least 6 characters",
+  role: "Role must be SUPER ADMIN, HR, or NORMAL USER",
+  company: "Company is required for HR role",
+};
 
-const createUserSchemaBase = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  company: UserCompanySchema,
-  role: UserRoleSchema,
-});
+const userRoleSchema = (e: UserErrorMessages) =>
+  z.enum(ROLE_VALUES, { error: e.role });
 
-const updateUserSchemaBase = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .optional()
-    .or(z.literal("")),
-  company: UserCompanySchema,
-  role: UserRoleSchema,
-});
-
-const withHrCompanyRequirement = <
-  TSchema extends typeof createUserSchemaBase | typeof updateUserSchemaBase,
->(
-  schema: TSchema
-) =>
-  schema.superRefine((data, ctx) => {
-    if (data.role !== ROLES.HR) {
-      return;
-    }
-
-    if (!data.company?._id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["company", "_id"],
-        message: "Company is required for HR role",
-      });
-    }
+export const createUserSchemaBase = (e: UserErrorMessages = DEFAULT_ERRORS) =>
+  z.object({
+    name: z.string().min(2, e.name),
+    email: z.string().email(e.email),
+    password: z.string().min(6, e.password),
+    company: z
+      .object({
+        _id: mongoIdStringSchema({
+          requiredMessage: e.company,
+          invalidMessage: e.company,
+        }).optional(),
+        name: z.string().optional(),
+        logo: z.string().optional(),
+      })
+      .optional(),
+    role: userRoleSchema(e),
   });
 
-// Schema cho Create User
-export const CreateUserSchema = createUserSchemaBase;
-export const createUserFormSchema = () =>
-  withHrCompanyRequirement(createUserSchemaBase);
+export const updateUserSchemaBase = (e: UserErrorMessages = DEFAULT_ERRORS) =>
+  createUserSchemaBase(e).extend({
+    password: z.string().min(6, e.password).optional().or(z.literal("")),
+  });
 
-// Schema cho Update User (password là optional)
-export const UpdateUserSchema = updateUserSchemaBase;
-export const updateUserFormSchema = () =>
-  withHrCompanyRequirement(updateUserSchemaBase);
+export const requireHrCompany =
+  (e: UserErrorMessages = DEFAULT_ERRORS) =>
+  (
+    data: { role: string; company?: { _id?: string } },
+    ctx: z.RefinementCtx
+  ) => {
+    if (data.role === ROLES.HR && !data.company?._id) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["company", "_id"],
+        message: e.company,
+      });
+    }
+  };
 
-// Giữ lại UserSchema cũ để backward compatible
-export const UserSchema = CreateUserSchema;
+export const CreateUserSchema = createUserSchemaBase();
+export const UpdateUserSchema = updateUserSchemaBase();
 
 export const UserEntitySchema = CreateUserSchema.extend({
   _id: z.string(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
-  role: UserRoleSchema,
+  role: userRoleSchema(DEFAULT_ERRORS),
   savedJobs: z.array(z.string()).optional().default([]),
   jobFavorites: z.array(z.string()).optional().default([]),
   companyFollowing: z.array(z.string()).optional().default([]),

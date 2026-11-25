@@ -52,6 +52,7 @@ const HrChatAssistant = ({ isOpen, onOpenChange }: HrChatAssistantProps) => {
         <Sheet open={isOpen} onOpenChange={onOpenChange}>
           <SheetContent
             side="right"
+            closeLabel={t("common.close")}
             className="h-dvh max-h-dvh w-full max-w-none overflow-hidden border-0 p-0 sm:max-w-md [&>button]:hidden"
           >
             <SheetHeader className="sr-only">

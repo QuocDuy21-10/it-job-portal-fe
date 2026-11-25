@@ -3,6 +3,7 @@ import { standaloneMessages } from "./standalone";
 export const en = {
   common: {
     cancel: "Cancel",
+    close: "Close",
     view: "View",
     collapse: "Collapse",
     showMore: "Show more",
@@ -960,9 +961,6 @@ export const en = {
       saved: "Changes saved. The public pages update within about a minute.",
       error: "Something went wrong. Please try again.",
       tabs: { banner: "Banner", legal: "Legal texts" },
-      unsavedTitle: "Discard unsaved changes?",
-      unsavedDescription: "Your latest edits are not saved and will be lost.",
-      discard: "Discard",
       banner: {
         hint: "JPG, PNG or WebP, up to 5 MB. A wide image of 1920 px or more works best.",
         upload: "Upload image",
@@ -1031,7 +1029,17 @@ export const en = {
       metaDescription:
         "Track recruiting efficiency and application processing progress",
     },
+    companyPicker: {
+      label: "Company",
+      placeholder: "Choose a company",
+      search: "Search companies...",
+      empty: "No company found",
+    },
+    drawer: { optional: "(optional)", saveChanges: "Save changes" },
     shared: {
+      unsavedTitle: "Discard unsaved changes?",
+      unsavedDescription: "Your latest edits are not saved and will be lost.",
+      discard: "Discard",
       number: "No.",
       clear: "Clear",
       deleteSelected: "Delete selected",
@@ -1069,6 +1077,29 @@ export const en = {
       resumes: "resumes",
     },
     users: {
+      form: {
+        createTitle: "Add user",
+        editTitle: "Edit user",
+        createDescription: "Create an account and assign a role.",
+        create: "Create user",
+        name: "Full name",
+        namePlaceholder: "e.g. John Doe",
+        email: "Email",
+        emailPlaceholder: "e.g. name@company.com",
+        password: "Password",
+        passwordHint: "At least 6 characters",
+        showPassword: "Show password",
+        hidePassword: "Hide password",
+        role: "Role",
+        rolePlaceholder: "Choose a role",
+        errors: {
+          name: "Enter a name of at least 2 characters",
+          email: "Enter a valid email, e.g. name@company.com",
+          password: "Enter a password of at least 6 characters",
+          role: "Choose a role",
+          company: "Choose a company for the HR user",
+        },
+      },
       title: "Users Management",
       description: "Manage user profiles, roles and permissions",
       addButton: "Add user",
@@ -1195,6 +1226,15 @@ export const en = {
       },
     },
     resumes: {
+      form: {
+        title: "Application",
+        email: "Candidate email",
+        resume: "CV",
+        status: "Status",
+        history: "Status history",
+        noHistory: "No status change yet.",
+        submit: "Update status",
+      },
       title: "Applications",
       description: "Manage candidate resumes and track their status",
       searchPlaceholder: "Search by email...",

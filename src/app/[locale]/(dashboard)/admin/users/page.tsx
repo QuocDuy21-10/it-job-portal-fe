@@ -18,7 +18,7 @@ import { useUserOperations } from "@/hooks/use-user";
 import { useTableSelection } from "@/hooks/use-table-selection";
 import { SearchBar } from "@/components/ui/search-bar";
 import { UserTable } from "@/components/user/user-table";
-import { UserDialog } from "@/components/user/user-dialog";
+import { UserDrawer } from "@/components/user/user-drawer";
 import { LockUserDialog } from "@/components/user/lock-user-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
@@ -323,8 +323,8 @@ export default function UsersPage() {
         />
       )}
 
-      {/* User Dialog */}
-      <UserDialog
+      {/* User drawer */}
+      <UserDrawer
         open={isDialogOpen}
         onOpenChange={handleCloseDialog}
         editingUser={editingUser}

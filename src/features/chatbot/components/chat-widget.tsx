@@ -198,6 +198,7 @@ const ChatWidget = () => {
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetContent
             side="bottom"
+            closeLabel={t("common.close")}
             className="fixed inset-0 h-full max-h-full w-full overflow-hidden border-0 p-0 sm:max-w-none [&>button]:hidden"
           >
             <SheetHeader className="sr-only">

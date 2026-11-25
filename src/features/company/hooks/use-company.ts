@@ -31,10 +31,6 @@ export function useCompanyOperations() {
   // Close dialog và reset state
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    // Delay reset để tránh flash UI
-    setTimeout(() => {
-      setEditingCompany(null);
-    }, 200);
   };
 
   // Handle submit (create or update)

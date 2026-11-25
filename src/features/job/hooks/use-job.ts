@@ -36,10 +36,6 @@ export function useJobOperations() {
   // Close dialog and reset state
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    // Delay reset to avoid UI flash
-    setTimeout(() => {
-      setEditingJob(null);
-    }, 200);
   };
 
   // Handle submit (create or update)
