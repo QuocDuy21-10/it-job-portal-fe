@@ -45,7 +45,7 @@ Sơ đồ rút gọn, không theo đúng ký pháp UML. Quản trị viên cũng
 | Quản lý người dùng: thêm, sửa, khóa, xóa | `/admin/users` | [Trang quản trị](../../04-features/admin-dashboard.md) |
 | Quản lý công ty: thêm, sửa, xóa | `/admin/companies` | [Trang quản trị](../../04-features/admin-dashboard.md) |
 | Quản lý tin tuyển dụng | `/admin/jobs` | [Duyệt tin tuyển dụng](../../04-features/job-approval.md) |
-| Duyệt hoặc từ chối tin | Nút duyệt ở bảng tin | [Trạng thái duyệt tin](../state-machines/job-approval-status.md) |
+| Duyệt hoặc từ chối tin | Nút duyệt ở bảng tin mở ngăn kéo duyệt với hàng đợi các tin chờ duyệt; từ chối cần lý do | [Trạng thái duyệt tin](../state-machines/job-approval-status.md) |
 | Quản lý hồ sơ, đổi trạng thái | `/admin/resumes` | [Trạng thái hồ sơ](../state-machines/application-status.md) |
 | Xóa hàng loạt | Bảng người dùng, công ty, tin, hồ sơ | [Trang quản trị](../../04-features/admin-dashboard.md) |
 | Cập nhật thông tin, đổi mật khẩu | `/admin/personal-info`, `/admin/change-password` | [Trang quản trị](../../04-features/admin-dashboard.md) |
