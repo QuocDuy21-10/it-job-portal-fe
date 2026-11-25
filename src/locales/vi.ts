@@ -974,9 +974,6 @@ export const vi = {
       saved: "Đã lưu thay đổi. Trang công khai cập nhật sau khoảng 1 phút.",
       error: "Có lỗi xảy ra. Vui lòng thử lại.",
       tabs: { banner: "Banner", legal: "Văn bản" },
-      unsavedTitle: "Bỏ thay đổi chưa lưu?",
-      unsavedDescription: "Nội dung bạn vừa sửa chưa được lưu và sẽ mất.",
-      discard: "Bỏ thay đổi",
       banner: {
         hint: "JPG, PNG hoặc WebP, tối đa 5 MB, nên dùng ảnh ngang rộng từ 1920 px.",
         upload: "Tải ảnh lên",
@@ -1043,7 +1040,11 @@ export const vi = {
       metaTitle: "Bảng điều khiển HR | IT Dev Link",
       metaDescription: "Theo dõi hiệu quả tuyển dụng và tiến độ xử lý hồ sơ",
     },
+    drawer: { optional: "(không bắt buộc)", saveChanges: "Lưu thay đổi" },
     shared: {
+      unsavedTitle: "Bỏ thay đổi chưa lưu?",
+      unsavedDescription: "Nội dung bạn vừa sửa chưa được lưu và sẽ mất.",
+      discard: "Bỏ thay đổi",
       number: "STT",
       clear: "Xóa",
       deleteSelected: "Xóa đã chọn",

@@ -82,16 +82,16 @@ export default function SiteContentPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {t("adminPages.siteContent.unsavedTitle")}
+              {t("adminPages.shared.unsavedTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("adminPages.siteContent.unsavedDescription")}
+              {t("adminPages.shared.unsavedDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={discard}>
-              {t("adminPages.siteContent.discard")}
+              {t("adminPages.shared.discard")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

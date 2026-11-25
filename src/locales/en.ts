@@ -961,9 +961,6 @@ export const en = {
       saved: "Changes saved. The public pages update within about a minute.",
       error: "Something went wrong. Please try again.",
       tabs: { banner: "Banner", legal: "Legal texts" },
-      unsavedTitle: "Discard unsaved changes?",
-      unsavedDescription: "Your latest edits are not saved and will be lost.",
-      discard: "Discard",
       banner: {
         hint: "JPG, PNG or WebP, up to 5 MB. A wide image of 1920 px or more works best.",
         upload: "Upload image",
@@ -1032,7 +1029,11 @@ export const en = {
       metaDescription:
         "Track recruiting efficiency and application processing progress",
     },
+    drawer: { optional: "(optional)", saveChanges: "Save changes" },
     shared: {
+      unsavedTitle: "Discard unsaved changes?",
+      unsavedDescription: "Your latest edits are not saved and will be lost.",
+      discard: "Discard",
       number: "No.",
       clear: "Clear",
       deleteSelected: "Delete selected",
