@@ -1,4 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  RESUME_STATUSES,
+  UpdateResumeFormData,
+} from "@/features/resume/schemas/resume.schema";
 import { ResumeForm } from "./resume-form";
 
 jest.mock("@/hooks/use-i18n", () => ({
@@ -40,4 +44,11 @@ it("submits only the status and shows the history", async () => {
   await waitFor(() =>
     expect(onSubmit.mock.calls[0][0]).toEqual({ status: "REVIEWING" })
   );
+});
+
+it("offers the interviewing status", () => {
+  expect(RESUME_STATUSES).toContain("INTERVIEWING");
+  expect(UpdateResumeFormData.parse({ status: "INTERVIEWING" })).toEqual({
+    status: "INTERVIEWING",
+  });
 });

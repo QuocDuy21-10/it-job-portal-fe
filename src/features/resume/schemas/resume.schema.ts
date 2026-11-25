@@ -1,15 +1,23 @@
 import { z } from "zod";
 
+export const RESUME_STATUSES = [
+  "PENDING",
+  "REVIEWING",
+  "INTERVIEWING",
+  "APPROVED",
+  "REJECTED",
+] as const;
+
 export const ResumeSchema = z.object({
   email: z.string().email("Invalid email address"),
   userId: z.string().min(1, "User ID is required"),
   url: z.string(),
-  status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
+  status: z.enum(RESUME_STATUSES),
   companyId: z.string().min(1, "Company ID is required").optional(),
   jobId: z.string().min(1, "Job ID is required").optional(),
   histories: z.array(
     z.object({
-      status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
+      status: z.enum(RESUME_STATUSES),
       updatedAt: z.string(),
       updatedBy: z.object({
         _id: z.string(),
@@ -69,7 +77,7 @@ export const CreateResumeFormData = z.object({
 });
 
 export const UpdateResumeFormData = z.object({
-  status: z.enum(["PENDING", "REVIEWING", "APPROVED", "REJECTED"]),
+  status: z.enum(RESUME_STATUSES),
 });
 
 export const ResumeAppliedJob = z.object({

@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NoResults } from "@/components/admin/list/no-results";
 import { Resume } from "@/features/resume/schemas/resume.schema";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
 import { Access } from "@/components/access";
@@ -31,6 +32,7 @@ interface ResumeTableProps {
   isLoading?: boolean;
   onEdit: (resume: Resume) => void;
   onDelete: (id: string) => void;
+  onClearFilters?: () => void;
   currentPage: number;
   pageSize: number;
   selectedIds: Set<string>;
@@ -45,6 +47,7 @@ export function ResumeTable({
   isLoading,
   onEdit,
   onDelete,
+  onClearFilters,
   currentPage,
   pageSize,
   selectedIds,
@@ -62,7 +65,7 @@ export function ResumeTable({
   return (
     <Access action={EAction.READ} subject="Resume">
       <TooltipProvider>
-        <div className="admin-card">
+        <div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -95,17 +98,21 @@ export function ResumeTable({
               {resumes.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={11} className="py-12">
-                    <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
-                      <FileText className="h-12 w-12 text-gray-300" />
-                      <div className="text-center">
-                        <p className="font-medium text-gray-900 dark:text-gray-100">
-                          {t("adminPages.resumes.table.emptyTitle")}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          {t("adminPages.resumes.table.emptyDescription")}
-                        </p>
+                    {onClearFilters ? (
+                      <NoResults onClear={onClearFilters} />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
+                        <FileText className="h-10 w-10" aria-hidden="true" />
+                        <div className="text-center">
+                          <p className="font-medium text-foreground">
+                            {t("adminPages.resumes.table.emptyTitle")}
+                          </p>
+                          <p className="mt-1 text-sm">
+                            {t("adminPages.resumes.table.emptyDescription")}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -171,6 +178,7 @@ function ResumeTableRow({
       return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
     if (status === "REVIEWING")
       return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
+    if (status === "INTERVIEWING") return "bg-warning-bg text-warning";
     if (status === "PENDING")
       return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
     return "bg-gray-100 text-gray-700";
@@ -339,7 +347,7 @@ function ResumeTableSkeleton() {
   const { t } = useI18n();
 
   return (
-    <div className="admin-card">
+    <div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -361,7 +369,7 @@ function ResumeTableSkeleton() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.from({ length: 5 }).map((_, index) => (
+          {Array.from({ length: 8 }).map((_, index) => (
             <TableRow key={index}>
               <TableCell>
                 <Skeleton className="h-4 w-4" />
