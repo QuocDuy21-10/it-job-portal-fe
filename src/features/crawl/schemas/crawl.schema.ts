@@ -1,3 +1,6 @@
+import { z } from "zod";
+import type { Translate } from "@/shared/types/i18n";
+
 export const DISPLAY_POLICIES = ["FULL", "LINK_ONLY", "HIDDEN"] as const;
 export type DisplayPolicy = (typeof DISPLAY_POLICIES)[number];
 
@@ -41,11 +44,29 @@ export type JobSource = {
   };
 };
 
-export type CreateJobSourceInput = {
-  provider: "GREENHOUSE" | "LEVER";
-  boardToken: string;
-  companyName: string;
-};
+const identity: Translate = (key) => key;
+const ERROR = "adminPages.crawl.addDialog.errors";
+
+export const createJobSourceSchema = (t: Translate = identity) =>
+  z.object({
+    provider: z.enum(["GREENHOUSE", "LEVER"], {
+      error: t(`${ERROR}.provider`),
+    }),
+    boardToken: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .regex(/^[a-z0-9-]{1,100}$/, t(`${ERROR}.boardToken`)),
+    companyName: z
+      .string()
+      .trim()
+      .min(1, t(`${ERROR}.companyName`))
+      .max(200, t(`${ERROR}.companyName`)),
+  });
+
+export type CreateJobSourceInput = z.infer<
+  ReturnType<typeof createJobSourceSchema>
+>;
 
 export type CrawlRun = {
   _id: string;

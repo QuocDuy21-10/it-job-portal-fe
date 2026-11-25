@@ -44,8 +44,8 @@ import {
   type DisplayPolicy,
   type JobSource,
 } from "../schemas/crawl.schema";
-import { AddSourceDialog } from "./add-source-dialog";
-import { SourceRunsDialog } from "./source-runs-dialog";
+import { AddSourceDrawer } from "./add-source-drawer";
+import { SourceRunsDrawer } from "./source-runs-drawer";
 
 const COUNT_COLUMNS = [
   "total",
@@ -75,6 +75,7 @@ export function SourcesTab() {
   const [syncSource] = useSyncJobSourceMutation();
   const [isAdding, setIsAdding] = useState(false);
   const [runsKey, setRunsKey] = useState<string | null>(null);
+  const [isRunsOpen, setIsRunsOpen] = useState(false);
   const [confirm, setConfirm] = useState<Confirm | null>(null);
 
   const sources = data?.data ?? [];
@@ -270,7 +271,10 @@ export function SourcesTab() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setRunsKey(source.key)}
+                          onClick={() => {
+                            setRunsKey(source.key);
+                            setIsRunsOpen(true);
+                          }}
                         >
                           {t("adminPages.crawl.sources.history")}
                         </Button>
@@ -301,11 +305,12 @@ export function SourcesTab() {
         </div>
       )}
 
-      <AddSourceDialog open={isAdding} onOpenChange={setIsAdding} />
+      <AddSourceDrawer open={isAdding} onOpenChange={setIsAdding} />
       {runsKey && (
-        <SourceRunsDialog
+        <SourceRunsDrawer
+          open={isRunsOpen}
           sourceKey={runsKey}
-          onClose={() => setRunsKey(null)}
+          onClose={() => setIsRunsOpen(false)}
         />
       )}
       <AlertDialog
