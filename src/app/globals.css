@@ -45,6 +45,7 @@
     --radius: 0.75rem;
     --text-tertiary: 215 16% 47%;
     --primary-hover: 224 76% 48%;
+    --text-link: 224 76% 48%;
     --primary-subtle: 214 100% 97%;
     --brand-secondary: 193 82% 31%;
     --highlight: 38 92% 50%;
@@ -117,6 +118,7 @@
     --chart-5: 262 83% 70%;
     --text-tertiary: 215 20% 65%;
     --primary-hover: 224 76% 48%;
+    --text-link: 213 94% 68%;
     --primary-subtle: 226 57% 21%;
     --brand-secondary: 188 86% 53%;
     --highlight: 43 96% 56%;

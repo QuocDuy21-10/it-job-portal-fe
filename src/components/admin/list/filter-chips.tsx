@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
 import type { Translate } from "@/shared/types/i18n";
+import { focusFilterButton } from "./focus-filter-button";
 import { parseDateRange } from "./list-params";
 import type { FilterField } from "./types";
 
@@ -28,11 +29,11 @@ export function FilterChips({ fields, filters, onChange, onClear }: Props) {
   };
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto px-4 pb-3 md:flex-wrap md:overflow-visible">
+    <div className="flex items-center gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] md:flex-wrap md:overflow-visible [&::-webkit-scrollbar]:hidden">
       {active.map((field) => (
         <span
           key={field.key}
-          className="inline-flex h-8 shrink-0 items-center rounded-full border border-primary/30 bg-primary-subtle pl-3 text-sm text-primary"
+          className="inline-flex h-8 shrink-0 items-center rounded-full border border-primary/30 bg-primary-subtle pl-3 text-sm text-link"
         >
           {field.type === "entity" ? (
             <EntityText field={field} value={filters[field.key]} />
@@ -42,9 +43,12 @@ export function FilterChips({ fields, filters, onChange, onClear }: Props) {
           <button
             type="button"
             aria-label={t("adminPages.filters.remove", { label: field.label })}
-            onClick={() => remove(field.key)}
+            onClick={(event) => {
+              focusFilterButton(event.currentTarget);
+              remove(field.key);
+            }}
             // The pseudo-element makes the touch target 44px without a taller chip.
-            className="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] md:after:hidden"
+            className="relative flex h-8 w-11 items-center justify-center rounded-full hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] md:w-8 md:after:hidden"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -54,7 +58,10 @@ export function FilterChips({ fields, filters, onChange, onClear }: Props) {
         type="button"
         variant="ghost"
         className="h-11 shrink-0 px-3 md:h-8"
-        onClick={onClear}
+        onClick={(event) => {
+          focusFilterButton(event.currentTarget);
+          onClear();
+        }}
       >
         {t("adminPages.filters.clearAll")}
       </Button>

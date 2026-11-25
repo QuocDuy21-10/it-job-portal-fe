@@ -131,7 +131,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
               }
             }}
             className={cn(
-              "flex min-h-[40px] flex-wrap items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-[invalid=true]:border-error",
+              "flex min-h-[44px] flex-wrap items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm md:min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-[invalid=true]:border-error",
               disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
               isOpen && "border-primary"
             )}
@@ -208,7 +208,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                         className={cn(
                           "flex w-full items-center gap-3 px-4 py-2.5 text-left transition",
                           value.includes(option.value)
-                            ? "bg-primary-subtle font-medium text-primary"
+                            ? "bg-primary-subtle font-medium text-link"
                             : "text-foreground hover:bg-muted"
                         )}
                       >

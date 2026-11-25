@@ -1165,6 +1165,11 @@ export const en = {
         admin: "Admins",
         locked: "Locked",
       },
+      roles: {
+        "NORMAL USER": "Candidate",
+        HR: "Recruiter",
+        "SUPER ADMIN": "Admin",
+      },
       filters: {
         verified: "Email verified",
         verifiedYes: "Verified",
@@ -1271,12 +1276,12 @@ export const en = {
         formOfWork: "Work type",
         skills: "Skills",
         salary: "Salary",
-        expiring: "Expiring soon",
+        expiring: "Deadline",
         expiring7: "Within 7 days",
         expiring30: "Within 30 days",
         salaryHigh: "Highest salary",
         salaryLow: "Lowest salary",
-        deadline: "Deadline soonest",
+        deadline: "Earliest deadline",
       },
       salaryRanges: {
         under10m: "Under 10 million",
@@ -1428,11 +1433,6 @@ export const en = {
       searchPlaceholder: "Search email, candidate name",
       tabs: {
         all: "All",
-        PENDING: "New",
-        REVIEWING: "Reviewing",
-        INTERVIEWING: "Interviewing",
-        APPROVED: "Passed",
-        REJECTED: "Not a fit",
       },
       filters: {
         job: "Job",

@@ -6,6 +6,7 @@ let mockIsDesktop = true;
 jest.mock("@/hooks/use-media-query", () => ({
   useMediaQuery: () => mockIsDesktop,
 }));
+jest.mock("next-intl", () => ({ useLocale: () => "vi" }));
 jest.mock("@/hooks/use-i18n", () => ({
   useI18n: () => ({
     t: (key: string, values?: object) =>
@@ -120,6 +121,16 @@ describe.each([true, false])("AdminFilterPanel (desktop: %s)", (isDesktop) => {
     setup();
     open();
     expect(screen.getByRole("dialog")).toHaveAccessibleName("button");
+  });
+
+  it("brings the custom dates into view", () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    setup();
+    open();
+    expect(scrollIntoView).not.toHaveBeenCalled();
+    fireEvent.click(button("custom"));
+    expect(scrollIntoView).toHaveBeenCalled();
   });
 
   it("sets a date preset", () => {

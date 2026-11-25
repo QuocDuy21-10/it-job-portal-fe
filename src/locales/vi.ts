@@ -1175,6 +1175,11 @@ export const vi = {
         admin: "Quản trị viên",
         locked: "Bị khóa",
       },
+      roles: {
+        "NORMAL USER": "Ứng viên",
+        HR: "Nhà tuyển dụng",
+        "SUPER ADMIN": "Quản trị viên",
+      },
       filters: {
         verified: "Xác thực email",
         verifiedYes: "Đã xác thực",
@@ -1281,12 +1286,12 @@ export const vi = {
         formOfWork: "Hình thức",
         skills: "Kỹ năng",
         salary: "Mức lương",
-        expiring: "Sắp hết hạn",
+        expiring: "Hạn nộp",
         expiring7: "Trong 7 ngày tới",
         expiring30: "Trong 30 ngày tới",
         salaryHigh: "Lương cao nhất",
         salaryLow: "Lương thấp nhất",
-        deadline: "Hạn nộp gần nhất",
+        deadline: "Hạn nộp sớm nhất",
       },
       salaryRanges: {
         under10m: "Dưới 10 triệu",
@@ -1312,7 +1317,7 @@ export const vi = {
         emptyTitle: "Chưa có việc làm",
         emptyDescription: "Không có tin nào trong mục này.",
         approved: "Đã duyệt",
-        rejected: "Từ chối",
+        rejected: "Bị từ chối",
         pending: "Chờ duyệt",
       },
       review: {
@@ -1438,11 +1443,6 @@ export const vi = {
       searchPlaceholder: "Tìm email, tên ứng viên",
       tabs: {
         all: "Tất cả",
-        PENDING: "Mới",
-        REVIEWING: "Đang xem",
-        INTERVIEWING: "Phỏng vấn",
-        APPROVED: "Đạt",
-        REJECTED: "Không phù hợp",
       },
       filters: {
         job: "Việc làm",

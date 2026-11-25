@@ -237,7 +237,9 @@ function UserTableRow({
   onToggleSelect,
 }: UserTableRowProps) {
   const { t, language } = useI18n();
-  const roleName = user.role || t("adminPages.users.table.unknownRole");
+  const roleName = user.role
+    ? t(`adminPages.users.roles.${user.role}`)
+    : t("adminPages.users.table.unknownRole");
 
   const formattedDate = user.createdAt
     ? formatLocaleDate(user.createdAt, language, {
@@ -297,7 +299,10 @@ function UserTableRow({
 
       {/* Role */}
       <TableCell>
-        <Badge variant={getRoleBadgeColor(roleName)} className="font-medium">
+        <Badge
+          variant={getRoleBadgeColor(user.role ?? "")}
+          className="font-medium"
+        >
           {roleName}
         </Badge>
       </TableCell>

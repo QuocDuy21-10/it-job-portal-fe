@@ -56,6 +56,11 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     const selectedLabel = options.find(
       (option) => option.value === value
     )?.label;
+    // cmdk loses its highlight when a server search replaces the options, so Enter would do nothing.
+    const [highlighted, setHighlighted] = React.useState("");
+    const active = options.some((option) => option.value === highlighted)
+      ? highlighted
+      : (options[0]?.value ?? "");
 
     return (
       <Popover
@@ -88,6 +93,10 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           {/* Match the label only: ids are hex and would match short searches. */}
           <Command
             shouldFilter={!onSearchChange}
+            {...(onSearchChange && {
+              value: active,
+              onValueChange: setHighlighted,
+            })}
             filter={(_value, search, keywords) =>
               normalizeSearchText(keywords?.[0] ?? "").includes(
                 normalizeSearchText(search)

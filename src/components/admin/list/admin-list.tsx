@@ -40,19 +40,29 @@ type AdminListProps = {
 
 /** One card: status tabs, search, filters, chips, and the page's own table. */
 export function AdminList(props: AdminListProps) {
-  const { config, values, onChange, hideToolbar } = props;
+  const { config, values, onChange, hideToolbar, total, isFetching } = props;
   const card = "rounded-lg border border-border bg-card";
+
+  // Rows deleted from the last page, or an old link: the page may be gone.
+  const lastPage = Math.max(1, Math.ceil((total ?? 0) / values.limit));
+  const isPastEnd =
+    total !== undefined && !isFetching && values.page > lastPage;
+  useEffect(() => {
+    if (isPastEnd) onChange({ page: lastPage });
+    // onChange is a new function on each render; it reads the live URL.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPastEnd, lastPage]);
 
   if (hideToolbar) {
     return (
-      <section className={card}>
+      <section data-admin-list="" className={card}>
         <ListBody {...props} />
       </section>
     );
   }
   if (!config.tabs) {
     return (
-      <section className={card}>
+      <section data-admin-list="" className={card}>
         <Toolbar {...props} />
         <ListBody {...props} />
       </section>
@@ -66,6 +76,7 @@ export function AdminList(props: AdminListProps) {
       // Arrow keys only move focus: selecting sends a request.
       activationMode="manual"
       onValueChange={(next) => onChange({ tab: next === ALL ? "" : next })}
+      data-admin-list=""
       className={card}
     >
       <StatusTabs tabs={config.tabs} active={tab} counts={props.counts} />
@@ -110,7 +121,7 @@ function StatusTabs({
           <TabsPrimitive.Trigger
             key={value || ALL}
             value={value || ALL}
-            className="flex h-12 shrink-0 items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:border-primary data-[state=active]:text-primary"
+            className="flex h-12 shrink-0 items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:border-primary data-[state=active]:text-link"
           >
             {label}
             {counts && (

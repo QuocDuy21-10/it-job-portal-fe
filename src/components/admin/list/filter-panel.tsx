@@ -66,6 +66,7 @@ export function AdminFilterPanel(props: Props) {
     <Button
       type="button"
       variant="outline"
+      data-filter-button=""
       className="h-11 shrink-0 gap-2 md:h-9"
       aria-label={
         count > 0 ? t("adminPages.filters.buttonActive", { count }) : undefined

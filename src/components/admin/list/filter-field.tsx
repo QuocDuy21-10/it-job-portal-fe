@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { Combobox } from "@/components/combo-box";
 import { DatePicker } from "@/components/date-picker";
@@ -149,7 +149,7 @@ function Toggles({
             type="button"
             aria-pressed={isOn(option.value)}
             onClick={() => onToggle(option.value)}
-            className="inline-flex h-11 items-center gap-1 rounded-full border border-input bg-background px-3 text-sm text-foreground transition-colors duration-fast hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-pressed:border-primary aria-pressed:bg-primary-subtle aria-pressed:text-primary md:h-8"
+            className="inline-flex h-11 items-center gap-1 rounded-full border border-input bg-background px-3 text-sm text-foreground transition-colors duration-fast hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-pressed:border-primary aria-pressed:bg-primary-subtle aria-pressed:text-link md:h-8"
           >
             {option.label}
             {isOn(option.value) && (
@@ -175,7 +175,17 @@ function DateField({
 }) {
   const { t } = useI18n();
   const [isCustom, setIsCustom] = useState(value.includes(".."));
+  const datesRef = useRef<HTMLDivElement>(null);
+  const wasCustom = useRef(isCustom);
   const { from, to } = (isCustom && parseDateRange(value)) || {};
+
+  // The pickers appear below the fold of the panel when it is already full.
+  useEffect(() => {
+    if (isCustom && !wasCustom.current) {
+      datesRef.current?.scrollIntoView?.({ block: "nearest" });
+    }
+    wasCustom.current = isCustom;
+  }, [isCustom]);
 
   const setRange = (nextFrom?: Date, nextTo?: Date) =>
     onChange(
@@ -200,22 +210,22 @@ function DateField({
         }}
       />
       {isCustom && (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div
+          ref={datesRef}
+          className="grid scroll-mb-4 grid-cols-1 gap-2 sm:grid-cols-2"
+        >
           <DatePicker
             value={from}
-            // A start after the end drops the end, so the range stays valid.
-            onChange={(date) =>
-              setRange(date, date && to && date > to ? undefined : to)
-            }
+            max={to}
+            onChange={(date) => setRange(date, to)}
             placeholder={t("adminPages.filters.from")}
             aria-label={`${label}: ${t("adminPages.filters.from")}`}
             className="h-11 md:h-10"
           />
           <DatePicker
             value={to}
-            onChange={(date) =>
-              setRange(date && from && from > date ? undefined : from, date)
-            }
+            min={from}
+            onChange={(date) => setRange(from, date)}
             placeholder={t("adminPages.filters.to")}
             aria-label={`${label}: ${t("adminPages.filters.to")}`}
             className="h-11 md:h-10"
@@ -254,7 +264,7 @@ function EntityField({
           <Button
             type="button"
             variant="link"
-            className="h-6 p-0 text-sm"
+            className="h-6 p-0 text-sm text-link"
             onClick={() => onChange("")}
           >
             {t("adminPages.filters.deselect")}

@@ -28,7 +28,7 @@ export function buildResumeListConfig(
       { value: "", label: t("adminPages.resumes.tabs.all") },
       ...RESUME_STATUSES.map((value) => ({
         value,
-        label: t(`adminPages.resumes.tabs.${value}`),
+        label: t(`statisticsDashboard.statuses.${value}`),
       })),
     ],
     fields: [
