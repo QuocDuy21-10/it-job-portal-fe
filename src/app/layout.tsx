@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
-import { Roboto } from "next/font/google";
+import { Be_Vietnam_Pro, Inter } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,11 +10,18 @@ import { CaslProvider } from "@/lib/casl/casl-provider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NonceProvider } from "@/contexts/nonce-context";
 
-const roboto = Roboto({
+const inter = Inter({
   subsets: ["latin", "vietnamese"],
   // One variable file covers every weight, including 600 for font-semibold.
-  weight: "variable",
-  variable: "--font-roboto",
+  variable: "--font-inter",
+  display: "swap",
+});
+
+// Heading font (DESIGN.md): static weights only, 600 and 700.
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["600", "700"],
+  variable: "--font-heading",
   display: "swap",
 });
 
@@ -29,7 +36,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${roboto.variable} font-sans flex min-h-screen flex-col`}
+        className={`${inter.variable} ${beVietnamPro.variable} font-sans flex min-h-screen flex-col`}
       >
         <ReduxProvider>
           <CaslProvider>
