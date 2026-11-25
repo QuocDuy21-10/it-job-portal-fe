@@ -3,6 +3,7 @@ import { standaloneMessages } from "./standalone";
 export const en = {
   common: {
     cancel: "Cancel",
+    close: "Close",
     view: "View",
     collapse: "Collapse",
     showMore: "Show more",

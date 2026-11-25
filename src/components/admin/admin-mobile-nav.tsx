@@ -45,7 +45,11 @@ export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-72 p-0">
+      <SheetContent
+        side="left"
+        className="w-72 p-0"
+        closeLabel={t("common.close")}
+      >
         <SheetHeader className="p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <SheetTitle className="flex items-center gap-2">

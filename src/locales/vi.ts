@@ -3,6 +3,7 @@ import { standaloneMessages } from "./standalone";
 export const vi = {
   common: {
     cancel: "Huỷ",
+    close: "Đóng",
     view: "Xem",
     collapse: "Thu gọn",
     showMore: "Xem thêm",

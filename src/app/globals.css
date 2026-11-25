@@ -57,6 +57,7 @@
     --info: 201 96% 32%;
     --info-bg: 204 100% 97%;
     --surface-brand-strong: 224 64% 33%;
+    --scrim: 222 47% 11% / 0.48;
     --accent-subtle: 48 100% 96%;
     --accent-subtle-foreground: 26 90% 37%;
     --surface-hero-dot: 213 27% 84%;
@@ -128,6 +129,7 @@
     --info: 198 93% 60%;
     --info-bg: 221 56% 14%;
     --surface-brand-strong: 226 57% 21%;
+    --scrim: 229 84% 5% / 0.72;
     --accent-subtle: 34 79% 9%;
     --accent-subtle-foreground: 43 96% 56%;
     --surface-hero-dot: 215 25% 27%;

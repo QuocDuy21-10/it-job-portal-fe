@@ -72,6 +72,7 @@ const config: Config = {
           foreground: "hsl(var(--accent-subtle-foreground))",
         },
         "surface-brand-strong": "hsl(var(--surface-brand-strong))",
+        scrim: "hsl(var(--scrim))",
         success: {
           DEFAULT: "hsl(var(--success))",
           bg: "hsl(var(--success-bg))",
