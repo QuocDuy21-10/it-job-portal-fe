@@ -1,28 +1,24 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { Plus, Filter, Users as UsersIcon, Trash2, X } from "lucide-react";
+import { Suspense, useState, useMemo, useCallback } from "react";
+import { Plus, Users as UsersIcon, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   useGetUsersQuery,
+  useGetUserCountsQuery,
   useBulkDeleteUsersMutation,
 } from "@/features/user/redux/user.api";
 import { useUserOperations } from "@/hooks/use-user";
 import { useTableSelection } from "@/hooks/use-table-selection";
-import { SearchBar } from "@/components/ui/search-bar";
 import { UserTable } from "@/components/user/user-table";
 import { UserDrawer } from "@/components/user/user-drawer";
 import { LockUserDialog } from "@/components/user/lock-user-dialog";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Pagination } from "@/components/pagination";
+import { AdminList } from "@/components/admin/list/admin-list";
+import type { UseListTotal } from "@/components/admin/list/types";
+import { useAdminListParams } from "@/components/admin/list/use-admin-list-params";
 import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { useI18n } from "@/hooks/use-i18n";
@@ -33,38 +29,40 @@ import {
   User,
 } from "@/features/user/schemas/user.schema";
 import { DesktopWarningBanner } from "@/components/admin/desktop-warning-banner";
-import { ROLE_VALUES } from "@/shared/constants/role-values";
+import { buildUserListConfig, toUserQuery } from "./list-config";
 
 export default function UsersPage() {
+  return (
+    <Suspense>
+      <UsersContent />
+    </Suspense>
+  );
+}
+
+const useUserTotal: UseListTotal = (values, skip) =>
+  useGetUsersQuery({ ...toUserQuery(values), page: 1, limit: 1 }, { skip })
+    .currentData?.data?.meta?.pagination.total;
+
+function UsersContent() {
   const { t } = useI18n();
-  // State Management
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRole, setSelectedRole] = useState<string>("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const config = useMemo(() => buildUserListConfig(t), [t]);
+  const {
+    values,
+    set,
+    clear: clearFilters,
+    hasFilters,
+  } = useAdminListParams(config);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
 
-  // Construct filter query dynamically
-  const filter = useMemo(() => {
-    const filters: string[] = [];
-
-    if (searchQuery) {
-      filters.push(`name=/${searchQuery}/i`);
-    }
-
-    if (selectedRole && selectedRole !== "all") {
-      filters.push(`role=${selectedRole}`);
-    }
-
-    return filters.join("&");
-  }, [searchQuery, selectedRole]);
-
-  // Fetch users với RTK Query
-  const { data: usersData, isLoading } = useGetUsersQuery({
-    page: currentPage,
-    limit: pageSize,
-    filter,
-  });
+  const {
+    data: usersData,
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useGetUsersQuery(toUserQuery(values));
+  const { filter, keyword } = toUserQuery({ ...values, tab: "" });
+  const { data: countsData } = useGetUserCountsQuery({ filter, keyword });
 
   const {
     isDialogOpen,
@@ -109,42 +107,6 @@ export default function UsersPage() {
     selectedCount === 1
       ? t("adminPages.resources.user")
       : t("adminPages.resources.users");
-
-  // Optimized handlers with useCallback
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      setSearchQuery(value);
-      setCurrentPage(1);
-      clear();
-    },
-    [clear]
-  );
-
-  const handleRoleChange = useCallback(
-    (value: string) => {
-      setSelectedRole(value);
-      setCurrentPage(1);
-      clear();
-    },
-    [clear]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      setCurrentPage(page);
-      clear();
-    },
-    [clear]
-  );
-
-  const handlePageSizeChange = useCallback(
-    (size: number) => {
-      setPageSize(size);
-      setCurrentPage(1);
-      clear();
-    },
-    [clear]
-  );
 
   const handleBulkDelete = useCallback(async () => {
     try {
@@ -218,107 +180,86 @@ export default function UsersPage() {
 
       <DesktopWarningBanner />
 
-      {/* Filters Section */}
-      <div className="admin-card p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search Bar */}
-          <div className="flex-1">
-            <SearchBar
-              value={searchQuery}
-              onSearch={handleSearchChange}
-              placeholder={t("adminPages.users.searchPlaceholder")}
-            />
-          </div>
-
-          {/* Role Filter */}
-          <div className="w-full sm:w-48">
-            <Select value={selectedRole} onValueChange={handleRoleChange}>
-              <SelectTrigger className="w-full bg-white dark:bg-gray-900">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-400" />
-                  <SelectValue
-                    placeholder={t("adminPages.users.roleFilterPlaceholder")}
-                  />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t("adminPages.users.allRoles")}
-                </SelectItem>
-                {ROLE_VALUES.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-
-      {/* Users Table */}
-      {selectedCount > 0 && (
-        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
-          <span className="text-sm font-medium text-foreground">
-            {t("adminPages.shared.selectedSummary", {
-              count: selectedCount,
-              resource: selectedResourceLabel,
-            })}
-          </span>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clear}
-              className="gap-1.5"
-            >
-              <X className="h-4 w-4" />
-              {t("adminPages.shared.clear")}
-            </Button>
-            <Access action={EAction.DELETE} subject="User" hideChildren>
+      <AdminList
+        config={config}
+        values={values}
+        onChange={set}
+        onClear={clearFilters}
+        useTotal={useUserTotal}
+        searchPlaceholder={t("adminPages.users.searchPlaceholder")}
+        counts={countsData?.data ?? {}}
+        total={usersData?.data?.meta?.pagination?.total}
+        isFetching={isFetching && !isLoading}
+        isError={isError}
+        onRetry={refetch}
+      >
+        {selectedCount > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/20 bg-primary-subtle px-4 py-2">
+            <span className="text-sm font-medium text-foreground">
+              {t("adminPages.shared.selectedSummary", {
+                count: selectedCount,
+                resource: selectedResourceLabel,
+              })}
+            </span>
+            <div className="flex items-center gap-2">
               <Button
-                variant="destructive"
+                variant="ghost"
                 size="sm"
-                onClick={() => setShowBulkDeleteDialog(true)}
+                onClick={clear}
                 className="gap-1.5"
               >
-                <Trash2 className="h-4 w-4" />
-                {t("adminPages.shared.deleteSelected")}
+                <X className="h-4 w-4" aria-hidden="true" />
+                {t("adminPages.shared.clear")}
               </Button>
-            </Access>
+              <Access action={EAction.DELETE} subject="User" hideChildren>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowBulkDeleteDialog(true)}
+                  className="gap-1.5"
+                >
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  {t("adminPages.shared.deleteSelected")}
+                </Button>
+              </Access>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <UserTable
-        users={users}
-        isLoading={isLoading}
-        onEdit={handleOpenDialog}
-        onDelete={(id) => {
-          const user: User | undefined = users.find((c: User) => c._id === id);
-          if (user) handleOpenDeleteDialog(user);
-        }}
-        onLock={handleOpenLockDialog}
-        onUnlock={handleUnlock}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        selectedIds={selectedIds}
-        onToggleSelect={toggle}
-        onToggleAll={toggleAll}
-        isAllSelected={isAllSelected}
-        isIndeterminate={isIndeterminate}
-      />
-
-      {/* Pagination - Reusable Component */}
-      {totalItems > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          pageSize={pageSize}
-          totalItems={totalItems}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+        <UserTable
+          users={users}
+          isLoading={isLoading}
+          onEdit={handleOpenDialog}
+          onDelete={(id) => {
+            const user: User | undefined = users.find(
+              (c: User) => c._id === id
+            );
+            if (user) handleOpenDeleteDialog(user);
+          }}
+          onLock={handleOpenLockDialog}
+          onUnlock={handleUnlock}
+          onClearFilters={hasFilters ? clearFilters : undefined}
+          currentPage={values.page}
+          pageSize={values.limit}
+          selectedIds={selectedIds}
+          onToggleSelect={toggle}
+          onToggleAll={toggleAll}
+          isAllSelected={isAllSelected}
+          isIndeterminate={isIndeterminate}
         />
-      )}
+
+        {totalItems > 0 && (
+          <div className="border-t border-border p-4">
+            <Pagination
+              currentPage={values.page}
+              pageSize={values.limit}
+              totalItems={totalItems}
+              onPageChange={(page) => set({ page })}
+              onPageSizeChange={(limit) => set({ limit })}
+            />
+          </div>
+        )}
+      </AdminList>
 
       {/* User drawer */}
       <UserDrawer

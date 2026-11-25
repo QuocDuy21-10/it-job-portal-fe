@@ -18,14 +18,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  RESUME_STATUSES,
   UpdateResumeFormData,
   type Resume,
 } from "@/features/resume/schemas/resume.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { formatDateTime } from "@/lib/utils/locale-formatters";
 import { API_BASE_URL_IMAGE } from "@/shared/constants/constant";
-
-const STATUSES = ["PENDING", "REVIEWING", "APPROVED", "REJECTED"] as const;
 
 interface ResumeFormProps {
   formId: string;
@@ -104,7 +103,7 @@ export function ResumeForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {STATUSES.map((status) => (
+                    {RESUME_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
                         {statusLabel(status)}
                       </SelectItem>

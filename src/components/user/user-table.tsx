@@ -22,6 +22,7 @@ import { Access } from "@/components/access";
 import { EAction } from "@/lib/casl/ability";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/hooks/use-i18n";
+import { NoResults } from "@/components/admin/list/no-results";
 import { formatLocaleDate } from "@/lib/utils/locale-formatters";
 
 interface UserTableProps {
@@ -31,6 +32,7 @@ interface UserTableProps {
   onDelete: (id: string) => void;
   onLock: (user: User) => void;
   onUnlock: (id: string) => void;
+  onClearFilters?: () => void;
   currentPage: number;
   pageSize: number;
   selectedIds: Set<string>;
@@ -47,6 +49,7 @@ export function UserTable({
   onDelete,
   onLock,
   onUnlock,
+  onClearFilters,
   currentPage,
   pageSize,
   selectedIds,
@@ -63,7 +66,7 @@ export function UserTable({
 
   return (
     <Access action={EAction.READ} subject="User">
-      <div className="admin-card overflow-hidden">
+      <div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -102,19 +105,21 @@ export function UserTable({
               {users.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="h-40 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3 py-8">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        <Shield className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+                    {onClearFilters ? (
+                      <NoResults onClear={onClearFilters} />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-3 py-8 text-muted-foreground">
+                        <Shield className="h-10 w-10" aria-hidden="true" />
+                        <div>
+                          <p className="font-medium text-foreground">
+                            {t("adminPages.users.table.emptyTitle")}
+                          </p>
+                          <p className="mt-1 text-sm">
+                            {t("adminPages.users.table.emptyDescription")}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {t("adminPages.users.table.emptyTitle")}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {t("adminPages.users.table.emptyDescription")}
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -147,7 +152,7 @@ function UserTableSkeleton() {
   const { t } = useI18n();
 
   return (
-    <div className="admin-card overflow-hidden">
+    <div>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -167,7 +172,7 @@ function UserTableSkeleton() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {[...Array(5)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <Skeleton className="h-4 w-4" />
