@@ -1,38 +1,35 @@
 import { z } from "zod";
+import type { Translate } from "@/shared/types/i18n";
 
-export const CompanySchema = z.object({
-  name: z
-    .string()
-    .min(1, "Tên công ty không được để trống")
-    .max(100, "Tên công ty không được quá 100 ký tự"),
+const identity: Translate = (key) => key;
+const ERROR = "adminPages.companies.form.errors";
 
-  description: z
-    .string()
-    .min(10, "Mô tả phải có ít nhất 10 ký tự")
-    .max(3000, "Mô tả không được quá 3000 ký tự"),
+export const createCompanySchema = (t: Translate = identity) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, t(`${ERROR}.name`))
+      .max(100, t(`${ERROR}.name`)),
+    description: z
+      .string()
+      .min(10, t(`${ERROR}.description`))
+      .max(3000, t(`${ERROR}.description`)),
+    address: z
+      .string()
+      .min(1, t(`${ERROR}.address`))
+      .max(200, t(`${ERROR}.address`)),
+    website: z
+      .string()
+      .url(t(`${ERROR}.website`))
+      .or(z.literal("")),
+    numberOfEmployees: z
+      .number(t(`${ERROR}.employees`))
+      .min(0, t(`${ERROR}.employees`))
+      .max(1000000, t(`${ERROR}.employees`)),
+    logo: z.string().optional(),
+  });
 
-  address: z
-    .string()
-    .min(1, "Địa chỉ không được để trống")
-    .max(200, "Địa chỉ không được quá 200 ký tự"),
-
-  website: z
-    .string()
-    .url("Website không hợp lệ (phải bắt đầu bằng http:// hoặc https://)")
-    .or(z.literal(""))
-    .transform((val) => val || ""), // Convert undefined thành ""
-
-  numberOfEmployees: z
-    .number()
-    .min(0, "Số lượng nhân viên phải lớn hơn hoặc bằng 0")
-    .max(1000000, "Số lượng nhân viên không hợp lệ"),
-
-  logo: z
-    .string()
-    .or(z.literal(""))
-    .transform((val) => val || "")
-    .optional(),
-});
+export const CompanySchema = createCompanySchema();
 
 export const CompanyEntitySchema = CompanySchema.extend({
   _id: z.string(),

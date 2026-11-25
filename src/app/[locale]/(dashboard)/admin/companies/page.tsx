@@ -13,7 +13,7 @@ import { SearchBar } from "@/components/ui/search-bar";
 import { SingleSelect } from "@/components/single-select";
 import { Pagination } from "@/components/pagination";
 import { CompanyTable } from "@/features/company/components/company-table";
-import { CompanyDialog } from "@/features/company/components/company-dialog";
+import { CompanyDrawer } from "@/features/company/components/company-drawer";
 import { BulkDeleteConfirmDialog } from "@/components/admin/bulk-delete-confirm-dialog";
 import { SingleDeleteConfirmDialog } from "@/components/admin/single-delete-confirm-dialog";
 import { Company } from "@/features/company/schemas/company.schema";
@@ -304,7 +304,7 @@ export default function CompaniesPage() {
       )}
 
       {/* Dialog */}
-      <CompanyDialog
+      <CompanyDrawer
         open={isDialogOpen}
         onOpenChange={handleCloseDialog}
         editingCompany={editingCompany}
