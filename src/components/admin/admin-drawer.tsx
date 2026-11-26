@@ -178,9 +178,10 @@ export function AdminDrawer({
                 </TooltipProvider>
               </div>
             </header>
+            {/* relative: hidden absolute inputs (file, checkbox) must overflow here, not scroll the panel. */}
             <div
               ref={bodyRef}
-              className="flex-1 overflow-y-auto overscroll-contain p-4 text-body-sm md:p-6"
+              className="relative flex-1 overflow-y-auto overscroll-contain p-4 text-body-sm md:p-6"
             >
               {children}
             </div>
