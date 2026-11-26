@@ -17,6 +17,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { toJobSearchQueryString } from "@/lib/utils/public-listing";
 import type { ApiResponse } from "@/shared/base/api-response.base";
 import { API_BASE_URL } from "@/shared/constants/constant";
+import type { IPublicStats } from "@/shared/types/dashboard";
 import type {
   PaginatedQueryParams,
   PaginatedResult,
@@ -192,6 +193,16 @@ export const fetchPublicActiveBanner = cache(() =>
   nullOnError(
     fetchPublicEntity<{ imageUrl: string }>(
       "/site-content/banners/active",
+      SITE_CONTENT_REVALIDATE_SECONDS
+    )
+  )
+);
+
+// The hero hides the stats row on null, so a missing endpoint or outage shows no numbers.
+export const fetchPublicStats = cache(() =>
+  nullOnError(
+    fetchPublicEntity<IPublicStats>(
+      "/statistics/public",
       SITE_CONTENT_REVALIDATE_SECONDS
     )
   )

@@ -124,7 +124,8 @@ export const vi = {
     location: "Địa điểm",
     searchButton: "Tìm Kiếm",
     activeJobs: "Vị Trí Tuyển Dụng",
-    companies: "Công Ty",
+    hiringCompanies: "Công Ty Đang Tuyển",
+    newJobsThisWeek: "Việc Mới Tuần Này",
     jobSeekers: "Ứng Viên",
     featuredJobs: "Công Việc Nổi Bật",
     featuredJobsDescription:

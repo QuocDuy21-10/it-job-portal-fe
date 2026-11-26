@@ -126,7 +126,8 @@ export const en = {
     location: "Location",
     searchButton: "Search",
     activeJobs: "Open Roles",
-    companies: "Companies",
+    hiringCompanies: "Hiring Companies",
+    newJobsThisWeek: "New This Week",
     jobSeekers: "Candidates",
     featuredJobs: "Featured Jobs",
     featuredJobsDescription:

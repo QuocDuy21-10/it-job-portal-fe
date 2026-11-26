@@ -4,11 +4,13 @@ import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.
 import type { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import type { Job } from "@/features/job/schemas/job.schema";
+import type { IPublicStats } from "@/shared/types/dashboard";
 import type { PaginatedResult } from "@/shared/types/pagination";
 
 const mockPush = jest.fn();
 let mockIsStaff = false;
 let mockHasSession = false;
+let mockLanguage: "en" | "vi" = "vi";
 
 jest.mock("@/lib/auth/session", () => ({
   hasSession: () => mockHasSession,
@@ -45,6 +47,7 @@ jest.mock("@/i18n/navigation", () => ({
 jest.mock("@/hooks/use-i18n", () => ({
   useI18n: () => ({
     mounted: true,
+    language: mockLanguage,
     t: (key: string) => key,
   }),
 }));
@@ -178,6 +181,13 @@ const initialCompanies = [
   { _id: "server-company", name: "Server company" },
 ] as TopHiringCompany[];
 
+const stats: IPublicStats = {
+  activeJobs: 1234,
+  newJobsThisWeek: 35,
+  hiringCompanies: 42,
+  candidates: 0,
+};
+
 const page1Query = {
   page: 1,
   limit: 6,
@@ -190,6 +200,7 @@ describe("Home", () => {
     jest.clearAllMocks();
     mockIsStaff = false;
     mockHasSession = false;
+    mockLanguage = "vi";
   });
 
   it("navigates with the selected suggestion instead of the stale typed keyword", () => {
@@ -307,5 +318,44 @@ describe("Home", () => {
     expect(hero().getAttribute("src")).toContain(
       "homepage-it-careers-banner.png"
     );
+  });
+
+  it("shows the real stats with locale separators and hides a zero stat", () => {
+    render(<Home initialJobs={null} initialCompanies={null} stats={stats} />);
+
+    expect(screen.getByText("1.234")).toBeInTheDocument();
+    expect(screen.getByText("home.activeJobs")).toBeInTheDocument();
+    expect(screen.getByText("42")).toBeInTheDocument();
+    expect(screen.getByText("home.hiringCompanies")).toBeInTheDocument();
+    expect(screen.getByText("35")).toBeInTheDocument();
+    expect(screen.getByText("home.newJobsThisWeek")).toBeInTheDocument();
+    expect(screen.queryByText("home.jobSeekers")).not.toBeInTheDocument();
+    expect(screen.queryByText("20k+")).not.toBeInTheDocument();
+  });
+
+  it("formats the stats for English", () => {
+    mockLanguage = "en";
+    render(<Home initialJobs={null} initialCompanies={null} stats={stats} />);
+
+    expect(screen.getByText("1,234")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["no stats", null],
+    [
+      "all-zero stats",
+      {
+        activeJobs: 0,
+        newJobsThisWeek: 0,
+        hiringCompanies: 0,
+        candidates: 0,
+      },
+    ],
+  ])("renders no stats row for %s", (_case, value) => {
+    render(<Home initialJobs={null} initialCompanies={null} stats={value} />);
+
+    expect(screen.queryByText("home.activeJobs")).not.toBeInTheDocument();
+    expect(screen.queryByText("home.jobSeekers")).not.toBeInTheDocument();
+    expect(screen.queryByText("20k+")).not.toBeInTheDocument();
   });
 });
