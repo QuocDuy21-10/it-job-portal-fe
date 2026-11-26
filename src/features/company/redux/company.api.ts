@@ -13,6 +13,10 @@ import {
   UpdateCompanyFormData,
 } from "../schemas/company.schema";
 
+// The form holds "" for "no logo", which the API refuses; null clears it.
+const toCompanyBody = (data: UpdateCompanyFormData) =>
+  data.logo === "" ? { ...data, logo: null } : data;
+
 export const companyApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCompanies: builder.query<
@@ -43,7 +47,7 @@ export const companyApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/companies",
         method: "POST",
-        data: data,
+        data: toCompanyBody(data),
       }),
       invalidatesTags: ["Company"],
     }),
@@ -56,7 +60,7 @@ export const companyApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/companies/${id}`,
         method: "PATCH",
-        data: data,
+        data: toCompanyBody(data),
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: "Company", id },
