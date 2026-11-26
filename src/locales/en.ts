@@ -117,6 +117,15 @@ export const en = {
     next: "Next",
   },
   home: {
+    carousel: {
+      label: "Featured campaigns",
+      previous: "Previous slide",
+      next: "Next slide",
+      pause: "Pause slides",
+      play: "Play slides",
+      slideOf: "Slide {current} of {total}",
+      opensInNewTab: "opens in a new tab",
+    },
     topCompaniesHiringNow: "Top Companies Hiring Now",
     findYour: "Find Your ",
     dreamJob: "Dream IT Job",

@@ -116,6 +116,15 @@ export const vi = {
     next: "Trang sau",
   },
   home: {
+    carousel: {
+      label: "Chiến dịch nổi bật",
+      previous: "Slide trước",
+      next: "Slide sau",
+      pause: "Tạm dừng slide",
+      play: "Chạy slide",
+      slideOf: "Slide {current} trên {total}",
+      opensInNewTab: "mở tab mới",
+    },
     findYour: "Tìm ",
     dreamJob: "Công Việc IT Mơ Ước",
     discoverOpportunities:

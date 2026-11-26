@@ -303,12 +303,19 @@ describe("Home", () => {
     ).toBeNull();
   });
 
-  it("shows the banner chosen by the admin and falls back when it cannot load", () => {
+  it("shows the admin's first slide and falls back when it cannot load", () => {
     const { container } = render(
       <Home
         initialJobs={null}
         initialCompanies={null}
-        heroImageUrl="http://localhost:8081/images/banner/custom.png"
+        slides={[
+          {
+            id: "s1",
+            imageUrl: "http://localhost:8081/images/banner/custom.png",
+            mobileImageUrl: null,
+            content: null,
+          },
+        ]}
       />
     );
     const hero = () => container.querySelector('img[fetchpriority="high"]')!;

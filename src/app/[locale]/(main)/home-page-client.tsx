@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment, useState, useEffect } from "react";
-import Image from "next/image";
 import {
   Search,
   ArrowRight,
@@ -38,6 +37,8 @@ import { selectIsAdmin } from "@/features/auth/redux/auth.slice";
 import { useAppSelector } from "@/lib/redux/hooks";
 import type { IPublicStats } from "@/shared/types/dashboard";
 import type { PaginatedResult } from "@/shared/types/pagination";
+import type { BannerSlide } from "@/features/site-content/schemas/site-content.schema";
+import { HeroCarousel } from "./hero-carousel";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
 
 type HomeSearchBoxProps = {
@@ -64,19 +65,16 @@ function HomeSearchBox({ onSearch }: HomeSearchBoxProps) {
 type HomeProps = {
   initialJobs: PaginatedResult<Job> | null;
   initialCompanies: TopHiringCompany[] | null;
-  heroImageUrl?: string;
+  slides?: BannerSlide[];
   stats?: IPublicStats | null;
 };
-
-const DEFAULT_HERO_IMAGE = "/images/homepage-it-careers-banner.png";
 
 export default function Home({
   initialJobs,
   initialCompanies,
-  heroImageUrl,
+  slides = [],
   stats,
 }: HomeProps) {
-  const [heroFailed, setHeroFailed] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
 
@@ -191,70 +189,48 @@ export default function Home({
 
   return (
     <div className="flex flex-col">
-      <section className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32">
-        {/* LCP element on the home page: preloaded with fetchpriority=high, served as AVIF/WebP. */}
-        <Image
-          src={heroImageUrl && !heroFailed ? heroImageUrl : DEFAULT_HERO_IMAGE}
-          onError={() => setHeroFailed(true)}
-          alt=""
-          fill
-          priority
-          fetchPriority="high"
-          sizes="100vw"
-          className="object-contain object-top opacity-90 sm:object-cover sm:object-center dark:opacity-25"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/35 to-background/95 dark:from-background/25 dark:via-background/60 dark:to-background"
-        />
-        {/* Decorative background */}
-        <div className="hidden dark:block absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-10">
-            {/* Heading */}
-            <div className="space-y-4">
-              <h1
-                className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}
-              >
-                {t("home.findYour")}
-                <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
-                  {t("home.dreamJob")}
-                </span>
-              </h1>
-              <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
-                {t("home.discoverOpportunities")} {t("home.startCareerJourney")}
-              </p>
-            </div>
-
-            {/* Search Box */}
-            <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
-              <HomeSearchBox onSearch={handleSearch} />
-            </div>
-
-            {/* Stats */}
-            {heroStats.length > 0 && (
-              <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
-                {heroStats.map((stat, index) => (
-                  <Fragment key={stat.key}>
-                    {index > 0 && (
-                      <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
-                    )}
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-foreground sm:text-3xl">
-                        {numberFormat.format(stat.value)}
-                      </div>
-                      <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                        {stat.label}
-                      </div>
+      <HeroCarousel
+        slides={slides}
+        footer={
+          heroStats.length > 0 && (
+            <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
+              {heroStats.map((stat, index) => (
+                <Fragment key={stat.key}>
+                  {index > 0 && (
+                    <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
+                  )}
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-foreground sm:text-3xl">
+                      {numberFormat.format(stat.value)}
                     </div>
-                  </Fragment>
-                ))}
-              </div>
-            )}
-          </div>
+                    <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
+                      {stat.label}
+                    </div>
+                  </div>
+                </Fragment>
+              ))}
+            </div>
+          )
+        }
+      >
+        <div className="space-y-4">
+          <h1
+            className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}
+          >
+            {t("home.findYour")}
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
+              {t("home.dreamJob")}
+            </span>
+          </h1>
+          <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
+            {t("home.discoverOpportunities")} {t("home.startCareerJourney")}
+          </p>
         </div>
-      </section>
+
+        <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+          <HomeSearchBox onSearch={handleSearch} />
+        </div>
+      </HeroCarousel>
 
       {/* Featured Jobs Section */}
       <SectionContainer className="home-section-base">
