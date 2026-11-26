@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { CompanyProfileFields } from "@/features/company/components/company-profile-fields";
 import { createCompanySchema } from "@/features/company/schemas/company-form.schema";
 import type { CreateCompanyFormData } from "@/features/company/schemas/company.schema";
 import { useFocusFirstError } from "@/hooks/use-focus-first-error";
@@ -26,6 +27,7 @@ interface CompanyFormProps {
   isLoading?: boolean;
   onDirtyChange?: (isDirty: boolean) => void;
   onNewLogoUploaded?: (prev: string | null, next: string | null) => void;
+  onNewCoverUploaded?: (fileName: string) => void;
 }
 
 export function CompanyForm({
@@ -35,6 +37,7 @@ export function CompanyForm({
   isLoading,
   onDirtyChange,
   onNewLogoUploaded,
+  onNewCoverUploaded,
 }: CompanyFormProps) {
   const { t } = useI18n();
   const form = useForm<CreateCompanyFormData>({
@@ -46,6 +49,10 @@ export function CompanyForm({
       website: initialData?.website ?? "",
       numberOfEmployees: initialData?.numberOfEmployees,
       logo: initialData?.logo ?? "",
+      coverImage: initialData?.coverImage ?? null,
+      industry: initialData?.industry ?? null,
+      techStack: initialData?.techStack ?? [],
+      benefits: initialData?.benefits ?? [],
     },
     mode: "onTouched",
     shouldFocusError: false,
@@ -177,6 +184,13 @@ export function CompanyForm({
             )}
           />
         </section>
+
+        <CompanyProfileFields
+          form={form}
+          formId={formId}
+          isLoading={isLoading}
+          onNewCoverUploaded={onNewCoverUploaded}
+        />
 
         <section className="space-y-4 border-t border-border pt-6">
           <h3 className="text-h4">{label("description")}</h3>

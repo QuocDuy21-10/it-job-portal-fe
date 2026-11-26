@@ -25,6 +25,23 @@ jest.mock("@/components/logo-upload", () => ({
     </button>
   ),
 }));
+jest.mock("@/hooks/use-skill-catalog", () => ({
+  useSkillCatalog: () => ({
+    skillOptions: [{ label: "React", value: "React" }],
+    isLoading: false,
+  }),
+}));
+jest.mock("@/features/site-content/components/banner-image-field", () => ({
+  BannerImageField: ({
+    onUploaded,
+  }: {
+    onUploaded: (name: string) => void;
+  }) => (
+    <button type="button" onClick={() => onUploaded("cover.webp")}>
+      upload cover
+    </button>
+  ),
+}));
 
 const company = {
   _id: "1",
@@ -34,6 +51,10 @@ const company = {
   website: "",
   numberOfEmployees: 5,
   logo: "old.png",
+  coverImage: null,
+  industry: null,
+  techStack: [],
+  benefits: [],
 };
 
 const setup = (onSubmit = jest.fn()) => {
@@ -69,5 +90,45 @@ it("keeps the uploaded logo after a save", async () => {
   fireEvent.click(screen.getByText("adminPages.drawer.saveChanges"));
   await waitFor(() => expect(onSubmit).toHaveBeenCalled());
   expect(onSubmit.mock.calls[0][0].logo).toBe("new.png");
+  expect(mockDelete).not.toHaveBeenCalled();
+});
+
+it("deletes an uploaded cover when the drawer is discarded", async () => {
+  const onOpenChange = setup();
+  fireEvent.click(screen.getByText("upload cover"));
+  fireEvent.click(screen.getByText("common.cancel"));
+  fireEvent.click(await screen.findByText("adminPages.shared.discard"));
+
+  expect(mockDelete).toHaveBeenCalledWith("cover.webp", "company");
+  expect(onOpenChange).toHaveBeenCalledWith(false);
+});
+
+it("saves the cover, industry and benefits", async () => {
+  const onSubmit = jest.fn().mockResolvedValue(true);
+  setup(onSubmit);
+
+  fireEvent.click(screen.getByText("upload cover"));
+  fireEvent.click(
+    screen.getByLabelText("companyProfile.benefit.REMOTE_HYBRID")
+  );
+  fireEvent.change(
+    screen.getByLabelText("adminPages.companies.form.benefitNote"),
+    {
+      target: { value: "2 ngày/tuần" },
+    }
+  );
+  fireEvent.click(
+    screen.getByLabelText("companyProfile.benefit.HEALTH_INSURANCE")
+  );
+  fireEvent.click(screen.getByText("adminPages.drawer.saveChanges"));
+
+  await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+  expect(onSubmit.mock.calls[0][0]).toMatchObject({
+    coverImage: "cover.webp",
+    benefits: [
+      { type: "HEALTH_INSURANCE", note: null },
+      { type: "REMOTE_HYBRID", note: "2 ngày/tuần" },
+    ],
+  });
   expect(mockDelete).not.toHaveBeenCalled();
 });

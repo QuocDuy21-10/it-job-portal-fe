@@ -30,12 +30,14 @@ export function CompanyDrawer({
   const { handleDelete } = useFileOperations();
   const [isDirty, setIsDirty] = useState(false);
   const [pendingNewLogo, setPendingNewLogo] = useState<string | null>(null);
+  const [pendingNewCover, setPendingNewCover] = useState<string | null>(null);
   const submittedRef = useRef(false);
 
   useEffect(() => {
     if (open) {
       submittedRef.current = false;
       setPendingNewLogo(null);
+      setPendingNewCover(null);
     }
   }, [open]);
 
@@ -46,11 +48,20 @@ export function CompanyDrawer({
     setPendingNewLogo(next);
   };
 
+  const handleNewCoverUploaded = (fileName: string) => {
+    // A second upload before saving replaces the first, which nothing will reference.
+    if (pendingNewCover && pendingNewCover !== editingCompany?.coverImage) {
+      handleDelete(pendingNewCover, "company");
+    }
+    setPendingNewCover(fileName);
+  };
+
   const handleSubmit = async (data: CreateCompanyFormData) => {
     const success = await onSubmit(data);
     if (success) {
       submittedRef.current = true;
       setPendingNewLogo(null);
+      setPendingNewCover(null);
     }
     return success;
   };
@@ -64,6 +75,15 @@ export function CompanyDrawer({
     ) {
       handleDelete(pendingNewLogo, "company");
       setPendingNewLogo(null);
+    }
+    if (
+      !nextOpen &&
+      !submittedRef.current &&
+      pendingNewCover &&
+      pendingNewCover !== editingCompany?.coverImage
+    ) {
+      handleDelete(pendingNewCover, "company");
+      setPendingNewCover(null);
     }
     onOpenChange(nextOpen);
   };
@@ -99,6 +119,7 @@ export function CompanyDrawer({
         isLoading={isLoading}
         onDirtyChange={setIsDirty}
         onNewLogoUploaded={handleNewLogoUploaded}
+        onNewCoverUploaded={handleNewCoverUploaded}
       />
     </AdminDrawer>
   );
