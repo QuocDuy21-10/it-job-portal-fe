@@ -3,6 +3,7 @@ import type { AppLocale } from "@/i18n/routing";
 import type { ApiResponse } from "@/shared/base/api-response.base";
 import type {
   Banner,
+  BannerInput,
   LegalPageContent,
   LegalPageInput,
   LegalPageKey,
@@ -21,22 +22,38 @@ export const siteContentApi = baseApi.injectEndpoints({
       query: () => ({ url: "/site-content/banners", method: "GET" }),
       providesTags: ["Banner"],
     }),
-    createBanner: builder.mutation<
-      ApiResponse<Banner>,
-      { name: string; fileName: string }
-    >({
+    createBanner: builder.mutation<ApiResponse<Banner>, BannerInput>({
       query: (data) => ({ url: "/site-content/banners", method: "POST", data }),
       invalidatesTags: ["Banner"],
     }),
-    activateBanner: builder.mutation<ApiResponse<Banner>, string>({
-      query: (id) => ({
-        url: `/site-content/banners/${id}/activate`,
+    updateBanner: builder.mutation<
+      ApiResponse<Banner>,
+      { id: string; data: BannerInput }
+    >({
+      query: ({ id, data }) => ({
+        url: `/site-content/banners/${id}`,
         method: "PATCH",
+        data,
       }),
       invalidatesTags: ["Banner"],
     }),
-    clearActiveBanner: builder.mutation<ApiResponse<null>, void>({
-      query: () => ({ url: "/site-content/banners/active", method: "DELETE" }),
+    setBannerVisibility: builder.mutation<
+      ApiResponse<Banner>,
+      { id: string; isActive: boolean }
+    >({
+      query: ({ id, isActive }) => ({
+        url: `/site-content/banners/${id}/visibility`,
+        method: "PATCH",
+        data: { isActive },
+      }),
+      invalidatesTags: ["Banner"],
+    }),
+    reorderBanners: builder.mutation<ApiResponse<Banner[]>, string[]>({
+      query: (ids) => ({
+        url: "/site-content/banners/order",
+        method: "PUT",
+        data: { ids },
+      }),
       invalidatesTags: ["Banner"],
     }),
     deleteBanner: builder.mutation<ApiResponse<{ deleted: true }>, string>({
@@ -64,8 +81,9 @@ export const siteContentApi = baseApi.injectEndpoints({
 export const {
   useGetBannersQuery,
   useCreateBannerMutation,
-  useActivateBannerMutation,
-  useClearActiveBannerMutation,
+  useUpdateBannerMutation,
+  useSetBannerVisibilityMutation,
+  useReorderBannersMutation,
   useDeleteBannerMutation,
   useGetLegalPageQuery,
   useUpdateLegalPageMutation,

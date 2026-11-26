@@ -10,6 +10,7 @@ import type {
   JobSearchParams,
 } from "@/features/job/schemas/job-search.schema";
 import type {
+  BannerSlide,
   LegalPageContent,
   LegalPageKey,
 } from "@/features/site-content/schemas/site-content.schema";
@@ -188,14 +189,15 @@ export const fetchAllPublicJobs = () =>
 export const fetchAllPublicCompanies = () =>
   fetchAllPages<Company>("/companies", COMPANIES_REVALIDATE_SECONDS);
 
-// null: no banner chosen, or the backend failed. The page then shows its bundled image.
-export const fetchPublicActiveBanner = cache(() =>
-  nullOnError(
-    fetchPublicEntity<{ imageUrl: string }>(
-      "/site-content/banners/active",
-      SITE_CONTENT_REVALIDATE_SECONDS
-    )
-  )
+// No slides, or no backend, both fall back to the default hero image.
+export const fetchPublicBannerSlides = cache(
+  async (): Promise<BannerSlide[]> =>
+    (await nullOnError(
+      fetchPublicEntity<BannerSlide[]>(
+        "/site-content/banners/public",
+        SITE_CONTENT_REVALIDATE_SECONDS
+      )
+    )) ?? []
 );
 
 // The hero hides the stats row on null, so a missing endpoint or outage shows no numbers.

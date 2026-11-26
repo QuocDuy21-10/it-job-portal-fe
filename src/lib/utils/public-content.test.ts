@@ -8,7 +8,7 @@ import {
   fetchPublicCompanyById,
   fetchPublicExternalJobById,
   fetchPublicJobById,
-  fetchPublicActiveBanner,
+  fetchPublicBannerSlides,
   fetchPublicJobs,
   fetchPublicJobSearch,
   fetchPublicJobSearchStrict,
@@ -54,9 +54,9 @@ describe("public-content", () => {
       60,
     ],
     [
-      "fetchPublicActiveBanner",
-      () => fetchPublicActiveBanner(),
-      `${API}/site-content/banners/active`,
+      "fetchPublicBannerSlides",
+      () => fetchPublicBannerSlides(),
+      `${API}/site-content/banners/public`,
       60,
     ],
     [
@@ -236,9 +236,19 @@ describe("public-content", () => {
     );
   });
 
-  it("fetchPublicActiveBanner falls back to null when the backend fails", async () => {
-    respondWith(null, 500);
-    await expect(fetchPublicActiveBanner()).resolves.toBeNull();
+  it.each([404, 500])(
+    "fetchPublicBannerSlides gives no slides when the backend answers %i",
+    async (status) => {
+      respondWith(null, status);
+
+      await expect(fetchPublicBannerSlides()).resolves.toEqual([]);
+    }
+  );
+
+  it("fetchPublicBannerSlides gives no slides when the backend cannot be reached", async () => {
+    fetchMock.mockRejectedValue(new Error("ECONNREFUSED"));
+
+    await expect(fetchPublicBannerSlides()).resolves.toEqual([]);
   });
 
   it("fetchPublicStats returns the counts", async () => {
