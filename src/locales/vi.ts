@@ -7,6 +7,7 @@ export const vi = {
     view: "Xem",
     collapse: "Thu gọn",
     showMore: "Xem thêm",
+    retry: "Thử lại",
   },
   pagination: {
     showing: "Hiển thị",

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
-import Image from "next/image";
-import { Loader2, Upload } from "lucide-react";
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -13,68 +12,57 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFileOperations } from "@/hooks/use-file";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { useI18n } from "@/hooks/use-i18n";
+import { MAX_ACTIVE_SLIDES } from "../lib/banner-form";
 import {
-  useActivateBannerMutation,
-  useClearActiveBannerMutation,
-  useCreateBannerMutation,
   useDeleteBannerMutation,
   useGetBannersQuery,
+  useReorderBannersMutation,
+  useSetBannerVisibilityMutation,
 } from "../redux/site-content.api";
 import type { Banner } from "../schemas/site-content.schema";
-
-const FOLDER = "banner";
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const MAX_NAME_LENGTH = 100;
+import { BannerDrawer } from "./banner-drawer";
+import { BannerListItem } from "./banner-list-item";
 
 export function BannerTab() {
   const { t } = useI18n();
-  const { data, isLoading, isError } = useGetBannersQuery();
-  const { handleUpload, handleDelete, isUploading } = useFileOperations();
-  const [createBanner, { isLoading: isCreating }] = useCreateBannerMutation();
-  const [activateBanner, { isLoading: isActivating }] =
-    useActivateBannerMutation();
-  const [clearActive, { isLoading: isClearing }] =
-    useClearActiveBannerMutation();
+  const text = (key: string, values?: Record<string, string | number>) =>
+    t(`adminPages.siteContent.banner.${key}`, values);
+  const { data, isLoading, isError, refetch } = useGetBannersQuery();
+  const [setVisibility, { isLoading: isToggling }] =
+    useSetBannerVisibilityMutation();
+  const [reorder, { isLoading: isReordering }] = useReorderBannersMutation();
   const [deleteBanner, { isLoading: isDeleting }] = useDeleteBannerMutation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editing, setEditing] = useState<Banner | null>(null);
   const [deleting, setDeleting] = useState<Banner | null>(null);
 
   const banners = data?.data ?? [];
-  const isBusy = isUploading || isCreating || isActivating || isClearing;
+  const activeCount = banners.filter((banner) => banner.isActive).length;
+  const busy = isToggling || isReordering;
 
   const run = async (action: () => Promise<unknown>) => {
     try {
       await action();
       toast.success(t("adminPages.siteContent.saved"));
-      return true;
     } catch (error: any) {
       toast.error(error?.data?.message || t("adminPages.siteContent.error"));
-      return false;
     }
   };
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
+  const move = (index: number, direction: -1 | 1) => {
+    const ids = banners.map((banner) => banner._id);
+    const [id] = ids.splice(index, 1);
+    ids.splice(index + direction, 0, id);
+    run(() => reorder(ids).unwrap());
+  };
 
-    if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE) {
-      toast.error(t("adminPages.siteContent.banner.invalidFile"));
-      return;
-    }
-
-    const fileName = await handleUpload(file, FOLDER);
-    if (!fileName) return;
-
-    const name =
-      file.name.replace(/\.[^.]+$/, "").slice(0, MAX_NAME_LENGTH) || fileName;
-    const added = await run(() => createBanner({ name, fileName }).unwrap());
-    if (!added) handleDelete(fileName, FOLDER);
+  const openDrawer = (banner: Banner | null) => {
+    setEditing(banner);
+    setDrawerOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -84,130 +72,113 @@ export function BannerTab() {
   };
 
   return (
-    <div className="admin-card space-y-4 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground">
-          {t("adminPages.siteContent.banner.hint")}
-        </p>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            disabled={isBusy || !banners.some((banner) => banner.isActive)}
-            onClick={() => run(() => clearActive().unwrap())}
-          >
-            {t("adminPages.siteContent.banner.useDefault")}
-          </Button>
-          <Button asChild disabled={isBusy}>
-            <label className="cursor-pointer gap-2 focus-within:ring-2 focus-within:ring-ring">
-              {isUploading ? (
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              ) : (
-                <Upload className="h-4 w-4" aria-hidden="true" />
-              )}
-              {t("adminPages.siteContent.banner.upload")}
-              <input
-                type="file"
-                className="sr-only"
-                aria-label={t("adminPages.siteContent.banner.upload")}
-                accept={ALLOWED_TYPES.join(",")}
-                disabled={isBusy}
-                onChange={handleFileChange}
-              />
-            </label>
+    <TooltipProvider>
+      <div className="admin-card space-y-4 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">{text("hint")}</p>
+            <p className="text-sm font-medium">
+              {text("activeCount", { count: activeCount })}
+            </p>
+          </div>
+          <Button onClick={() => openDrawer(null)} className="gap-2">
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            {text("add")}
           </Button>
         </div>
-      </div>
 
-      {isLoading && <Skeleton className="h-48 w-full" />}
-      {isError && (
-        <p role="alert" className="text-sm text-destructive">
-          {t("adminPages.siteContent.error")}
-        </p>
-      )}
-      {!isLoading && !isError && banners.length === 0 && (
-        <p className="py-8 text-center text-sm text-muted-foreground">
-          {t("adminPages.siteContent.banner.empty")}
-        </p>
-      )}
-
-      <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {banners.map((banner) => (
-          <li
-            key={banner._id}
-            className="overflow-hidden rounded-lg border border-border"
+        {isLoading && (
+          <div aria-busy="true" className="space-y-3">
+            {Array.from({ length: 3 }, (_, index) => (
+              <Skeleton key={index} className="h-[106px] w-full rounded-lg" />
+            ))}
+          </div>
+        )}
+        {isError && (
+          <div
+            role="alert"
+            className="flex items-center gap-3 text-sm text-destructive"
           >
-            <div className="relative aspect-[16/6] bg-muted">
-              <Image
-                src={banner.imageUrl}
-                alt={banner.name}
-                fill
-                sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-            <div className="flex items-center justify-between gap-2 p-3">
-              <span className="truncate text-sm font-medium">
-                {banner.name}
-              </span>
-              {banner.isActive ? (
-                <Badge>{t("adminPages.siteContent.banner.active")}</Badge>
-              ) : (
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={isBusy}
-                    onClick={() =>
-                      run(() => activateBanner(banner._id).unwrap())
-                    }
-                  >
-                    {t("adminPages.siteContent.banner.activate")}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={isBusy}
-                    onClick={() => setDeleting(banner)}
-                  >
-                    {t("adminPages.shared.delete")}
-                  </Button>
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      {/* Not SingleDeleteConfirmDialog: its text promises a recoverable soft delete. */}
-      <AlertDialog
-        open={!!deleting}
-        onOpenChange={(open) => !open && setDeleting(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("adminPages.siteContent.banner.deleteTitle", {
-                name: deleting?.name ?? "",
-              })}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("adminPages.siteContent.banner.deleteDescription")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
-              {t("common.cancel")}
-            </AlertDialogCancel>
-            <Button
-              variant="destructive"
-              disabled={isDeleting}
-              onClick={confirmDelete}
-            >
-              {t("adminPages.siteContent.banner.deleteConfirm")}
+            {t("adminPages.siteContent.error")}
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              {t("common.retry")}
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+          </div>
+        )}
+        {!isLoading && !isError && banners.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            {text("empty")}
+          </p>
+        )}
+        {banners.length > 0 &&
+          !banners.some((banner) => banner.status === "live") && (
+            <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+              {text("noneLive")}
+            </p>
+          )}
+
+        <ul className="space-y-3">
+          {banners.map((banner, index) => (
+            <BannerListItem
+              key={banner._id}
+              banner={banner}
+              isFirst={index === 0}
+              isLast={index === banners.length - 1}
+              canShow={activeCount < MAX_ACTIVE_SLIDES}
+              busy={busy}
+              onToggle={() =>
+                run(() =>
+                  setVisibility({
+                    id: banner._id,
+                    isActive: !banner.isActive,
+                  }).unwrap()
+                )
+              }
+              onMove={(direction) => move(index, direction)}
+              onEdit={() => openDrawer(banner)}
+              onDelete={() => setDeleting(banner)}
+            />
+          ))}
+        </ul>
+
+        <BannerDrawer
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+          banner={editing}
+        />
+
+        {/* Not SingleDeleteConfirmDialog: its text promises a recoverable soft delete. */}
+        <AlertDialog
+          open={!!deleting}
+          onOpenChange={(open) => !open && setDeleting(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {text("deleteTitle", { name: deleting?.name ?? "" })}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {deleting?.status === "live" && (
+                  <strong className="block">{text("deleteLiveWarning")}</strong>
+                )}
+                {text("deleteDescription")}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isDeleting}>
+                {t("common.cancel")}
+              </AlertDialogCancel>
+              <Button
+                variant="destructive"
+                disabled={isDeleting}
+                onClick={confirmDelete}
+              >
+                {text("deleteConfirm")}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </TooltipProvider>
   );
 }

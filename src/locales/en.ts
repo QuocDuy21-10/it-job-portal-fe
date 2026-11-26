@@ -7,6 +7,7 @@ export const en = {
     view: "View",
     collapse: "Collapse",
     showMore: "Show more",
+    retry: "Try again",
   },
   pagination: {
     showing: "Showing",
