@@ -22,6 +22,7 @@ import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
 
 interface AdminHeaderProps {
+  isSidebarExpanded?: boolean;
   onMobileMenuToggle?: () => void;
   onLogout: () => void;
   className?: string;
@@ -29,6 +30,7 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({
+  isSidebarExpanded = true,
   onMobileMenuToggle,
   onLogout,
   className,
@@ -40,7 +42,8 @@ export function AdminHeader({
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-40",
+        "fixed top-0 left-0 right-0 z-30 transition-[left] duration-300 ease-in-out",
+        isSidebarExpanded ? "lg:left-64" : "lg:left-16",
         "border-b border-gray-200 bg-white dark:border-border dark:bg-background",
         "shadow-sm",
         className
@@ -59,7 +62,7 @@ export function AdminHeader({
             <Menu className="h-5 w-5" />
           </Button>
 
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center lg:hidden">
             <Image
               src="/images/logo.png"
               alt="DevLink"

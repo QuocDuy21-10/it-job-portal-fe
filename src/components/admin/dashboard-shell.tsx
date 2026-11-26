@@ -7,6 +7,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
 import { useLogout } from "@/hooks/use-logout";
 import { useI18n } from "@/hooks/use-i18n";
+import { useSidebarState } from "@/hooks/use-sidebar-state";
 
 interface DashboardShellProps {
   copyrightKey: "footer.adminCopyright" | "footer.hrCopyright";
@@ -23,7 +24,8 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const { t } = useI18n();
   const { logout, isLoggingOut } = useLogout();
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const { isExpanded: isSidebarExpanded, toggle: toggleSidebar } =
+    useSidebarState("devlink:admin-sidebar-expanded", true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const handleMobileMenuToggle = () => {
@@ -35,7 +37,7 @@ export function DashboardShell({
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
       <AdminSidebar
         isExpanded={isSidebarExpanded}
-        onToggle={() => setIsSidebarExpanded((prev) => !prev)}
+        onToggle={toggleSidebar}
         onLogout={logout}
         isLoggingOut={isLoggingOut}
       />
@@ -52,6 +54,7 @@ export function DashboardShell({
         )}
       >
         <AdminHeader
+          isSidebarExpanded={isSidebarExpanded}
           onMobileMenuToggle={handleMobileMenuToggle}
           onLogout={logout}
           assistantTrigger={headerAction}

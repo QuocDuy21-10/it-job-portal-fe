@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { Header } from "@/components/header";
@@ -11,6 +11,7 @@ import ProfileBottomNav from "@/features/profile/components/profile-bottom-nav";
 import { PendingDeletionBanner } from "@/features/profile/components/pending-deletion-banner";
 import { useGetMeQuery } from "@/features/auth/redux/auth.api";
 import { useAuth } from "@/hooks/use-auth";
+import { useSidebarState } from "@/hooks/use-sidebar-state";
 import { getPathname, usePathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,8 @@ export function ProfileLayoutClient({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const { isExpanded: sidebarExpanded, toggle: toggleSidebar } =
+    useSidebarState("devlink:profile-sidebar-expanded", true);
   const { data: meData } = useGetMeQuery();
   const scheduledDeletionAt = meData?.data?.user?.scheduledDeletionAt;
   const router = useRouter();
@@ -47,7 +49,7 @@ export function ProfileLayoutClient({
     <>
       <Header />
       <div className="flex min-h-screen bg-background">
-        <ProfileSidebar onExpandedChange={setSidebarExpanded} />
+        <ProfileSidebar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
         <div
           className={cn(
             "flex flex-col flex-1 transition-all duration-300 min-w-0",

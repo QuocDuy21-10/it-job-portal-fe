@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toAppHref } from "@/i18n/hrefs";
+import { BrandLogo } from "@/components/shared/brand-logo";
 
 interface AdminMobileNavProps {
   isOpen: boolean;
@@ -52,13 +53,12 @@ export function AdminMobileNav({ isOpen, onClose }: AdminMobileNavProps) {
       >
         <SheetHeader className="p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
-            <SheetTitle className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">A</span>
-              </div>
-              <span className="font-semibold text-base">
-                {t("adminShell.panelTitle")}
-              </span>
+            <SheetTitle className="flex items-center">
+              <BrandLogo
+                collapsed={false}
+                href=""
+                subtitle={t("adminShell.panelTitle")}
+              />
             </SheetTitle>
           </div>
         </SheetHeader>
