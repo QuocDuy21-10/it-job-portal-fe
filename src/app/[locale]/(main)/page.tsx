@@ -10,6 +10,7 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import {
   fetchPublicActiveBanner,
   fetchPublicJobs,
+  fetchPublicStats,
   fetchPublicTopHiringCompanies,
 } from "@/lib/utils/public-content";
 import { buildLocalizedPageMetadata } from "@/shared/constants/seo";
@@ -51,10 +52,11 @@ export async function generateMetadata({
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   // Either result is null when the backend is unreachable; the client then fetches it itself.
-  const [initialJobs, initialCompanies, banner, t] = await Promise.all([
+  const [initialJobs, initialCompanies, banner, stats, t] = await Promise.all([
     fetchPublicJobs(getHomeJobsQuery(1)),
     fetchPublicTopHiringCompanies(HOME_TOP_COMPANIES_LIMIT),
     fetchPublicActiveBanner(),
+    fetchPublicStats(),
     getTranslations({ locale }),
   ]);
 
@@ -65,6 +67,7 @@ export default async function HomePage({ params }: HomePageProps) {
         initialJobs={initialJobs}
         initialCompanies={initialCompanies}
         heroImageUrl={banner?.imageUrl}
+        stats={stats}
       />
       <LandingLinks locale={locale as AppLocale} t={t} variant="compact" />
     </>

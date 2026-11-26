@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Search,
@@ -36,6 +36,7 @@ import {
 import { hasSession } from "@/lib/auth/session";
 import { selectIsAdmin } from "@/features/auth/redux/auth.slice";
 import { useAppSelector } from "@/lib/redux/hooks";
+import type { IPublicStats } from "@/shared/types/dashboard";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
 
@@ -64,6 +65,7 @@ type HomeProps = {
   initialJobs: PaginatedResult<Job> | null;
   initialCompanies: TopHiringCompany[] | null;
   heroImageUrl?: string;
+  stats?: IPublicStats | null;
 };
 
 const DEFAULT_HERO_IMAGE = "/images/homepage-it-careers-banner.png";
@@ -72,6 +74,7 @@ export default function Home({
   initialJobs,
   initialCompanies,
   heroImageUrl,
+  stats,
 }: HomeProps) {
   const [heroFailed, setHeroFailed] = useState(false);
   const [hasToken, setHasToken] = useState(false);
@@ -110,7 +113,34 @@ export default function Home({
     }
   }, []);
 
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+
+  // Real counts only: a zero or a failed request shows nothing instead of a made-up number.
+  const heroStats = stats
+    ? [
+        {
+          key: "activeJobs",
+          value: stats.activeJobs,
+          label: t("home.activeJobs"),
+        },
+        {
+          key: "hiringCompanies",
+          value: stats.hiringCompanies,
+          label: t("home.hiringCompanies"),
+        },
+        {
+          key: "newJobsThisWeek",
+          value: stats.newJobsThisWeek,
+          label: t("home.newJobsThisWeek"),
+        },
+        {
+          key: "candidates",
+          value: stats.candidates,
+          label: t("home.jobSeekers"),
+        },
+      ].filter((stat) => stat.value > 0)
+    : [];
+  const numberFormat = new Intl.NumberFormat(language);
 
   // Pagination states
   const [jobsPage, setJobsPage] = useState(1);
@@ -203,34 +233,25 @@ export default function Home({
             </div>
 
             {/* Stats */}
-            <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground sm:text-3xl">
-                  20k+
-                </div>
-                <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                  {t("home.activeJobs")}
-                </div>
+            {heroStats.length > 0 && (
+              <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
+                {heroStats.map((stat, index) => (
+                  <Fragment key={stat.key}>
+                    {index > 0 && (
+                      <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
+                    )}
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground sm:text-3xl">
+                        {numberFormat.format(stat.value)}
+                      </div>
+                      <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
+                        {stat.label}
+                      </div>
+                    </div>
+                  </Fragment>
+                ))}
               </div>
-              <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground sm:text-3xl">
-                  5k+
-                </div>
-                <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                  {t("home.companies")}
-                </div>
-              </div>
-              <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground sm:text-3xl">
-                  100k+
-                </div>
-                <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                  {t("home.jobSeekers")}
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
