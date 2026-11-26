@@ -13,6 +13,7 @@ import {
   fetchPublicJobSearch,
   fetchPublicJobSearchStrict,
   fetchPublicLegalPage,
+  fetchPublicStats,
   fetchPublicTopHiringCompanies,
 } from "./public-content";
 
@@ -56,6 +57,12 @@ describe("public-content", () => {
       "fetchPublicActiveBanner",
       () => fetchPublicActiveBanner(),
       `${API}/site-content/banners/active`,
+      60,
+    ],
+    [
+      "fetchPublicStats",
+      () => fetchPublicStats(),
+      `${API}/statistics/public`,
       60,
     ],
     [
@@ -232,6 +239,33 @@ describe("public-content", () => {
   it("fetchPublicActiveBanner falls back to null when the backend fails", async () => {
     respondWith(null, 500);
     await expect(fetchPublicActiveBanner()).resolves.toBeNull();
+  });
+
+  it("fetchPublicStats returns the counts", async () => {
+    const stats = {
+      activeJobs: 240,
+      newJobsThisWeek: 35,
+      hiringCompanies: 42,
+      candidates: 1200,
+    };
+    respondWith(stats);
+
+    await expect(fetchPublicStats()).resolves.toEqual(stats);
+  });
+
+  it.each([404, 500])(
+    "fetchPublicStats gives null when the backend answers %i",
+    async (status) => {
+      respondWith(null, status);
+
+      await expect(fetchPublicStats()).resolves.toBeNull();
+    }
+  );
+
+  it("fetchPublicStats gives null when the backend cannot be reached", async () => {
+    fetchMock.mockRejectedValue(new Error("ECONNREFUSED"));
+
+    await expect(fetchPublicStats()).resolves.toBeNull();
   });
 
   it("fetchPublicLegalPage reports a missing page as null but throws on an outage", async () => {

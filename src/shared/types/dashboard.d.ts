@@ -126,3 +126,18 @@ export interface IHrDashboardStats {
   /** Dữ liệu lấy từ cache hay không */
   fromCache: boolean;
 }
+
+/** Public homepage counts from GET /statistics/public (cached 15 minutes by the backend). */
+export interface IPublicStats {
+  /** Jobs the public can see now, internal and crawled */
+  activeJobs: number;
+
+  /** Of those, jobs posted in the last 7 days */
+  newJobsThisWeek: number;
+
+  /** Companies with at least one visible internal job */
+  hiringCompanies: number;
+
+  /** Candidate accounts that are not deleted */
+  candidates: number;
+}
