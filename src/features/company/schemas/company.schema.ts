@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  COMPANY_BENEFITS,
+  COMPANY_INDUSTRIES,
+  type CompanyIndustry,
+} from "@/features/company/constants/company-profile";
 
 export const CompanySchema = z.object({
   name: z
@@ -31,6 +36,18 @@ export const CompanySchema = z.object({
     .string()
     .or(z.literal(""))
     .transform((val) => val || "")
+    .optional(),
+
+  coverImage: z.string().nullable().optional(),
+  industry: z.enum(COMPANY_INDUSTRIES).nullable().optional(),
+  techStack: z.array(z.string()).optional(),
+  benefits: z
+    .array(
+      z.object({
+        type: z.enum(COMPANY_BENEFITS),
+        note: z.string().nullable().optional(),
+      })
+    )
     .optional(),
 });
 
@@ -65,5 +82,7 @@ export interface TopHiringCompany {
   address: string;
   website?: string | null;
   numberOfEmployees?: number;
+  industry?: CompanyIndustry | null;
+  coverImage?: string | null;
   totalOpenJobs: number;
 }

@@ -13,6 +13,10 @@ import CompanyDetailPageClient from "./company-detail-page-client";
 import CompanyContact from "@/features/company/components/section/company-contact";
 import ShareCompany from "@/features/company/components/section/share-company";
 import {
+  CompanyBenefits,
+  CompanyTechStack,
+} from "@/features/company/components/section/company-profile-sections";
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -188,6 +192,16 @@ export default async function CompanyDetailPage({
         </div>
 
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white">
+          {/* Dimmed so even an all-white cover keeps white text at 4.5:1 or better. */}
+          {company.coverImage && (
+            <Image
+              src={`${API_BASE_URL_IMAGE}/images/company/${company.coverImage}`}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover opacity-30 brightness-[0.4]"
+            />
+          )}
           <div className="absolute inset-0 bg-[size:20px_20px] bg-grid-white/[0.05]" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
@@ -215,6 +229,14 @@ export default async function CompanyDetailPage({
                     {toMetadataDescription(company.description, 180)}
                   </p>
                   <div className="flex flex-wrap gap-4 text-sm">
+                    {company.industry && (
+                      <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
+                        <Building2 className="h-5 w-5" aria-hidden="true" />
+                        <span className="font-medium">
+                          {t(`companyProfile.industry.${company.industry}`)}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
                       <Users className="h-5 w-5" />
                       <span className="font-medium">
@@ -272,6 +294,9 @@ export default async function CompanyDetailPage({
                   </div>
                 </Card>
               </section>
+
+              <CompanyTechStack techStack={company.techStack} t={t} />
+              <CompanyBenefits benefits={company.benefits} t={t} />
 
               <section className="space-y-6">
                 <div>

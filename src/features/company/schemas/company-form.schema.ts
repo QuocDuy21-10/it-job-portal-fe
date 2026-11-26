@@ -1,4 +1,11 @@
 import { z } from "zod";
+import {
+  COMPANY_BENEFITS,
+  COMPANY_INDUSTRIES,
+  MAX_BENEFIT_NOTE_LENGTH,
+  MAX_BENEFITS,
+  MAX_TECH_STACK,
+} from "@/features/company/constants/company-profile";
 import type { Translate } from "@/shared/types/i18n";
 
 // Kept apart from company.schema.ts: that file is reachable from public routes,
@@ -29,4 +36,28 @@ export const createCompanySchema = (t: Translate = identity) =>
       .min(0, t(`${ERROR}.employees`))
       .max(1000000, t(`${ERROR}.employees`)),
     logo: z.string().optional(),
+    coverImage: z.string().nullable().optional(),
+    industry: z.enum(COMPANY_INDUSTRIES).nullable().optional(),
+    techStack: z
+      .array(z.string())
+      .max(MAX_TECH_STACK, t(`${ERROR}.techStack`))
+      .optional(),
+    benefits: z
+      .array(
+        z.object({
+          type: z.enum(COMPANY_BENEFITS),
+          note: z
+            .string()
+            .max(MAX_BENEFIT_NOTE_LENGTH, t(`${ERROR}.benefitNote`))
+            .nullable()
+            .optional(),
+        })
+      )
+      .max(MAX_BENEFITS, t(`${ERROR}.benefits`))
+      .refine(
+        (items) =>
+          new Set(items.map((item) => item.type)).size === items.length,
+        t(`${ERROR}.benefits`)
+      )
+      .optional(),
   });

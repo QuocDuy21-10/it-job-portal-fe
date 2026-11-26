@@ -23,6 +23,7 @@ type BannerImageFieldProps = {
   aspectClassName: string;
   error?: string;
   disabled?: boolean;
+  folder?: string;
   onUploaded: (fileName: string) => void;
   onRemove?: () => void;
 };
@@ -36,6 +37,7 @@ export function BannerImageField({
   aspectClassName,
   error,
   disabled = false,
+  folder = BANNER_FOLDER,
   onUploaded,
   onRemove,
 }: BannerImageFieldProps) {
@@ -57,7 +59,7 @@ export function BannerImageField({
       return;
     }
 
-    const fileName = await handleUpload(file, BANNER_FOLDER);
+    const fileName = await handleUpload(file, folder);
     if (fileName) onUploaded(fileName);
   };
 
