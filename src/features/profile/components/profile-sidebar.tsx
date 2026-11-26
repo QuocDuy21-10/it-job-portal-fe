@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import {
-  ArrowLeft,
   BarChart3,
   FileText,
   Edit3,
@@ -10,252 +9,108 @@ import {
   Mail,
   Bell,
   Settings,
-  type LucideIcon,
 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { type PageType } from "@/features/profile/config/profile-tabs";
 import { useProfileTab } from "@/features/profile/hooks/use-profile-tab";
 import { useI18n } from "@/hooks/use-i18n";
-import { cn } from "@/lib/utils";
-
-interface MenuItem {
-  id: PageType;
-  label: string;
-  icon: LucideIcon;
-  badge?: number;
-  description?: string;
-}
+import {
+  AppSidebar,
+  type SidebarNavItem,
+} from "@/components/shared/app-sidebar";
 
 interface ProfileSidebarProps {
-  onExpandedChange?: (isExpanded: boolean) => void;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
+/**
+ * ProfileSidebar Component
+ * Thin wrapper around AppSidebar configured for Profile tabs.
+ */
 export default function ProfileSidebar({
-  onExpandedChange,
+  isExpanded,
+  onToggle,
 }: ProfileSidebarProps) {
   const { currentPage, goToPage: handlePageChange } = useProfileTab();
   const { t } = useI18n();
 
-  // Auto-detect screen size và set initial state
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detect screen size và set initial expanded state
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const mobile = window.innerWidth < 768; // md breakpoint
-      setIsMobile(mobile);
-
-      // Desktop/Tablet: expanded, Mobile: collapsed
-      if (!mobile && !isExpanded) {
-        setIsExpanded(true);
-        onExpandedChange?.(true);
-      } else if (mobile && isExpanded) {
-        setIsExpanded(false);
-        onExpandedChange?.(false);
-      }
-    };
-
-    // Initial check
-    checkScreenSize();
-
-    // Listen for resize
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
-
-  const handleToggle = () => {
-    const newExpanded = !isExpanded;
-    setIsExpanded(newExpanded);
-    onExpandedChange?.(newExpanded);
-  };
-  // Memoize menu items để tránh re-render không cần thiết
-  const menuItems: MenuItem[] = useMemo(
+  const items: SidebarNavItem[] = useMemo(
     () => [
       {
         id: "overview",
         label: t("profileSidebar.overviewLabel"),
-        icon: BarChart3,
         description: t("profileSidebar.overviewDescription"),
+        icon: BarChart3,
+        isActive: currentPage === "overview",
+        onClick: () => handlePageChange("overview"),
       },
       {
         id: "my-cv",
         label: t("profileSidebar.myCvLabel"),
-        icon: FileText,
         description: t("profileSidebar.myCvDescription"),
+        icon: FileText,
+        isActive: currentPage === "my-cv",
+        onClick: () => handlePageChange("my-cv"),
       },
       {
         id: "create-cv",
         label: t("profileSidebar.createCvLabel"),
-        icon: Edit3,
         description: t("profileSidebar.createCvDescription"),
+        icon: Edit3,
+        isActive: currentPage === "create-cv",
+        onClick: () => handlePageChange("create-cv"),
       },
       {
         id: "my-jobs",
         label: t("profileSidebar.myJobsLabel"),
-        icon: Briefcase,
         description: t("profileSidebar.myJobsDescription"),
+        icon: Briefcase,
+        isActive: currentPage === "my-jobs",
+        onClick: () => handlePageChange("my-jobs"),
       },
       {
         id: "email-subscription",
         label: t("profileSidebar.emailSubscriptionLabel"),
-        icon: Mail,
         description: t("profileSidebar.emailSubscriptionDescription"),
+        icon: Mail,
+        isActive: currentPage === "email-subscription",
+        onClick: () => handlePageChange("email-subscription"),
       },
       {
         id: "notifications",
         label: t("profileSidebar.notificationsLabel"),
-        icon: Bell,
-        badge: 0, // Có thể thêm logic đếm thông báo
         description: t("profileSidebar.notificationsDescription"),
+        icon: Bell,
+        badge: 0,
+        isActive: currentPage === "notifications",
+        onClick: () => handlePageChange("notifications"),
       },
       {
         id: "settings",
         label: t("profileSidebar.settingsLabel"),
-        icon: Settings,
         description: t("profileSidebar.settingsDescription"),
+        icon: Settings,
+        isActive: currentPage === "settings",
+        onClick: () => handlePageChange("settings"),
       },
     ],
-    [t]
+    [currentPage, handlePageChange, t]
   );
 
   return (
-    <TooltipProvider>
-      <aside
-        className={cn(
-          "hidden md:flex flex-col fixed inset-y-0 left-0",
-          "border-r border-gray-200 bg-white dark:border-border dark:bg-card",
-          "pt-16 transition-all duration-300 z-20",
-          "shadow-sm",
-          // Responsive width
-          isExpanded ? "w-64" : "w-16"
-        )}
-      >
-        {/* Sidebar Header - Toggle Button */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-border">
-          {isExpanded && (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
-              </div>
-              <span className="font-semibold text-gray-900 dark:text-gray-100 text-base">
-                {t("profileSidebar.title")}
-              </span>
-            </div>
-          )}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleToggle}
-                  className={cn(
-                    "rounded-md p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-secondary",
-                    !isExpanded && "mx-auto"
-                  )}
-                  aria-label={
-                    isExpanded
-                      ? t("profileSidebar.collapseAria")
-                      : t("profileSidebar.expandAria")
-                  }
-                  type="button"
-                >
-                  <ArrowLeft
-                    className={cn(
-                      "w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-300",
-                      !isExpanded && "rotate-180"
-                    )}
-                    aria-hidden="true"
-                  />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {isExpanded
-                  ? t("profileSidebar.collapseLabel")
-                  : t("profileSidebar.expandLabel")}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-
-        {/* Sidebar Navigation */}
-        <div className="flex flex-col flex-1 overflow-y-auto">
-          <nav
-            className={cn(
-              "flex-1 py-4 space-y-1 transition-all duration-300",
-              isExpanded ? "px-3" : "px-2"
-            )}
-          >
-            <TooltipProvider>
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentPage === item.id;
-
-                const navButton = (
-                  <button
-                    key={item.id}
-                    onClick={() => handlePageChange(item.id)}
-                    className={cn(
-                      "w-full group flex items-center py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
-                      isExpanded ? "px-3 gap-3" : "px-2 justify-center",
-                      isActive
-                        ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 shadow-sm"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-secondary dark:hover:text-gray-100"
-                    )}
-                  >
-                    <Icon
-                      className={cn(
-                        "flex-shrink-0 h-5 w-5 transition-colors",
-                        isExpanded ? "" : "mx-auto",
-                        isActive
-                          ? "text-blue-600 dark:text-blue-400"
-                          : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
-                      )}
-                      aria-hidden="true"
-                    />
-                    {isExpanded && (
-                      <span className="flex-1 text-left">{item.label}</span>
-                    )}
-                    {isExpanded &&
-                      item.badge !== undefined &&
-                      item.badge > 0 && (
-                        <span className="badge-primary text-xs px-2 py-0.5">
-                          {item.badge > 99 ? "99+" : item.badge}
-                        </span>
-                      )}
-                  </button>
-                );
-
-                // Wrap với Tooltip khi collapsed
-                if (!isExpanded) {
-                  return (
-                    <Tooltip key={item.id}>
-                      <TooltipTrigger asChild>{navButton}</TooltipTrigger>
-                      <TooltipContent side="right">
-                        <p>{item.label}</p>
-                        {item.description && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            {item.description}
-                          </p>
-                        )}
-                        {item.badge !== undefined && item.badge > 0 && (
-                          <span className="ml-2 text-xs">({item.badge})</span>
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                }
-
-                return navButton;
-              })}
-            </TooltipProvider>
-          </nav>
-        </div>
-      </aside>
-    </TooltipProvider>
+    <AppSidebar
+      items={items}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      brandHref="/"
+      brandSubtitle={t("profileSidebar.title")}
+      topOffsetClassName="top-16"
+      responsiveClassName="hidden md:flex"
+      zIndexClassName="z-20"
+      collapseLabel={t("profileSidebar.collapseLabel")}
+      expandLabel={t("profileSidebar.expandLabel")}
+      collapseAriaLabel={t("profileSidebar.collapseAria")}
+      expandAriaLabel={t("profileSidebar.expandAria")}
+      ariaLabel={t("profileSidebar.title")}
+    />
   );
 }

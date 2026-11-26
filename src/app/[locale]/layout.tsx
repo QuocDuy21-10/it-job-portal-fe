@@ -11,6 +11,7 @@ import { AuthInitializer } from "@/components/auth-initializer";
 import { ClientLayout } from "@/components/client-layout";
 import { NotificationInitializer } from "@/components/notification/notification-initializer";
 import { AuthModalLazy } from "@/components/modals/auth-modal-lazy";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { I18nProvider } from "@/contexts/i18n-provider";
 import { AuthModalProvider } from "@/contexts/auth-modal-context";
 import { pickPublicMessages } from "@/i18n/client-messages";
@@ -83,11 +84,13 @@ export default async function LocaleLayout({
       <I18nProvider>
         <AuthModalProvider>
           <SocketProvider>
-            <AuthInitializer />
-            <NotificationInitializer />
-            <ClientLayout />
-            <div className="flex-1">{children}</div>
-            <AuthModalLazy />
+            <TooltipProvider delayDuration={200} skipDelayDuration={100}>
+              <AuthInitializer />
+              <NotificationInitializer />
+              <ClientLayout />
+              <div className="flex-1">{children}</div>
+              <AuthModalLazy />
+            </TooltipProvider>
           </SocketProvider>
         </AuthModalProvider>
       </I18nProvider>
