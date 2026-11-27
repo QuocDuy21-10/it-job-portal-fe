@@ -68,14 +68,14 @@ export function DesktopFilterSidebar({
         <div className="flex items-center justify-between border-b pb-4">
           <h3 className="font-bold text-lg flex items-center gap-2">
             <SlidersHorizontal className="w-5 h-5 text-primary" />
-            {t("jobsPage.filters") || "Filters"}
+            {t("jobsPage.filters")}
           </h3>
           {hasResettableState && (
             <Button
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-300 dark:hover:bg-red-950/40 dark:hover:text-red-200 h-8 px-2 transition-all duration-300 ease-in-out hover:border hover:border-red-200/50"
+              className="h-8 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
               <X className="w-4 h-4 mr-1" />
               {t("jobsPage.clearFilters")}
@@ -86,13 +86,13 @@ export function DesktopFilterSidebar({
         <div className="space-y-6">
           <div className="space-y-3">
             <label className="block text-sm font-semibold text-foreground">
-              {t("jobsPage.jobTypeLabel") || "Select work type"}
+              {t("jobsPage.jobTypeLabel")}
             </label>
             <Select
               value={draftJobType}
               onValueChange={handleDesktopJobTypeChange}
             >
-              <SelectTrigger className="listing-input-surface h-10 w-full text-foreground transition-all duration-300 ease-in-out hover:border-primary/50 hover:bg-primary/5 focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <SelectTrigger className="h-10 w-full bg-card text-foreground transition-colors duration-[120ms] hover:border-primary/50 hover:bg-primary/5 focus:border-primary focus:ring-2 focus:ring-primary/20">
                 <SelectValue placeholder={t("jobsPage.jobTypePlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -111,7 +111,7 @@ export function DesktopFilterSidebar({
 
           <div className="space-y-3">
             <label className="block text-sm font-semibold text-foreground">
-              {t("jobsPage.levelLabel") || "Select level"}
+              {t("jobsPage.levelLabel")}
             </label>
             <div className="space-y-3">
               {Object.entries(JOB_LEVEL_LABEL_KEYS)
@@ -120,7 +120,7 @@ export function DesktopFilterSidebar({
                   <label
                     key={value}
                     htmlFor={`desktop-exp-${value}`}
-                    className="flex items-center gap-3 cursor-pointer group rounded-lg p-1.5 -mx-1.5 transition-all duration-300 ease-in-out hover:text-primary text-foreground"
+                    className="flex items-center gap-3 cursor-pointer group rounded-lg p-1.5 -mx-1.5 transition-colors duration-[120ms] hover:text-primary text-foreground"
                   >
                     <Checkbox
                       id={`desktop-exp-${value}`}
@@ -132,7 +132,7 @@ export function DesktopFilterSidebar({
                           handleDesktopExperienceChange(value);
                         }
                       }}
-                      className="flex items-center justify-center h-5 w-5 rounded-full border-2 border-slate-300 transition-all duration-200 data-[state=checked]:border-primary data-[state=checked]:bg-transparent hover:border-primary group-hover:border-primary focus-visible:ring-primary/20 focus-visible:ring-offset-0 [&_svg]:hidden [&>span]:w-2.5 [&>span]:h-2.5 [&>span]:rounded-full [&>span]:bg-primary [&>span]:shrink-0"
+                      className="flex items-center justify-center h-5 w-5 rounded-full border-2 transition-all duration-200 data-[state=checked]:border-primary data-[state=checked]:bg-transparent hover:border-primary group-hover:border-primary focus-visible:ring-primary/20 focus-visible:ring-offset-0 [&_svg]:hidden [&>span]:w-2.5 [&>span]:h-2.5 [&>span]:rounded-full [&>span]:bg-primary [&>span]:shrink-0"
                     />
                     <span className="text-body-md font-body-md transition-colors duration-200 group-hover:text-primary">
                       {t(labelKey)}
@@ -144,13 +144,13 @@ export function DesktopFilterSidebar({
 
           <div className="space-y-3">
             <label className="block text-sm font-semibold text-foreground">
-              {t("jobsPage.salaryLabel") || "Salary range"}
+              {t("jobsPage.salaryLabel")}
             </label>
             <Select
               value={draftSalaryRange}
               onValueChange={handleDesktopSalaryRangeChange}
             >
-              <SelectTrigger className="listing-input-surface h-10 w-full text-foreground transition-all duration-300 ease-in-out hover:border-primary/50 hover:bg-primary/5 focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <SelectTrigger className="h-10 w-full bg-card text-foreground transition-colors duration-[120ms] hover:border-primary/50 hover:bg-primary/5 focus:border-primary focus:ring-2 focus:ring-primary/20">
                 <SelectValue placeholder={t("jobsPage.salaryPlaceholder")} />
               </SelectTrigger>
               <SelectContent>

@@ -34,11 +34,12 @@ export default function JobsPageClient({
   );
 
   return (
-    <div className="listing-page-surface min-h-screen">
+    <div className="min-h-screen bg-background">
       <JobsPageHero list={list} popularSkills={popularSkills} />
 
       {/* Mobile Filter Bar (Hidden on Desktop) */}
-      <div className="lg:hidden listing-filter-surface listing-strong-border sticky top-0 z-30 border-b shadow-sm bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* top-16 and z-30: it sticks under the header and stays below it and its drawers. */}
+      <div className="sticky top-16 z-30 border-b bg-background/95 backdrop-blur lg:hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between gap-3">
             {/* Summary of results */}

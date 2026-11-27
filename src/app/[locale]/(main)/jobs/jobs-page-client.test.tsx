@@ -21,6 +21,7 @@ jest.mock("@/features/job/redux/job.api", () => ({
 
 jest.mock("@/hooks/use-i18n", () => ({
   useI18n: () => ({
+    language: "en",
     t: (key: string, values?: Record<string, unknown>) =>
       values && "count" in values ? `${key}:${values.count}` : key,
   }),
@@ -236,6 +237,23 @@ describe("JobsPageClient", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: "Rust" }));
     expect(list.applyFilters).toHaveBeenCalledWith({ q: "Rust" });
+  });
+
+  it("announces the result count politely", () => {
+    renderPage(
+      createJobListState({ jobs: twoJobs, totalItems: 1234, totalPages: 2 })
+    );
+
+    const heading = screen.getByText(/1[.,]234/).closest("h2");
+    expect(heading).toHaveAttribute("aria-live", "polite");
+  });
+
+  it("renders the results without a staggered entrance", () => {
+    const { container } = renderPage(
+      createJobListState({ jobs: twoJobs, totalItems: 2, totalPages: 1 })
+    );
+
+    expect(container.querySelector(".slide-in-from-bottom-4")).toBeNull();
   });
 
   it("shows no skill row without popular skills", () => {

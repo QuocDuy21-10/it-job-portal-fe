@@ -142,6 +142,19 @@ describe("MobileFilterDrawer", () => {
     );
   });
 
+  it("tells screen readers how many filters are applied", () => {
+    render(
+      <MobileFilterDrawer
+        list={createJobListState()}
+        summary={{ ...summary, activeFiltersCount: 2 }}
+      />
+    );
+
+    expect(
+      screen.getByRole("button", { name: "jobsPage.filtersButtonLabel:2" })
+    ).toBeInTheDocument();
+  });
+
   it("applies the draft filters and closes the drawer", () => {
     const list = createJobListState();
     render(<MobileFilterDrawer list={list} summary={summary} />);
