@@ -70,3 +70,7 @@ export const BREAKPOINTS = {
   xl: "1280px",
   "2xl": "1536px",
 } as const;
+
+// DESIGN.md v2.2 public exception: clickable cards lift on hover. Public pages only, never buttons.
+export const PUBLIC_CARD_HOVER =
+  "transition-[transform,box-shadow,border-color] duration-[120ms] ease-[cubic-bezier(.2,0,0,1)] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-elevation-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0";

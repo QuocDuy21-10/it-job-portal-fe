@@ -11,13 +11,14 @@ import type { Job } from "@/features/job/schemas/job.schema";
 import { getJobStatus } from "@/features/job/utils/job-status";
 import { useI18n } from "@/hooks/use-i18n";
 import { formatVndCurrency } from "@/lib/utils/locale-formatters";
+import { JobCardCompact } from "./job-card-compact";
 import { JobCardDefault } from "./job-card-default";
 import { JobCardDetailed } from "./job-card-detailed";
 import type { JobCardViewProps } from "./types";
 
 interface JobCardProps {
   job: Job;
-  variant?: "default" | "detailed";
+  variant?: "default" | "detailed" | "compact";
   className?: string;
   hideLogo?: boolean;
   hideSalary?: boolean;
@@ -58,6 +59,10 @@ export function JobCard({
       disabled: !isHydrated || isLoading,
     },
   };
+
+  if (variant === "compact") {
+    return <JobCardCompact {...view} />;
+  }
 
   if (variant === "detailed") {
     return <JobCardDetailed {...view} actionLayout={actionLayout} />;
