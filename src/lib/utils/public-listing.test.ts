@@ -1,12 +1,17 @@
 import {
   DEFAULT_COMPANY_LIST_PAGE_SIZE,
+  DEFAULT_COMPANY_LIST_SORT,
   DEFAULT_JOB_LIST_PAGE_SIZE,
+  buildCompanyListQueryArgs,
+  buildCompanyListUrlSearchParams,
   buildJobListUrlSearchParams,
   buildJobSearchParams,
   getCompanyListCanonicalPath,
   getJobListCanonicalPath,
+  parseCompanyListSearchParams,
   parseJobListSearchParams,
   toJobSearchQueryString,
+  type CompanyListSearchState,
   type JobListSearchState,
 } from "@/lib/utils/public-listing";
 
@@ -140,21 +145,87 @@ describe("toJobSearchQueryString", () => {
   });
 });
 
+const companyState = (
+  overrides: Partial<CompanyListSearchState> = {}
+): CompanyListSearchState => ({
+  limit: DEFAULT_COMPANY_LIST_PAGE_SIZE,
+  page: 1,
+  q: "",
+  industry: "",
+  size: "",
+  sort: DEFAULT_COMPANY_LIST_SORT,
+  ...overrides,
+});
+
+describe("company list URL state", () => {
+  it("reads industry, size and sort, and drops unknown values", () => {
+    expect(
+      parseCompanyListSearchParams({
+        industry: "FINTECH_BANKING",
+        size: "m",
+        sort: "name",
+      })
+    ).toEqual(
+      companyState({ industry: "FINTECH_BANKING", size: "m", sort: "name" })
+    );
+    expect(
+      parseCompanyListSearchParams({
+        industry: "GAMBLING",
+        size: "xxl",
+        sort: "-totalJobs",
+      })
+    ).toEqual(companyState());
+  });
+
+  it("writes only non-default values to the URL", () => {
+    expect(buildCompanyListUrlSearchParams(companyState()).toString()).toBe("");
+    expect(
+      buildCompanyListUrlSearchParams(
+        companyState({
+          q: "fpt",
+          industry: "TELECOM",
+          size: "xl",
+          sort: "name",
+          page: 2,
+        })
+      ).toString()
+    ).toBe("q=fpt&industry=TELECOM&size=xl&sort=name&page=2");
+  });
+
+  it("asks the API for the industry, size range and sort", () => {
+    expect(
+      buildCompanyListQueryArgs(
+        companyState({ industry: "TELECOM", size: "m" })
+      )
+    ).toEqual({
+      filter: "industry=TELECOM&numberOfEmployees>=51&numberOfEmployees<=200",
+      sort: "sort=-createdAt",
+      limit: DEFAULT_COMPANY_LIST_PAGE_SIZE,
+      page: 1,
+    });
+    expect(buildCompanyListQueryArgs(companyState({ size: "xl" })).filter).toBe(
+      "numberOfEmployees>=1001"
+    );
+  });
+
+  it("keeps filtered and re-sorted lists out of the index", () => {
+    expect(
+      getCompanyListCanonicalPath(companyState({ industry: "TELECOM" }))
+    ).toBeNull();
+    expect(getCompanyListCanonicalPath(companyState({ size: "s" }))).toBeNull();
+    expect(
+      getCompanyListCanonicalPath(companyState({ sort: "name" }))
+    ).toBeNull();
+    expect(getCompanyListCanonicalPath(companyState())).toBe("/companies");
+  });
+});
+
 describe("getCompanyListCanonicalPath", () => {
   it("returns null for a search and keeps plain pagination canonical", () => {
-    expect(
-      getCompanyListCanonicalPath({
-        limit: DEFAULT_COMPANY_LIST_PAGE_SIZE,
-        page: 1,
-        q: "fpt",
-      })
-    ).toBeNull();
-    expect(
-      getCompanyListCanonicalPath({
-        limit: DEFAULT_COMPANY_LIST_PAGE_SIZE,
-        page: 3,
-        q: "",
-      })
-    ).toEqual({ pathname: "/companies", query: { page: "3" } });
+    expect(getCompanyListCanonicalPath(companyState({ q: "fpt" }))).toBeNull();
+    expect(getCompanyListCanonicalPath(companyState({ page: 3 }))).toEqual({
+      pathname: "/companies",
+      query: { page: "3" },
+    });
   });
 });

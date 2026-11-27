@@ -21,6 +21,7 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("@/lib/utils/public-content", () => ({
   fetchPublicCompanies: jest.fn(),
+  fetchPublicTopHiringCompanies: jest.fn().mockResolvedValue(null),
 }));
 
 jest.mock("./companies-page-client", () => ({

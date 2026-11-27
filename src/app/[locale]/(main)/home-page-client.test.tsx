@@ -138,6 +138,7 @@ jest.mock("@/features/company/components/company-card", () => ({
   CompanyCard: ({ company }: { company: { name: string } }) => (
     <div data-testid="company-card">{company.name}</div>
   ),
+  CompanyCardSkeleton: () => <div data-testid="company-skeleton" />,
 }));
 
 jest.mock("@/components/ui/carousel", () => ({
