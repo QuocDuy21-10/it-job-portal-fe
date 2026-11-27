@@ -7,7 +7,6 @@ import {
   HOME_POPULAR_SKILLS_LIMIT,
   PopularSkills,
 } from "@/features/home/components/popular-skills";
-import { LandingLinks } from "@/features/job/components/landing/landing-links";
 import { JsonLd, buildHomeJsonLd } from "@/lib/seo/json-ld";
 import {
   HOME_TOP_COMPANIES_LIMIT,
@@ -86,7 +85,6 @@ export default async function HomePage({ params }: HomePageProps) {
           />
         }
       />
-      <LandingLinks locale={locale as AppLocale} t={t} variant="compact" />
     </>
   );
 }

@@ -12,8 +12,25 @@ describe("parseEnv", () => {
       API_URL: "http://localhost:8081",
       SITE_URL: "http://localhost:3000",
       GOOGLE_CLIENT_ID: undefined,
+      CONTACT_EMAIL: undefined,
     });
     expect(parseEnv({}, "test").API_URL).toBe("http://localhost:8081");
+  });
+
+  it("reads an optional contact email", () => {
+    expect(
+      parseEnv(
+        { ...PROD_OK, NEXT_PUBLIC_CONTACT_EMAIL: " hr@devlink.vn " },
+        "production"
+      ).CONTACT_EMAIL
+    ).toBe("hr@devlink.vn");
+    expect(parseEnv(PROD_OK, "production").CONTACT_EMAIL).toBeUndefined();
+  });
+
+  it("rejects a contact email that is not an email", () => {
+    expect(() =>
+      parseEnv({ ...PROD_OK, NEXT_PUBLIC_CONTACT_EMAIL: "hr" }, "production")
+    ).toThrow(/NEXT_PUBLIC_CONTACT_EMAIL/);
   });
 
   it("requires NEXT_PUBLIC_API_URL in production", () => {

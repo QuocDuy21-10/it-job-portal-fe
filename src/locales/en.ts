@@ -116,7 +116,48 @@ export const en = {
     previous: "Previous",
     next: "Next",
   },
+  employers: {
+    metaTitle: "Hire IT talent",
+    metaDescription:
+      "Post IT jobs, manage applications and follow your hiring statistics on DevLink.",
+    title: "Hire IT talent on DevLink",
+    description:
+      "Post jobs, receive applications and track your hiring in one dashboard built for HR.",
+    contactEmail: "Contact us by email",
+    hrLogin: "HR sign in",
+    benefitsTitle: "What DevLink does for employers",
+    benefitReachTitle: "Reach IT candidates",
+    benefitReachDescription:
+      "Your jobs appear alongside the skill, city and level job pages IT candidates search.",
+    benefitManageTitle: "Manage jobs and applications",
+    benefitManageDescription:
+      "Create and edit job posts and handle applications right in the HR dashboard.",
+    benefitStatsTitle: "Hiring statistics",
+    benefitStatsDescription:
+      "Follow your company's job count, applications and application trends.",
+    stepsTitle: "How to start",
+    stepContactTitle: "Contact DevLink",
+    stepContactDescription:
+      "Email us with your company name and the person in charge.",
+    stepAccountTitle: "Get an HR account",
+    stepAccountDescription:
+      "An administrator creates an HR account linked to your company.",
+    stepPostTitle: "Post jobs and get applications",
+    stepPostDescription:
+      "Publish your job posts; once approved they go live and receive applications from candidates.",
+    finalTitle: "Ready to hire?",
+    finalDescription:
+      "Contact us for an HR account, or sign in if you already have one.",
+  },
   home: {
+    ctaCandidateTitle: "Find your next IT job",
+    ctaCandidateDescription:
+      "Filter by skill, location and salary, and apply with your saved profile.",
+    ctaCandidateAction: "Find jobs",
+    ctaEmployerTitle: "Hiring?",
+    ctaEmployerDescription:
+      "Post jobs and manage applications in the HR dashboard.",
+    ctaEmployerAction: "Learn more",
     goToSlide: "Go to company group {index}",
     newJobs: "New jobs",
     newJobsDescription: "The latest job posts and the best-paid open roles.",
@@ -168,10 +209,6 @@ export const en = {
     getHired: "Get Hired",
     getHiredDescription:
       "Connect with top employers and land your dream IT job faster than ever",
-    readyToGetStarted: "Ready to Level Up Your Career?",
-    readyToGetStartedDescription:
-      "Join thousands of IT professionals who have found their dream careers through DevLink",
-    browseJobs: "Get Started",
   },
   nav: {
     findJobs: "Find Jobs",
@@ -1603,20 +1640,15 @@ export const en = {
   footer: {
     logoName: "DevLink",
     description:
-      "Connecting talented professionals with amazing opportunities worldwide.",
+      "An IT job platform connecting candidates with tech companies in Vietnam.",
     forJobSeekers: "For Job Seekers",
     browseJobs: "Browse Jobs",
     browseCompanies: "Browse Companies",
-    careerAdvice: "Career Advice",
-    salaryGuide: "Salary Guide",
-    forEmployers: "For Employers",
     postAJob: "Post a Job",
-    browseCandidates: "Browse Candidates",
-    employerBranding: "Employer Branding",
-    pricing: "Pricing",
-    company: "Company",
-    aboutUs: "About Us",
     contact: "Contact",
+    bySkill: "Jobs by skill",
+    forEmployersPage: "Hire on DevLink",
+    support: "Employers & support",
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
     copyright: "© {year} DevLink. All rights reserved.",
