@@ -117,6 +117,7 @@ export const en = {
     next: "Next",
   },
   home: {
+    goToSlide: "Go to company group {index}",
     newJobs: "New jobs",
     newJobsDescription: "The latest job posts and the best-paid open roles.",
     tabLatest: "Latest",

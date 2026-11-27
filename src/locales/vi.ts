@@ -116,6 +116,7 @@ export const vi = {
     next: "Trang sau",
   },
   home: {
+    goToSlide: "Đến nhóm công ty {index}",
     newJobs: "Việc làm mới",
     newJobsDescription:
       "Tin tuyển dụng mới đăng và mức lương cao nhất đang mở.",

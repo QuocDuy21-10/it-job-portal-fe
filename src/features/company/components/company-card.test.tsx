@@ -1,26 +1,40 @@
-import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
+import type { ImgHTMLAttributes, ReactNode } from "react";
+import type { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { CompanyCard } from "./company-card";
 
+jest.mock("next/image", () => ({
+  __esModule: true,
+  default: (props: ImgHTMLAttributes<HTMLImageElement>) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img {...props} alt={props.alt ?? ""} />
+  ),
+}));
+
+jest.mock("next-intl", () => ({ useLocale: () => "vi" }));
+
+jest.mock("@/hooks/use-i18n", () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}));
+
 jest.mock("@/i18n/navigation", () => {
-  // Real route table: object hrefs render as the URL a visitor sees (Vietnamese).
   const { getPathname } = jest.requireActual("@/i18n/navigation");
 
   return {
     Link: ({
       children,
-      className,
       href,
+      className,
     }: {
       children: ReactNode;
-      className?: string;
       href: string | object;
+      className?: string;
     }) => (
       <a
-        className={className}
         href={
           typeof href === "string" ? href : getPathname({ href, locale: "vi" })
         }
+        className={className}
       >
         {children}
       </a>
@@ -28,48 +42,42 @@ jest.mock("@/i18n/navigation", () => {
   };
 });
 
-jest.mock("@/hooks/use-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string) => {
-      if (key === "companyList.openPositions") {
-        return "Open positions";
-      }
-
-      return key;
-    },
-  }),
-}));
-
-jest.mock("next-intl", () => ({
-  useLocale: () => "en",
-}));
+const company: TopHiringCompany = {
+  _id: "c1",
+  name: "Acme",
+  logo: "acme.png",
+  address: "Quận 1, TP.HCM",
+  industry: "FINTECH_BANKING",
+  totalOpenJobs: 1234,
+};
 
 describe("CompanyCard", () => {
-  it("renders description-first content and localized open positions without follow controls", () => {
-    render(
-      <CompanyCard
-        company={{
-          _id: "company-1",
-          name: "Google",
-          description: "<p>Organizing the world's information.</p>",
-          address: "Mountain View",
-          website: "https://google.com",
-          numberOfEmployees: 1000,
-          totalJobs: 1200,
-          logo: "google.png",
-        }}
-      />
-    );
+  it("links to the company and shows its industry and open jobs", () => {
+    render(<CompanyCard company={company} />);
 
-    expect(screen.getByRole("link", { name: /google/i })).toHaveAttribute(
+    expect(screen.getByRole("link")).toHaveAttribute(
       "href",
-      "/cong-ty/google-company-1"
+      "/cong-ty/acme-c1"
     );
     expect(
-      screen.getByText("Organizing the world's information.")
+      screen.getByText("companyProfile.industry.FINTECH_BANKING")
     ).toBeInTheDocument();
-    expect(screen.getByText("1,200 Open positions")).toBeInTheDocument();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-    expect(screen.queryByText(/follow/i)).not.toBeInTheDocument();
+    expect(screen.getByText("Quận 1, TP.HCM")).toBeInTheDocument();
+    expect(screen.getByText(/1\.234/)).toBeInTheDocument();
+    expect(screen.getByRole("img")).toHaveAttribute(
+      "src",
+      expect.stringContaining("acme.png")
+    );
+    // The whole card is one link: no follow or save control on it.
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
+  it("leaves out a missing industry and logo", () => {
+    render(
+      <CompanyCard company={{ ...company, industry: null, logo: null }} />
+    );
+
+    expect(screen.queryByText(/companyProfile\.industry/)).toBeNull();
+    expect(screen.queryByRole("img")).toBeNull();
   });
 });
