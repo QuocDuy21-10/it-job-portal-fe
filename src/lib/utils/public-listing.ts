@@ -2,6 +2,16 @@ import type { AppHref } from "@/i18n/navigation";
 import type { PaginatedQueryParams } from "@/shared/types/pagination";
 import { resolveLocationCode } from "@/shared/data/location-catalog";
 import {
+  COMPANY_SIZES,
+  COMPANY_SIZE_KEYS,
+  type CompanySizeKey,
+} from "@/features/company/config/company-size";
+import {
+  COMPANY_INDUSTRIES,
+  type CompanyIndustry,
+} from "@/features/company/constants/company-profile";
+import { between, equals } from "@/lib/utils/list-url";
+import {
   JOB_SEARCH_SOURCES,
   type JobSearchParams,
   type JobSearchSort,
@@ -10,6 +20,14 @@ import {
 
 export const DEFAULT_JOB_LIST_PAGE_SIZE = 10;
 export const DEFAULT_COMPANY_LIST_PAGE_SIZE = 9;
+
+export const COMPANY_LIST_SORTS = [
+  "-createdAt",
+  "name",
+  "-numberOfEmployees",
+] as const;
+export type CompanyListSort = (typeof COMPANY_LIST_SORTS)[number];
+export const DEFAULT_COMPANY_LIST_SORT: CompanyListSort = "-createdAt";
 export const DEFAULT_JOB_LIST_SORT = "-createdAt";
 
 const JOB_TYPE_VALUES = [
@@ -74,6 +92,10 @@ export type CompanyListSearchState = {
   limit: number;
   page: number;
   q: string;
+  // "" means no filter.
+  industry: CompanyIndustry | "";
+  size: CompanySizeKey | "";
+  sort: CompanyListSort;
 };
 
 const getSingleSearchParam = (
@@ -176,6 +198,21 @@ export const parseCompanyListSearchParams = (
     ),
     page: parsePositiveInt(getSingleSearchParam(searchParams, "page"), 1),
     q: normalizeStringParam(getSingleSearchParam(searchParams, "q")),
+    industry: normalizeEnumParam(
+      getSingleSearchParam(searchParams, "industry"),
+      COMPANY_INDUSTRIES,
+      ""
+    ) as CompanyIndustry | "",
+    size: normalizeEnumParam(
+      getSingleSearchParam(searchParams, "size"),
+      COMPANY_SIZE_KEYS,
+      ""
+    ) as CompanySizeKey | "",
+    sort: normalizeEnumParam(
+      getSingleSearchParam(searchParams, "sort"),
+      COMPANY_LIST_SORTS,
+      DEFAULT_COMPANY_LIST_SORT
+    ) as CompanyListSort,
   };
 };
 
@@ -238,8 +275,17 @@ export const toJobSearchQueryString = (params: JobSearchParams) => {
 export const buildCompanyListQueryArgs = (
   searchState: CompanyListSearchState
 ): PaginatedQueryParams => {
+  const size = searchState.size ? COMPANY_SIZES[searchState.size] : undefined;
+
   return {
-    filter: searchState.q ? `name=/${encodeURIComponent(searchState.q)}/i` : "",
+    filter: [
+      ...(searchState.q
+        ? [`name=/${encodeURIComponent(searchState.q)}/i`]
+        : []),
+      ...equals("industry", searchState.industry || undefined),
+      ...between("numberOfEmployees", size?.min, size?.max),
+    ].join("&"),
+    sort: `sort=${searchState.sort}`,
     limit: searchState.limit,
     page: searchState.page,
   };
@@ -298,6 +344,18 @@ export const buildCompanyListUrlSearchParams = (
     params.set("q", searchState.q);
   }
 
+  if (searchState.industry) {
+    params.set("industry", searchState.industry);
+  }
+
+  if (searchState.size) {
+    params.set("size", searchState.size);
+  }
+
+  if (searchState.sort !== DEFAULT_COMPANY_LIST_SORT) {
+    params.set("sort", searchState.sort);
+  }
+
   if (searchState.page > 1) {
     params.set("page", String(searchState.page));
   }
@@ -345,7 +403,11 @@ export const getCompanyListCanonicalPath = (
   searchState: CompanyListSearchState
 ): AppHref | null => {
   const isIndexableVariant =
-    !searchState.q && searchState.limit === DEFAULT_COMPANY_LIST_PAGE_SIZE;
+    !searchState.q &&
+    !searchState.industry &&
+    !searchState.size &&
+    searchState.sort === DEFAULT_COMPANY_LIST_SORT &&
+    searchState.limit === DEFAULT_COMPANY_LIST_PAGE_SIZE;
 
   if (!isIndexableVariant) {
     return null;
@@ -378,6 +440,11 @@ export const areCompanyListSearchStatesEqual = (
   right: CompanyListSearchState
 ) => {
   return (
-    left.limit === right.limit && left.page === right.page && left.q === right.q
+    left.limit === right.limit &&
+    left.page === right.page &&
+    left.q === right.q &&
+    left.industry === right.industry &&
+    left.size === right.size &&
+    left.sort === right.sort
   );
 };

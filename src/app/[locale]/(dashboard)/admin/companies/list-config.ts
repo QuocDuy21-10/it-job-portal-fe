@@ -1,18 +1,15 @@
 import { dateFilter } from "@/components/admin/list/list-params";
 import type { ListConfig, ListValues } from "@/components/admin/list/types";
+import {
+  COMPANY_SIZES,
+  COMPANY_SIZE_KEYS,
+  type CompanySizeKey,
+} from "@/features/company/config/company-size";
 import { between, equals } from "@/lib/utils/list-url";
 import { LOCATION_CATALOG } from "@/shared/data/location-catalog";
 import provinces from "@/shared/data/provinces.json";
 import type { Translate } from "@/shared/types/i18n";
 import type { PaginatedQueryParams } from "@/shared/types/pagination";
-
-// 0 means the size is unknown, so it is in no range.
-const SIZES: Record<string, { min: number; max?: number }> = {
-  s: { min: 1, max: 50 },
-  m: { min: 51, max: 200 },
-  l: { min: 201, max: 1000 },
-  xl: { min: 1001 },
-};
 
 // "Hue" alone is also a common street name (Nguyễn Huệ).
 const AMBIGUOUS_ALIASES = ["Hue"];
@@ -39,7 +36,7 @@ export function buildCompanyListConfig(t: Translate): ListConfig {
         key: "size",
         label: label("size"),
         type: "select",
-        options: Object.keys(SIZES).map((value) => ({
+        options: COMPANY_SIZE_KEYS.map((value) => ({
           value,
           label: label(`sizes.${value}`),
         })),
@@ -66,7 +63,9 @@ export function toCompanyQuery({
   limit,
   filters,
 }: ListValues): PaginatedQueryParams {
-  const size = SIZES[filters.size];
+  const size = filters.size
+    ? COMPANY_SIZES[filters.size as CompanySizeKey]
+    : undefined;
 
   return {
     page,

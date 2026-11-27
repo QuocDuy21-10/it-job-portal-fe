@@ -88,6 +88,9 @@ const initialSearchState: CompanyListSearchState = {
   limit: 9,
   page: 1,
   q: "",
+  industry: "",
+  size: "",
+  sort: "-createdAt",
 };
 
 describe("CompaniesPageClient", () => {
