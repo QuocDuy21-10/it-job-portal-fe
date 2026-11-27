@@ -149,6 +149,14 @@ export const vi = {
       "Liên hệ để được tạo tài khoản HR, hoặc đăng nhập nếu bạn đã có tài khoản.",
   },
   home: {
+    ctaCandidateTitle: "Tìm công việc IT tiếp theo",
+    ctaCandidateDescription:
+      "Lọc theo kỹ năng, địa điểm, mức lương và ứng tuyển bằng hồ sơ đã lưu.",
+    ctaCandidateAction: "Tìm việc ngay",
+    ctaEmployerTitle: "Bạn đang tuyển dụng?",
+    ctaEmployerDescription:
+      "Đăng tin và quản lý hồ sơ ứng tuyển trong bảng điều khiển HR.",
+    ctaEmployerAction: "Tìm hiểu thêm",
     goToSlide: "Đến nhóm công ty {index}",
     newJobs: "Việc làm mới",
     newJobsDescription:
@@ -203,10 +211,6 @@ export const vi = {
     getHired: "Được Tuyển Dụng",
     getHiredDescription:
       "Kết nối với nhà tuyển dụng hàng đầu và nhanh chóng có được công việc IT mơ ước",
-    readyToGetStarted: "Sẵn Sàng Nâng Tầm Sự Nghiệp?",
-    readyToGetStartedDescription:
-      "Tham gia cùng hàng nghìn chuyên gia IT đã tìm thấy sự nghiệp mơ ước thông qua DevLink",
-    browseJobs: "Bắt Đầu Ngay",
   },
   nav: {
     myAccount: "Tài Khoản Của Tôi",

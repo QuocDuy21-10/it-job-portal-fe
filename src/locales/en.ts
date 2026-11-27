@@ -150,6 +150,14 @@ export const en = {
       "Contact us for an HR account, or sign in if you already have one.",
   },
   home: {
+    ctaCandidateTitle: "Find your next IT job",
+    ctaCandidateDescription:
+      "Filter by skill, location and salary, and apply with your saved profile.",
+    ctaCandidateAction: "Find jobs",
+    ctaEmployerTitle: "Hiring?",
+    ctaEmployerDescription:
+      "Post jobs and manage applications in the HR dashboard.",
+    ctaEmployerAction: "Learn more",
     goToSlide: "Go to company group {index}",
     newJobs: "New jobs",
     newJobsDescription: "The latest job posts and the best-paid open roles.",
@@ -201,10 +209,6 @@ export const en = {
     getHired: "Get Hired",
     getHiredDescription:
       "Connect with top employers and land your dream IT job faster than ever",
-    readyToGetStarted: "Ready to Level Up Your Career?",
-    readyToGetStartedDescription:
-      "Join thousands of IT professionals who have found their dream careers through DevLink",
-    browseJobs: "Get Started",
   },
   nav: {
     findJobs: "Find Jobs",
