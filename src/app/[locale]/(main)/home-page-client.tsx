@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   ArrowRight,
@@ -22,7 +22,7 @@ import { SectionHeader } from "@/components/sections/section-header";
 import { SectionContainer } from "@/components/sections/section-container";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 import { Link, useRouter } from "@/i18n/navigation";
-import { JobSearchBox } from "@/components/search/job-search-box";
+import { HomeHero } from "@/features/home/components/home-hero";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -38,29 +38,7 @@ import { useAppSelector } from "@/lib/redux/hooks";
 import type { IPublicStats } from "@/shared/types/dashboard";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import type { BannerSlide } from "@/features/site-content/schemas/site-content.schema";
-import { HeroCarousel } from "./hero-carousel";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
-
-type HomeSearchBoxProps = {
-  onSearch: (query: string, locationCode: string) => void;
-};
-
-function HomeSearchBox({ onSearch }: HomeSearchBoxProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLocationCode, setSelectedLocationCode] = useState<string>("");
-
-  return (
-    <JobSearchBox
-      searchQuery={searchQuery}
-      onSearchQueryChange={setSearchQuery}
-      locationCode={selectedLocationCode}
-      onLocationCodeChange={setSelectedLocationCode}
-      onSearch={(submittedQuery) =>
-        onSearch(submittedQuery ?? searchQuery, selectedLocationCode)
-      }
-    />
-  );
-}
 
 type HomeProps = {
   initialJobs: PaginatedResult<Job> | null;
@@ -111,34 +89,7 @@ export default function Home({
     }
   }, []);
 
-  const { t, language } = useI18n();
-
-  // Real counts only: a zero or a failed request shows nothing instead of a made-up number.
-  const heroStats = stats
-    ? [
-        {
-          key: "activeJobs",
-          value: stats.activeJobs,
-          label: t("home.activeJobs"),
-        },
-        {
-          key: "hiringCompanies",
-          value: stats.hiringCompanies,
-          label: t("home.hiringCompanies"),
-        },
-        {
-          key: "newJobsThisWeek",
-          value: stats.newJobsThisWeek,
-          label: t("home.newJobsThisWeek"),
-        },
-        {
-          key: "candidates",
-          value: stats.candidates,
-          label: t("home.jobSeekers"),
-        },
-      ].filter((stat) => stat.value > 0)
-    : [];
-  const numberFormat = new Intl.NumberFormat(language);
+  const { t } = useI18n();
 
   // Pagination states
   const [jobsPage, setJobsPage] = useState(1);
@@ -189,48 +140,12 @@ export default function Home({
 
   return (
     <div className="flex flex-col">
-      <HeroCarousel
+      <HomeHero
         slides={slides}
-        footer={
-          heroStats.length > 0 && (
-            <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 animate-in fade-in slide-in-from-bottom-7 duration-1100">
-              {heroStats.map((stat, index) => (
-                <Fragment key={stat.key}>
-                  {index > 0 && (
-                    <div className="hidden h-10 w-px bg-foreground/10 dark:bg-white/10 sm:block" />
-                  )}
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground sm:text-3xl">
-                      {numberFormat.format(stat.value)}
-                    </div>
-                    <div className="home-muted-text mt-0.5 text-sm text-muted-foreground">
-                      {stat.label}
-                    </div>
-                  </div>
-                </Fragment>
-              ))}
-            </div>
-          )
-        }
-      >
-        <div className="space-y-4">
-          <h1
-            className={`${TYPOGRAPHY.h1} animate-in fade-in slide-in-from-bottom-4 duration-700 text-foreground`}
-          >
-            {t("home.findYour")}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent dark:from-sky-200 dark:via-cyan-300 dark:to-blue-400">
-              {t("home.dreamJob")}
-            </span>
-          </h1>
-          <p className="home-muted-text mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-5 text-lg leading-relaxed text-muted-foreground duration-900 sm:text-xl">
-            {t("home.discoverOpportunities")} {t("home.startCareerJourney")}
-          </p>
-        </div>
-
-        <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
-          <HomeSearchBox onSearch={handleSearch} />
-        </div>
-      </HeroCarousel>
+        stats={stats}
+        jobs={initialJobs?.result ?? []}
+        onSearch={handleSearch}
+      />
 
       {/* Featured Jobs Section */}
       <SectionContainer className="home-section-base">

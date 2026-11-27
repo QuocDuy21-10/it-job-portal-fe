@@ -118,8 +118,8 @@ jest.mock("@/components/single-select", () => ({
 }));
 
 jest.mock("@/features/job/components/job-card", () => ({
-  JobCard: ({ job }: { job: { name: string } }) => (
-    <div data-testid="job-card">{job.name}</div>
+  JobCard: ({ job, variant }: { job: { name: string }; variant?: string }) => (
+    <div data-testid={`job-card-${variant ?? "default"}`}>{job.name}</div>
   ),
 }));
 
@@ -195,6 +195,11 @@ const page1Query = {
   sort: "sort=-createdAt",
 };
 
+const listedJobs = (variant: "default" | "compact") =>
+  screen
+    .queryAllByTestId(`job-card-${variant}`)
+    .map((node) => node.textContent);
+
 describe("Home", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -223,9 +228,8 @@ describe("Home", () => {
       <Home initialJobs={initialJobs} initialCompanies={initialCompanies} />
     );
 
-    expect(screen.getByText("Server job")).toBeInTheDocument();
+    expect(listedJobs("default")).toEqual(["Server job"]);
     expect(screen.getByText("Server company")).toBeInTheDocument();
-    expect(screen.queryByText("Fetched job")).not.toBeInTheDocument();
     expect(screen.queryByText("Fetched company")).not.toBeInTheDocument();
     expect(useGetJobsQuery).toHaveBeenLastCalledWith(page1Query, {
       skip: true,
@@ -239,7 +243,7 @@ describe("Home", () => {
   it("fetches on the client when the server sent nothing", () => {
     render(<Home initialJobs={null} initialCompanies={null} />);
 
-    expect(screen.getByText("Fetched job")).toBeInTheDocument();
+    expect(listedJobs("default")).toEqual(["Fetched job"]);
     expect(screen.getByText("Fetched company")).toBeInTheDocument();
     expect(useGetJobsQuery).toHaveBeenLastCalledWith(page1Query, {
       skip: false,
@@ -261,8 +265,7 @@ describe("Home", () => {
       { ...page1Query, page: 2 },
       { skip: false }
     );
-    expect(screen.getByText("Fetched job")).toBeInTheDocument();
-    expect(screen.queryByText("Server job")).not.toBeInTheDocument();
+    expect(listedJobs("default")).toEqual(["Fetched job"]);
   });
 
   it("ignores the server job list for signed-in HR and Super Admin", () => {
@@ -280,10 +283,26 @@ describe("Home", () => {
     expect(useGetJobsQuery).toHaveBeenLastCalledWith(page1Query, {
       skip: false,
     });
-    expect(screen.getByText("Fetched job")).toBeInTheDocument();
-    expect(screen.queryByText("Server job")).not.toBeInTheDocument();
+    expect(listedJobs("default")).toEqual(["Fetched job"]);
     // Top hiring companies do not depend on the role.
     expect(screen.getByText("Server company")).toBeInTheDocument();
+  });
+
+  it("shows the three newest server jobs as compact cards in the hero", () => {
+    const fourJobs = {
+      meta: { pagination: { total_pages: 1 } },
+      result: ["A", "B", "C", "D"].map((name) => ({ _id: name, name })),
+    } as PaginatedResult<Job>;
+
+    render(<Home initialJobs={fourJobs} initialCompanies={initialCompanies} />);
+
+    expect(listedJobs("compact")).toEqual(["A", "B", "C"]);
+  });
+
+  it("keeps the single-column hero when the server sent no jobs", () => {
+    render(<Home initialJobs={null} initialCompanies={null} />);
+
+    expect(listedJobs("compact")).toEqual([]);
   });
 
   it("loads the hero banner as a prioritized image, not a CSS background", () => {
