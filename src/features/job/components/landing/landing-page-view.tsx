@@ -7,7 +7,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { JobSearchCard } from "@/features/job/components/job-search-card";
+import { JobCard } from "@/features/job/components/job-card";
+import { searchItemToCardData } from "@/features/job/components/job-card/job-card-data";
 import {
   LANDING_TEXT_KEYS,
   getLandingPagesByType,
@@ -99,7 +100,11 @@ export function LandingPageView({
         <div className="mt-8 space-y-4">
           {data.result.length > 0 ? (
             data.result.map((item) => (
-              <JobSearchCard key={item.id} item={item} />
+              <JobCard
+                key={item.id}
+                data={searchItemToCardData(item)}
+                variant="list"
+              />
             ))
           ) : (
             <p className="text-muted-foreground">

@@ -125,9 +125,13 @@ jest.mock("@/components/single-select", () => ({
 }));
 
 jest.mock("@/features/job/components/job-card", () => ({
-  JobCard: ({ job, variant }: { job: { name: string }; variant?: string }) => (
-    <div data-testid={`job-card-${variant ?? "default"}`}>{job.name}</div>
-  ),
+  JobCard: ({
+    data,
+    variant,
+  }: {
+    data: { title: string };
+    variant: string;
+  }) => <div data-testid={`job-card-${variant}`}>{data.title}</div>,
 }));
 
 jest.mock("@/features/company/components/company-card", () => ({
@@ -191,7 +195,7 @@ const latestQuery = {
 };
 const topSalaryQuery = { ...latestQuery, sort: "sort=-salary" };
 
-const listedJobs = (variant: "default" | "compact") =>
+const listedJobs = (variant: "grid" | "compact") =>
   screen
     .queryAllByTestId(`job-card-${variant}`)
     .map((node) => node.textContent);
@@ -224,7 +228,7 @@ describe("Home", () => {
       <Home initialJobs={initialJobs} initialCompanies={initialCompanies} />
     );
 
-    expect(listedJobs("default")).toEqual(["Server job"]);
+    expect(listedJobs("grid")).toEqual(["Server job"]);
     expect(screen.getByText("Server company")).toBeInTheDocument();
     expect(screen.queryByText("Fetched company")).not.toBeInTheDocument();
     expect(useGetJobsQuery).toHaveBeenCalledWith(latestQuery, { skip: true });
@@ -240,7 +244,7 @@ describe("Home", () => {
   it("fetches on the client when the server sent nothing", () => {
     render(<Home initialJobs={null} initialCompanies={null} />);
 
-    expect(listedJobs("default")).toEqual(["Fetched job"]);
+    expect(listedJobs("grid")).toEqual(["Fetched job"]);
     expect(screen.getByText("Fetched company")).toBeInTheDocument();
     expect(useGetJobsQuery).toHaveBeenCalledWith(latestQuery, { skip: false });
     expect(useGetTopHiringCompaniesQuery).toHaveBeenLastCalledWith(
@@ -262,7 +266,7 @@ describe("Home", () => {
       skip: true,
     });
     expect(useGetJobsQuery).toHaveBeenCalledWith(latestQuery, { skip: false });
-    expect(listedJobs("default")).toEqual(["Fetched job"]);
+    expect(listedJobs("grid")).toEqual(["Fetched job"]);
     // Top hiring companies do not depend on the role.
     expect(screen.getByText("Server company")).toBeInTheDocument();
   });
@@ -304,7 +308,7 @@ describe("Home", () => {
     expect(useGetJobsQuery).toHaveBeenLastCalledWith(topSalaryQuery, {
       skip: false,
     });
-    expect(listedJobs("default")).toEqual(["Fetched job"]);
+    expect(listedJobs("grid")).toEqual(["Fetched job"]);
   });
 
   it("points 'view all' at the job list sorted like the open tab", () => {

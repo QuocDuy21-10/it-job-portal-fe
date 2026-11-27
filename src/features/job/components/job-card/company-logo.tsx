@@ -17,10 +17,10 @@ export const CompanyLogo = ({
 }) => {
   const { t } = useI18n();
   const sizeMap = {
-    sm: "h-10 w-10 rounded-lg",
-    md: "h-12 w-12 rounded-xl",
-    lg: "h-14 w-14 rounded-xl",
-    xl: "h-16 w-16 rounded-2xl",
+    sm: "h-10 w-10 rounded-md",
+    md: "h-12 w-12 rounded-lg",
+    lg: "h-14 w-14 rounded-lg",
+    xl: "h-16 w-16 rounded-lg",
   };
   const imageSize = {
     sm: 40,
@@ -38,7 +38,7 @@ export const CompanyLogo = ({
   return (
     <div
       className={cn(
-        "flex flex-shrink-0 items-center justify-center overflow-hidden border bg-white dark:bg-white/[0.04] shadow-sm border-muted/30 dark:border-white/10 p-1",
+        "flex flex-shrink-0 items-center justify-center overflow-hidden border bg-background p-1",
         sizeMap[size]
       )}
     >
@@ -48,10 +48,10 @@ export const CompanyLogo = ({
           alt={`${name ?? t("jobsPage.jobCard.companyFallback")} logo`}
           width={imageSize[size]}
           height={imageSize[size]}
-          className="h-full w-full object-contain rounded-lg"
+          className="h-full w-full rounded-md object-contain"
         />
       ) : (
-        <Building2 className={cn("text-muted-foreground/40", iconSize[size])} />
+        <Building2 className={cn("text-muted-foreground", iconSize[size])} />
       )}
     </div>
   );

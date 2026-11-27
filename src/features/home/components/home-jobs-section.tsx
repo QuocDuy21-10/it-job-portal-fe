@@ -12,6 +12,7 @@ import {
   type HomeJobsTab,
 } from "@/features/home/config/home-query";
 import { JobCard } from "@/features/job/components/job-card";
+import { jobToCardData } from "@/features/job/components/job-card/job-card-data";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import type { Job } from "@/features/job/schemas/job.schema";
 import { useI18n } from "@/hooks/use-i18n";
@@ -93,7 +94,7 @@ function JobGrid({ jobs, loading, failed }: JobList) {
   return (
     <div className={GRID}>
       {jobs.map((job) => (
-        <JobCard key={job._id} job={job} />
+        <JobCard key={job._id} data={jobToCardData(job)} variant="grid" />
       ))}
     </div>
   );

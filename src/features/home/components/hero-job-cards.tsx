@@ -1,6 +1,7 @@
 "use client";
 
 import { JobCard } from "@/features/job/components/job-card";
+import { jobToCardData } from "@/features/job/components/job-card/job-card-data";
 import type { Job } from "@/features/job/schemas/job.schema";
 import { useI18n } from "@/hooks/use-i18n";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,7 @@ export function HeroJobCards({ jobs }: { jobs: Job[] }) {
               LAYOUT[index].delay
             )}
           >
-            <JobCard job={job} variant="compact" />
+            <JobCard data={jobToCardData(job)} variant="compact" />
           </div>
         </li>
       ))}

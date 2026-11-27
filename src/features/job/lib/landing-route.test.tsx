@@ -22,9 +22,9 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/lib/utils/public-content", () => ({
   fetchPublicJobSearchStrict: jest.fn(),
 }));
-jest.mock("@/features/job/components/job-search-card", () => ({
-  JobSearchCard: ({ item }: { item: { title: string } }) => (
-    <div data-testid="card">{item.title}</div>
+jest.mock("@/features/job/components/job-card", () => ({
+  JobCard: ({ data }: { data: { title: string } }) => (
+    <div data-testid="card">{data.title}</div>
   ),
 }));
 jest.mock("@/i18n/navigation", () => ({
