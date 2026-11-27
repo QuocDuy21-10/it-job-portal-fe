@@ -48,6 +48,26 @@ export const vi = {
     home: "Trang chủ",
   },
   companyList: {
+    featured: "Đang tuyển nhiều",
+    filters: {
+      industry: "Lĩnh vực",
+      size: "Quy mô",
+      sort: "Sắp xếp",
+      allIndustries: "Tất cả lĩnh vực",
+      allSizes: "Mọi quy mô",
+      clear: "Xóa bộ lọc",
+    },
+    sizes: {
+      s: "1–50 người",
+      m: "51–200 người",
+      l: "201–1.000 người",
+      xl: "Trên 1.000 người",
+    },
+    sort: {
+      newest: "Mới nhất",
+      name: "Tên A–Z",
+      size: "Quy mô lớn nhất",
+    },
     noOpenJobs: "Chưa có vị trí đang tuyển",
     techStack: "Công nghệ sử dụng",
     techMore: "+{count}",
@@ -62,7 +82,6 @@ export const vi = {
     loading: "Đang tải danh sách công ty...",
     errorLoading: "Lỗi khi tải danh sách công ty.",
     openPositions: "vị trí đang tuyển",
-    viewDetails: "Xem chi tiết",
     noCompaniesFound: "Không tìm thấy công ty nào",
     tryAdjustingSearch:
       "Hãy thử thay đổi từ khóa tìm kiếm để có kết quả phù hợp hơn",

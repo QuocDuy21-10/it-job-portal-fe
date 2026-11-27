@@ -1,7 +1,11 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { useGetCompaniesQuery } from "@/features/company/redux/company.api";
 import CompaniesPageClient from "./companies-page-client";
-import type { Company } from "@/features/company/schemas/company.schema";
+import type {
+  Company,
+  TopHiringCompany,
+} from "@/features/company/schemas/company.schema";
 import type { CompanyListSearchState } from "@/lib/utils/public-listing";
 import type { PaginatedResult } from "@/shared/types/pagination";
 
@@ -18,6 +22,35 @@ jest.mock("next/image", () => ({
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <img {...props} alt={props.alt ?? ""} />
   ),
+}));
+
+jest.mock("next-intl", () => ({ useLocale: () => "en" }));
+
+// Radix Select cannot open in jsdom; a native <select> exposes the same value/onValueChange contract.
+jest.mock("@/components/ui/select", () => ({
+  Select: ({
+    value,
+    onValueChange,
+    children,
+  }: {
+    value: string;
+    onValueChange: (value: string) => void;
+    children?: ReactNode;
+  }) => (
+    <select value={value} onChange={(e) => onValueChange(e.target.value)}>
+      {children}
+    </select>
+  ),
+  SelectTrigger: () => null,
+  SelectValue: () => null,
+  SelectContent: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectItem: ({
+    value,
+    children,
+  }: {
+    value: string;
+    children?: ReactNode;
+  }) => <option value={value}>{children}</option>,
 }));
 
 jest.mock("@/features/company/redux/company.api", () => ({
@@ -114,6 +147,7 @@ describe("CompaniesPageClient", () => {
       <CompaniesPageClient
         initialData={createInitialDataWithTotal(420)}
         initialSearchState={initialSearchState}
+        featuredCompanies={null}
       />
     );
 
@@ -137,6 +171,7 @@ describe("CompaniesPageClient", () => {
       <CompaniesPageClient
         initialData={createInitialData()}
         initialSearchState={initialSearchState}
+        featuredCompanies={null}
       />
     );
 
@@ -155,6 +190,7 @@ describe("CompaniesPageClient", () => {
       <CompaniesPageClient
         initialData={createInitialData()}
         initialSearchState={initialSearchState}
+        featuredCompanies={null}
       />
     );
 
@@ -179,14 +215,77 @@ describe("CompaniesPageClient", () => {
     fireEvent.change(input, {
       target: { value: "fintech" },
     });
-    fireEvent.keyDown(input, {
-      key: "Enter",
-    });
+    // Enter submits the form; jsdom does not turn a keyDown into a submit.
+    fireEvent.submit(input.closest("form")!);
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith("/en/companies?q=fintech", {
         scroll: false,
       });
     });
+  });
+
+  it("writes a chosen industry to the URL and asks the API for it", async () => {
+    render(
+      <CompaniesPageClient
+        initialData={createInitialData()}
+        initialSearchState={initialSearchState}
+        featuredCompanies={null}
+      />
+    );
+
+    const [industry] = screen.getAllByRole("combobox");
+    fireEvent.change(industry, { target: { value: "FINTECH_BANKING" } });
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith(
+        "/en/companies?industry=FINTECH_BANKING",
+        { scroll: false }
+      );
+    });
+    expect(mockUseGetCompaniesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        filter: "industry=FINTECH_BANKING",
+        sort: "sort=-createdAt",
+      }),
+      { skip: false }
+    );
+  });
+
+  it("shows the featured strip only on the unfiltered first page", () => {
+    const featured = [
+      { _id: "f1", name: "Featured Co", address: "Hà Nội", totalOpenJobs: 9 },
+    ] as TopHiringCompany[];
+    render(
+      <CompaniesPageClient
+        initialData={createInitialData()}
+        initialSearchState={initialSearchState}
+        featuredCompanies={featured}
+      />
+    );
+
+    expect(screen.getByText("Featured Co")).toBeInTheDocument();
+
+    fireEvent.change(screen.getAllByRole("combobox")[1], {
+      target: { value: "s" },
+    });
+    expect(screen.queryByText("Featured Co")).toBeNull();
+  });
+
+  it("shows an error message when the list cannot load", () => {
+    mockUseGetCompaniesQuery.mockReturnValue({
+      data: undefined,
+      error: { status: 500 },
+      isLoading: false,
+    });
+    render(
+      <CompaniesPageClient
+        initialData={null}
+        initialSearchState={initialSearchState}
+        featuredCompanies={null}
+      />
+    );
+
+    expect(screen.getByText("companyList.errorLoading")).toBeInTheDocument();
   });
 });

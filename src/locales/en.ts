@@ -49,6 +49,26 @@ export const en = {
     home: "Home",
   },
   companyList: {
+    featured: "Hiring the most",
+    filters: {
+      industry: "Industry",
+      size: "Company size",
+      sort: "Sort by",
+      allIndustries: "All industries",
+      allSizes: "Any size",
+      clear: "Clear filters",
+    },
+    sizes: {
+      s: "1–50 people",
+      m: "51–200 people",
+      l: "201–1,000 people",
+      xl: "Over 1,000 people",
+    },
+    sort: {
+      newest: "Newest",
+      name: "Name A–Z",
+      size: "Largest first",
+    },
     noOpenJobs: "No open positions yet",
     techStack: "Tech stack",
     techMore: "+{count}",
@@ -63,7 +83,6 @@ export const en = {
     loading: "Loading companies...",
     errorLoading: "Error loading companies.",
     openPositions: "open positions",
-    viewDetails: "View Details",
     noCompaniesFound: "No companies found",
     tryAdjustingSearch:
       "Try adjusting your search query to find what you're looking for",
