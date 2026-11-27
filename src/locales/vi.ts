@@ -2200,6 +2200,8 @@ export const vi = {
       internal: "DevLink",
       external: "Nguồn khác",
     },
+    filtersButtonLabel: "Bộ lọc, {count} đang áp dụng",
+    popularSkills: "Kỹ năng phổ biến:",
     externalBadge: "Nguồn ngoài",
     salaryNotDisclosed: "Không công bố",
     externalFilterHint:

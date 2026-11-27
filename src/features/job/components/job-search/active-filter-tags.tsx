@@ -78,7 +78,7 @@ export function ActiveFilterTags({ list, summary }: ActiveFilterTagsProps) {
               <span>
                 {t(
                   SALARY_RANGE_OPTIONS.find((o) => o.value === salaryRange)
-                    ?.labelKey || ""
+                    ?.labelKey ?? ""
                 )}
               </span>
               <X className="w-3.5 h-3.5" />
@@ -89,9 +89,9 @@ export function ActiveFilterTags({ list, summary }: ActiveFilterTagsProps) {
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
-            className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/40 px-2.5 font-semibold rounded-full"
+            className="h-8 rounded-md px-2.5 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
-            {t("jobsPage.clearFilters") || "Clear All"}
+            {t("jobsPage.clearFilters")}
           </Button>
         </div>
       )}

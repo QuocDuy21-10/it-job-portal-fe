@@ -68,7 +68,7 @@ function HighlightedLabel({ label, query }: { label: string; query: string }) {
     <span>
       {parts.map((part, i) =>
         i % 2 !== 0 ? (
-          <strong key={i} className="font-bold text-primary dark:text-blue-400">
+          <strong key={i} className="font-bold text-primary">
             {part}
           </strong>
         ) : (
@@ -180,7 +180,7 @@ export function SearchSuggestInput({
       const container = containerRef.current;
       if (!container) return;
 
-      const parentSearchBox = container.closest(".listing-panel-surface");
+      const parentSearchBox = container.closest("[data-search-box]");
       if (parentSearchBox) {
         const parentRect = parentSearchBox.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
@@ -374,7 +374,7 @@ export function SearchSuggestInput({
           aria-label={t("search.suggest.clear")}
           onMouseDown={(event) => event.preventDefault()}
           onClick={handleClear}
-          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -410,8 +410,8 @@ export function SearchSuggestInput({
                       className={cn(
                         "flex cursor-pointer items-center justify-between px-3 py-3 text-sm text-muted-foreground rounded-lg transition-all duration-200 h-12 select-none",
                         isSelected
-                          ? "bg-accent text-accent-foreground translate-x-1"
-                          : "hover:bg-accent/70 hover:text-accent-foreground hover:translate-x-1"
+                          ? "bg-accent text-accent-foreground"
+                          : "hover:bg-accent/70 hover:text-accent-foreground"
                       )}
                     >
                       <div className="flex items-center gap-3">
@@ -440,7 +440,7 @@ export function SearchSuggestInput({
               <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
                 <Search className="h-8 w-8 text-muted-foreground/40 mb-2 animate-pulse" />
                 <p className="text-sm font-semibold text-foreground">
-                  {t("search.suggest.noResultTitle") || "No results matching"}
+                  {t("search.suggest.noResultTitle")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1 max-w-[240px] leading-relaxed">
                   {t("search.suggest.noResult")}
@@ -471,8 +471,8 @@ export function SearchSuggestInput({
                           className={cn(
                             "flex cursor-pointer items-center justify-between px-3 py-3 text-sm text-muted-foreground rounded-lg transition-all duration-200 h-12 select-none",
                             isSelected
-                              ? "bg-accent text-accent-foreground translate-x-1"
-                              : "hover:bg-accent/70 hover:text-accent-foreground hover:translate-x-1"
+                              ? "bg-accent text-accent-foreground"
+                              : "hover:bg-accent/70 hover:text-accent-foreground"
                           )}
                         >
                           <div className="flex items-center gap-3">
@@ -488,7 +488,7 @@ export function SearchSuggestInput({
                               e.preventDefault();
                             }}
                             onClick={(e) => deleteFromHistory(e, term)}
-                            className="p-1.5 rounded-full text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:outline-none"
+                            className="p-1.5 rounded-md text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:outline-none"
                             aria-label={`Delete ${term} from history`}
                           >
                             <X className="h-3.5 w-3.5" />
@@ -519,7 +519,7 @@ export function SearchSuggestInput({
                           event.preventDefault();
                           selectSuggestion(skill.label);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary text-foreground hover:bg-primary/15 hover:text-primary border border-border/80 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary text-foreground hover:bg-primary/15 hover:text-primary border border-border/80 transition-colors duration-[120ms]"
                       >
                         {skill.label}
                       </button>

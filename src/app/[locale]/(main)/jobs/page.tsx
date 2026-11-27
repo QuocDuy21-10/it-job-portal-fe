@@ -5,13 +5,18 @@ import { notFound } from "next/navigation";
 import JobsPageClient from "./jobs-page-client";
 import { LandingLinks } from "@/features/job/components/landing/landing-links";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { fetchPublicJobSearch } from "@/lib/utils/public-content";
+import {
+  fetchPublicJobSearch,
+  fetchPublicPopularSkills,
+} from "@/lib/utils/public-content";
 import {
   buildJobSearchParams,
   getJobListCanonicalPath,
   parseJobListSearchParams,
 } from "@/lib/utils/public-listing";
 import { buildLocalizedPageMetadata } from "@/shared/constants/seo";
+
+const JOBS_POPULAR_SKILLS_LIMIT = 8;
 
 type JobsPageProps = {
   params: Promise<{ locale: string }>;
@@ -67,9 +72,10 @@ export default async function JobsPage({
   }
 
   const initialSearchState = parseJobListSearchParams(resolvedSearchParams);
-  const initialData = await fetchPublicJobSearch(
-    buildJobSearchParams(initialSearchState)
-  );
+  const [initialData, popularSkills] = await Promise.all([
+    fetchPublicJobSearch(buildJobSearchParams(initialSearchState)),
+    fetchPublicPopularSkills(JOBS_POPULAR_SKILLS_LIMIT),
+  ]);
 
   // Google asks for a 404 on pagination URLs past the last page.
   if (
@@ -87,6 +93,7 @@ export default async function JobsPage({
       <JobsPageClient
         initialData={initialData}
         initialSearchState={initialSearchState}
+        popularSkills={popularSkills ?? []}
       />
       <LandingLinks locale={locale as AppLocale} t={t} variant="full" />
     </>

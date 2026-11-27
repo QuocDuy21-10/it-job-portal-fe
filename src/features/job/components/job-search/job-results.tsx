@@ -32,7 +32,7 @@ type JobResultsProps = {
 };
 
 export function JobResults({ list, summary }: JobResultsProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const {
     jobs,
     totalItems,
@@ -51,25 +51,34 @@ export function JobResults({ list, summary }: JobResultsProps) {
   return (
     <>
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-lg font-medium text-foreground">
-          <span className="font-bold">{totalItems.toLocaleString()}</span>{" "}
+        <h2
+          aria-live="polite"
+          aria-atomic="true"
+          className="text-lg font-medium text-foreground"
+        >
+          <span className="font-bold">
+            {new Intl.NumberFormat(language).format(totalItems)}
+          </span>{" "}
           {t("jobsPage.resultsFoundSuffix", { count: totalItems })}
         </h2>
 
         <div className="flex w-full sm:w-auto sm:justify-end">
-          <div className="listing-input-surface listing-strong-border inline-flex h-11 w-full items-center gap-2 rounded-full border px-2 shadow-sm sm:w-auto">
+          <div className="inline-flex h-11 w-full items-center gap-2 rounded-md border bg-background px-2 sm:w-auto">
             <div className="flex items-center gap-2 pl-2">
               <ArrowUpDown className="h-4 w-4 text-primary" />
-              <span className="listing-muted-text whitespace-nowrap text-sm font-medium">
+              <span className="whitespace-nowrap text-sm font-medium text-muted-foreground">
                 {t("jobsPage.sortLabel")}
               </span>
             </div>
-            <div className="listing-subtle-border hidden h-5 w-px border-l sm:block" />
+            <div className="hidden h-5 w-px bg-border sm:block" />
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="h-9 min-w-0 flex-1 rounded-full border-0 bg-transparent px-3 text-sm font-semibold text-foreground shadow-none focus:ring-0 focus:ring-offset-0 sm:min-w-[180px]">
+              <SelectTrigger
+                aria-label={t("jobsPage.sortLabel")}
+                className="h-9 min-w-0 flex-1 border-0 bg-transparent px-3 text-sm font-semibold text-foreground shadow-none focus:ring-0 focus:ring-offset-0 sm:min-w-[180px]"
+              >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="listing-panel-surface listing-strong-border">
+              <SelectContent>
                 {SORT_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {t(option.labelKey)}
@@ -98,54 +107,49 @@ export function JobResults({ list, summary }: JobResultsProps) {
         </TabsList>
       </Tabs>
       {showExternalFilterHint && (
-        <p className="listing-muted-text text-sm">
+        <p className="text-sm text-muted-foreground">
           {t("jobsPage.externalFilterHint")}
         </p>
       )}
 
       {isLoading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Card
-              key={i}
-              className="listing-panel-surface listing-subtle-border p-5 sm:p-6 animate-pulse"
+        <div className="space-y-4" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, index) => (
+            <div
+              key={index}
+              className="flex animate-pulse flex-col gap-4 rounded-lg border bg-card p-5 sm:flex-row sm:p-6"
             >
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="h-14 w-14 rounded-xl bg-muted/60" />
-                <div className="flex-1 space-y-3">
-                  <div className="h-5 w-1/3 bg-muted/60 rounded" />
-                  <div className="h-4 w-1/4 bg-muted/60 rounded" />
-                  <div className="flex gap-2">
-                    <div className="h-5 w-16 bg-muted/60 rounded-md" />
-                    <div className="h-5 w-16 bg-muted/60 rounded-md" />
-                  </div>
-                </div>
-                <div className="sm:w-[100px] flex flex-col justify-between sm:items-end gap-2">
-                  <div className="h-3 w-12 bg-muted/60 rounded" />
-                  <div className="h-6 w-20 bg-muted/60 rounded" />
+              <div className="h-16 w-16 shrink-0 rounded-lg bg-muted" />
+              <div className="flex-1 space-y-2">
+                <div className="h-5 w-2/5 rounded bg-muted" />
+                <div className="h-4 w-1/5 rounded bg-muted" />
+                <div className="h-4 w-1/4 rounded bg-muted" />
+                <div className="flex gap-1.5">
+                  <div className="h-5 w-16 rounded-md bg-muted" />
+                  <div className="h-5 w-16 rounded-md bg-muted" />
                 </div>
               </div>
-            </Card>
+              <div className="space-y-2 sm:w-44 sm:border-l sm:pl-6">
+                <div className="h-4 w-24 rounded bg-muted sm:ml-auto" />
+                <div className="h-4 w-16 rounded bg-muted sm:ml-auto" />
+              </div>
+            </div>
           ))}
         </div>
       ) : jobs.length === 0 ? (
-        <Card className="listing-panel-surface listing-subtle-border p-16 text-center">
+        <Card className="p-16 text-center">
           <div className="max-w-md mx-auto">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/40">
-              <Briefcase className="h-8 w-8 text-blue-500" />
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+              <Briefcase className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="mb-2 text-xl font-semibold text-foreground">
               {t("jobsPage.emptyTitle")}
             </h3>
-            <p className="listing-muted-text mb-6">
+            <p className="mb-6 text-muted-foreground">
               {t("jobsPage.emptyDescription")}
             </p>
             {hasAppliedFilters && (
-              <Button
-                onClick={clearAllFilters}
-                variant="outline"
-                className="border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-900 dark:text-blue-300 dark:hover:bg-blue-950/40"
-              >
+              <Button onClick={clearAllFilters} variant="outline">
                 {t("jobsPage.clearAllFilters")}
               </Button>
             )}
@@ -153,14 +157,12 @@ export function JobResults({ list, summary }: JobResultsProps) {
         </Card>
       ) : (
         <div className="space-y-4">
-          {jobs.map((item: JobSearchItem, index: number) => (
-            <div
+          {jobs.map((item: JobSearchItem) => (
+            <JobCard
               key={item.id}
-              className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <JobCard data={searchItemToCardData(item)} variant="list" />
-            </div>
+              data={searchItemToCardData(item)}
+              variant="list"
+            />
           ))}
         </div>
       )}
