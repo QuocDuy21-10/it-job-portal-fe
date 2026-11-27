@@ -1,7 +1,11 @@
 "use client";
 
-import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import Image from "next/image";
+import type { ReactNode } from "react";
+import {
+  selectIsAdmin,
+  selectIsAuthenticated,
+} from "@/features/auth/redux/auth.slice";
 import {
   getLandingPagesByType,
   landingHref,
@@ -10,26 +14,43 @@ import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { useAppSelector } from "@/lib/redux/hooks";
-import {
-  selectIsAdmin,
-  selectIsAuthenticated,
-} from "@/features/auth/redux/auth.slice";
+import { env } from "@/shared/config/env";
 
+const FOOTER_SKILL_COUNT = 6;
+const LINK_CLASS =
+  "rounded-sm text-sm text-muted-foreground transition-colors duration-[120ms] hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+function FooterColumn({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
+        {title}
+      </h3>
+      <ul className="space-y-3">{children}</ul>
+    </div>
+  );
+}
+
+// Only links with a real destination: a page that does not exist yet is left out, not linked to "#".
 export function Footer() {
-  const { t, language, mounted: i18nMounted } = useI18n();
+  const { t, language } = useI18n();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const isAdmin = useAppSelector(selectIsAdmin);
   // /admin only bounces a signed-in candidate back home, so the link is for guests (login) and staff.
   const showPostAJob = !isAuthenticated || isAdmin;
+  const contactEmail = env.CONTACT_EMAIL;
+  const locale = language as AppLocale;
 
   return (
-    <footer className="mt-auto border-t bg-background relative overflow-hidden">
-      {/* Subtle background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-      <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+    <footer className="mt-auto border-t bg-background">
+      <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center">
               <Image
@@ -40,191 +61,79 @@ export function Footer() {
                 className="h-20 w-auto"
               />
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              {i18nMounted
-                ? t("footer.description")
-                : "Connecting talented professionals with amazing opportunities worldwide."}
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+              {t("footer.description")}
             </p>
-            <div className="flex gap-3">
-              <a
-                href="#"
-                className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 hover:scale-110"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 hover:scale-110"
-                aria-label="Twitter"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 hover:scale-110"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 hover:scale-110"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
-          <div>
-            <h3 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">
-              {i18nMounted ? t("footer.forJobSeekers") : "For Job Seekers"}
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/jobs"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.browseJobs") : "Browse Jobs"}
+          <FooterColumn title={t("footer.forJobSeekers")}>
+            <li>
+              <Link href="/jobs" className={LINK_CLASS}>
+                {t("footer.browseJobs")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/companies" className={LINK_CLASS}>
+                {t("footer.browseCompanies")}
+              </Link>
+            </li>
+            {getLandingPagesByType("city").map((city) => (
+              <li key={city.slug}>
+                <Link href={landingHref(city)} className={LINK_CLASS}>
+                  {t("landingPage.linkCity", { name: city.name[locale] })}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/companies"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted
-                    ? t("footer.browseCompanies")
-                    : "Browse Companies"}
-                </Link>
-              </li>
-              {getLandingPagesByType("city").map((city) => (
-                <li key={city.slug}>
-                  <Link
-                    href={landingHref(city)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                  >
-                    {t("landingPage.linkCity", {
-                      name: city.name[language as AppLocale],
-                    })}
+            ))}
+          </FooterColumn>
+
+          <FooterColumn title={t("footer.bySkill")}>
+            {getLandingPagesByType("skill")
+              .slice(0, FOOTER_SKILL_COUNT)
+              .map((skill) => (
+                <li key={skill.slug}>
+                  <Link href={landingHref(skill)} className={LINK_CLASS}>
+                    {t("landingPage.linkSkill", { name: skill.name[locale] })}
                   </Link>
                 </li>
               ))}
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.careerAdvice") : "Career Advice"}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.salaryGuide") : " Salary Guide"}
-                </a>
-              </li>
-            </ul>
-          </div>
+          </FooterColumn>
 
-          <div>
-            <h3 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">
-              {i18nMounted ? t("footer.forEmployers") : " For Employers"}
-            </h3>
-            <ul className="space-y-3">
-              {showPostAJob && (
-                <li>
-                  <Link
-                    href="/admin"
-                    className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                  >
-                    {i18nMounted ? t("footer.postAJob") : " Post a Job"}
-                  </Link>
-                </li>
-              )}
+          <FooterColumn title={t("footer.support")}>
+            <li>
+              <Link href="/employers" className={LINK_CLASS}>
+                {t("footer.forEmployersPage")}
+              </Link>
+            </li>
+            {showPostAJob && (
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted
-                    ? t("footer.browseCandidates")
-                    : " Browse Candidates"}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted
-                    ? t("footer.employerBranding")
-                    : "Employer Branding"}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.pricing") : "Pricing"}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">
-              {i18nMounted ? t("footer.company") : "Company"}
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.aboutUs") : "About Us"}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.contact") : "Contact"}
-                </a>
-              </li>
-              <li>
-                <Link
-                  href="/privacy"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted ? t("footer.privacyPolicy") : "Privacy Policy"}
+                <Link href="/admin" className={LINK_CLASS}>
+                  {t("footer.postAJob")}
                 </Link>
               </li>
+            )}
+            {contactEmail && (
               <li>
-                <Link
-                  href="/terms"
-                  className="text-sm text-muted-foreground hover:text-primary transition-all duration-200 hover:translate-x-1 inline-block"
-                >
-                  {i18nMounted
-                    ? t("footer.termsOfService")
-                    : "Terms of Service"}
-                </Link>
+                <a href={`mailto:${contactEmail}`} className={LINK_CLASS}>
+                  {t("footer.contact")}
+                </a>
               </li>
-            </ul>
-          </div>
+            )}
+            <li>
+              <Link href="/privacy" className={LINK_CLASS}>
+                {t("footer.privacyPolicy")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/terms" className={LINK_CLASS}>
+                {t("footer.termsOfService")}
+              </Link>
+            </li>
+          </FooterColumn>
         </div>
 
-        <div className="mt-20 pt-10 border-t border-border/60 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground/80 font-medium">
-            {i18nMounted
-              ? t("footer.copyright", { year: new Date().getFullYear() })
-              : `© ${new Date().getFullYear()} DevLink. All rights reserved.`}
+        <div className="mt-12 border-t pt-8">
+          <p className="text-sm text-muted-foreground">
+            {t("footer.copyright", { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>
