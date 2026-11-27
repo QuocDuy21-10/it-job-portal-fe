@@ -131,8 +131,9 @@ export function TopCompaniesSection({
             <CarouselNext className="right-3 hidden md:inline-flex lg:-right-5" />
           </Carousel>
 
+          {/* -mx-6 reclaims the section padding, so eight 44px targets fit one row from 360px. */}
           {!isLoading && snapsCount > 1 && (
-            <div className="mt-4 flex flex-wrap justify-center md:hidden">
+            <div className="-mx-6 mt-4 flex flex-wrap justify-center md:hidden">
               {Array.from({ length: snapsCount }, (_, index) => (
                 <button
                   key={index}

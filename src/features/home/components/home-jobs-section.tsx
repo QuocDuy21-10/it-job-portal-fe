@@ -33,9 +33,10 @@ const VIEW_ALL_HREF: Record<HomeJobsTab, StaticHref> = {
 const GRID =
   "grid min-h-[22rem] grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3";
 
+// min-h matches a loaded JobCard with a one-line title, so loading -> loaded does not jump.
 function JobCardSkeleton() {
   return (
-    <Card>
+    <Card className="min-h-[13rem]">
       <CardContent className="p-5">
         <div className="animate-pulse space-y-3">
           <div className="flex items-start gap-3 pr-9">
