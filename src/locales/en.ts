@@ -2189,6 +2189,7 @@ export const en = {
       internal: "DevLink",
       external: "Other sources",
     },
+    popularSkills: "Popular skills:",
     externalBadge: "External",
     salaryNotDisclosed: "Not disclosed",
     externalFilterHint:

@@ -8,6 +8,7 @@ import { MobileFilterDrawer } from "@/features/job/components/job-search/mobile-
 import { useJobList } from "@/features/job/hooks/use-job-list";
 import { useJobListUrlSync } from "@/features/job/hooks/use-job-list-url-sync";
 import type { JobSearchItem } from "@/features/job/schemas/job-search.schema";
+import type { PopularSkill } from "@/features/skill/schemas/skill.schema";
 import { getJobFilterSummary } from "@/features/job/utils/job-filter-summary";
 import { useI18n } from "@/hooks/use-i18n";
 import type { JobListSearchState } from "@/lib/utils/public-listing";
@@ -16,11 +17,13 @@ import type { PaginatedResult } from "@/shared/types/pagination";
 type JobsPageClientProps = {
   initialData: PaginatedResult<JobSearchItem> | null;
   initialSearchState: JobListSearchState;
+  popularSkills?: PopularSkill[];
 };
 
 export default function JobsPageClient({
   initialData,
   initialSearchState,
+  popularSkills = [],
 }: JobsPageClientProps) {
   const { t } = useI18n();
   const list = useJobList({ initialData, initialSearchState });
@@ -32,7 +35,7 @@ export default function JobsPageClient({
 
   return (
     <div className="listing-page-surface min-h-screen">
-      <JobsPageHero list={list} />
+      <JobsPageHero list={list} popularSkills={popularSkills} />
 
       {/* Mobile Filter Bar (Hidden on Desktop) */}
       <div className="lg:hidden listing-filter-surface listing-strong-border sticky top-0 z-30 border-b shadow-sm bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

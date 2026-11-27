@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import type { JobListState } from "@/features/job/hooks/use-job-list";
 import type { JobSearchItem } from "@/features/job/schemas/job-search.schema";
+import type { PopularSkill } from "@/features/skill/schemas/skill.schema";
 import JobsPageClient from "./jobs-page-client";
 
 const mockUseJobList = jest.fn();
@@ -26,8 +27,10 @@ jest.mock("@/hooks/use-i18n", () => ({
 }));
 
 jest.mock("@/i18n/navigation", () => ({
-  Link: ({ children, href }: { children: ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
+  Link: ({ children, href }: { children: ReactNode; href: unknown }) => (
+    <a href={typeof href === "string" ? href : JSON.stringify(href)}>
+      {children}
+    </a>
   ),
 }));
 
@@ -150,12 +153,13 @@ const searchItem = (id: string): JobSearchItem => ({
 });
 const twoJobs = [searchItem("job-a"), searchItem("job-b")];
 
-function renderPage(list: JobListState) {
+function renderPage(list: JobListState, popularSkills: PopularSkill[] = []) {
   mockUseJobList.mockReturnValue(list);
   return render(
     <JobsPageClient
       initialData={null}
       initialSearchState={list.currentSearchState}
+      popularSkills={popularSkills}
     />
   );
 }
@@ -217,5 +221,26 @@ describe("JobsPageClient", () => {
     const heading = screen.getByRole("heading", { level: 2 });
     expect(heading).toHaveTextContent(text);
     expect(heading).not.toHaveTextContent(/IT Jobs|Job found/);
+  });
+
+  it("links a popular skill with a landing page and applies the others as a search", () => {
+    const list = createJobListState();
+    renderPage(list, [
+      { skill: "React", count: 12 },
+      { skill: "Rust", count: 2 },
+    ]);
+
+    expect(screen.getByRole("link", { name: "React" })).toHaveAttribute(
+      "href",
+      expect.stringContaining('"skill":"react"')
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Rust" }));
+    expect(list.applyFilters).toHaveBeenCalledWith({ q: "Rust" });
+  });
+
+  it("shows no skill row without popular skills", () => {
+    renderPage(createJobListState());
+
+    expect(screen.queryByText("jobsPage.popularSkills")).toBeNull();
   });
 });
