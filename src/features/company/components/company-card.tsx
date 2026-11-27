@@ -13,7 +13,7 @@ import { PUBLIC_CARD_HOVER } from "@/shared/constants/design";
 const MAX_TECH = 4;
 // Fixed sizes so the skeleton and the loaded card take the same space.
 const CARD_FRAME =
-  "flex h-full min-h-72 flex-col overflow-hidden rounded-lg border bg-card";
+  "flex h-full min-h-[18rem] flex-col overflow-hidden rounded-lg border bg-card";
 const COVER = "relative h-24 shrink-0";
 
 export function CompanyCard({
