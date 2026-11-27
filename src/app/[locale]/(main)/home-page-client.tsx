@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import {
   Search,
   ArrowRight,
@@ -45,6 +45,8 @@ type HomeProps = {
   initialCompanies: TopHiringCompany[] | null;
   slides?: BannerSlide[];
   stats?: IPublicStats | null;
+  // Server-rendered section, passed through so it stays out of the client bundle.
+  popularSkills?: ReactNode;
 };
 
 export default function Home({
@@ -52,6 +54,7 @@ export default function Home({
   initialCompanies,
   slides = [],
   stats,
+  popularSkills,
 }: HomeProps) {
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
@@ -146,6 +149,8 @@ export default function Home({
         jobs={initialJobs?.result ?? []}
         onSearch={handleSearch}
       />
+
+      {popularSkills}
 
       {/* Featured Jobs Section */}
       <SectionContainer className="home-section-base">

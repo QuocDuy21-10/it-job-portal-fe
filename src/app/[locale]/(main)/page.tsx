@@ -3,6 +3,10 @@ import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import HomePageClient from "./home-page-client";
+import {
+  HOME_POPULAR_SKILLS_LIMIT,
+  PopularSkills,
+} from "@/features/home/components/popular-skills";
 import { LandingLinks } from "@/features/job/components/landing/landing-links";
 import { JsonLd, buildHomeJsonLd } from "@/lib/seo/json-ld";
 import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
@@ -10,6 +14,7 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import {
   fetchPublicBannerSlides,
   fetchPublicJobs,
+  fetchPublicPopularSkills,
   fetchPublicStats,
   fetchPublicTopHiringCompanies,
 } from "@/lib/utils/public-content";
@@ -52,13 +57,15 @@ export async function generateMetadata({
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   // Either result is null when the backend is unreachable; the client then fetches it itself.
-  const [initialJobs, initialCompanies, slides, stats, t] = await Promise.all([
-    fetchPublicJobs(getHomeJobsQuery(1)),
-    fetchPublicTopHiringCompanies(HOME_TOP_COMPANIES_LIMIT),
-    fetchPublicBannerSlides(),
-    fetchPublicStats(),
-    getTranslations({ locale }),
-  ]);
+  const [initialJobs, initialCompanies, slides, stats, popularSkills, t] =
+    await Promise.all([
+      fetchPublicJobs(getHomeJobsQuery(1)),
+      fetchPublicTopHiringCompanies(HOME_TOP_COMPANIES_LIMIT),
+      fetchPublicBannerSlides(),
+      fetchPublicStats(),
+      fetchPublicPopularSkills(HOME_POPULAR_SKILLS_LIMIT),
+      getTranslations({ locale }),
+    ]);
 
   return (
     <>
@@ -68,6 +75,13 @@ export default async function HomePage({ params }: HomePageProps) {
         initialCompanies={initialCompanies}
         slides={slides}
         stats={stats}
+        popularSkills={
+          <PopularSkills
+            skills={popularSkills}
+            locale={locale as AppLocale}
+            t={t}
+          />
+        }
       />
       <LandingLinks locale={locale as AppLocale} t={t} variant="compact" />
     </>

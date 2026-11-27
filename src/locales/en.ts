@@ -117,6 +117,9 @@ export const en = {
     next: "Next",
   },
   home: {
+    popularSkills: "In-demand skills",
+    popularSkillsDescription: "The skills that appear most in open job posts.",
+    skillJobCount: "{count} jobs",
     heroJobsLabel: "Newest jobs",
     carousel: {
       label: "Featured campaigns",

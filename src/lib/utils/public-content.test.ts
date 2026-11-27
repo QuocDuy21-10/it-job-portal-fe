@@ -15,6 +15,7 @@ import {
   fetchPublicLegalPage,
   fetchPublicStats,
   fetchPublicTopHiringCompanies,
+  fetchPublicPopularSkills,
 } from "./public-content";
 
 // React 18.2 (the version Jest loads) has no `cache`; Next.js brings its own React at runtime.
@@ -99,6 +100,12 @@ describe("public-content", () => {
       "fetchPublicTopHiringCompanies",
       () => fetchPublicTopHiringCompanies(8),
       `${API}/companies/top-hiring?limit=8`,
+      3600,
+    ],
+    [
+      "fetchPublicPopularSkills",
+      () => fetchPublicPopularSkills(12),
+      `${API}/skills/popular?limit=12`,
       3600,
     ],
     [
@@ -276,6 +283,12 @@ describe("public-content", () => {
     fetchMock.mockRejectedValue(new Error("ECONNREFUSED"));
 
     await expect(fetchPublicStats()).resolves.toBeNull();
+  });
+
+  it("fetchPublicPopularSkills gives null when the backend cannot be reached", async () => {
+    fetchMock.mockRejectedValue(new Error("ECONNREFUSED"));
+
+    await expect(fetchPublicPopularSkills(12)).resolves.toBeNull();
   });
 
   it("fetchPublicLegalPage reports a missing page as null but throws on an outage", async () => {

@@ -116,6 +116,10 @@ export const vi = {
     next: "Trang sau",
   },
   home: {
+    popularSkills: "Kỹ năng được tuyển nhiều",
+    popularSkillsDescription:
+      "Các kỹ năng xuất hiện nhiều nhất trong tin tuyển dụng đang mở.",
+    skillJobCount: "{count} việc làm",
     heroJobsLabel: "Việc làm mới nhất",
     carousel: {
       label: "Chiến dịch nổi bật",
