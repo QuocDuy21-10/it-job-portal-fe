@@ -205,7 +205,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
                                 setDraftExperience(level.value);
                               }
                             }}
-                            className="flex items-center justify-center h-5 w-5 rounded-full border-2 transition-all duration-200 data-[state=checked]:border-primary data-[state=checked]:bg-transparent hover:border-primary group-hover:border-primary focus-visible:ring-primary/20 focus-visible:ring-offset-0 [&_svg]:hidden [&>span]:w-2.5 [&>span]:h-2.5 [&>span]:rounded-full [&>span]:bg-primary [&>span]:shrink-0"
+                            className="flex items-center justify-center h-5 w-5 rounded-full border-2 border-input transition-all duration-200 data-[state=checked]:border-primary data-[state=checked]:bg-transparent hover:border-primary group-hover:border-primary focus-visible:ring-primary/20 focus-visible:ring-offset-0 [&_svg]:hidden [&>span]:w-2.5 [&>span]:h-2.5 [&>span]:rounded-full [&>span]:bg-primary [&>span]:shrink-0"
                           />
                         </label>
                       );
