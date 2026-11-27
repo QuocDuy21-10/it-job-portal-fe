@@ -48,6 +48,9 @@ export const vi = {
     home: "Trang chủ",
   },
   companyList: {
+    noOpenJobs: "Chưa có vị trí đang tuyển",
+    techStack: "Công nghệ sử dụng",
+    techMore: "+{count}",
     searchPlaceholder: "Tìm công ty theo tên hoặc mô tả...",
     searchButton: "Tìm kiếm",
     topEmployers: "Khám phá các nhà tuyển dụng hàng đầu",

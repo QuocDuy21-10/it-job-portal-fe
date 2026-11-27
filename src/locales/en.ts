@@ -49,6 +49,9 @@ export const en = {
     home: "Home",
   },
   companyList: {
+    noOpenJobs: "No open positions yet",
+    techStack: "Tech stack",
+    techMore: "+{count}",
     searchPlaceholder: "Search companies by name or description...",
     searchButton: "Search",
     topEmployers: "Discover Top Employers",
