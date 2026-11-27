@@ -76,7 +76,7 @@ Sitemap render theo từng request (`connection()`); dữ liệu vẫn dùng cac
 
 Ba route dùng chung `createLandingRoute` trong `src/features/job/lib/landing-route.tsx`. Trang lấy 20 việc làm mỗi trang qua `fetchPublicJobSearchStrict` (kỹ năng lọc bằng tham số `skills` của backend, khớp chính xác), lỗi backend trả 500. Trang có dưới 5 việc làm vẫn hiển thị nhưng `noindex, follow`. JSON-LD chỉ có `BreadcrumbList`.
 
-Liên kết nội bộ: thẻ kỹ năng, địa điểm và cấp bậc trên trang chi tiết việc làm; mục "Việc làm theo kỹ năng / thành phố / cấp bậc" (`LandingLinks`) cuối `/viec-lam` và trang chủ; ba thành phố ở footer. Sitemap thêm trang có từ 5 việc làm nội bộ phù hợp.
+Liên kết nội bộ: thẻ kỹ năng, địa điểm và cấp bậc trên trang chi tiết việc làm; mục "Việc làm theo kỹ năng / thành phố / cấp bậc" (`LandingLinks`) cuối `/viec-lam`; kỹ năng phổ biến trên trang chủ; ba thành phố và sáu kỹ năng ở footer. Sitemap thêm trang có từ 5 việc làm nội bộ phù hợp.
 
 Muốn thêm trang: thêm một mục vào `LANDING_PAGES` với đoạn giới thiệu thật, không thêm trang chỉ để chứa từ khóa.
 

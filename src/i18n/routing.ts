@@ -34,6 +34,7 @@ export const routing = defineRouting({
     "/companies/[id]": { vi: "/cong-ty/[id]", en: "/companies/[id]" },
     "/privacy": { vi: "/chinh-sach-bao-mat", en: "/privacy" },
     "/terms": { vi: "/dieu-khoan-su-dung", en: "/terms" },
+    "/employers": { vi: "/nha-tuyen-dung", en: "/employers" },
     "/login": "/login",
     "/register": "/register",
     "/forgot-password": "/forgot-password",

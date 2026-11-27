@@ -267,6 +267,17 @@ describe("Home", () => {
     expect(screen.getByText("Server company")).toBeInTheDocument();
   });
 
+  it("ends with one candidate and one employer call to action", () => {
+    render(<Home initialJobs={null} initialCompanies={null} />);
+
+    expect(
+      screen.getByRole("link", { name: /home\.ctaCandidateAction/ })
+    ).toHaveAttribute("href", "/jobs");
+    expect(
+      screen.getByRole("link", { name: /home\.ctaEmployerAction/ })
+    ).toHaveAttribute("href", "/employers");
+  });
+
   it("lists the three steps as an ordered list", () => {
     render(<Home initialJobs={null} initialCompanies={null} />);
 

@@ -30,6 +30,7 @@ export type RawEnv = {
   NEXT_PUBLIC_API_URL?: string;
   NEXT_PUBLIC_SITE_URL?: string;
   NEXT_PUBLIC_GOOGLE_CLIENT_ID?: string;
+  NEXT_PUBLIC_CONTACT_EMAIL?: string;
 };
 
 const blankToUndefined = (value?: string) => value?.trim() || undefined;
@@ -38,6 +39,9 @@ const schema = z.object({
   NEXT_PUBLIC_API_URL: origin("NEXT_PUBLIC_API_URL"),
   NEXT_PUBLIC_SITE_URL: origin("NEXT_PUBLIC_SITE_URL"),
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().optional(),
+  NEXT_PUBLIC_CONTACT_EMAIL: z
+    .email("NEXT_PUBLIC_CONTACT_EMAIL must be an email address")
+    .optional(),
 });
 
 export function parseEnv(source: RawEnv, nodeEnv: string | undefined) {
@@ -53,6 +57,9 @@ export function parseEnv(source: RawEnv, nodeEnv: string | undefined) {
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: blankToUndefined(
       source.NEXT_PUBLIC_GOOGLE_CLIENT_ID
     ),
+    NEXT_PUBLIC_CONTACT_EMAIL: blankToUndefined(
+      source.NEXT_PUBLIC_CONTACT_EMAIL
+    ),
   });
 
   if (!result.success) {
@@ -65,6 +72,7 @@ export function parseEnv(source: RawEnv, nodeEnv: string | undefined) {
     API_URL: result.data.NEXT_PUBLIC_API_URL,
     SITE_URL: result.data.NEXT_PUBLIC_SITE_URL,
     GOOGLE_CLIENT_ID: result.data.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    CONTACT_EMAIL: result.data.NEXT_PUBLIC_CONTACT_EMAIL,
   };
 }
 
@@ -74,6 +82,7 @@ export const env = parseEnv(
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
   },
   process.env.NODE_ENV
 );

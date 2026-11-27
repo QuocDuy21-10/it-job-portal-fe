@@ -11,7 +11,7 @@ DevLink hỗ trợ tiếng Anh và tiếng Việt bằng thư viện `next-intl`
 | `locales` | `vi`, `en` |
 | `defaultLocale` | `vi` |
 | `localePrefix` | `as-needed`: tiếng Việt không có tiền tố, tiếng Anh nằm dưới `/en`, ví dụ `/viec-lam` và `/en/jobs` |
-| `pathnames` | Đường dẫn tiếng Việt cho trang công khai: `/viec-lam`, `/viec-lam/{slug}-{id}`, `/cong-ty`, `/cong-ty/{slug}-{id}`, `/chinh-sach-bao-mat`, `/dieu-khoan-su-dung`; trang riêng tư giữ nguyên đường dẫn |
+| `pathnames` | Đường dẫn tiếng Việt cho trang công khai: `/viec-lam`, `/viec-lam/{slug}-{id}`, `/cong-ty`, `/cong-ty/{slug}-{id}`, `/chinh-sach-bao-mat`, `/dieu-khoan-su-dung`, `/nha-tuyen-dung`; trang riêng tư giữ nguyên đường dẫn |
 | `localeDetection`, `localeCookie`, `alternateLinks` | `false`: không tự chuyển ngôn ngữ theo cookie hay trình duyệt, không đặt cookie, hreflang chỉ nằm trong HTML |
 
 `src/middleware.ts` giao mọi địa chỉ cho `next-intl`, thư viện tự dịch đường dẫn (`/viec-lam` → route `/jobs`). Mọi chuyển hướng của `next-intl` (307) được đổi thành 308: địa chỉ cũ như `/jobs`, `/vi/...`, `/companies`, `/privacy` chuyển vĩnh viễn sang địa chỉ tiếng Việt tương ứng. Xem [Routing và layout](routing-and-layouts.md).
