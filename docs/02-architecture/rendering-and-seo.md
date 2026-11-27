@@ -40,7 +40,7 @@ Mọi trang dưới `src/app/[locale]/` được render theo từng request; kh�
 
 Thứ được cache là dữ liệu: các hàm `fetchPublic*` giữ phản hồi của backend trong 60 giây hoặc 1 giờ tùy loại, xem [Chiến lược cache](caching-strategy.md).
 
-Trang chủ lấy sẵn dữ liệu trên server. `(main)/page.tsx` gọi song song `fetchPublicJobs` (trang 1 của việc làm nổi bật) và `fetchPublicTopHiringCompanies`, rồi truyền kết quả cho `home-page-client.tsx` qua hai prop `initialJobs` và `initialCompanies`. Nhờ vậy HTML trả về đã có danh sách việc làm và công ty, công cụ tìm kiếm đọc được mà không cần chạy JavaScript. Khi backend không trả lời, hai prop này là `null` và trình duyệt tự gọi API.
+Trang chủ lấy sẵn dữ liệu trên server. `(main)/page.tsx` gọi song song `fetchPublicJobs` (6 việc làm mới nhất) và `fetchPublicTopHiringCompanies`, rồi truyền kết quả cho `home-page-client.tsx` qua hai prop `initialJobs` và `initialCompanies`. Nhờ vậy HTML trả về đã có danh sách việc làm và công ty, công cụ tìm kiếm đọc được mà không cần chạy JavaScript. Khi backend không trả lời, hai prop này là `null` và trình duyệt tự gọi API.
 
 ## Content Security Policy
 

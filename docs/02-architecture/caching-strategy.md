@@ -63,7 +63,7 @@ Code không đặt thời gian giữ riêng cho từng endpoint, ngoại trừ h
 
 Ở trang danh sách việc làm, hook `useJobList` bỏ qua RTK Query khi bộ lọc còn trùng với trạng thái ban đầu và dùng luôn dữ liệu từ server. Chỉ khi người dùng đổi bộ lọc hoặc trang thì mới có lời gọi RTK Query.
 
-Trang chủ làm tương tự. Server lấy trang 1 của việc làm nổi bật và danh sách công ty tuyển nhiều; `home-page-client.tsx` bỏ qua hai truy vấn tương ứng khi đã có dữ liệu đó, và chỉ gọi RTK Query khi người dùng sang trang 2 trở đi. Với `HR` và `SUPER ADMIN` đang đăng nhập, truy vấn việc làm vẫn chạy ở trình duyệt sau khi trang hydrate xong: backend trả `GET /jobs` cho hai vai trò này khác với danh sách công khai mà server đã lấy.
+Trang chủ làm tương tự. Server lấy 6 việc làm mới nhất và danh sách công ty tuyển nhiều; các section của trang chủ bỏ qua truy vấn tương ứng khi đã có dữ liệu đó, và chỉ gọi RTK Query cho tab "Lương cao" khi người dùng mở tab. Với `HR` và `SUPER ADMIN` đang đăng nhập, truy vấn việc làm vẫn chạy ở trình duyệt sau khi trang hydrate xong: backend trả `GET /jobs` cho hai vai trò này khác với danh sách công khai mà server đã lấy.
 
 ### Lớp 3: Redux Persist
 

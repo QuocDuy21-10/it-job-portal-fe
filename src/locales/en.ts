@@ -117,6 +117,10 @@ export const en = {
     next: "Next",
   },
   home: {
+    newJobs: "New jobs",
+    newJobsDescription: "The latest job posts and the best-paid open roles.",
+    tabLatest: "Latest",
+    tabTopSalary: "Top salary",
     popularSkills: "In-demand skills",
     popularSkillsDescription: "The skills that appear most in open job posts.",
     skillJobCount: "{count} jobs",
@@ -143,9 +147,6 @@ export const en = {
     hiringCompanies: "Hiring Companies",
     newJobsThisWeek: "New This Week",
     jobSeekers: "Candidates",
-    featuredJobs: "Featured Jobs",
-    featuredJobsDescription:
-      "Hand-picked opportunities from top companies around the world.",
     loadJobsError: "Failed to load jobs. Please try again later.",
     noJobs: "No jobs available at the moment. ",
     viewAllJobs: "See All Jobs",

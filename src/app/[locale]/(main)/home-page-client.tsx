@@ -10,15 +10,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import { Job } from "@/features/job/schemas/job.schema";
 import { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import { JobCard } from "@/features/job/components/job-card";
 import { CompanyCard } from "@/features/company/components/company-card";
-import { SimplePagination } from "@/components/simple-pagination";
-import { SectionHeader } from "@/components/sections/section-header";
 import { SectionContainer } from "@/components/sections/section-container";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -38,7 +34,8 @@ import { useAppSelector } from "@/lib/redux/hooks";
 import type { IPublicStats } from "@/shared/types/dashboard";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import type { BannerSlide } from "@/features/site-content/schemas/site-content.schema";
-import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
+import { HOME_TOP_COMPANIES_LIMIT } from "@/features/home/config/home-query";
+import { HomeJobsSection } from "@/features/home/components/home-jobs-section";
 
 type HomeProps = {
   initialJobs: PaginatedResult<Job> | null;
@@ -94,24 +91,11 @@ export default function Home({
 
   const { t } = useI18n();
 
-  // Pagination states
-  const [jobsPage, setJobsPage] = useState(1);
-
   // The backend scopes GET /jobs by role: HR and Super Admin get a different list than
   // the public one the server fetched, so they keep fetching it themselves.
   // hasToken turns true only after mount, so the first client render still matches the
   // server HTML even though the persisted role is already in the store by then.
   const isStaff = useAppSelector(selectIsAdmin) && hasToken;
-  const hasServerJobs = jobsPage === 1 && initialJobs !== null && !isStaff;
-
-  const {
-    data: jobsData,
-    isLoading: jobsInitialLoading,
-    isFetching: jobsFetching,
-    error: jobsError,
-  } = useGetJobsQuery(getHomeJobsQuery(jobsPage), { skip: hasServerJobs });
-
-  const jobsLoading = jobsInitialLoading || jobsFetching;
 
   // Top hiring companies are the same for every role.
   const hasServerCompanies = initialCompanies !== null;
@@ -124,10 +108,6 @@ export default function Home({
     { limit: HOME_TOP_COMPANIES_LIMIT },
     { skip: hasServerCompanies }
   );
-
-  const jobsResult = hasServerJobs ? initialJobs : jobsData?.data;
-  const featuredJobsToRender = jobsResult?.result ?? [];
-  const jobsTotalPages = jobsResult?.meta?.pagination?.total_pages ?? 1;
 
   const topCompaniesToRender = hasServerCompanies
     ? initialCompanies
@@ -152,97 +132,7 @@ export default function Home({
 
       {popularSkills}
 
-      {/* Featured Jobs Section */}
-      <SectionContainer className="home-section-base">
-        <SectionHeader
-          title={t("home.featuredJobs")}
-          description={t("home.featuredJobsDescription")}
-          actionLabel={t("home.viewAll")}
-          actionHref="/jobs"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {jobsLoading ? (
-            // Loading placeholders — matches redesigned default JobCard dimensions
-            Array.from({ length: 3 }).map((_, index) => (
-              <Card key={index}>
-                <CardContent className="p-5">
-                  <div className="animate-pulse space-y-3">
-                    {/* Header: logo + title/company */}
-                    <div className="flex items-start gap-3 pr-9">
-                      <div className="h-12 w-12 rounded-xl bg-muted" />
-                      <div className="flex-1 space-y-1.5">
-                        <div className="h-4 bg-muted rounded w-3/4" />
-                        <div className="h-3 bg-muted rounded w-1/2" />
-                      </div>
-                    </div>
-                    {/* Skills */}
-                    <div className="flex gap-1.5">
-                      <div className="h-5 bg-muted rounded-md w-14" />
-                      <div className="h-5 bg-muted rounded-md w-16" />
-                      <div className="h-5 bg-muted rounded-md w-12" />
-                    </div>
-                    {/* Meta: location + type */}
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 bg-muted rounded w-20" />
-                      <div className="h-3 bg-muted rounded w-16" />
-                    </div>
-                    {/* Footer: salary + time */}
-                    <div className="flex justify-between pt-3 border-t border-border/40">
-                      <div className="h-4 bg-muted rounded w-20" />
-                      <div className="h-3 bg-muted rounded w-16" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : jobsError ? (
-            <div className="col-span-3 text-center py-8">
-              <p className="home-muted-text text-muted-foreground">
-                {t("home.loadJobsError")}
-              </p>
-            </div>
-          ) : featuredJobsToRender.length === 0 ? (
-            <div className="col-span-3 text-center py-8">
-              <p className="home-muted-text text-muted-foreground">
-                {t("home.noJobs")}
-              </p>
-            </div>
-          ) : (
-            featuredJobsToRender.map((job: Job) => (
-              <JobCard
-                key={job._id}
-                job={job}
-                className="home-panel-surface home-subtle-border dark:bg-transparent"
-              />
-            ))
-          )}
-        </div>
-
-        {/* Jobs Pagination */}
-        {!jobsLoading && !jobsError && featuredJobsToRender.length > 0 && (
-          <div className="mt-8">
-            <SimplePagination
-              page={jobsPage}
-              totalPages={jobsTotalPages}
-              onPageChange={setJobsPage}
-              labelText={t("jobsPage.pageLabel")}
-            />
-          </div>
-        )}
-
-        <div className="mt-8 text-center sm:hidden">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-          >
-            <Link href="/jobs">
-              {t("home.viewAllJobs")} <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </SectionContainer>
+      <HomeJobsSection initialJobs={initialJobs} isStaff={isStaff} />
 
       {/* Top Companies Section */}
       <SectionContainer className="home-section-muted">

@@ -116,6 +116,11 @@ export const vi = {
     next: "Trang sau",
   },
   home: {
+    newJobs: "Việc làm mới",
+    newJobsDescription:
+      "Tin tuyển dụng mới đăng và mức lương cao nhất đang mở.",
+    tabLatest: "Mới nhất",
+    tabTopSalary: "Lương cao",
     popularSkills: "Kỹ năng được tuyển nhiều",
     popularSkillsDescription:
       "Các kỹ năng xuất hiện nhiều nhất trong tin tuyển dụng đang mở.",
@@ -142,9 +147,6 @@ export const vi = {
     hiringCompanies: "Công Ty Đang Tuyển",
     newJobsThisWeek: "Việc Mới Tuần Này",
     jobSeekers: "Ứng Viên",
-    featuredJobs: "Công Việc Nổi Bật",
-    featuredJobsDescription:
-      "Những cơ hội được tuyển chọn từ các công ty hàng đầu trên toàn thế giới.",
     loadJobsError: "Tải công việc thất bại. Vui lòng thử lại sau.",
     noJobs: "Hiện tại không có công việc nào. ",
     topCompaniesHiringNow: "Các Công Ty Hàng Đầu Đang Tuyển Dụng",

@@ -9,7 +9,10 @@ import {
 } from "@/features/home/components/popular-skills";
 import { LandingLinks } from "@/features/job/components/landing/landing-links";
 import { JsonLd, buildHomeJsonLd } from "@/lib/seo/json-ld";
-import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
+import {
+  HOME_TOP_COMPANIES_LIMIT,
+  getHomeJobsQuery,
+} from "@/features/home/config/home-query";
 import { routing, type AppLocale } from "@/i18n/routing";
 import {
   fetchPublicBannerSlides,
@@ -59,7 +62,7 @@ export default async function HomePage({ params }: HomePageProps) {
   // Either result is null when the backend is unreachable; the client then fetches it itself.
   const [initialJobs, initialCompanies, slides, stats, popularSkills, t] =
     await Promise.all([
-      fetchPublicJobs(getHomeJobsQuery(1)),
+      fetchPublicJobs(getHomeJobsQuery("latest")),
       fetchPublicTopHiringCompanies(HOME_TOP_COMPANIES_LIMIT),
       fetchPublicBannerSlides(),
       fetchPublicStats(),
