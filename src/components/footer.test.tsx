@@ -72,6 +72,19 @@ describe("Footer", () => {
     expect(container.querySelector('a[href="#"]')).toBeNull();
   });
 
+  it("names each link column without adding headings to the page", () => {
+    render(<Footer />);
+
+    expect(screen.queryByRole("heading")).toBeNull();
+    for (const name of [
+      "footer.forJobSeekers",
+      "footer.bySkill",
+      "footer.support",
+    ]) {
+      expect(screen.getByRole("list", { name })).toBeInTheDocument();
+    }
+  });
+
   it("links the employer page, skill pages and legal pages", () => {
     render(<Footer />);
 

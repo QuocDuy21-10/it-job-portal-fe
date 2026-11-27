@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import {
   selectIsAdmin,
   selectIsAuthenticated,
@@ -27,12 +27,20 @@ function FooterColumn({
   title: string;
   children: ReactNode;
 }) {
+  const titleId = useId();
+
+  // Not a heading (DESIGN.md SEO rule): the title names the list instead.
   return (
     <div>
-      <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
+      <p
+        id={titleId}
+        className="mb-4 font-heading text-sm font-semibold uppercase tracking-wider text-foreground"
+      >
         {title}
-      </h3>
-      <ul className="space-y-3">{children}</ul>
+      </p>
+      <ul aria-labelledby={titleId} className="space-y-3">
+        {children}
+      </ul>
     </div>
   );
 }
