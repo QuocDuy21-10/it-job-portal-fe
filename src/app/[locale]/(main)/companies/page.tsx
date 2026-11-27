@@ -4,13 +4,18 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import CompaniesPageClient from "./companies-page-client";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { fetchPublicCompanies } from "@/lib/utils/public-content";
+import {
+  fetchPublicCompanies,
+  fetchPublicTopHiringCompanies,
+} from "@/lib/utils/public-content";
 import {
   buildCompanyListQueryArgs,
   getCompanyListCanonicalPath,
   parseCompanyListSearchParams,
 } from "@/lib/utils/public-listing";
 import { buildLocalizedPageMetadata } from "@/shared/constants/seo";
+
+const FEATURED_COMPANIES_LIMIT = 4;
 
 type CompaniesPageProps = {
   params: Promise<{ locale: string }>;
@@ -66,9 +71,10 @@ export default async function CompaniesPage({
   }
 
   const initialSearchState = parseCompanyListSearchParams(resolvedSearchParams);
-  const initialData = await fetchPublicCompanies(
-    buildCompanyListQueryArgs(initialSearchState)
-  );
+  const [initialData, featuredCompanies] = await Promise.all([
+    fetchPublicCompanies(buildCompanyListQueryArgs(initialSearchState)),
+    fetchPublicTopHiringCompanies(FEATURED_COMPANIES_LIMIT),
+  ]);
 
   // Google asks for a 404 on pagination URLs past the last page.
   if (
@@ -83,6 +89,7 @@ export default async function CompaniesPage({
     <CompaniesPageClient
       initialData={initialData}
       initialSearchState={initialSearchState}
+      featuredCompanies={featuredCompanies}
     />
   );
 }

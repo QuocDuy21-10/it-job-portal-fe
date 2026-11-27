@@ -12,9 +12,13 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { CompanyCard } from "@/features/company/components/company-card";
+import {
+  CompanyCard,
+  CompanyCardSkeleton,
+} from "@/features/company/components/company-card";
 import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import type { TopHiringCompany } from "@/features/company/schemas/company.schema";
+import { topHiringToCardData } from "@/features/company/utils/company-card-data";
 import { HOME_TOP_COMPANIES_LIMIT } from "@/features/home/config/home-query";
 import { useI18n } from "@/hooks/use-i18n";
 import { Link } from "@/i18n/navigation";
@@ -22,22 +26,6 @@ import { cn } from "@/lib/utils";
 import { TYPOGRAPHY } from "@/shared/constants/design";
 
 const SLIDE_CLASS = "basis-[85%] pl-4 md:basis-1/2 xl:basis-1/4";
-
-function CompanyCardSkeleton() {
-  return (
-    <div className="flex h-full min-h-44 flex-col gap-4 rounded-lg border bg-card p-5">
-      <div className="flex items-center gap-3">
-        <div className="h-14 w-14 animate-pulse rounded-lg bg-muted" />
-        <div className="flex-1 space-y-2">
-          <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
-          <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
-        </div>
-      </div>
-      <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
-      <div className="mt-auto h-4 w-1/3 animate-pulse rounded bg-muted" />
-    </div>
-  );
-}
 
 export function TopCompaniesSection({
   initialCompanies,
@@ -123,7 +111,7 @@ export function TopCompaniesSection({
                   ))
                 : companies.map((company) => (
                     <CarouselItem key={company._id} className={SLIDE_CLASS}>
-                      <CompanyCard company={company} />
+                      <CompanyCard company={topHiringToCardData(company)} />
                     </CarouselItem>
                   ))}
             </CarouselContent>

@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -92,24 +93,31 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
         <DrawerTrigger asChild>
           <Button
             variant="outline"
-            className="listing-input-surface gap-2 h-10 text-foreground hover:bg-accent/70 relative rounded-full px-4 border shadow-sm font-semibold text-sm"
+            aria-label={
+              activeFiltersCount > 0
+                ? t("jobsPage.filtersButtonLabel", {
+                    count: activeFiltersCount,
+                  })
+                : undefined
+            }
+            className="relative h-10 gap-2 border bg-card px-4 text-sm font-semibold text-foreground shadow-sm hover:bg-accent/70"
           >
             <SlidersHorizontal className="w-4 h-4" />
-            {t("jobsPage.filters") || "Filters"}
+            {t("jobsPage.filters")}
             {activeFiltersCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-background animate-in zoom-in duration-200">
+              <Badge className="absolute -right-1.5 -top-1.5 h-5 min-w-[1.25rem] justify-center px-1">
                 {activeFiltersCount}
-              </span>
+              </Badge>
             )}
           </Button>
         </DrawerTrigger>
-        <DrawerContent className="max-h-[85vh] flex flex-col rounded-t-2xl border-t bg-background">
+        <DrawerContent className="max-h-[85vh] flex flex-col rounded-t-xl border-t bg-background">
           <div className="mx-auto mt-4 h-1.5 w-12 rounded-full bg-muted-foreground/20" />
 
           <DrawerHeader className="border-b pb-4 px-6 text-left">
             <DrawerTitle className="text-xl font-bold flex items-center gap-2">
               <SlidersHorizontal className="w-5 h-5 text-primary" />
-              {t("jobsPage.filters") || "Filters"}
+              {t("jobsPage.filters")}
             </DrawerTitle>
             <DrawerDescription className="sr-only">
               Filter jobs by work type, experience level, and salary range.
@@ -121,7 +129,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
             {/* Work Type: Grid of Badges */}
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground tracking-wide uppercase text-muted-foreground/80">
-                {t("jobsPage.jobTypeLabel") || "Work Type"}
+                {t("jobsPage.jobTypeLabel")}
               </h4>
               <div className="flex flex-wrap gap-2">
                 {jobTypes.map((type) => {
@@ -137,9 +145,9 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
                       type="button"
                       onClick={() => setDraftJobType(type.value)}
                       className={cn(
-                        "px-4 py-2.5 rounded-full text-sm font-medium border transition-all duration-200 outline-none select-none touch-manipulation flex items-center gap-1.5",
+                        "px-4 py-2.5 rounded-full text-sm font-medium border transition-colors duration-[120ms] outline-none focus-visible:ring-2 focus-visible:ring-ring select-none touch-manipulation flex items-center gap-1.5",
                         isSelected
-                          ? "bg-primary/10 text-primary border-primary shadow-sm scale-[0.98]"
+                          ? "bg-primary/10 text-primary border-primary shadow-sm"
                           : "bg-muted/40 hover:bg-muted/70 text-foreground border-border"
                       )}
                     >
@@ -164,7 +172,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
               {/* Experience Level */}
               <AccordionItem value="experience" className="border-none">
                 <AccordionTrigger className="text-sm font-semibold text-foreground hover:no-underline py-3 uppercase tracking-wide text-muted-foreground/80">
-                  {t("jobsPage.levelLabel") || "Experience Level"}
+                  {t("jobsPage.levelLabel")}
                 </AccordionTrigger>
                 <AccordionContent className="pt-2 pb-4">
                   <div className="space-y-1">
@@ -197,7 +205,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
                                 setDraftExperience(level.value);
                               }
                             }}
-                            className="flex items-center justify-center h-5 w-5 rounded-full border-2 border-slate-300 transition-all duration-200 data-[state=checked]:border-primary data-[state=checked]:bg-transparent hover:border-primary group-hover:border-primary focus-visible:ring-primary/20 focus-visible:ring-offset-0 [&_svg]:hidden [&>span]:w-2.5 [&>span]:h-2.5 [&>span]:rounded-full [&>span]:bg-primary [&>span]:shrink-0"
+                            className="flex items-center justify-center h-5 w-5 rounded-full border-2 border-input transition-all duration-200 data-[state=checked]:border-primary data-[state=checked]:bg-transparent hover:border-primary group-hover:border-primary focus-visible:ring-primary/20 focus-visible:ring-offset-0 [&_svg]:hidden [&>span]:w-2.5 [&>span]:h-2.5 [&>span]:rounded-full [&>span]:bg-primary [&>span]:shrink-0"
                           />
                         </label>
                       );
@@ -211,7 +219,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
               {/* Salary Range */}
               <AccordionItem value="salary" className="border-none">
                 <AccordionTrigger className="text-sm font-semibold text-foreground hover:no-underline py-3 uppercase tracking-wide text-muted-foreground/80">
-                  {t("jobsPage.salaryLabel") || "Salary Range"}
+                  {t("jobsPage.salaryLabel")}
                 </AccordionTrigger>
                 <AccordionContent className="pt-2 pb-4">
                   <div className="space-y-1">
@@ -250,7 +258,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
               onClick={handleResetMobileFilters}
               className="flex-1 py-6 rounded-xl text-sm font-semibold border-border hover:bg-muted/40 transition-colors"
             >
-              {t("jobsPage.clearAllFilters") || "Reset"}
+              {t("jobsPage.clearAllFilters")}
             </Button>
             <Button
               onClick={handleApplyMobileFilters}

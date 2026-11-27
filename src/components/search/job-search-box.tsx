@@ -33,9 +33,11 @@ export function JobSearchBox({
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   return (
+    // data-search-box: the suggestion list sizes itself to this frame.
     <div
+      data-search-box=""
       className={cn(
-        "listing-panel-surface listing-strong-border mx-auto max-w-3xl rounded-[2rem] border p-2 shadow-2xl shadow-slate-900/10 backdrop-blur-md dark:text-white dark:shadow-black/30 sm:rounded-full",
+        "mx-auto max-w-3xl rounded-xl border bg-card p-2 shadow-elevation-1",
         className
       )}
     >
@@ -46,7 +48,7 @@ export function JobSearchBox({
             {mounted ? t("home.jobTitleOrKeyword") : "Job title or keyword"}
           </label>
           <Search
-            className="listing-muted-text pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2"
+            className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <SearchSuggestInput
@@ -59,11 +61,11 @@ export function JobSearchBox({
             }
             noBorder
             forceClose={isLocationOpen}
-            inputClassName="h-12 w-full bg-transparent pl-12 pr-14 text-foreground placeholder:text-muted-foreground transition-all dark:text-white dark:placeholder:text-white/70"
+            inputClassName="h-12 w-full bg-transparent pl-12 pr-14 text-foreground placeholder:text-muted-foreground"
           />
         </div>
 
-        <div className="listing-subtle-border mx-2 hidden h-8 w-px border-l sm:block" />
+        <div className="mx-2 hidden h-8 w-px bg-border sm:block" />
 
         {/* Location Select */}
         <div className="flex-1 w-full relative z-[60] sm:pr-2">
@@ -78,14 +80,14 @@ export function JobSearchBox({
             placeholder={mounted ? t("home.location") : "Location"}
             searchPlaceholder="Tìm kiếm tỉnh/thành..."
             noBorder
-            className="h-12 w-full bg-transparent text-foreground dark:text-white z-[100]"
-            leftIcon={<MapPin className="listing-muted-text mr-1 h-5 w-5" />}
+            className="z-[100] h-12 w-full bg-transparent text-foreground"
+            leftIcon={<MapPin className="mr-1 h-5 w-5 text-muted-foreground" />}
           />
         </div>
 
         {/* Search Button */}
         <Button
-          className="h-12 w-full flex-shrink-0 rounded-full px-8 font-semibold shadow-md transition-all duration-300 hover:shadow-lg sm:w-auto"
+          className="h-12 w-full flex-shrink-0 px-8 font-semibold sm:w-auto"
           onClick={() => onSearch()}
           disabled={searchDisabled}
         >
