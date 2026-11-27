@@ -115,6 +115,39 @@ export const vi = {
     previous: "Trang trước",
     next: "Trang sau",
   },
+  employers: {
+    metaTitle: "Tuyển dụng nhân sự IT",
+    metaDescription:
+      "Đăng tin tuyển dụng IT, quản lý hồ sơ ứng tuyển và theo dõi thống kê trên DevLink.",
+    title: "Tuyển dụng nhân sự IT trên DevLink",
+    description:
+      "Đăng tin, nhận hồ sơ và theo dõi hiệu quả tuyển dụng trong một bảng điều khiển dành cho HR.",
+    contactEmail: "Liên hệ qua email",
+    hrLogin: "Đăng nhập cho HR",
+    benefitsTitle: "DevLink giúp gì cho nhà tuyển dụng",
+    benefitReachTitle: "Tiếp cận ứng viên IT",
+    benefitReachDescription:
+      "Tin của bạn hiển thị cùng các trang việc làm theo kỹ năng, thành phố và cấp bậc mà ứng viên IT tìm kiếm.",
+    benefitManageTitle: "Quản lý tin và hồ sơ",
+    benefitManageDescription:
+      "Tạo, sửa tin tuyển dụng và xử lý hồ sơ ứng tuyển ngay trong bảng điều khiển HR.",
+    benefitStatsTitle: "Thống kê tuyển dụng",
+    benefitStatsDescription:
+      "Theo dõi số tin, số hồ sơ và xu hướng ứng tuyển của công ty bạn.",
+    stepsTitle: "Cách bắt đầu",
+    stepContactTitle: "Liên hệ DevLink",
+    stepContactDescription:
+      "Gửi email cho chúng tôi kèm tên công ty và người phụ trách.",
+    stepAccountTitle: "Nhận tài khoản HR",
+    stepAccountDescription:
+      "Quản trị viên tạo tài khoản HR gắn với công ty của bạn.",
+    stepPostTitle: "Đăng tin và nhận hồ sơ",
+    stepPostDescription:
+      "Đăng tin tuyển dụng; tin được duyệt sẽ hiển thị và nhận hồ sơ từ ứng viên.",
+    finalTitle: "Sẵn sàng tuyển dụng?",
+    finalDescription:
+      "Liên hệ để được tạo tài khoản HR, hoặc đăng nhập nếu bạn đã có tài khoản.",
+  },
   home: {
     goToSlide: "Đến nhóm công ty {index}",
     newJobs: "Việc làm mới",

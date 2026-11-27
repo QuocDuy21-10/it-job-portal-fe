@@ -116,6 +116,39 @@ export const en = {
     previous: "Previous",
     next: "Next",
   },
+  employers: {
+    metaTitle: "Hire IT talent",
+    metaDescription:
+      "Post IT jobs, manage applications and follow your hiring statistics on DevLink.",
+    title: "Hire IT talent on DevLink",
+    description:
+      "Post jobs, receive applications and track your hiring in one dashboard built for HR.",
+    contactEmail: "Contact us by email",
+    hrLogin: "HR sign in",
+    benefitsTitle: "What DevLink does for employers",
+    benefitReachTitle: "Reach IT candidates",
+    benefitReachDescription:
+      "Your jobs appear alongside the skill, city and level job pages IT candidates search.",
+    benefitManageTitle: "Manage jobs and applications",
+    benefitManageDescription:
+      "Create and edit job posts and handle applications right in the HR dashboard.",
+    benefitStatsTitle: "Hiring statistics",
+    benefitStatsDescription:
+      "Follow your company's job count, applications and application trends.",
+    stepsTitle: "How to start",
+    stepContactTitle: "Contact DevLink",
+    stepContactDescription:
+      "Email us with your company name and the person in charge.",
+    stepAccountTitle: "Get an HR account",
+    stepAccountDescription:
+      "An administrator creates an HR account linked to your company.",
+    stepPostTitle: "Post jobs and get applications",
+    stepPostDescription:
+      "Publish your job posts; once approved they go live and receive applications from candidates.",
+    finalTitle: "Ready to hire?",
+    finalDescription:
+      "Contact us for an HR account, or sign in if you already have one.",
+  },
   home: {
     goToSlide: "Go to company group {index}",
     newJobs: "New jobs",

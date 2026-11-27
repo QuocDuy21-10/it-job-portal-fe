@@ -92,6 +92,7 @@ describe("middleware legacy URLs", () => {
     [`/companies/${ID}`, `/cong-ty/${ID}`],
     ["/privacy", "/chinh-sach-bao-mat"],
     ["/terms", "/dieu-khoan-su-dung"],
+    ["/employers", "/nha-tuyen-dung"],
     ["/vi/login", "/login"],
     ["/en/viec-lam", "/en/jobs"],
     ["/jobs?q=react&page=2", "/viec-lam?q=react&page=2"],

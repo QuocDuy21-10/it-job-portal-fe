@@ -14,6 +14,7 @@ Có hai ngôn ngữ: `vi` (mặc định) và `en`. Cấu hình `localePrefix: "
 | `/viec-lam/nguon-ngoai/{id}` | `/en/jobs/external/{id}` |
 | `/cong-ty`, `/cong-ty/{slug}-{id}` | `/en/companies`, `/en/companies/{slug}-{id}` |
 | `/chinh-sach-bao-mat`, `/dieu-khoan-su-dung` | `/en/privacy`, `/en/terms` |
+| `/nha-tuyen-dung` | `/en/employers` |
 
 Middleware giao mọi địa chỉ cho `next-intl`: địa chỉ không tiền tố được viết lại (rewrite) sang `/vi/...` bên trong, địa chỉ cũ (`/jobs`, `/vi/...`, `/companies`) được chuyển hướng 308 sang địa chỉ tiếng Việt hiện hành. Các đường dẫn `/api`, `/_next` và file có phần mở rộng không đi qua middleware. Chi tiết ở [Đa ngôn ngữ](internationalization.md).
 

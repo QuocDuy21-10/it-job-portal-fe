@@ -48,12 +48,13 @@ describe("sitemap.xml", () => {
         [`${SITE}/`, "2026-11-05T00:00:00.000Z"],
         [`${SITE}/viec-lam`, "2026-11-05T00:00:00.000Z"],
         [`${SITE}/cong-ty`, "2026-10-01T00:00:00.000Z"],
+        [`${SITE}/nha-tuyen-dung`, undefined],
         [`${SITE}/viec-lam/dev-one-j1`, "2026-11-02T00:00:00.000Z"],
         [`${SITE}/viec-lam/dev-two-j2`, "2026-11-05T00:00:00.000Z"],
         [`${SITE}/cong-ty/acme-c1`, "2026-10-01T00:00:00.000Z"],
       ]
     );
-    expect(entries[3].alternates?.languages).toEqual({
+    expect(entries[4].alternates?.languages).toEqual({
       vi: `${SITE}/viec-lam/dev-one-j1`,
       en: `${SITE}/en/jobs/dev-one-j1`,
       "x-default": `${SITE}/viec-lam/dev-one-j1`,
@@ -99,6 +100,7 @@ describe("sitemap.xml", () => {
     expect(entries[0]).not.toHaveProperty("lastModified");
     expect(entries[2]).not.toHaveProperty("lastModified");
     expect(entries[3]).not.toHaveProperty("lastModified");
+    expect(entries[4]).not.toHaveProperty("lastModified");
   });
 
   it("fails instead of publishing a sitemap with jobs missing", async () => {

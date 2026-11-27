@@ -64,6 +64,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     toEntry("/", newestJob),
     toEntry("/jobs", newestJob),
     toEntry("/companies", newestOf(companies)),
+    // Static content: no honest lastmod to give.
+    toEntry("/employers", undefined),
     ...landingEntries,
     ...jobs.map((job) =>
       toEntry(jobHref(job._id, job.name), lastModifiedOf(job))

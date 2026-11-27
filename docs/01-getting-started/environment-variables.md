@@ -1,6 +1,6 @@
 # Biến môi trường
 
-DevLink Frontend đọc bốn biến môi trường, trong đó chỉ `NEXT_PUBLIC_GOOGLE_CLIENT_ID` thực sự cần để trang đăng nhập hoạt động. Địa chỉ backend **không** nằm trong biến môi trường mà được viết cứng trong code. Dự án chưa có file `.env.example`, nên trang này là danh sách biến duy nhất; nó được lập từ các chỗ gọi `process.env` trong `src/`, không đọc file `.env` nào.
+DevLink Frontend đọc năm biến môi trường, trong đó chỉ `NEXT_PUBLIC_GOOGLE_CLIENT_ID` thực sự cần để trang đăng nhập hoạt động. Địa chỉ backend **không** nằm trong biến môi trường mà được viết cứng trong code. Dự án chưa có file `.env.example`, nên trang này là danh sách biến duy nhất; nó được lập từ các chỗ gọi `process.env` trong `src/`, không đọc file `.env` nào.
 
 ## Danh sách biến
 
@@ -9,6 +9,7 @@ DevLink Frontend đọc bốn biến môi trường, trong đó chỉ `NEXT_PUBL
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Trang đăng nhập và nút đăng nhập Google | `google-oauth-provider.tsx` | Xem bên dưới |
 | `NEXT_PUBLIC_SITE_URL` | Địa chỉ gốc của site trong canonical, sitemap, robots, Open Graph | `shared/constants/seo.ts` | Dùng `http://localhost:3000` |
 | `NEXT_PUBLIC_API_URL` | Mở rộng danh sách máy chủ ảnh được phép của proxy ảnh PDF | `api/proxy-image/route.ts`, `features/cv-builder/lib/pdf/image-helpers.ts` | Chỉ `localhost:8081` được phép |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Nút liên hệ ở trang `/nha-tuyen-dung` và footer | `shared/config/env.ts` | Ẩn các nút và liên kết email; giá trị không phải email làm build lỗi |
 | `NODE_ENV` | Do Next.js tự đặt | `app/error.tsx` | Khi là `development`, trang lỗi hiện thêm chi tiết lỗi |
 
 Các biến có tiền tố `NEXT_PUBLIC_` được Next.js nhúng vào mã khi **build**, nên đổi giá trị cần chạy lại `npm run build` (hoặc khởi động lại `npm run dev`).
