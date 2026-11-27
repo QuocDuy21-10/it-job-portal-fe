@@ -105,7 +105,7 @@ export function MobileFilterDrawer({ list, summary }: MobileFilterDrawerProps) {
             <SlidersHorizontal className="w-4 h-4" />
             {t("jobsPage.filters")}
             {activeFiltersCount > 0 && (
-              <Badge className="absolute -right-1.5 -top-1.5 h-5 min-w-5 justify-center px-1">
+              <Badge className="absolute -right-1.5 -top-1.5 h-5 min-w-[1.25rem] justify-center px-1">
                 {activeFiltersCount}
               </Badge>
             )}
