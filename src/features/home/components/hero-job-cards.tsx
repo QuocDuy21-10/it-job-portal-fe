@@ -8,10 +8,11 @@ import { cn } from "@/lib/utils";
 export const HERO_JOB_CARD_COUNT = 3;
 
 // Static stagger plus a phase offset per card, so the three never float in step.
+// The delay needs the motion-safe variant too, or the `animation` shorthand resets it to 0s.
 const LAYOUT = [
-  { offset: "translate-x-0", delay: "[animation-delay:0s]" },
-  { offset: "translate-x-10", delay: "[animation-delay:-2s]" },
-  { offset: "translate-x-4", delay: "[animation-delay:-4s]" },
+  { offset: "translate-x-0", delay: "motion-safe:[animation-delay:0s]" },
+  { offset: "translate-x-10", delay: "motion-safe:[animation-delay:-2s]" },
+  { offset: "translate-x-4", delay: "motion-safe:[animation-delay:-4s]" },
 ] as const;
 
 export function HeroJobCards({ jobs }: { jobs: Job[] }) {
