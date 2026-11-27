@@ -14,13 +14,13 @@ export const SkillTags = ({
       {visible.map((skill) => (
         <span
           key={skill}
-          className="inline-block rounded-md bg-secondary/60 px-2 py-0.5 text-[11px] font-medium text-secondary-foreground/70 dark:bg-white/[0.05] dark:text-white/70 transition-colors hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary-foreground cursor-default"
+          className="inline-block rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
         >
           {skill}
         </span>
       ))}
       {overflow > 0 && (
-        <span className="text-[11px] text-muted-foreground/60 font-medium">
+        <span className="text-xs font-medium text-muted-foreground">
           +{overflow}
         </span>
       )}

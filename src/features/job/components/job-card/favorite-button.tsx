@@ -30,7 +30,7 @@ export const FavoriteButton = ({
             variant="ghost"
             size="icon"
             className={cn(
-              "h-9 w-9 rounded-full transition-all duration-200 hover:bg-primary/5 active:scale-90",
+              "h-9 w-9 rounded-full transition-colors duration-[120ms] hover:bg-primary/5",
               className
             )}
             onClick={onClick}
@@ -39,10 +39,10 @@ export const FavoriteButton = ({
           >
             <Heart
               className={cn(
-                "h-[18px] w-[18px] transition-all duration-200",
+                "h-[18px] w-[18px] transition-colors duration-[120ms]",
                 isSaved
-                  ? "fill-primary text-primary scale-110"
-                  : "fill-transparent text-muted-foreground/60 hover:text-primary/70"
+                  ? "fill-primary text-primary"
+                  : "fill-transparent text-muted-foreground hover:text-primary"
               )}
             />
           </Button>

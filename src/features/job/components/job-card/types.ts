@@ -1,23 +1,17 @@
-import type { MouseEvent } from "react";
-import type { Job } from "@/features/job/schemas/job.schema";
 import type { JobStatus } from "@/features/job/utils/job-status";
-
-export type JobCardFavorite = {
-  isSaved: boolean;
-  onClick: (e: MouseEvent) => void;
-  disabled: boolean;
-};
+import type { JobCardData } from "./job-card-data";
 
 // Values JobCard computes once and hands to whichever variant renders.
 export interface JobCardViewProps {
-  job: Job;
+  data: JobCardData;
   className?: string;
   hideLogo: boolean;
   hideSalary: boolean;
   status: JobStatus | null;
   statusLabel: string | null;
   salaryLabel: string;
-  jobTypeLabel: string;
-  jobLevelLabel: string | null;
-  favorite: JobCardFavorite;
+  hasSalary: boolean;
+  workTypeLabel: string | null;
+  levelLabel: string | null;
+  postedLabel: string | null;
 }

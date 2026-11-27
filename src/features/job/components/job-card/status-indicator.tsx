@@ -14,9 +14,8 @@ export const StatusIndicator = ({
   if (!variant) return null;
 
   const styles: Record<string, string> = {
-    new: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-    closing:
-      "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+    new: "bg-success-bg text-success",
+    closing: "bg-warning-bg text-warning",
   };
 
   return (
