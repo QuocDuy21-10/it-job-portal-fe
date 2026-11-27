@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "./home-page-client";
 import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import type { TopHiringCompany } from "@/features/company/schemas/company.schema";
@@ -33,9 +33,16 @@ jest.mock("@/i18n/navigation", () => ({
   }: {
     children: React.ReactNode;
     className?: string;
-    href: string;
+    href: string | { pathname: string; query?: Record<string, string> };
   }) => (
-    <a className={className} href={href}>
+    <a
+      className={className}
+      href={
+        typeof href === "string"
+          ? href
+          : `${href.pathname}${href.query ? `?${new URLSearchParams(href.query)}` : ""}`
+      }
+    >
       {children}
     </a>
   ),
@@ -150,18 +157,6 @@ jest.mock("@/components/ui/carousel", () => ({
   CarouselNext: () => <button type="button">Next slide</button>,
 }));
 
-jest.mock("@/components/simple-pagination", () => ({
-  SimplePagination: ({
-    onPageChange,
-  }: {
-    onPageChange: (page: number) => void;
-  }) => (
-    <button type="button" onClick={() => onPageChange(2)}>
-      Go to page 2
-    </button>
-  ),
-}));
-
 jest.mock("@/components/sections/section-header", () => ({
   SectionHeader: () => <div data-testid="section-header" />,
 }));
@@ -188,12 +183,13 @@ const stats: IPublicStats = {
   candidates: 0,
 };
 
-const page1Query = {
+const latestQuery = {
   page: 1,
   limit: 6,
   filter: "isActive=true",
   sort: "sort=-createdAt",
 };
+const topSalaryQuery = { ...latestQuery, sort: "sort=-salary" };
 
 const listedJobs = (variant: "default" | "compact") =>
   screen
@@ -231,7 +227,8 @@ describe("Home", () => {
     expect(listedJobs("default")).toEqual(["Server job"]);
     expect(screen.getByText("Server company")).toBeInTheDocument();
     expect(screen.queryByText("Fetched company")).not.toBeInTheDocument();
-    expect(useGetJobsQuery).toHaveBeenLastCalledWith(page1Query, {
+    expect(useGetJobsQuery).toHaveBeenCalledWith(latestQuery, { skip: true });
+    expect(useGetJobsQuery).toHaveBeenLastCalledWith(topSalaryQuery, {
       skip: true,
     });
     expect(useGetTopHiringCompaniesQuery).toHaveBeenLastCalledWith(
@@ -245,27 +242,11 @@ describe("Home", () => {
 
     expect(listedJobs("default")).toEqual(["Fetched job"]);
     expect(screen.getByText("Fetched company")).toBeInTheDocument();
-    expect(useGetJobsQuery).toHaveBeenLastCalledWith(page1Query, {
-      skip: false,
-    });
+    expect(useGetJobsQuery).toHaveBeenCalledWith(latestQuery, { skip: false });
     expect(useGetTopHiringCompaniesQuery).toHaveBeenLastCalledWith(
       { limit: 8 },
       { skip: false }
     );
-  });
-
-  it("fetches page 2 on the client", () => {
-    render(
-      <Home initialJobs={initialJobs} initialCompanies={initialCompanies} />
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Go to page 2" }));
-
-    expect(useGetJobsQuery).toHaveBeenLastCalledWith(
-      { ...page1Query, page: 2 },
-      { skip: false }
-    );
-    expect(listedJobs("default")).toEqual(["Fetched job"]);
   });
 
   it("ignores the server job list for signed-in HR and Super Admin", () => {
@@ -277,15 +258,59 @@ describe("Home", () => {
     );
 
     // The first render keeps the server list so hydration matches the server HTML.
-    expect(useGetJobsQuery).toHaveBeenNthCalledWith(1, page1Query, {
+    expect(useGetJobsQuery).toHaveBeenNthCalledWith(1, latestQuery, {
       skip: true,
     });
-    expect(useGetJobsQuery).toHaveBeenLastCalledWith(page1Query, {
-      skip: false,
-    });
+    expect(useGetJobsQuery).toHaveBeenCalledWith(latestQuery, { skip: false });
     expect(listedJobs("default")).toEqual(["Fetched job"]);
     // Top hiring companies do not depend on the role.
     expect(screen.getByText("Server company")).toBeInTheDocument();
+  });
+
+  it("lists the three steps as an ordered list", () => {
+    render(<Home initialJobs={null} initialCompanies={null} />);
+
+    const steps = screen.getByRole("list", { name: "home.howItWorks" });
+    expect(steps.tagName).toBe("OL");
+    expect(within(steps).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(steps).getByText("home.getHired")).toBeInTheDocument();
+  });
+
+  it("fetches the top-salary list only once its tab is opened", () => {
+    render(
+      <Home initialJobs={initialJobs} initialCompanies={initialCompanies} />
+    );
+
+    expect(useGetJobsQuery).not.toHaveBeenCalledWith(topSalaryQuery, {
+      skip: false,
+    });
+
+    fireEvent.mouseDown(
+      screen.getByRole("tab", { name: "home.tabTopSalary" }),
+      { button: 0 }
+    );
+
+    expect(useGetJobsQuery).toHaveBeenLastCalledWith(topSalaryQuery, {
+      skip: false,
+    });
+    expect(listedJobs("default")).toEqual(["Fetched job"]);
+  });
+
+  it("points 'view all' at the job list sorted like the open tab", () => {
+    render(
+      <Home initialJobs={initialJobs} initialCompanies={initialCompanies} />
+    );
+    const viewAll = () =>
+      screen.getByRole("link", { name: /home\.viewAllJobs/ });
+
+    expect(viewAll()).toHaveAttribute("href", "/jobs");
+
+    fireEvent.mouseDown(
+      screen.getByRole("tab", { name: "home.tabTopSalary" }),
+      { button: 0 }
+    );
+
+    expect(viewAll()).toHaveAttribute("href", "/jobs?sort=-salary");
   });
 
   it("shows the three newest server jobs as compact cards in the hero", () => {

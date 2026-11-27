@@ -1,50 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Search,
-  ArrowRight,
-  UserPlus,
-  MousePointerClick,
-  Trophy,
-} from "lucide-react";
+import { useState, useEffect, type ReactNode } from "react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useGetJobsQuery } from "@/features/job/redux/job.api";
-import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import { Job } from "@/features/job/schemas/job.schema";
 import { TopHiringCompany } from "@/features/company/schemas/company.schema";
 import { useI18n } from "@/hooks/use-i18n";
-import { JobCard } from "@/features/job/components/job-card";
-import { CompanyCard } from "@/features/company/components/company-card";
-import { SimplePagination } from "@/components/simple-pagination";
-import { SectionHeader } from "@/components/sections/section-header";
-import { SectionContainer } from "@/components/sections/section-container";
-import { TYPOGRAPHY } from "@/shared/constants/design";
 import { Link, useRouter } from "@/i18n/navigation";
 import { HomeHero } from "@/features/home/components/home-hero";
-import { cn } from "@/lib/utils";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 import { hasSession } from "@/lib/auth/session";
 import { selectIsAdmin } from "@/features/auth/redux/auth.slice";
 import { useAppSelector } from "@/lib/redux/hooks";
 import type { IPublicStats } from "@/shared/types/dashboard";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import type { BannerSlide } from "@/features/site-content/schemas/site-content.schema";
-import { HOME_TOP_COMPANIES_LIMIT, getHomeJobsQuery } from "./home-query";
+import { HowItWorks } from "@/features/home/components/how-it-works";
+import { TopCompaniesSection } from "@/features/home/components/top-companies-section";
+import { HomeJobsSection } from "@/features/home/components/home-jobs-section";
 
 type HomeProps = {
   initialJobs: PaginatedResult<Job> | null;
   initialCompanies: TopHiringCompany[] | null;
   slides?: BannerSlide[];
   stats?: IPublicStats | null;
+  // Server-rendered section, passed through so it stays out of the client bundle.
+  popularSkills?: ReactNode;
 };
 
 export default function Home({
@@ -52,34 +32,10 @@ export default function Home({
   initialCompanies,
   slides = [],
   stats,
+  popularSkills,
 }: HomeProps) {
   const [hasToken, setHasToken] = useState(false);
   const router = useRouter();
-
-  // Carousel states for mobile dot indicators
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [currentSnap, setCurrentSnap] = useState(0);
-  const [snapsCount, setSnapsCount] = useState(0);
-
-  useEffect(() => {
-    if (!carouselApi) {
-      return;
-    }
-
-    const updateCarouselState = () => {
-      setSnapsCount(carouselApi.scrollSnapList().length);
-      setCurrentSnap(carouselApi.selectedScrollSnap());
-    };
-
-    updateCarouselState();
-    carouselApi.on("select", updateCarouselState);
-    carouselApi.on("reInit", updateCarouselState);
-
-    return () => {
-      carouselApi.off("select", updateCarouselState);
-      carouselApi.off("reInit", updateCarouselState);
-    };
-  }, [carouselApi]);
 
   useEffect(() => {
     try {
@@ -91,44 +47,11 @@ export default function Home({
 
   const { t } = useI18n();
 
-  // Pagination states
-  const [jobsPage, setJobsPage] = useState(1);
-
   // The backend scopes GET /jobs by role: HR and Super Admin get a different list than
   // the public one the server fetched, so they keep fetching it themselves.
   // hasToken turns true only after mount, so the first client render still matches the
   // server HTML even though the persisted role is already in the store by then.
   const isStaff = useAppSelector(selectIsAdmin) && hasToken;
-  const hasServerJobs = jobsPage === 1 && initialJobs !== null && !isStaff;
-
-  const {
-    data: jobsData,
-    isLoading: jobsInitialLoading,
-    isFetching: jobsFetching,
-    error: jobsError,
-  } = useGetJobsQuery(getHomeJobsQuery(jobsPage), { skip: hasServerJobs });
-
-  const jobsLoading = jobsInitialLoading || jobsFetching;
-
-  // Top hiring companies are the same for every role.
-  const hasServerCompanies = initialCompanies !== null;
-
-  const {
-    data: companiesData,
-    isLoading: companiesLoading,
-    error: companiesError,
-  } = useGetTopHiringCompaniesQuery(
-    { limit: HOME_TOP_COMPANIES_LIMIT },
-    { skip: hasServerCompanies }
-  );
-
-  const jobsResult = hasServerJobs ? initialJobs : jobsData?.data;
-  const featuredJobsToRender = jobsResult?.result ?? [];
-  const jobsTotalPages = jobsResult?.meta?.pagination?.total_pages ?? 1;
-
-  const topCompaniesToRender = hasServerCompanies
-    ? initialCompanies
-    : (companiesData?.data ?? []);
 
   const handleSearch = (query: string, locationCode: string) => {
     const params = new URLSearchParams();
@@ -147,282 +70,13 @@ export default function Home({
         onSearch={handleSearch}
       />
 
-      {/* Featured Jobs Section */}
-      <SectionContainer className="home-section-base">
-        <SectionHeader
-          title={t("home.featuredJobs")}
-          description={t("home.featuredJobsDescription")}
-          actionLabel={t("home.viewAll")}
-          actionHref="/jobs"
-        />
+      {popularSkills}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {jobsLoading ? (
-            // Loading placeholders — matches redesigned default JobCard dimensions
-            Array.from({ length: 3 }).map((_, index) => (
-              <Card key={index}>
-                <CardContent className="p-5">
-                  <div className="animate-pulse space-y-3">
-                    {/* Header: logo + title/company */}
-                    <div className="flex items-start gap-3 pr-9">
-                      <div className="h-12 w-12 rounded-xl bg-muted" />
-                      <div className="flex-1 space-y-1.5">
-                        <div className="h-4 bg-muted rounded w-3/4" />
-                        <div className="h-3 bg-muted rounded w-1/2" />
-                      </div>
-                    </div>
-                    {/* Skills */}
-                    <div className="flex gap-1.5">
-                      <div className="h-5 bg-muted rounded-md w-14" />
-                      <div className="h-5 bg-muted rounded-md w-16" />
-                      <div className="h-5 bg-muted rounded-md w-12" />
-                    </div>
-                    {/* Meta: location + type */}
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 bg-muted rounded w-20" />
-                      <div className="h-3 bg-muted rounded w-16" />
-                    </div>
-                    {/* Footer: salary + time */}
-                    <div className="flex justify-between pt-3 border-t border-border/40">
-                      <div className="h-4 bg-muted rounded w-20" />
-                      <div className="h-3 bg-muted rounded w-16" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : jobsError ? (
-            <div className="col-span-3 text-center py-8">
-              <p className="home-muted-text text-muted-foreground">
-                {t("home.loadJobsError")}
-              </p>
-            </div>
-          ) : featuredJobsToRender.length === 0 ? (
-            <div className="col-span-3 text-center py-8">
-              <p className="home-muted-text text-muted-foreground">
-                {t("home.noJobs")}
-              </p>
-            </div>
-          ) : (
-            featuredJobsToRender.map((job: Job) => (
-              <JobCard
-                key={job._id}
-                job={job}
-                className="home-panel-surface home-subtle-border dark:bg-transparent"
-              />
-            ))
-          )}
-        </div>
+      <HomeJobsSection initialJobs={initialJobs} isStaff={isStaff} />
 
-        {/* Jobs Pagination */}
-        {!jobsLoading && !jobsError && featuredJobsToRender.length > 0 && (
-          <div className="mt-8">
-            <SimplePagination
-              page={jobsPage}
-              totalPages={jobsTotalPages}
-              onPageChange={setJobsPage}
-              labelText={t("jobsPage.pageLabel")}
-            />
-          </div>
-        )}
+      <TopCompaniesSection initialCompanies={initialCompanies} />
 
-        <div className="mt-8 text-center sm:hidden">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-          >
-            <Link href="/jobs">
-              {t("home.viewAllJobs")} <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </SectionContainer>
-
-      {/* Top Companies Section */}
-      <SectionContainer className="home-section-muted">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div className="space-y-2">
-            <h2 className={TYPOGRAPHY.h2}>
-              {t("home.topCompaniesHiringNow") || "Top IT Companies Hiring Now"}
-            </h2>
-            <p className="home-muted-text max-w-2xl text-base text-muted-foreground">
-              {t("home.topCompaniesDescription")}
-            </p>
-          </div>
-
-          <Button
-            asChild
-            variant="outline"
-            className="hidden sm:inline-flex dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-          >
-            <Link href="/companies">
-              {t("home.viewAllCompanies")}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-
-        {companiesError ? (
-          <div className="py-8 text-center">
-            <p className="home-muted-text text-muted-foreground">
-              {t("home.errorLoadingCompanies")}
-            </p>
-          </div>
-        ) : topCompaniesToRender.length === 0 && !companiesLoading ? (
-          <div className="py-8 text-center">
-            <p className="home-muted-text text-muted-foreground">
-              {t("home.noCompanies")}
-            </p>
-          </div>
-        ) : (
-          <div className="relative">
-            <Carousel
-              setApi={setCarouselApi}
-              opts={{
-                align: "start",
-                containScroll: "trimSnaps",
-                dragFree: true,
-              }}
-              className="top-companies-carousel"
-            >
-              <CarouselContent className="-ml-4">
-                {(companiesLoading
-                  ? Array.from({ length: 4 }, (_, index) => index)
-                  : topCompaniesToRender
-                ).map((companyOrIndex) => (
-                  <CarouselItem
-                    key={
-                      typeof companyOrIndex === "number"
-                        ? `company-skeleton-${companyOrIndex}`
-                        : companyOrIndex._id
-                    }
-                    className="pl-4 basis-[85%] md:basis-1/2 xl:basis-1/4"
-                  >
-                    {typeof companyOrIndex === "number" ? (
-                      <Card className="home-panel-surface home-subtle-border h-full rounded-[28px] border-border/70 bg-card shadow-sm dark:bg-transparent">
-                        <CardContent className="flex h-full min-h-[320px] flex-col items-center justify-between gap-6 p-8 text-center">
-                          <div className="flex flex-col items-center gap-5">
-                            <div className="h-24 w-24 rounded-[24px] bg-muted animate-pulse" />
-                            <div className="space-y-3">
-                              <div className="mx-auto h-8 w-36 rounded-full bg-muted animate-pulse" />
-                              <div className="mx-auto h-4 w-52 rounded-full bg-muted animate-pulse" />
-                              <div className="mx-auto h-4 w-44 rounded-full bg-muted animate-pulse" />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="h-11 w-11 rounded-full bg-muted animate-pulse" />
-                            <div className="h-6 w-40 rounded-full bg-muted animate-pulse" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      <CompanyCard
-                        company={companyOrIndex as TopHiringCompany}
-                      />
-                    )}
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-
-              <CarouselPrevious className="top-companies-carousel__button left-3 hidden md:inline-flex lg:-left-5" />
-              <CarouselNext className="top-companies-carousel__button right-3 hidden md:inline-flex lg:-right-5" />
-            </Carousel>
-
-            {/* Mobile pagination indicator dots */}
-            {!companiesLoading && snapsCount > 1 && (
-              <div className="mt-6 flex justify-center gap-2 md:hidden">
-                {Array.from({ length: snapsCount }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => carouselApi?.scrollTo(index)}
-                    className={cn(
-                      "h-2.5 w-2.5 rounded-full transition-all duration-300",
-                      currentSnap === index
-                        ? "bg-blue-600 dark:bg-blue-500 scale-110"
-                        : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                    )}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="mt-8 text-center sm:hidden">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full sm:w-auto dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-          >
-            <Link href="/companies">{t("home.viewAllCompanies")}</Link>
-          </Button>
-        </div>
-      </SectionContainer>
-
-      {/* How It Works Section */}
-      <SectionContainer className="home-section-base">
-        <div className="text-center mb-12">
-          <h2 className={TYPOGRAPHY.h2}>{t("home.howItWorks")}</h2>
-          <p className="home-muted-text mt-3 text-lg text-muted-foreground">
-            {t("home.howItWorksDescription")}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
-          {/* Step 1 */}
-          <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg">
-                <UserPlus className="h-10 w-10 text-white" aria-hidden="true" />
-              </div>
-            </div>
-            <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-              {t("home.searchJobs")}
-            </h3>
-            <p className="home-muted-text leading-relaxed text-muted-foreground">
-              {t("home.searchJobsDescription")}
-            </p>
-          </div>
-
-          {/* Step 2 */}
-          <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mx-auto shadow-lg">
-                <MousePointerClick
-                  className="h-10 w-10 text-white"
-                  aria-hidden="true"
-                />
-              </div>
-            </div>
-            <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-              {t("home.applyWithEase")}
-            </h3>
-            <p className="home-muted-text leading-relaxed text-muted-foreground">
-              {t("home.applyWithEaseDescription")}
-            </p>
-          </div>
-
-          {/* Step 3 */}
-          <div className="home-panel-surface home-subtle-border group space-y-6 rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl dark:bg-transparent">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto shadow-lg">
-                <Trophy className="h-10 w-10 text-white" aria-hidden="true" />
-              </div>
-            </div>
-            <h3 className={`${TYPOGRAPHY.h3} text-foreground`}>
-              {t("home.getHired")}
-            </h3>
-            <p className="home-muted-text leading-relaxed text-muted-foreground">
-              {t("home.getHiredDescription")}
-            </p>
-          </div>
-        </div>
-      </SectionContainer>
+      <HowItWorks />
 
       {/* CTA Section */}
       <section className="home-cta-surface relative overflow-hidden py-16 text-white sm:py-20 lg:py-24">

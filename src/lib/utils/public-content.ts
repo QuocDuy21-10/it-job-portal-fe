@@ -14,6 +14,7 @@ import type {
   LegalPageContent,
   LegalPageKey,
 } from "@/features/site-content/schemas/site-content.schema";
+import type { PopularSkill } from "@/features/skill/schemas/skill.schema";
 import type { AppLocale } from "@/i18n/routing";
 import { toJobSearchQueryString } from "@/lib/utils/public-listing";
 import type { ApiResponse } from "@/shared/base/api-response.base";
@@ -28,6 +29,8 @@ import type {
 // Jobs and aggregated external jobs change often; companies rarely do.
 const JOBS_REVALIDATE_SECONDS = 60;
 const COMPANIES_REVALIDATE_SECONDS = 3600;
+// The backend caches popular skills for an hour too.
+const SKILLS_REVALIDATE_SECONDS = 3600;
 // Short, so a job taken down by an admin leaves the site within about a minute.
 const EXTERNAL_JOBS_REVALIDATE_SECONDS = 60;
 const SITE_CONTENT_REVALIDATE_SECONDS = 60;
@@ -206,6 +209,16 @@ export const fetchPublicStats = cache(() =>
     fetchPublicEntity<IPublicStats>(
       "/statistics/public",
       SITE_CONTENT_REVALIDATE_SECONDS
+    )
+  )
+);
+
+// The home page hides the section on null.
+export const fetchPublicPopularSkills = cache((limit: number) =>
+  nullOnError(
+    fetchPublicEntity<PopularSkill[]>(
+      `/skills/popular?limit=${limit}`,
+      SKILLS_REVALIDATE_SECONDS
     )
   )
 );

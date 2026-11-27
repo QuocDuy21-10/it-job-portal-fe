@@ -4,9 +4,16 @@ import type { PaginatedQueryParams } from "@/shared/types/pagination";
 // first page is only valid if both sides ask the backend for the same list.
 export const HOME_TOP_COMPANIES_LIMIT = 8;
 
-export const getHomeJobsQuery = (page: number): PaginatedQueryParams => ({
-  page,
+export const HOME_JOBS_SORTS = {
+  latest: "-createdAt",
+  topSalary: "-salary",
+} as const;
+
+export type HomeJobsTab = keyof typeof HOME_JOBS_SORTS;
+
+export const getHomeJobsQuery = (tab: HomeJobsTab): PaginatedQueryParams => ({
+  page: 1,
   limit: 6,
   filter: "isActive=true",
-  sort: "sort=-createdAt",
+  sort: `sort=${HOME_JOBS_SORTS[tab]}`,
 });

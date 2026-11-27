@@ -40,9 +40,9 @@ Tham số nhận vào là `PaginatedQueryParams`:
 `getJobs` và `getCompanies` dựng `page=..&limit=..`, rồi nối `filter` và `sort` nguyên văn. Ví dụ từ trang chủ:
 
 ```ts
-// home-query.ts: getHomeJobsQuery(page) trả về
-// { page, limit: 6, filter: "isActive=true", sort: "sort=-createdAt" }
-useGetJobsQuery(getHomeJobsQuery(jobsPage));
+// features/home/config/home-query.ts: getHomeJobsQuery("latest") trả về
+// { page: 1, limit: 6, filter: "isActive=true", sort: "sort=-createdAt" }
+useGetJobsQuery(getHomeJobsQuery("latest"));
 // GET /jobs?page=1&limit=6&isActive=true&sort=-createdAt
 ```
 

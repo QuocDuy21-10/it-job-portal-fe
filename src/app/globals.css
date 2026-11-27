@@ -427,31 +427,6 @@
     @apply hidden bg-white dark:bg-card lg:fixed lg:inset-y-0 lg:flex lg:flex-col lg:border-r lg:border-gray-200 dark:lg:border-border lg:pt-16;
   }
 
-  .top-companies-carousel [aria-roledescription="carousel"] {
-    @apply cursor-grab;
-  }
-
-  .top-companies-carousel [aria-roledescription="carousel"]:active {
-    cursor: grabbing;
-  }
-
-  .top-companies-carousel [class*="overflow-hidden"] {
-    touch-action: pan-y;
-  }
-
-  .top-companies-carousel__button {
-    @apply h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-40;
-    border: 1px solid hsl(var(--primary)) !important;
-    background-color: hsl(var(--primary)) !important;
-    color: hsl(var(--primary-foreground)) !important;
-  }
-
-  .top-companies-carousel__button:hover {
-    background-color: hsl(var(--primary) / 0.9) !important;
-    border-color: hsl(var(--primary) / 0.9) !important;
-    color: hsl(var(--primary-foreground)) !important;
-  }
-
   .home-hero-surface {
     background-color: #eff6ff;
   }
@@ -753,10 +728,6 @@
     background-color: hsl(var(--toast-info-bg));
     border-left: 4px solid hsl(var(--toast-info-border));
     color: hsl(var(--toast-info-foreground));
-  }
-
-  .dark .top-companies-carousel__button {
-    box-shadow: 0 20px 40px hsl(228 46% 6% / 0.35);
   }
 
   /* Chatbot loading/thinking indicator custom styles */
