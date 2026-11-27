@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "./home-page-client";
 import { useGetTopHiringCompaniesQuery } from "@/features/company/redux/company.api";
 import type { TopHiringCompany } from "@/features/company/schemas/company.schema";
@@ -265,6 +265,15 @@ describe("Home", () => {
     expect(listedJobs("default")).toEqual(["Fetched job"]);
     // Top hiring companies do not depend on the role.
     expect(screen.getByText("Server company")).toBeInTheDocument();
+  });
+
+  it("lists the three steps as an ordered list", () => {
+    render(<Home initialJobs={null} initialCompanies={null} />);
+
+    const steps = screen.getByRole("list", { name: "home.howItWorks" });
+    expect(steps.tagName).toBe("OL");
+    expect(within(steps).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(steps).getByText("home.getHired")).toBeInTheDocument();
   });
 
   it("fetches the top-salary list only once its tab is opened", () => {
