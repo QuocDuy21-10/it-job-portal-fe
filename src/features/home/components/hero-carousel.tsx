@@ -108,9 +108,16 @@ type HeroCarouselProps = {
   // The fixed hero content (heading, search); the campaign block goes right after it.
   children: ReactNode;
   footer?: ReactNode;
+  // Desktop-only second column (lg and up); below lg it is display:none, so it leaves the tab order.
+  aside?: ReactNode;
 };
 
-export function HeroCarousel({ slides, children, footer }: HeroCarouselProps) {
+export function HeroCarousel({
+  slides,
+  children,
+  footer,
+  aside,
+}: HeroCarouselProps) {
   const { t, language } = useI18n();
   const count = slides.length;
   const isCarousel = count > 1;
@@ -177,12 +184,13 @@ export function HeroCarousel({ slides, children, footer }: HeroCarouselProps) {
   const current = slides[index];
   const content = current?.content?.[language === "en" ? "en" : "vi"] ?? null;
   const reservesCampaign = slides.some((slide) => slide.content);
+  const hasAside = Boolean(aside);
   const slideLabel = (position: number) =>
     t("home.carousel.slideOf", { current: position + 1, total: count });
 
   return (
     <section
-      className="home-hero-surface relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32"
+      className="surface-hero relative z-20 overflow-x-clip py-16 sm:py-24 lg:py-32"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -234,125 +242,151 @@ export function HeroCarousel({ slides, children, footer }: HeroCarouselProps) {
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/35 to-background/95 dark:from-background/25 dark:via-background/60 dark:to-background"
       />
+      <div
+        aria-hidden="true"
+        className="hero-gradient-overlay pointer-events-none absolute inset-0 motion-safe:animate-hero-gradient-shift"
+      />
       <div className="hidden dark:block absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-10">
-          {children}
+        <div
+          className={cn(
+            hasAside && "lg:grid lg:grid-cols-12 lg:items-center lg:gap-12"
+          )}
+        >
+          <div
+            className={cn(
+              "mx-auto max-w-4xl space-y-8 text-center sm:space-y-10",
+              hasAside && "lg:col-span-7 lg:mx-0 lg:text-left"
+            )}
+          >
+            {children}
 
-          {(reservesCampaign || isCarousel) && (
-            <div
-              className="space-y-3"
-              {...(isCarousel
-                ? {
-                    role: "region",
-                    "aria-roledescription": "carousel",
-                    "aria-label": t("home.carousel.label"),
-                  }
-                : {})}
-            >
-              {reservesCampaign && (
-                // Fixed height for 1 title line, 2 description lines and the button: no layout shift.
-                <div aria-live={autoplay ? "off" : "polite"} className="h-36">
-                  {content && (
-                    <div
-                      key={current.id}
-                      className="flex h-full flex-col items-center gap-2 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
-                      {...(isCarousel
-                        ? {
-                            role: "group",
-                            "aria-roledescription": "slide",
-                            "aria-label": slideLabel(index),
-                          }
-                        : {})}
-                    >
-                      <p className="line-clamp-1 text-lg font-semibold text-foreground">
-                        {content.title}
-                      </p>
-                      {content.description && (
-                        <p className="line-clamp-2 max-w-2xl text-sm text-muted-foreground">
-                          {content.description}
-                        </p>
-                      )}
-                      <CampaignLink
-                        text={content}
-                        newTabLabel={t("home.carousel.opensInNewTab")}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {isCarousel && (
-                <div className="flex items-center justify-center gap-1">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 md:h-9 md:w-9"
-                    aria-label={t("home.carousel.previous")}
-                    title={t("home.carousel.previous")}
-                    onClick={() => userGoTo(index - 1)}
-                  >
-                    <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                  </Button>
-                  {slides.map((slide, position) => (
-                    <button
-                      key={slide.id}
-                      type="button"
-                      aria-label={slideLabel(position)}
-                      aria-current={position === index ? "true" : undefined}
-                      onClick={() => userGoTo(position)}
-                      className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:h-6 md:w-6"
-                    >
-                      <span
+            {(reservesCampaign || isCarousel) && (
+              <div
+                className="space-y-3"
+                {...(isCarousel
+                  ? {
+                      role: "region",
+                      "aria-roledescription": "carousel",
+                      "aria-label": t("home.carousel.label"),
+                    }
+                  : {})}
+              >
+                {reservesCampaign && (
+                  // Fixed height for 1 title line, 2 description lines and the button: no layout shift.
+                  <div aria-live={autoplay ? "off" : "polite"} className="h-36">
+                    {content && (
+                      <div
+                        key={current.id}
                         className={cn(
-                          "h-2.5 w-2.5 rounded-full transition-colors",
-                          position === index
-                            ? "bg-primary"
-                            : "bg-muted-foreground/40"
+                          "flex h-full flex-col items-center gap-2 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200",
+                          hasAside && "lg:items-start"
                         )}
-                      />
-                    </button>
-                  ))}
-                  {!reducedMotion && (
+                        {...(isCarousel
+                          ? {
+                              role: "group",
+                              "aria-roledescription": "slide",
+                              "aria-label": slideLabel(index),
+                            }
+                          : {})}
+                      >
+                        <p className="line-clamp-1 text-lg font-semibold text-foreground">
+                          {content.title}
+                        </p>
+                        {content.description && (
+                          <p className="line-clamp-2 max-w-2xl text-sm text-muted-foreground">
+                            {content.description}
+                          </p>
+                        )}
+                        <CampaignLink
+                          text={content}
+                          newTabLabel={t("home.carousel.opensInNewTab")}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {isCarousel && (
+                  <div
+                    className={cn(
+                      "flex items-center justify-center gap-1",
+                      hasAside && "lg:justify-start"
+                    )}
+                  >
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
                       className="h-11 w-11 md:h-9 md:w-9"
-                      aria-label={t(
-                        stopped ? "home.carousel.play" : "home.carousel.pause"
-                      )}
-                      title={t(
-                        stopped ? "home.carousel.play" : "home.carousel.pause"
-                      )}
-                      onClick={() => setStopped((value) => !value)}
+                      aria-label={t("home.carousel.previous")}
+                      title={t("home.carousel.previous")}
+                      onClick={() => userGoTo(index - 1)}
                     >
-                      {stopped ? (
-                        <Play className="h-5 w-5" aria-hidden="true" />
-                      ) : (
-                        <Pause className="h-5 w-5" aria-hidden="true" />
-                      )}
+                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 md:h-9 md:w-9"
-                    aria-label={t("home.carousel.next")}
-                    title={t("home.carousel.next")}
-                    onClick={() => userGoTo(index + 1)}
-                  >
-                    <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
+                    {slides.map((slide, position) => (
+                      <button
+                        key={slide.id}
+                        type="button"
+                        aria-label={slideLabel(position)}
+                        aria-current={position === index ? "true" : undefined}
+                        onClick={() => userGoTo(position)}
+                        className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:h-6 md:w-6"
+                      >
+                        <span
+                          className={cn(
+                            "h-2.5 w-2.5 rounded-full transition-colors",
+                            position === index
+                              ? "bg-primary"
+                              : "bg-muted-foreground/40"
+                          )}
+                        />
+                      </button>
+                    ))}
+                    {!reducedMotion && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-11 w-11 md:h-9 md:w-9"
+                        aria-label={t(
+                          stopped ? "home.carousel.play" : "home.carousel.pause"
+                        )}
+                        title={t(
+                          stopped ? "home.carousel.play" : "home.carousel.pause"
+                        )}
+                        onClick={() => setStopped((value) => !value)}
+                      >
+                        {stopped ? (
+                          <Play className="h-5 w-5" aria-hidden="true" />
+                        ) : (
+                          <Pause className="h-5 w-5" aria-hidden="true" />
+                        )}
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-11 w-11 md:h-9 md:w-9"
+                      aria-label={t("home.carousel.next")}
+                      title={t("home.carousel.next")}
+                      onClick={() => userGoTo(index + 1)}
+                    >
+                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
 
-          {footer}
+            {footer}
+          </div>
+          {hasAside && (
+            <div className="hidden lg:col-span-5 lg:block">{aside}</div>
+          )}
         </div>
       </div>
     </section>

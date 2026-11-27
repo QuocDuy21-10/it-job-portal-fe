@@ -167,4 +167,43 @@ describe("HeroCarousel", () => {
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
+
+  it("puts the aside in a column that only exists from lg up", () => {
+    render(
+      <HeroCarousel slides={[]} aside={<p>Hero jobs</p>}>
+        <h1>Find your job</h1>
+      </HeroCarousel>
+    );
+
+    const column = screen.getByText("Hero jobs").parentElement!;
+    expect(column).toHaveClass("hidden", "lg:block", "lg:col-span-5");
+    expect(screen.getByRole("heading").parentElement).toHaveClass(
+      "lg:col-span-7",
+      "lg:text-left"
+    );
+  });
+
+  it("keeps the centered single column without an aside", () => {
+    const { container } = hero([]);
+
+    expect(container.querySelector(".lg\\:col-span-5")).toBeNull();
+    expect(screen.getByRole("heading").parentElement).toHaveClass(
+      "text-center"
+    );
+    expect(screen.getByRole("heading").parentElement).not.toHaveClass(
+      "lg:text-left"
+    );
+  });
+
+  it("paints the public hero surface with the slow gradient layer", () => {
+    const { container } = hero([]);
+
+    expect(container.querySelector("section")).toHaveClass("surface-hero");
+    expect(container.querySelector("section")).not.toHaveClass(
+      "home-hero-surface"
+    );
+    expect(container.querySelector(".hero-gradient-overlay")).toHaveClass(
+      "motion-safe:animate-hero-gradient-shift"
+    );
+  });
 });

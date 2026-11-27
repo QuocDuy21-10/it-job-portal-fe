@@ -145,9 +145,21 @@ describe("JobCard", () => {
     expect(screen.queryByText(/25[.,]000[.,]000/)).toBeNull();
   });
 
-  it("does not accept the removed compact variant", () => {
-    // @ts-expect-error compact was removed in phase 3C
+  it("renders the compact variant as one link without a save button", () => {
     render(<JobCard job={job} variant="compact" />);
-    expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
+
+    const link = screen.getByRole("link");
+    expect(link).toHaveAttribute("href", "/viec-lam/frontend-engineer-job-1");
+    expect(link).toHaveTextContent("Frontend Engineer");
+    expect(link).toHaveTextContent("Acme");
+    expect(link).toHaveTextContent("Ho Chi Minh City");
+    expect(link).toHaveTextContent(/25[.,]000[.,]000/);
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
+  it("hides the salary on the compact variant when asked", () => {
+    render(<JobCard job={job} variant="compact" hideSalary />);
+
+    expect(screen.queryByText(/25[.,]000[.,]000/)).toBeNull();
   });
 });

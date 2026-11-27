@@ -116,6 +116,7 @@ export const vi = {
     next: "Trang sau",
   },
   home: {
+    heroJobsLabel: "Việc làm mới nhất",
     carousel: {
       label: "Chiến dịch nổi bật",
       previous: "Slide trước",

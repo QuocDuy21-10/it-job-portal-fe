@@ -869,4 +869,16 @@
       ),
       radial-gradient(hsl(var(--surface-hero-dot)) 1px, transparent 1px);
   }
+
+  /* DESIGN.md v2.2: slow gradient layer over the public hero. Animated with motion-safe:animate-hero-gradient-shift. */
+  .hero-gradient-overlay {
+    background-image: linear-gradient(
+      120deg,
+      hsl(var(--primary) / 0.1),
+      transparent 40%,
+      hsl(var(--primary) / 0.06) 70%,
+      transparent
+    );
+    background-size: 200% 200%;
+  }
 }

@@ -117,6 +117,7 @@ export const en = {
     next: "Next",
   },
   home: {
+    heroJobsLabel: "Newest jobs",
     carousel: {
       label: "Featured campaigns",
       previous: "Previous slide",
