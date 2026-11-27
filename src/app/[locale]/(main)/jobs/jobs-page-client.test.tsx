@@ -39,9 +39,9 @@ jest.mock("@/components/simple-pagination", () => ({
   SimplePagination: () => <nav data-testid="pagination" />,
 }));
 
-jest.mock("@/features/job/components/job-search-card", () => ({
-  JobSearchCard: ({ item }: { item: JobSearchItem }) => (
-    <div data-testid="job-search-card">{item.id}</div>
+jest.mock("@/features/job/components/job-card", () => ({
+  JobCard: ({ data }: { data: { id: string } }) => (
+    <div data-testid="job-card">{data.id}</div>
   ),
 }));
 
@@ -137,7 +137,18 @@ function createJobListState(
   };
 }
 
-const twoJobs = [{ id: "job-a" }, { id: "job-b" }] as JobSearchItem[];
+const searchItem = (id: string): JobSearchItem => ({
+  id,
+  sourceType: "INTERNAL",
+  title: id,
+  companyName: "Acme",
+  location: "Hà Nội",
+  isRemote: false,
+  skills: [],
+  postedAt: "2026-11-20T00:00:00.000Z",
+  applyMode: "INTERNAL",
+});
+const twoJobs = [searchItem("job-a"), searchItem("job-b")];
 
 function renderPage(list: JobListState) {
   mockUseJobList.mockReturnValue(list);
@@ -164,7 +175,7 @@ describe("JobsPageClient", () => {
       screen.getByRole("heading", { level: 1, name: "jobsPage.heroTitle" })
     ).toBeInTheDocument();
     expect(screen.getByText("jobsPage.breadcrumb")).toBeInTheDocument();
-    expect(screen.getAllByTestId("job-search-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("job-card")).toHaveLength(2);
     expect(screen.getByTestId("pagination")).toBeInTheDocument();
   });
 

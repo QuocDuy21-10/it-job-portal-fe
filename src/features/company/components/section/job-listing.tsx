@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useGetJobsQuery } from "@/features/job/redux/job.api";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobCard } from "@/features/job/components/job-card";
+import { jobToCardData } from "@/features/job/components/job-card/job-card-data";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import type { Job } from "@/features/job/schemas/job.schema";
 
@@ -78,14 +79,13 @@ function JobListing({
   return (
     <div className="space-y-4">
       {jobs.length > 0 ? (
-        jobs.map((job: any) => (
+        jobs.map((job: Job) => (
           <JobCard
             key={job._id}
-            job={job}
-            variant="detailed"
+            data={jobToCardData(job)}
+            variant="list"
             hideLogo
             hideSalary
-            actionLayout="inverted"
           />
         ))
       ) : (

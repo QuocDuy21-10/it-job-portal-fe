@@ -2194,9 +2194,7 @@ export const en = {
     externalFilterHint:
       "External listings have no salary or work-type data, so they are hidden when you filter by those.",
     jobCard: {
-      viewDetails: "View details",
       saveJob: "Save job",
-      applyNow: "Apply now",
       removeSavedJob: "Remove saved job",
       statusNew: "New",
       statusClosing: "Closing soon",

@@ -12,7 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { JobSearchCard } from "@/features/job/components/job-search-card";
+import { JobCard } from "@/features/job/components/job-card";
+import { searchItemToCardData } from "@/features/job/components/job-card/job-card-data";
 import {
   SORT_OPTIONS,
   SOURCE_TABS,
@@ -158,7 +159,7 @@ export function JobResults({ list, summary }: JobResultsProps) {
               className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              <JobSearchCard item={item} />
+              <JobCard data={searchItemToCardData(item)} variant="list" />
             </div>
           ))}
         </div>
